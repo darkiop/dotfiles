@@ -1,0 +1,9 @@
+[user]
+name = Thorsten Walk
+email = darkiop@gmail.com
+
+[core]
+editor=vim
+
+[push]
+default = matching

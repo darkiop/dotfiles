@@ -1,0 +1,41 @@
+# ls shortcuts
+alias ls='ls --sort=extension --color=auto'
+alias l='ls -lh'
+alias ll='ls -lah'
+alias la='ls -A'
+alias psg='ps -A | grep'
+alias ..='cd ..'
+
+# color for manpages
+alias man="TERMINFO=~/.terminfo TERM=mostlike LESS=C PAGER=less man"
+
+# Enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# avoid mistakes
+#alias rm='rm -i'
+#alias cp='cp -i'
+#alias mv='mv -i'
+
+# Git Commands - Add and Commit are used as functions
+alias gpo='git push origin master'
+alias gp='git pull'
+alias gs='git status'
+alias gd='git diff'
+alias gr='git reflog'
+alias glf='git ls-files'
+
+# Quickly load bashrc
+alias reload='source ~/.bashrc'
+
+# fix typo mistakes
+alias cd.='cd ..'
+alias cd..='cd ..'

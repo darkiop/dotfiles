@@ -1,0 +1,7 @@
+export PATH=:$HOME/bin:/usr/local/bin:$PATH
+export EDITOR='vim' ALTERNATE_EDITOR='vim' VISUAL='gvim'
+
+# Bash History
+export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
+export HISTCONTROL=ignoreboth
+export HISTIGNORE='&:clear:ls:cd:[bf]g:exit:[ t\]*'

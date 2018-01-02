@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# simple bash prompt by koljah
+# https://github.com/koljah-de/simple-bash-prompt/
+#
+# modified by darkiop
+
+blue_color="\e[38;5;33m"
+light_blue_color="\e[38;5;39m"
+red_color="\e[38;5;196m"
+green_color="\e[38;5;42m"
+yellow_color="\e[38;5;227m"
+white_color="\e[37m"
+close_color="$(tput sgr0)"
+
+# define the color of the simple-bash-prompt
+simple_bash_prompt_bracket_color=$blue_color
+simple_bash_prompt_command_color=$white_color
+simple_bash_prompt_device_color=$blue_color
+simple_bash_prompt_dir_color=$white_color
+simple_bash_prompt_git_branch_color=$yellow_color
+simple_bash_prompt_git_color=$yellow_color
+simple_bash_prompt_user_color=$light_blue_color
+simple_bash_prompt_separator_color=$white_color
+simple_bash_prompt_symbol_color=$white_color
+simple_bash_prompt_reset=$white_color
+simple_bash_prompt_date_color=$green_color
+
+# define the prompt terminator character
+simple_bash_prompt_symbol="\\$"
+
+# set the color with the exit status of the last command
+simple_bash_prompt_exit_status_color () {
+    if [ $1 -eq 0 ]; then
+        echo -e $blue_color
+    else
+        echo -e $red_color
+    fi
+}
+
+# check if current directory is a git repo
+simple_bash_prompt_is_git_repo () {
+    git rev-parse 2> /dev/null
+}
+
+# print the git branch
+simple_bash_prompt_get_git_branch () {
+    simple_bash_prompt_git_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+    if [ "$simple_bash_prompt_git_branch" = "HEAD" ]; then
+        echo "no branch"
+    else
+        echo $simple_bash_prompt_git_branch
+    fi
+}
+
+# define the simple-bash-prompt
+simple_bash_prompt_build_prompt () {
+simple_bash_prompt_exit_status=$?
+simple_bash_prompt="\[\$(simple_bash_prompt_exit_status_color $simple_bash_prompt_exit_status)\]┬─\
+\[$simple_bash_prompt_bracket_color\][\
+\[$simple_bash_prompt_user_color\]\u\
+\[$simple_bash_prompt_separator_color\]@\
+\[$simple_bash_prompt_device_color\]\h\
+\[$simple_bash_prompt_separator_color\]:\
+\[$simple_bash_prompt_dir_color\]\w\
+\[$simple_bash_prompt_bracket_color\]]\
+\[\$(simple_bash_prompt_exit_status_color $simple_bash_prompt_exit_status)\]─\
+\[$simple_bash_prompt_bracket_color\][\
+\[\$(simple_bash_prompt_exit_status_color $simple_bash_prompt_exit_status)\]$simple_bash_prompt_date_color\t\
+\[$simple_bash_prompt_bracket_color\]]"
+if $(simple_bash_prompt_is_git_repo); then
+simple_bash_prompt+="\[\$(simple_bash_prompt_exit_status_color $simple_bash_prompt_exit_status)\]─"
+simple_bash_prompt+="\[$simple_bash_prompt_git_color\]["
+simple_bash_prompt+="\[$simple_bash_prompt_git_branch_color\]\$(simple_bash_prompt_get_git_branch)"
+simple_bash_prompt+="\[$simple_bash_prompt_git_color\]]"
+fi
+simple_bash_prompt+="\n\[\$(simple_bash_prompt_exit_status_color $simple_bash_prompt_exit_status)\]╰─>\
+\[$simple_bash_prompt_symbol_color\]$simple_bash_prompt_symbol \[$simple_bash_prompt_command_color\]"
+PS1=$simple_bash_prompt
+}
+
+export PROMPT_COMMAND=simple_bash_prompt_build_prompt
