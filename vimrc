@@ -1,3 +1,5 @@
+let g:airline_theme='cool'
+
 " make Vim more useful
 set nocompatible
 
@@ -292,15 +294,8 @@ if has("autocmd")
   autocmd BufNewFile,BufRead *.json setfiletype json syntax=javascript
 endif
 
-"
-" Prevent various Vim features from keeping the contents of pass(1) password
-" files (or any other purely temporary files) in plaintext on the system.
-"
-" Either append this to the end of your .vimrc, or install it as a plugin with
-" a plugin manager like Tim Pope's Pathogen.
-"
-" Author: Tom Ryder <tom@sanctum.geek.nz>
-"
+" https://github.com/tpope/vim-pathogen
+execute pathogen#infect()
 
 " Don't backup files in temp directories or shm
 if exists('&backupskip')
