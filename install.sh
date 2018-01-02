@@ -13,7 +13,7 @@ yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
 dir=~/dotfiles
-files="bashrc vimrc gitconfig inputrc bash_profile"
+files="bashrc vimrc gitconfig inputrc bash_profile dircolors"
 folders="byobu vim"
 
 # delete old symlinks
