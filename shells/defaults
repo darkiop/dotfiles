@@ -40,3 +40,14 @@ fi
 # SUDO TAB COMPLETION
 #complete -cf sudo
 
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+  xterm*|rxvt*)
+    PROMPT_COMMAND='printf "\033]0;%s@%s:%s\033\\" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/~}"'
+  ;;
+  screen*)
+    PROMPT_COMMAND='CURDIR=`basename ${PWD}`;echo -ne "\033]0;${USER}@${HOSTNAME}:\007\033k${CURDIR}\033\\"'
+  ;;
+*)
+;;
+esac
