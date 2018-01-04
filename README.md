@@ -9,11 +9,11 @@ dotfiles for bash
 
 CREDITS
 
-original dotfiles version from:
 - https://github.com/rkirti/bashrc
-
-original prompt from:
 - https://github.com/koljah-de/simple-bash-prompt
+- https://github.com/vim-airline/vim-airline
+- https://github.com/vim-airline/vim-airline-themes
+- https://github.com/ranger/ranger
 
 TODO
 
@@ -21,9 +21,9 @@ TODO
 - https://www.linux.com/learn/enhancing-virtual-terminals-byobu
 - https://github.com/moprak/bashrc/blob/master/.bash_stuff/others
 - https://github.com/wklken/config
+- https://github.com/tmux
 
-
-Nützliche Links
+useful link
 
 - https://wiki.ubuntuusers.de/Bash/Prompt/
 - https://github.com/brantb/solarized
