@@ -22,6 +22,7 @@ source ~/dotfiles/shells/prompt-koljah-de
 source ~/dotfiles/shells/git
 
 # motd
+clear
 source ~/dotfiles/motd/motd.sh
 
 # EOF
