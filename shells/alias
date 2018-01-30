@@ -1,3 +1,6 @@
+# clear + motd
+alias cls='source ~/.bashrc'
+
 # system update
 alias update='sudo apt update && sudo apt upgrade -y'
 
