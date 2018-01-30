@@ -51,7 +51,11 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
-tasks="$(cat ~/dotfiles/motd/tasks)"
+if [ -f ~/dotfiles/motd/tasks-$(hostname) ]; then
+  tasks="$(cat ~/dotfiles/motd/tasks-$(hostname))"
+else
+  tasks="$(cat ~/dotfiles/motd/tasks)"
+fi
 
 echo -e "
 $light_blue_color"System Status:"$close_color
