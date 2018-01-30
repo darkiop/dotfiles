@@ -51,11 +51,14 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
+tasks="$(cat ~/dotfiles/motd/tasks)"
+
 echo -e "
 $light_blue_color"System Status:"$close_color
 $yellow_color"--------------------------------------"
 $blue_color"hostname"$close_color          `echo -e "$green_color$get_host_name$close_color"`
 $blue_color"ip"$close_color                `echo -e "$green_color$get_ip_host$close_color"`
+$blue_color"tasks"$close_color             `echo -e "$green_color$tasks$close_color"`
 $blue_color"load"$close_color              `echo -e "$green_color$get_os_load_1$close_color" / "$green_color$get_os_load_5$close_color" / "$green_color$get_os_load_15$close_color" `
 $blue_color"uptime"$close_color            `echo -e "$green_color$UP$close_color"`
 $blue_color"logged in users"$close_color   `echo -e "$green_color$users$close_color"`
