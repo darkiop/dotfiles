@@ -7,3 +7,5 @@ editor=vim
 
 [push]
 default = matching
+[credential]
+	helper = store
