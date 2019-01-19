@@ -29,8 +29,12 @@ alias gp='git pull'
 alias gs='git status' 
 alias gst='git stash' 
 alias gplo='git pull origin master'
+alias gpo='git push origin master'
 alias gbv='git branch -vv' 
+alias gr='git reflog'
+alias glf='git ls-files'
 
 # Useful when working on a branch and 
 # want to summarize changes against master
 alias gdmno='git diff master  --name-only'
+
