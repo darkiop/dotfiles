@@ -16,7 +16,7 @@ done
 
 rm -f $BACKUPPATH/.mysqldump-${DATE}.gz_INPROGRESS
 
-/usr/bin/mysqldump -u root -pf52c90f4 --all-databases | gzip -c -9 > $BACKUPPATH/.mysqldump-${DATE}.gz_INPROGRESS
+/usr/bin/mysqldump -u root -p[PASSWORD] --all-databases | gzip -c -9 > $BACKUPPATH/.mysqldump-${DATE}.gz_INPROGRESS
 
 mv -f $BACKUPPATH/.mysqldump-${DATE}.gz_INPROGRESS $BACKUPPATH/mysqldump-${DATE}.gz
 
