@@ -3,6 +3,7 @@
 # dieses Skript kann man beliebig oft ausführen
 
 # Anzahl der Sicherungen die aufgehoben werden sollen
+PASSWORD=XXX
 KEEP=10
 DATE=$(date +%Y%m%d_%H%M)
 BACKUPPATH=/var/lib/mysql/backups
@@ -16,7 +17,7 @@ done
 
 rm -f $BACKUPPATH/.mysqldump-${DATE}.gz_INPROGRESS
 
-/usr/bin/mysqldump -u root -p[PASSWORD] --all-databases | gzip -c -9 > $BACKUPPATH/.mysqldump-${DATE}.gz_INPROGRESS
+/usr/bin/mysqldump -u root -p$PASSWORD --all-databases | gzip -c -9 > $BACKUPPATH/.mysqldump-${DATE}.gz_INPROGRESS
 
 mv -f $BACKUPPATH/.mysqldump-${DATE}.gz_INPROGRESS $BACKUPPATH/mysqldump-${DATE}.gz
 
