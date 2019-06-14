@@ -17,8 +17,9 @@ export PROMPT_COMMAND="history -a;history -c; history -r; $PROMPT_COMMAND"
 
 force_color_prompt=yes
 
-# Vim key-bindings
-set -o vi
+# Key-bindings
+#set -o vi
+set -o emacs
 
 # Check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
