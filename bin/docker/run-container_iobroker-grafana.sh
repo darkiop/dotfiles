@@ -1,3 +1,4 @@
 #!/bin/bash
+# Docker Start Skript: iobroker-grafana
 
-docker run -d --name=iobroker-grafana -p 3000:3000 grafana/grafana
+docker run -d --name=iobroker-grafana -p 3000:3000 -v /volume1/docker/iobroker-grafana:/var/lib/grafana grafana/grafana
