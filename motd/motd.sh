@@ -79,7 +79,7 @@ fi
 # echo motd
 echo -e "
 $light_blue_color"System Status:"$close_color
-$yellow_color"--------------------------------------"
+$yellow_color"------------------------------------------------"
 $blue_color"hostname"$close_color          `echo -e "$green_color$get_host_name$close_color"`
 $blue_color"ip"$close_color                `echo -e "$green_color$get_ip_host$close_color"`
 $blue_color"tasks"$close_color             `echo -e "$green_color$tasks$close_color"`
