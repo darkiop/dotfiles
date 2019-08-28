@@ -55,9 +55,13 @@ red_color="\e[38;5;196m"
 green_color="\e[38;5;42m"
 green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
-close_color="$(tput sgr0)"
 
-if [ -f ~/dotfiles/motd/tasks-$(hostname) ]; then
+case $get_host_name in
+  (odin)  close_color=""
+  (*)     close_color="$(tput sgr0)"
+esac
+
+if [ -f ~/dotfiles/motd/tasks-$get_host_name ]; then
   tasks="$(cat ~/dotfiles/motd/tasks-$(hostname))"
 else
   tasks="$(cat ~/dotfiles/motd/tasks)"
