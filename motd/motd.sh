@@ -56,7 +56,7 @@ green_color="\e[38;5;42m"
 green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 
-case $get_host_name in
+case $HOSTNAME in
   (odin)  close_color="";;
   (*)     close_color="$(tput sgr0)";;
 esac
