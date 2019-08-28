@@ -19,6 +19,7 @@ root_usage=$(df -h / | awk '/\// {print $(NF-1)}' | sed 's/%//g')
 root_usage_gb=$(df -h / | awk '/\// {print $(NF-3)}')
 root_total=$(df -h / | awk '/\// {print $(NF-4)}')
 
+# size of /home
 if [ -d /home ]; then
   home_usage_gb=$(df -h /home | awk '/\// {print $(NF-3)}')
   home_total=$(df -h /home | awk '/\// {print $(NF-4)}')
