@@ -19,8 +19,10 @@ root_usage=$(df -h / | awk '/\// {print $(NF-1)}' | sed 's/%//g')
 root_usage_gb=$(df -h / | awk '/\// {print $(NF-3)}')
 root_total=$(df -h / | awk '/\// {print $(NF-4)}')
 
-home_usage_gb=$(df -h /home | awk '/\// {print $(NF-3)}')
-home_total=$(df -h /home | awk '/\// {print $(NF-4)}')
+if [ -d /home]; then
+  home_usage_gb=$(df -h /home | awk '/\// {print $(NF-3)}')
+  home_total=$(df -h /home | awk '/\// {print $(NF-4)}')
+fi
 
 # 26%/4135 MB of 16041MB
 memory_usage=$(free | awk '/Speicher/ {printf("%.0f",(($2-($4+$6+$7))/$2) * 100)}')
@@ -31,16 +33,12 @@ users=$(users)
 
 get_host_name=$(hostname)
 
-get_ip_host=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1)
-#get_ip_host=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
-
-case $HOSTNAME in
-  (odin) get_plat_data=$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//');;
-  (*)    get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }');;
+case $get_host_name in
+  (odin) get_plat_data="Synology DSM "$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
+         get_ip_host=$(/sbin/ip -o -4 addr list ovs_eth0 | awk '{print $4}' | cut -d/ -f1);;
+  (*)    get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
+         get_ip_host=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1);;
 esac
-
-# --> Synology DSM: cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//'
-#get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
 
 get_os_load_1=$(cat /proc/loadavg | awk '{ print $1 }')
 get_os_load_5=$(cat /proc/loadavg | awk '{ print $2 }')
