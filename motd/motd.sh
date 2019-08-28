@@ -40,10 +40,12 @@ get_host_name=$(hostname)
 
 # get os version & ip
 case $get_host_name in
-  (odin) get_plat_data="Synology DSM "$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
-         get_ip_host=$(/sbin/ip -o -4 addr list ovs_eth0 | awk '{print $4}' | cut -d/ -f1);;
-  (*)    get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
-         get_ip_host=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1);;
+  (odin)          get_plat_data="Synology DSM "$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
+                  get_ip_host=$(/sbin/ip -o -4 addr list ovs_eth0 | awk '{print $4}' | cut -d/ -f1);;
+  (iobroker-hwr)  get_cpu_temp=$(sudo vcgencmd measure_temp | egrep -o '[0-9]*\.[0-9]*')"°C";;
+  (freya)         get_cpu_temp=$(sudo vcgencmd measure_temp | egrep -o '[0-9]*\.[0-9]*')"°C";;
+  (*)             get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
+                  get_ip_host=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1);;
 esac
 
 # cpu load av
@@ -79,11 +81,12 @@ fi
 # echo motd
 echo -e "
 $light_blue_color"System Status:"$close_color
-$yellow_color"------------------------------------------------"
+$yellow_color"--------------------------------------------------"
 $blue_color"hostname"$close_color          `echo -e "$green_color$get_host_name$close_color"`
 $blue_color"ip"$close_color                `echo -e "$green_color$get_ip_host$close_color"`
 $blue_color"tasks"$close_color             `echo -e "$green_color$tasks$close_color"`
-$blue_color"load"$close_color              `echo -e "$green_color$get_os_load_1$close_color" / "$green_color$get_os_load_5$close_color" / "$green_color$get_os_load_15$close_color" `
+$blue_color"load"$close_color              `echo -e "$green_color$get_os_load_1$close_color" / "$green_color$get_os_load_5$close_color" / "$green_color$get_os_load_15$close_color"`
+$blue_color"cpu-temp"$close_color          `echo -e "$green_color$get_cpu_temp$close_color"`
 $blue_color"uptime"$close_color            `echo -e "$green_color$UP$close_color"`
 $blue_color"logged in users"$close_color   `echo -e "$green_color$users$close_color"`
 $blue_color"os"$close_color                `echo -e "$green_color$get_plat_data$close_color"`
