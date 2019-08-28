@@ -190,9 +190,9 @@ if exists("+showcmd")
 endif
 
 " Show the filename in the window titlebar.
-if exists("+title")
-  set title
-endif
+"if exists("+title")
+"  set title
+"endif
 
 " When closing a block, show the matching bracket.
 set showmatch
@@ -333,4 +333,3 @@ if has('viminfo')
         augroup END
     endif
 endif
-
