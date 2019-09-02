@@ -17,13 +17,15 @@ CREDITS
 
 TODO
 
+- https://github.com/Bash-it/bash-it
+- https://github.com/clvv/fasd
 - https://github.com/seebi/dircolors-solarized
 - https://www.linux.com/learn/enhancing-virtual-terminals-byobu
 - https://github.com/moprak/bashrc/blob/master/.bash_stuff/others
 - https://github.com/wklken/config
 - https://github.com/tmux
 
-useful link
+USEFUL LINKS
 
 - https://wiki.ubuntuusers.de/Bash/Prompt/
 - https://github.com/brantb/solarized
