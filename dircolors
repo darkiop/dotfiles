@@ -1,3 +1,5 @@
+# https://github.com/seebi/dircolors-solarized/blob/master/dircolors.ansi-dark
+#
 # Exact Solarized Dark color theme for the color GNU ls utility.
 # Designed for dircolors (GNU coreutils) 5.97
 #
@@ -44,6 +46,7 @@
 COLOR tty
 
 # Below, there should be one TERM entry for each termtype that is colorizable
+TERM alacritty
 TERM ansi
 TERM color_xterm
 TERM color-xterm

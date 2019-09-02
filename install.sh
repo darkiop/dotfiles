@@ -40,6 +40,9 @@ for folder in $folders; do
     ln -s $dir/$folder ~/.$folder
 done
 
+# dircolors
+ln -s $dir/dircolors ~/.dir_colors
+
 echo -e $green_color"done. type"$close_color$yellow_color" source ~/.bashrc "$green_color"to load the dotfiles"$close_color
 
 # EOF
