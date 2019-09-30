@@ -42,7 +42,8 @@ get_host_name=$(hostname)
 case $get_host_name in
   (odin)          get_plat_data="Synology DSM "$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
                   get_ip_host=$(/sbin/ip -o -4 addr list ovs_eth0 | awk '{print $4}' | cut -d/ -f1);;
-  (iobroker-hwr)  get_cpu_temp=$(sudo vcgencmd measure_temp | egrep -o '[0-9]*\.[0-9]*')"°C"
+  (iobroker-hwr)  get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
+                  get_cpu_temp=$(sudo vcgencmd measure_temp | egrep -o '[0-9]*\.[0-9]*')"°C"
                   get_ip_host=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1);;
   (*)             get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
                   get_ip_host=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1);;
