@@ -4,6 +4,9 @@ alias cls='source ~/.bashrc'
 # system update
 alias update='sudo apt update && sudo apt upgrade -y'
 
+# reboot
+alias reboot='sudo reboot'
+
 # ls shortcuts
 alias ls='ls --sort=extension --color=auto'
 alias l='ls -lh'
