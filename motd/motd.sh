@@ -1,11 +1,5 @@
 #!/bin/bash
-#
-# Server Status Script
-# Version 0.1.2 m
-# Updated: Feb 29th 2016
 # https://github.com/fedya/omv_motd.git
-# License: GPLv3
-
 # modified by thwalk
 
 # uptime
@@ -55,19 +49,16 @@ get_os_load_5=$(cat /proc/loadavg | awk '{ print $2 }')
 get_os_load_15=$(cat /proc/loadavg | awk '{ print $3 }')
 get_os_loadavg=`echo -e "$get_os_load_1" / " $get_os_load_5 $get_os_load_15"`
 
-
 get_proc_ps=$(ps -Afl | wc -l)
 get_swap=$(free -m | tail -n 1 | awk {'print $3'})
 
 # set colors
-#blue_color="\e[38;5;33m"
-#light_blue_color="\e[38;5;39m"
-#red_color="\e[38;5;196m"
-#green_color="\e[38;5;42m"
-#green_color_bold="\e[1;38;5;42m"
-#yellow_color="\e[38;5;227m"
-
-#bash ~/dotfiles/motd/colors.sh
+blue_color="\e[38;5;33m"
+light_blue_color="\e[38;5;39m"
+red_color="\e[38;5;196m"
+green_color="\e[38;5;42m"
+green_color_bold="\e[1;38;5;42m"
+yellow_color="\e[38;5;227m"
 
 case $HOSTNAME in
   (odin)  close_color="";;
@@ -81,23 +72,31 @@ else
   tasks="$(cat ~/dotfiles/motd/tasks)"
 fi
 
-# echo motd
-echo -e "
-$light_blue_color"System"$close_color
-$yellow_color"──────────────────────────────────────────────────"
-$blue_color"hostname"$close_color          `echo -e "$green_color$get_host_name$close_color"`
+# use toilet for title of motd
+# show all available fonts: https://gist.github.com/itzg/b889534a029855c018813458ff24f23c
+if [ -f $(which toilet) ]; then
+echo -e "$yellow_color"
+toilet -f smblock -w 150 $get_host_name
+echo -e "$close_color"
+fi
+
+# echo infos
+echo -e "$blue_color"hostname"$close_color          `echo -e "$green_color$get_host_name$close_color"`
 $blue_color"ip"$close_color                `echo -e "$green_color$get_ip_host$close_color"`
 $blue_color"tasks"$close_color             `echo -e "$green_color$tasks$close_color"`
 $blue_color"load"$close_color              `echo -e "$green_color$get_os_load_1$close_color" / "$green_color$get_os_load_5$close_color" / "$green_color$get_os_load_15$close_color"`
 $blue_color"cpu-temp"$close_color          `echo -e "$green_color$get_cpu_temp$close_color"`
 $blue_color"uptime"$close_color            `echo -e "$green_color$UP$close_color"`
-$blue_color"logged in users"$close_color   `echo -e "$green_color$users$close_color"`
 $blue_color"os"$close_color                `echo -e "$green_color$get_plat_data$close_color"`
-$blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage% $close_color"`/ ` echo -e "$green_color$root_usage_gb$close_color"` "of" `echo -e "$green_color$root_total$close_color"`
-"
-
+$blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage% $close_color"`/ ` echo -e "$green_color$root_usage_gb$close_color"` "of" `echo -e "$green_color$root_total$close_color"`"
 # special motd via hostname
 if [ -f ~/dotfiles/motd/motd-$get_host_name.sh ]; then
-  bash ~/dotfiles/motd/motd-$get_host_name.sh
+  source ~/dotfiles/motd/motd-$get_host_name.sh
 fi
 
+# show updates
+printf "Checking packages to install (this might take some time)..\n\n"
+if [ "$(which apt-get)" ]; then echo "`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` updates to install." ; fi
+printf "\n"
+
+# EOF

@@ -10,15 +10,13 @@ yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
 # show alias in motd
-echo -e "$blue_color"alias"$close_color             `echo -e "$green_color"iob-log"$close_color"`"
+echo -e "$blue_color"special aliases"$close_color   `echo -e "$green_color"iob-log"$close_color"`"
 
 # process-check
 process=("iobroker.js-controller" "io.smartmeter.0" "io.smartmeter.1")
 name=("iobroker.js-controller" "io.smartmeter.0" "io.smartmeter.1")
 services=${#process[@]}
 
-echo
-echo -e "$blue_color"ioBroker:"$close_color"
 echo
 for (( i=0; i<${services}; i++)); do
 if [ "$(pidof ${process[$i]})" ]; then
@@ -29,4 +27,5 @@ fi
 echo -e "$state ${name[$i]}"
 done
 echo
+
 #EOF
