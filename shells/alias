@@ -35,4 +35,4 @@ alias cd.='cd ..'
 alias cd..='cd ..'
 
 # ioBroker log -f
-alias iob-log='tail -n 50 -f /opt/iobroker/log/iobroker.$(date +"%F").log'
+alias iobl='tail -n 50 -f /opt/iobroker/log/iobroker.$(date +"%F").log'
