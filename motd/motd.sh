@@ -60,12 +60,14 @@ get_proc_ps=$(ps -Afl | wc -l)
 get_swap=$(free -m | tail -n 1 | awk {'print $3'})
 
 # set colors
-blue_color="\e[38;5;33m"
-light_blue_color="\e[38;5;39m"
-red_color="\e[38;5;196m"
-green_color="\e[38;5;42m"
-green_color_bold="\e[1;38;5;42m"
-yellow_color="\e[38;5;227m"
+#blue_color="\e[38;5;33m"
+#light_blue_color="\e[38;5;39m"
+#red_color="\e[38;5;196m"
+#green_color="\e[38;5;42m"
+#green_color_bold="\e[1;38;5;42m"
+#yellow_color="\e[38;5;227m"
+
+#bash ~/dotfiles/motd/colors.sh
 
 case $HOSTNAME in
   (odin)  close_color="";;
@@ -81,8 +83,8 @@ fi
 
 # echo motd
 echo -e "
-$light_blue_color"System Status:"$close_color
-$yellow_color"--------------------------------------------------"
+$light_blue_color"System"$close_color
+$yellow_color"──────────────────────────────────────────────────"
 $blue_color"hostname"$close_color          `echo -e "$green_color$get_host_name$close_color"`
 $blue_color"ip"$close_color                `echo -e "$green_color$get_ip_host$close_color"`
 $blue_color"tasks"$close_color             `echo -e "$green_color$tasks$close_color"`
@@ -93,4 +95,8 @@ $blue_color"logged in users"$close_color   `echo -e "$green_color$users$close_co
 $blue_color"os"$close_color                `echo -e "$green_color$get_plat_data$close_color"`
 $blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage% $close_color"`/ ` echo -e "$green_color$root_usage_gb$close_color"` "of" `echo -e "$green_color$root_total$close_color"`
 "
-
+case $HOSTNAME in
+(iobroker-master)
+bash ~/dotfiles/motd/motd-iobroker-master.sh
+;;
+esac
