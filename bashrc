@@ -19,6 +19,7 @@ source ~/dotfiles/shells/functions
 source ~/dotfiles/shells/exports
 source ~/dotfiles/shells/alias
 source ~/dotfiles/shells/alias-git
+source ~/dotfiles/shells/alias-docker
 source ~/dotfiles/shells/prompt-koljah-de
 
 # motd
