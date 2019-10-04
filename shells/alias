@@ -3,6 +3,9 @@ alias cls='source ~/.bashrc'
 alias reload='source ~/.bashrc'
 alias rl='source ~/.bashrc'
 
+# dotfiles update
+alias update-dotfiles='cd ~/dotfiles && git pull'
+
 # system update
 alias update='sudo apt update && sudo apt upgrade -y'
 
