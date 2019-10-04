@@ -21,26 +21,21 @@ if [ -d /home ]; then
   home_total=$(df -h /home | awk '/\// {print $(NF-4)}')
 fi
 
-# 26%/4135 MB of 16041MB
-memory_usage=$(free | awk '/Speicher/ {printf("%.0f",(($2-($4+$6+$7))/$2) * 100)}')
-memory_total=$(free -m |  awk '/Speicher/ {print $(2)}')
-memory_usage_gb=$(free -t -m | grep "buffers/cache" | awk '{print $3" MB";}')
-
-# users
-users=$(users)
-
 # get hostname
 get_host_name=$(hostname)
 
-# get os version & ip
+# get os version & ip & cputemp
 case $get_host_name in
-  (odin)          get_plat_data="Synology DSM "$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
-                  get_ip_host=$(/sbin/ip -o -4 addr list ovs_eth0 | awk '{print $4}' | cut -d/ -f1);;
-  (iobroker-hwr)  get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
-                  get_cpu_temp=$(sudo vcgencmd measure_temp | egrep -o '[0-9]*\.[0-9]*')"°C"
-                  get_ip_host=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1);;
-  (*)             get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
-                  get_ip_host=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1);;
+  (odin)            get_plat_data="Synology DSM "$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
+                    get_ip_host=$(/sbin/ip -o -4 addr list ovs_eth0 | awk '{print $4}' | cut -d/ -f1);;
+  (iobroker-hwr)    get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
+                    get_cpu_temp=$(sudo vcgencmd measure_temp | egrep -o '[0-9]*\.[0-9]*')"°C"
+                    get_ip_host=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1);;
+  (iobroker-master) get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
+                    get_cpu_temp=$(($(cat /sys/class/hwmon/hwmon0/temp1_input)/1000))"°C"
+                    get_ip_host=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1);;
+  (*)               get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
+                    get_ip_host=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1);;
 esac
 
 # cpu load av
@@ -92,13 +87,14 @@ $blue_color"cpu-temp"$close_color          `echo -e "$green_color$get_cpu_temp$c
 $blue_color"uptime"$close_color            `echo -e "$green_color$UP$close_color"`
 $blue_color"os"$close_color                `echo -e "$green_color$get_plat_data$close_color"`
 $blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage% $close_color"`/ ` echo -e "$green_color$root_usage_gb$close_color"` "of" `echo -e "$green_color$root_total$close_color"`"
+
 # special motd via hostname
 if [ -f ~/dotfiles/motd/motd-$get_host_name.sh ]; then
   source ~/dotfiles/motd/motd-$get_host_name.sh
 fi
 
 # show updates
-printf "Checking packages to install (this might take some time)..\n\n"
+printf "Checking for updates ...\n\n"
 if [ "$(which apt-get)" ]; then echo "`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` updates to install." ; fi
 printf "\n"
 
