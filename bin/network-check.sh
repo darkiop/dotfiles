@@ -14,10 +14,8 @@ do
   fping $ip -c 1 -t 1000 &> /dev/null
   if [ $? -ne 0 ]; then
     echo -e $red_color$ip "-" $(nslookup $ip | awk '/name/ {print $4}' | sed 's/.$//';)$close_color
-    #sleep 1
   else
     echo -e $green_color$ip "-" $(nslookup $ip | awk '/name/ {print $4}' | sed 's/.$//';)$close_color
-    #sleep 1
   fi
 done
 
