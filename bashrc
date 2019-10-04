@@ -13,6 +13,9 @@ export NICKNAME="darkiop"
 # load default bashrc 
 #source /etc/skel/.bashrc
 
+# path
+PATH=$PATH:~/dotfiles/bin
+
 # Distribute bashrc into smaller, more specific files
 source ~/dotfiles/shells/defaults
 source ~/dotfiles/shells/functions
