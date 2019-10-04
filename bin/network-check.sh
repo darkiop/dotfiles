@@ -9,7 +9,7 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
-hosts="network-check-ips"
+hosts="~/dotfiles/bin/network-check-ips"
 
 for ip in $(cat $hosts)
 do
