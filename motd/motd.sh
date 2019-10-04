@@ -78,6 +78,9 @@ if [ -x "$(command -v toilet)" ]; then
 echo -e "$yellow_color"
 toilet -f smblock -w 150 $get_host_name
 echo -e "$close_color"
+else 
+echo -e "$yellow_color$get_host_name$close_color
+$yellow_color"──────────────────────────────────────────────────""$close_color
 fi
 
 # echo infos
