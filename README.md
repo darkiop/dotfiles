@@ -1,11 +1,13 @@
 # dotfiles
 dotfiles for bash
 
+INSTALL
 - mkdir ~/dotfiles
 - cd ~/dotfiles
 - git clone https://github.com/darkiop/dotfiles.git .
 - ./install.sh
 - source ~/.bashrc
+- mkdir ~/dotfiles && cd ~/dotfiles && git clone https://github.com/darkiop/dotfiles.git . && ./install.sh && source ~/.bashrc
 
 CREDITS
 
