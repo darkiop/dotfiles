@@ -95,8 +95,9 @@ $blue_color"logged in users"$close_color   `echo -e "$green_color$users$close_co
 $blue_color"os"$close_color                `echo -e "$green_color$get_plat_data$close_color"`
 $blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage% $close_color"`/ ` echo -e "$green_color$root_usage_gb$close_color"` "of" `echo -e "$green_color$root_total$close_color"`
 "
-case $HOSTNAME in
-(iobroker-master)
-bash ~/dotfiles/motd/motd-iobroker-master.sh
-;;
-esac
+
+# special motd via hostname
+if [ -f ~/dotfiles/motd/motd-$get_host_name.sh ]; then
+  bash ~/dotfiles/motd/motd-$get_host_name.sh
+fi
+
