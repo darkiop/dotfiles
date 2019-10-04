@@ -95,6 +95,7 @@ if [ -f ~/dotfiles/motd/motd-$get_host_name.sh ]; then
 fi
 
 # show updates
+echo
 printf "Checking for updates ...\n\n"
 if [ "$(which apt-get)" ]; then echo "`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` updates to install." ; fi
 printf "\n"

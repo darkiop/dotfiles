@@ -26,6 +26,5 @@ else
 fi
 echo -e "$state ${name[$i]}"
 done
-echo
 
 #EOF
