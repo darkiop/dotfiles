@@ -1,5 +1,7 @@
 # clear + motd
 alias cls='source ~/.bashrc'
+alias reload='source ~/.bashrc'
+alias rl='source ~/.bashrc'
 
 # system update
 alias update='sudo apt update && sudo apt upgrade -y'
@@ -28,17 +30,9 @@ if [ -x /usr/bin/dircolors ]; then
   alias diff='colordiff'
 fi
 
-# avoid mistakes
-#alias rm='rm -i'
-#alias cp='cp -i'
-#alias mv='mv -i'
-
-# Quickly load bashrc
-alias reload='source ~/.bashrc'
-
 # fix typo mistakes
 alias cd.='cd ..'
 alias cd..='cd ..'
 
-# ioBroker
+# ioBroker log -f
 alias iob-log='tail -n 50 -f /opt/iobroker/log/iobroker.$(date +"%F").log'
