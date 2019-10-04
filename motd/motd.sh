@@ -74,7 +74,7 @@ fi
 
 # use toilet for title of motd
 # show all available fonts: https://gist.github.com/itzg/b889534a029855c018813458ff24f23c
-if [ -f $(which toilet) ]; then
+if [ -x "$(command -v toilet)" ]; then
 echo -e "$yellow_color"
 toilet -f smblock -w 150 $get_host_name
 echo -e "$close_color"
