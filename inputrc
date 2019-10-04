@@ -1,5 +1,31 @@
 # /etc/inputrc - global inputrc for libreadline
-# See readline(3readline) and `info rluserman' for more information.
+
+# Faster tab completion
+set show-all-if-ambiguous on
+set completion-ignore-case on
+
+# TAB through the suggestions
+TAB:menu-complete
+
+# Move between words with Ctrl+Left and Ctrl+Right
+"\e[1;5D":backward-word
+"\e[1;5C":forward-word
+
+# Enable the history search mode
+"\e[A":history-search-backward
+"\e[B":history-search-forward
+"\e[C":forward-char
+"\e[D":backward-char
+
+# Enable colors
+set colored-stats On
+set visible-stats On
+set mark-symlinked-directories On
+set colored-completion-prefix On
+set menu-complete-display-prefix On
+
+# Disables the control echo after pressing Ctrl+C
+set echo-control-characters off
 
 # Be 8 bit clean.
 set input-meta on
@@ -18,7 +44,7 @@ set output-meta on
 # see /usr/share/doc/bash/inputrc.arrows for other codes of arrow keys
 
 # do not bell on tab-completion
-# set bell-style none
+set bell-style none
 # set bell-style visible
 
 # some defaults / modifications for the emacs mode
