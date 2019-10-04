@@ -18,8 +18,8 @@ source ~/dotfiles/shells/defaults
 source ~/dotfiles/shells/functions
 source ~/dotfiles/shells/exports
 source ~/dotfiles/shells/alias
+source ~/dotfiles/shells/alias-git
 source ~/dotfiles/shells/prompt-koljah-de
-source ~/dotfiles/shells/git
 
 # motd
 clear
