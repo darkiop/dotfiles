@@ -11,7 +11,7 @@ close_color="$(tput sgr0)"
 
 for ip in $(cat ~/dotfiles/bin/network-check-ips)
 do
-  fping $ip -c 1 -t 1 &> /dev/null
+  fping $ip -c 1 &> /dev/null
   if [ $? -ne 0 ]; then
     echo -e $red_color$ip "-" $(nslookup $ip | awk '/name/ {print $4}' | sed 's/.$//';)$close_color
     #sleep 1
