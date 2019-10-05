@@ -1,3 +1,7 @@
+case $HOSTNAME in
+  (odin) alias docker 'sudo docker';;
+esac
+
 alias dk='docker'
 alias dklc='docker ps -l'  # List last Docker container
 alias dklcid='docker ps -l -q'  # List last Docker container ID
