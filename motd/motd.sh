@@ -70,14 +70,27 @@ fi
 
 # use toilet for title of motd
 # show all available fonts: https://gist.github.com/itzg/b889534a029855c018813458ff24f23c
-if [ -x "$(command -v toilet)" ]; then
+case $HOSTNAME in
+(odin)
 echo -e "$yellow_color"
-toilet -f smblock -w 150 $get_host_name
-echo -e "$close_color"
+cat << EOF
+     ▌▗    
+▞▀▖▞▀▌▄ ▛▀▖
+▌ ▌▌ ▌▐ ▌ ▌
+▝▀ ▝▀▘▀▘▘ ▘
+EOF
+;;
+(*)
+if [ -x "$(command -v toilet)" ]; then
+  echo -e "$yellow_color"
+  toilet -f smblock -w 150 $get_host_name
+  echo -e "$close_color"
 else 
-echo -e "$yellow_color$get_host_name$close_color
-$yellow_color"──────────────────────────────────────────────────""$close_color
+  echo -e "$yellow_color$get_host_name$close_color
+  $yellow_color"──────────────────────────────────────────────────""$close_color
 fi
+;;
+esac
 
 # echo infos
 echo -e "$blue_color"hostname"$close_color          `echo -e "$green_color$get_host_name$close_color"`
