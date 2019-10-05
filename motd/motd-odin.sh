@@ -11,5 +11,6 @@ echo
 echo -e $light_blue_color"running docker containers:"$green_color
 echo
 docker ps --format '{{.Names}}' | sort
+echo
 
 #EOF
