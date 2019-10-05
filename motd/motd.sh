@@ -79,6 +79,7 @@ cat << EOF
 ▌ ▌▌ ▌▐ ▌ ▌
 ▝▀ ▝▀▘▀▘▘ ▘
 EOF
+echo
 ;;
 (*)
 if [ -x "$(command -v toilet)" ]; then
