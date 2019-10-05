@@ -72,6 +72,7 @@ fi
 # show all available fonts: https://gist.github.com/itzg/b889534a029855c018813458ff24f23c
 case $HOSTNAME in
 (odin)
+clear
 echo -e "$yellow_color"
 cat << EOF
      ▌▗    
