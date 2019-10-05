@@ -12,7 +12,10 @@ close_color="$(tput sgr0)"
 # show alias in motd
 echo -e "$blue_color"special aliases"$close_color   `echo -e "$green_color"iobl"$close_color"`"
 
-# process-check
+# iobroker process-check
+echo
+echo -e $light_blue_color"iobroker instances:"$green_color
+
 process=("iobroker.js-controller" "io.smartmeter.0" "io.smartmeter.1")
 name=("iobroker.js-controller" "io.smartmeter.0" "io.smartmeter.1")
 services=${#process[@]}
