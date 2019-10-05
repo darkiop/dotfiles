@@ -6,6 +6,9 @@ alias rl='source ~/.bashrc'
 # dotfiles update
 alias update-dotfiles='cd ~/dotfiles && git pull'
 
+# fast switch to dotfiles
+alias dotf='cd ~/dotfiles'
+
 # system update
 alias update='sudo apt update && sudo apt upgrade -y'
 
