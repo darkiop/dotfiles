@@ -12,6 +12,13 @@ close_color="$(tput sgr0)"
 # show alias in motd
 echo -e "$blue_color"special aliases"$close_color   `echo -e "$green_color"iobl"$close_color"`"
 
+# iobroker version
+if [ -f $(which iobroker) ]; then
+  iobversion=$(iobroker version)
+  echo
+  echo -e $light_blue_color"ioBroker js-controller: $green_color$iobversion$close_color"
+fi
+
 # iobroker process-check
 echo
 echo -e $light_blue_color"iobroker instances:"$green_color
