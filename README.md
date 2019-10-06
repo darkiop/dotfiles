@@ -1,6 +1,8 @@
 # dotfiles
 dotfiles for bash
 
+![Screenshot](screenshot.png)
+
 INSTALL
 - mkdir ~/dotfiles
 - cd ~/dotfiles
