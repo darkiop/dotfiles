@@ -1,9 +1,14 @@
+## debian
+```
 docker run -d \
 --name debian \
 --hostname debian \
 -v /var/run/docker.sock:/var/run/docker.sock \
 darkiop/debian:latest
+```
 
+## iobroker-test-jscontroller-1.5
+```
 sudo mkdir -p /volume2/docker/iobroker-test-jscontroller-1.5/opt-iobroker
 sudo mkdir -p /volume2/docker/iobroker-test-jscontroller-1.5/root
 
@@ -23,8 +28,10 @@ docker run -d \
 --dns=192.168.1.43 \
 --restart=no \
 buanet/iobroker:beta
+```
 
-
+## iobroker-test-jscontroller-2.0
+```
 sudo mkdir -p /volume2/docker/iobroker-test-jscontroller-2.0/opt-iobroker
 sudo mkdir -p /volume2/docker/iobroker-test-jscontroller-2.0/root
 
@@ -44,3 +51,4 @@ docker run -d \
 --dns=192.168.1.43 \
 --restart=no \
 buanet/iobroker:beta
+```
