@@ -123,6 +123,9 @@ $blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage% $c
 # special motd via hostname
 if [ -f ~/dotfiles/motd/motd-$get_host_name.sh ]; then
   source ~/dotfiles/motd/motd-$get_host_name.sh
+else
+  # print empty line
+  echo
 fi
 
 # show updates
