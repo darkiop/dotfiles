@@ -9,7 +9,7 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
-for ip in $(cat ~/dotfiles/bin/network-check-ips)
+for ip in $(cat ~/dotfiles/bin/network-check-ip-list)
 do
   fping $ip -c 1 -t 1000 &> /dev/null
   if [ $? -ne 0 ]; then

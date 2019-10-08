@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# manual install on synology dsm (no git)
 
 dotfiles=/var/services/homes/darkiop/dotfiles
 

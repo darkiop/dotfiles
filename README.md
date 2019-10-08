@@ -10,12 +10,13 @@ Screenshot with Terminal https://github.com/Eugeny/terminus
 mkdir ~/dotfiles
 cd ~/dotfiles
 git clone https://github.com/darkiop/dotfiles.git .
-./install.sh
+./install-applications.sh
+./install-bashrc.sh
 source ~/.bashrc
 ```
 
 ```
-mkdir ~/dotfiles && cd ~/dotfiles && git clone https://github.com/darkiop/dotfiles.git . && ./install.sh && source ~/.bashrc
+mkdir ~/dotfiles && cd ~/dotfiles && git clone https://github.com/darkiop/dotfiles.git . && ./install-applications.sh && ./install-bashrc.sh && source ~/.bashrc
 ```
 
 ## LINKS
