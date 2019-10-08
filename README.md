@@ -10,7 +10,7 @@ Screenshot with Terminal https://github.com/Eugeny/terminus
 mkdir ~/dotfiles
 cd ~/dotfiles
 git clone https://github.com/darkiop/dotfiles.git .
-./ 	install-bashrc.sh
+./install-bashrc.sh
 source ~/.bashrc
 ```
 
