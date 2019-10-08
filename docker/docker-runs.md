@@ -1,3 +1,9 @@
+docker run -d \
+--name debian \
+--hostname debian \
+-v /var/run/docker.sock:/var/run/docker.sock \
+darkiop/debian:latest
+
 sudo mkdir -p /volume2/docker/iobroker-test-jscontroller-1.5/opt-iobroker
 sudo mkdir -p /volume2/docker/iobroker-test-jscontroller-1.5/root
 
