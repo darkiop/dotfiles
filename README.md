@@ -1,6 +1,8 @@
 # dotfiles
 dotfiles for bash
 
+Screenshot with https://github.com/Eugeny/terminus
+
 ![Screenshot](screenshot.png)
 
 INSTALL
