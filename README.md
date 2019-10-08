@@ -3,7 +3,7 @@ dotfiles for bash
 
 Screenshot with Terminal https://github.com/Eugeny/terminus
 
-![Screenshot](screenshot.png)
+![Screenshot](screenshot2.png)
 
 ## INSTALL
 ```
