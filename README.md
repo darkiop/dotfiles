@@ -1,7 +1,7 @@
 # dotfiles
 dotfiles for bash
 
-Screenshot with https://github.com/Eugeny/terminus
+Screenshot with Terminal https://github.com/Eugeny/terminus
 
 ![Screenshot](screenshot.png)
 
