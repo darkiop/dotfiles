@@ -23,8 +23,12 @@ fi
 echo
 echo -e $light_blue_color"iobroker instances:"$green_color
 
-process=("iobroker.js-controller" "io.smartmeter.0" "io.smartmeter.1")
-name=("iobroker.js-controller" "io.smartmeter.0" "io.smartmeter.1")
+process=(
+  "iobroker.js-controller" 
+  "io.smartmeter.0" 
+  "io.smartmeter.1"
+)
+
 services=${#process[@]}
 
 echo
@@ -34,7 +38,7 @@ if [ "$(pidof ${process[$i]})" ]; then
 else
   state="$red_color[Stopped]$close_color"
 fi
-echo -e "$state ${name[$i]}"
+echo -e "$state ${process[$i]}"
 done
 
 #EOF
