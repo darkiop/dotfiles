@@ -29,4 +29,7 @@ source ~/dotfiles/shells/prompt-koljah-de
 clear
 source ~/dotfiles/motd/motd.sh
 
+# Forces npm to run as iobroker when inside the iobroker installation dir
+source /root/.iobroker/npm_command_fix
+
 # EOF
