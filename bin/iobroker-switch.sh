@@ -12,21 +12,18 @@ close_color="$(tput sgr0)"
 # switch directory
 cd /opt/iobroker
 
-echo "type '1.5.14' (latest) or '2.0' (from github)"
+echo "type 'latest' (1.5) or 'github' (2.0.x from github)"
 read -p "switch js-controller to: " version
 
-if [ $version == "1.5" ]; then
-
-  echo -e $green_color"Install Version: "$blue_color"1.5.14"$close_color
-  sleep 1
-    
+if [ $version == "latest" ]; then
+   
   # use killskript ('iobroker stop' do not work if not started with 'iobroker start')
   echo -e $red_color"ioBroker is terminated ..."$close_color
-  killiob.sh
+  pgrep -f '^io.*' | xargs kill -9
   sleep 1
 
   # install with npm + version
-  echo -e $green_color"Install 1.5.14 ..."$close_color
+  echo -e $green_color"Install js-controller 1.5.14 ..."$close_color
   sudo -H -u iobroker npm install iobroker.js-controller@1.5.14
 
   # start iobroker
@@ -40,18 +37,15 @@ if [ $version == "1.5" ]; then
   # reload bash and show ioBroker Proceses in motd
   source ~/.bashrc
 
-elif [ $version == "2.0" ]; then
-
-  echo -e $green_color"Install Version: "$blue_color"2.0"$close_color
-  sleep 1
+elif [ $version == "github" ]; then
 
   # use killskript ('iobroker stop' do not work if not started with 'iobroker start')
   echo -e $red_color"ioBroker is terminated ..."$close_color
-  killiob.sh
+  pgrep -f '^io.*' | xargs kill -9
   sleep 1
   
   # install from github
-  echo -e $green_color"Install 2.0 ..."$close_color
+  echo -e $green_color"Install js-controller from Github ..."$close_color
   sleep 1
   sudo -H -u iobroker npm install ioBroker/ioBroker.js-controller
   
@@ -66,6 +60,8 @@ elif [ $version == "2.0" ]; then
   # reload bash and show ioBroker Proceses in motd
   source ~/.bashrc
 
+else 
+  echo "Version nicht korrekt."
 fi
 
 # EOF
