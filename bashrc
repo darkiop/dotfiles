@@ -32,4 +32,11 @@ source ~/dotfiles/motd/motd.sh
 # Forces npm to run as iobroker when inside the iobroker installation dir
 source /root/.iobroker/npm_command_fix
 
+# create link to current log
+if [ -f /opt/iobroker/log/iobroker.current.log ]; then
+  rm /opt/iobroker/log/iobroker.current.log
+  ln -s /opt/iobroker/log/iobroker.$(date +"%F").log /opt/iobroker/log/iobroker.current.log
+else
+  ln -s /opt/iobroker/log/iobroker.$(date +"%F").log /opt/iobroker/log/iobroker.current.log
+fi
 # EOF
