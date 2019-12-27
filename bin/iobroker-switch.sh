@@ -22,7 +22,7 @@ if [ $fixsh == "y" ]; then
   if pgrep -n iobroker >/dev/null 2>&1 || pgrep -n io. >/dev/null 2>&1; then
     echo -e $red_color"ioBroker will be terminated ..."$close_color
     sudo pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
-    sleep 1
+    sleep 5
   fi
  
   echo -e $green_color"run fix.sh ..."$close_color
@@ -38,7 +38,7 @@ if [ $version != "github" ]; then
   if pgrep -n iobroker >/dev/null 2>&1 || pgrep -n io. >/dev/null 2>&1; then
     echo -e $red_color"ioBroker will be terminated ..."$close_color
     sudo pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
-    sleep 1
+    sleep 5
   fi
 
   # install with npm + version
@@ -61,7 +61,7 @@ elif [ $version == "github" ]; then
   if pgrep -n iobroker >/dev/null 2>&1 || pgrep -n io. >/dev/null 2>&1; then
     echo -e $red_color"ioBroker will be terminated ..."$close_color
     sudo pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
-    sleep 1
+    sleep 5
   fi
   
   # install from github
