@@ -18,9 +18,12 @@ read -p "run fix.sh before install? (y/n): " fixsh
 
 # run fix.sh
 if [ $fixsh == "y" ]; then
-  echo -e $red_color"ioBroker will be terminated ..."$close_color
-  pgrep -f '^io.*' | xargs kill -9   
-  sleep 1
+
+  if [[ ! $(iobroker status) = *not* ]]; then
+    echo -e $red_color"ioBroker is terminated ..."$close_color
+    sudo pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
+    sleep 1
+  fi
   
   echo -e $green_color"run fix.sh ..."$close_color
   curl -sL https://iobroker.net/fix.sh | bash -
@@ -34,7 +37,7 @@ if [ $version != "github" ]; then
 
   if [[ ! $(iobroker status) = *not* ]]; then
     echo -e $red_color"ioBroker is terminated ..."$close_color
-    pgrep -f '^io.*' | xargs kill -9
+    sudo pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
     sleep 1
   fi
 
@@ -58,7 +61,7 @@ elif [ $version == "github" ]; then
   # use killskript ('iobroker stop' do not work if not started with 'iobroker start')
   if [[ ! $(iobroker status) = *not* ]]; then
     echo -e $red_color"ioBroker is terminated ..."$close_color
-    pgrep -f '^io.*' | xargs kill -9
+    sudo pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
     sleep 1
   fi
   
