@@ -12,7 +12,7 @@ close_color="$(tput sgr0)"
 # switch directory
 cd /opt/iobroker
 
-echo "type 'latest' (1.5) or 'github' (2.0.x from github)"
+echo "type '2.1.1' or another tagged version or 'github' for the last commited version from github"
 read -p "switch js-controller to: " version
 
 if [ $version != "github" ]; then
