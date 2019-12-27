@@ -18,7 +18,7 @@ read -p "run fix.sh before install? (y/n): " fixsh
 
 # run fix.sh
 if [ $fixsh == "y" ]; then
-  echo -e $red_color"ioBroker is terminated ..."$close_color
+  echo -e $red_color"ioBroker will be terminated ..."$close_color
   pgrep -f '^io.*' | xargs kill -9   
   sleep 1
   
@@ -31,10 +31,11 @@ fi
 if [ $version != "github" ]; then
    
   # use killskript ('iobroker stop' do not work if not started with 'iobroker start')
-  if [ pgrep -f '^io.*' ]; then
+
+  if [[ ! $(iobroker status) = *not* ]]; then
     echo -e $red_color"ioBroker is terminated ..."$close_color
     pgrep -f '^io.*' | xargs kill -9
-    sleep 1  
+    sleep 1
   fi
 
   # install with npm + version
@@ -55,9 +56,11 @@ if [ $version != "github" ]; then
 elif [ $version == "github" ]; then
 
   # use killskript ('iobroker stop' do not work if not started with 'iobroker start')
-  echo -e $red_color"ioBroker is terminated ..."$close_color
-  pgrep -f '^io.*' | xargs kill -9
-  sleep 1
+  if [[ ! $(iobroker status) = *not* ]]; then
+    echo -e $red_color"ioBroker is terminated ..."$close_color
+    pgrep -f '^io.*' | xargs kill -9
+    sleep 1
+  fi
   
   # install from github
   echo -e $green_color"Install js-controller from Github ..."$close_color
@@ -75,8 +78,8 @@ elif [ $version == "github" ]; then
   # reload bash and show ioBroker Proceses in motd
   source ~/.bashrc
 
-else 
-  echo "Version nicht korrekt."
+#else 
+#  echo "Version nicht korrekt."
 fi
 
 # EOF
