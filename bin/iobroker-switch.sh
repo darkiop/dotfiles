@@ -21,7 +21,7 @@ if [ $fixsh == "y" ]; then
 
   if pgrep -n iobroker >/dev/null 2>&1 || pgrep -n io. >/dev/null 2>&1; then
     echo -e $red_color"ioBroker will be terminated ..."$close_color
-    sudo pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
+    pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
     sleep 5
   fi
   
@@ -41,7 +41,7 @@ if [ $version != "github" ]; then
 
   if pgrep -n iobroker >/dev/null 2>&1 || pgrep -n io. >/dev/null 2>&1; then
     echo -e $red_color"ioBroker will be terminated ..."$close_color
-    sudo pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
+    pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
     sleep 5
   fi
 
@@ -64,7 +64,7 @@ elif [ $version == "github" ]; then
 
   if pgrep -n iobroker >/dev/null 2>&1 || pgrep -n io. >/dev/null 2>&1; then
     echo -e $red_color"ioBroker will be terminated ..."$close_color
-    sudo pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
+    pgrep -f '^io.*' | xargs kill -9 >/dev/null 2>&1
     sleep 5
   fi
   
