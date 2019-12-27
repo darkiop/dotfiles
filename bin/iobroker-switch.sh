@@ -14,10 +14,10 @@ cd /opt/iobroker
 
 echo "type '2.1.1' or another tagged version or 'github' for the last commited version from github"
 read -p "switch js-controller to: " version
-read -p "run fix.sh before install? (y/n)" fixsh
+read -p "run fix.sh before install? (y/n): " fixsh
 
 # Run fix.sh
-if [ $fix == "y" ]; then
+if [ $fixsh == "y" ]; then
    curl -sL https://iobroker.net/fix.sh | bash -
 fi
 
