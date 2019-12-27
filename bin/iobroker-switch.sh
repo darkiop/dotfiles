@@ -31,9 +31,11 @@ fi
 if [ $version != "github" ]; then
    
   # use killskript ('iobroker stop' do not work if not started with 'iobroker start')
-  echo -e $red_color"ioBroker is terminated ..."$close_color
-  pgrep -f '^io.*' | xargs kill -9
-  sleep 1
+  if [ pgrep -f '^io.*' ]; then
+    echo -e $red_color"ioBroker is terminated ..."$close_color
+    pgrep -f '^io.*' | xargs kill -9
+    sleep 1  
+  fi
 
   # install with npm + version
   echo -e $green_color"Install js-controller "$version " ..."$close_color
