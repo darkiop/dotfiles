@@ -15,7 +15,7 @@ cd /opt/iobroker
 echo "type 'latest' (1.5) or 'github' (2.0.x from github)"
 read -p "switch js-controller to: " version
 
-if [ $version == "latest" ]; then
+if [ $version != "github" ]; then
    
   # use killskript ('iobroker stop' do not work if not started with 'iobroker start')
   echo -e $red_color"ioBroker is terminated ..."$close_color
@@ -24,7 +24,7 @@ if [ $version == "latest" ]; then
 
   # install with npm + version
   echo -e $green_color"Install js-controller 1.5.14 ..."$close_color
-  sudo -H -u iobroker npm install iobroker.js-controller@1.5.14
+  sudo -H -u iobroker npm install iobroker.js-controller@$version
 
   # start iobroker
   sleep 1
