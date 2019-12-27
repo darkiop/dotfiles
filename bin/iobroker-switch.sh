@@ -16,12 +16,18 @@ echo "type '2.1.1' or another tagged version or 'github' for the last commited v
 read -p "switch js-controller to: " version
 read -p "run fix.sh before install? (y/n): " fixsh
 
-# Run fix.sh
+# run fix.sh
 if [ $fixsh == "y" ]; then
-   curl -sL https://iobroker.net/fix.sh | bash -
+  echo -e $red_color"ioBroker is terminated ..."$close_color
+  pgrep -f '^io.*' | xargs kill -9   
+  sleep 1
+  
+  echo -e $green_color"run fix.sh ..."$close_color
+  curl -sL https://iobroker.net/fix.sh | bash -
+  echo
 fi
 
-# Install
+# install
 if [ $version != "github" ]; then
    
   # use killskript ('iobroker stop' do not work if not started with 'iobroker start')
@@ -30,7 +36,7 @@ if [ $version != "github" ]; then
   sleep 1
 
   # install with npm + version
-  echo -e $green_color"Install js-controller 1.5.14 ..."$close_color
+  echo -e $green_color"Install js-controller "$version " ..."$close_color
   sudo -H -u iobroker npm install iobroker.js-controller@$version
 
   # start iobroker
