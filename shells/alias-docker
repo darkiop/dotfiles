@@ -20,4 +20,6 @@ alias dkrit='docker run --rm -it '
 alias dkip='docker image prune -a -f'
 alias dkvp='docker volume prune -f'
 alias dksp='docker system prune -a -f'
+
 alias dsl='~/dotfiles/bin/dsl.sh'
+alias dps="docker ps --format 'table {{.Names}}\t{{.Image}}'"
