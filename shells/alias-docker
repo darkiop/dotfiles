@@ -1,5 +1,6 @@
 case $HOSTNAME in
-  (odin) alias docker 'sudo docker';;
+  (odin) alias docker='sudo docker';;
+  (odin) alias docker-compose='sudo docker-compose';;
 esac
 
 alias dk='docker'
