@@ -24,7 +24,7 @@ alias psg='ps -A | grep'
 alias ..='cd ..'
 
 # lsd shortcuts (if exist)
-if [ -x /usr/bin/lsd ]; then
+if [ -x ~/.cargo/bin/lsd ]; then
   alias ls='lsd'
   alias l='lsd -lh'
   alias ll='lsd -lah'

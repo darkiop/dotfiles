@@ -15,6 +15,9 @@ export NICKNAME="darkiop"
 
 # path
 PATH=$PATH:~/dotfiles/bin
+if [ -d ~/.cargo/bin ]; then
+  PATH=$PATH:~/.cargo/bin
+fi
 
 # Distribute bashrc into smaller, more specific files
 source ~/dotfiles/shells/defaults
