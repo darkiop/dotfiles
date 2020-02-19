@@ -23,6 +23,13 @@ alias la='ls -A'
 alias psg='ps -A | grep'
 alias ..='cd ..'
 
+# lsd shortcuts (if exist)
+if [ -x /usr/bin/lsd ]; then
+  alias ls='lsd'
+  alias l='lsd -lh'
+  alias ll='lsd -lah'
+fi
+
 # color for manpages
 alias man="TERMINFO=~/.terminfo TERM=mostlike LESS=C PAGER=less man"
 
@@ -41,5 +48,4 @@ alias cd.='cd ..'
 alias cd..='cd ..'
 
 # ioBroker log -f
-#alias iobl='tail -n 50 -f /opt/iobroker/log/iobroker.$(date +"%F").log'
 alias iobl='lnav /opt/iobroker/log/iobroker.$(date +"%F").log'
