@@ -33,20 +33,13 @@ source ~/dotfiles/motd/motd.sh
 source /root/.iobroker/npm_command_fix
 
 # create link to current log
-<<<<<<< HEAD
 # deprecated, ioBroker do this:
-#if [ -L /opt/iobroker/log/iobroker.current.log ]; then
-=======
+
 #if [ -f /opt/iobroker/log/iobroker.current.log ]; then
->>>>>>> 4c5991cb2154b5be46e87aae10793ec268a696bc
 #  rm /opt/iobroker/log/iobroker.current.log
 #  ln -s /opt/iobroker/log/iobroker.$(date +"%F").log /opt/iobroker/log/iobroker.current.log
 #else
 #  ln -s /opt/iobroker/log/iobroker.$(date +"%F").log /opt/iobroker/log/iobroker.current.log
 #fi
 
-<<<<<<< HEAD
 # EOF
-=======
-# EOF
->>>>>>> 4c5991cb2154b5be46e87aae10793ec268a696bc
