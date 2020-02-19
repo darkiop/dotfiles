@@ -14,10 +14,7 @@ git clone https://github.com/darkiop/dotfiles.git .
 ./install-bashrc.sh
 source ~/.bashrc
 ```
-
-```
-mkdir ~/dotfiles && cd ~/dotfiles && git clone https://github.com/darkiop/dotfiles.git . && ./install-applications.sh && ./install-bashrc.sh && source ~/.bashrc
-```
+currently there is no package for lsd (ls deluxe) on debian, it has to be install manually. see https://github.com/Peltoche/lsd
 
 ## LINKS
 - https://github.com/Peltoche/lsd
