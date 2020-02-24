@@ -20,6 +20,7 @@ currently there is no package for lsd (ls deluxe) on debian, it has to be instal
 - https://github.com/Peltoche/lsd
 - https://github.com/Eugeny/terminus
 - https://github.com/ryanoasis/nerd-fonts
+- https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack#quick-installation
 - https://github.com/koljah-de/simple-bash-prompt
 - https://github.com/vim-airline/vim-airline
 - https://github.com/vim-airline/vim-airline-themes
