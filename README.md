@@ -17,6 +17,7 @@ source ~/.bashrc
 currently there is no package for lsd (ls deluxe) on debian, it has to be install manually. see https://github.com/Peltoche/lsd
 
 ## LINKS
+- http://lnav.org/blog
 - https://github.com/Peltoche/lsd
 - https://github.com/Eugeny/terminus
 - https://github.com/ryanoasis/nerd-fonts
