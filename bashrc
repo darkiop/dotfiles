@@ -28,21 +28,13 @@ source ~/dotfiles/shells/alias-git
 source ~/dotfiles/shells/alias-docker
 source ~/dotfiles/shells/prompt-koljah-de
 
-# motd
+# Forces npm to run as iobroker when inside the iobroker installation dir
+if [ -f /opt/iobroker/log/iobroker.current.log ]; then
+  source /root/.iobroker/npm_command_fix
+fi
+
+# clear screen & show motd
 clear
 source ~/dotfiles/motd/motd.sh
-
-# Forces npm to run as iobroker when inside the iobroker installation dir
-source /root/.iobroker/npm_command_fix
-
-# create link to current log
-# deprecated, ioBroker do this:
-
-#if [ -f /opt/iobroker/log/iobroker.current.log ]; then
-#  rm /opt/iobroker/log/iobroker.current.log
-#  ln -s /opt/iobroker/log/iobroker.$(date +"%F").log /opt/iobroker/log/iobroker.current.log
-#else
-#  ln -s /opt/iobroker/log/iobroker.$(date +"%F").log /opt/iobroker/log/iobroker.current.log
-#fi
 
 # EOF
