@@ -46,6 +46,3 @@ fi
 # fix typo mistakes
 alias cd.='cd ..'
 alias cd..='cd ..'
-
-# ioBroker log -f
-alias iobl='lnav /opt/iobroker/log/iobroker.$(date +"%F").log'
