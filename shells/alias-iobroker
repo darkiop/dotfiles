@@ -1,0 +1,1 @@
+alias iofix='curl -sL https://iobroker.net/fix.sh | bash -'
