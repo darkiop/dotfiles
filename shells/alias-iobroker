@@ -1,1 +1,5 @@
+# run ioBroker fix.sh Skript
 alias iofix='curl -sL https://iobroker.net/fix.sh | bash -'
+
+# ioBroker log -f
+alias iobl='lnav /opt/iobroker/log/iobroker.$(date +"%F").log'
