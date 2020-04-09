@@ -26,6 +26,7 @@ source ~/dotfiles/shells/exports
 source ~/dotfiles/shells/alias
 source ~/dotfiles/shells/alias-git
 source ~/dotfiles/shells/alias-docker
+source ~/dotfiles/shells/alias-iobroker
 source ~/dotfiles/shells/prompt-koljah-de
 
 # Forces npm to run as iobroker when inside the iobroker installation dir
