@@ -23,5 +23,5 @@ alias dkvp='docker volume prune -f'
 alias dksp='docker system prune -a -f'
 
 alias dsl='~/dotfiles/bin/dsl.sh'
-alias dps="docker ps --format 'table {{.Names}}\t{{.Image}}'"
-alias dpsa="docker ps -a --format 'table {{.Names}}\t{{.Image}}'"
+alias dps="docker ps --format 'table {{.Names}}\t{{.Image}}' | sort -n"
+alias dpsa="docker ps -a --format 'table {{.Names}}\t{{.Image}}' | sort -n"
