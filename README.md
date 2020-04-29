@@ -18,7 +18,7 @@ currently there is no package for lsd (ls deluxe) on debian, it has to be instal
 ## LINKS
 - http://lnav.org/blog
 - https://github.com/denisidoro/navi
-- https://github.com/Peltoche/lsd
+- https://github.com/Peltoche/lsd (Siehe auch LinuxUser 2020/02 Seite 14)
 - https://github.com/Eugeny/terminus
 - https://github.com/ryanoasis/nerd-fonts
 - https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack#quick-installation
