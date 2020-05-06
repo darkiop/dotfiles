@@ -13,10 +13,15 @@ export NICKNAME="darkiop"
 # load default bashrc 
 #source /etc/skel/.bashrc
 
-# path
+# expand $PATH
 PATH=$PATH:~/dotfiles/bin
+
 if [ -d ~/.cargo/bin ]; then
   PATH=$PATH:~/.cargo/bin
+fi
+
+if [ -d ~/.local/bin ]; then
+  PATH=$PATH:~/.local/bin
 fi
 
 # Distribute bashrc into smaller, more specific files
