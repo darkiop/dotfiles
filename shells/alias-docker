@@ -1,8 +1,8 @@
 case $HOSTNAME in
   (odin) alias docker='sudo docker';;
   (odin) alias docker-compose='sudo docker-compose';;
-  (docker) alias docker='sudo docker';;
-  (docker) alias docker-compose='sudo docker-compose';;
+  (pve-vm-docker) alias docker='sudo docker';;
+  (pve-vm-docker) alias docker-compose='sudo docker-compose';;
 esac
 
 alias dk='docker'
