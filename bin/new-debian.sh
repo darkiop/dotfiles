@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# install manuell curl and execute
+# -> curl -sL https://raw.githubusercontent.com/darkiop/dotfiles/master/bin/new-debian.sh | bash -
 
 apt update
 
