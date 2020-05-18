@@ -2,4 +2,8 @@
 alias iofix='curl -sL https://iobroker.net/fix.sh | bash -'
 
 # ioBroker log -f
-alias iobl='lnav /opt/iobroker/log/iobroker.$(date +"%F").log'
+case $HOSTNAME in
+  (iobroker-master) alias iobl='lnav /opt/iobroker/log/iobroker.current.log';;
+  (odin) alias iobl='docker exec -it iobroker-master sh -c "lnav /opt/iobroker/log/iobroker.current.log"';;
+  (pve-vm-docker) alias iobl='docker exec -it iobroker-master sh -c "lnav /opt/iobroker/log/iobroker.current.log"';;
+esac
