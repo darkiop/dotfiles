@@ -6,7 +6,7 @@ echo "Installiere Zertifikat für den unifi-controller ..."
 echo "Der Export des Zertifikates vom Synology DSM muss unter /unifi/data/cert-temp liegen (3 Dateien)"
 echo "Achtung: Ein Passwort muss vergeben werden!"
 
-cd /unifi/data/cert-temp
+cd /var/lib/unifi/cert-import
 
 openssl pkcs12 -export -in cert.pem -inkey privkey.pem -out unifi.p12 -name unifi -CAfile fullchain.pem -caname root
 keytool -importkeystore -deststorepass aircontrolenterprise -destkeypass aircontrolenterprise -destkeystore /var/lib/unifi/keystore -srckeystore unifi.p12 -srcstoretype PKCS12 -alias unifi
