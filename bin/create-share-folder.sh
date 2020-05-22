@@ -2,8 +2,10 @@
 #
 #
 
-# mkdir if not exist (todo)
-mkdir ~/share
+# mkdirs if not exist (todo)
+if [ -d mkdir ~/share ]; then
+  mkdir ~/share
+fi
 
 mkdir ~/share/odin
 mkdir ~/share/odin/home
@@ -24,6 +26,7 @@ mkdir ~/share/pve-ct-unifi
 mkdir ~/share/pve-ct-unifi/home
 
 # mounts (todo)
+# mount -t cifs -o user=darkiop,domain=birkenweg.walk-steinweiler.de //192.168.1.43/backup ~/share/odin/backup
 # ...
 
 # ggf in bashrc touch > smbcredentials + chmod 600
