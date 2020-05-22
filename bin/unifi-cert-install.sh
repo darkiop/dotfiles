@@ -3,7 +3,7 @@
 # Installiert SSL Zertifikate für den unifi-controller (docker). Zuvor müssen diese über den DSM (Synology) exportiert werden.
 
 echo "Installiere Zertifikat für den unifi-controller ..."
-echo "Der Export des Zertifikates vom Synology DSM muss unter /unifi/data/cert-temp liegen (3 Dateien)"
+echo "Der Export des Zertifikates vom Synology DSM muss unter /var/lib/unifi/cert-import liegen (3 Dateien)"
 echo "Achtung: Ein Passwort muss vergeben werden!"
 
 cd /var/lib/unifi/cert-import
