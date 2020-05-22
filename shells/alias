@@ -10,7 +10,7 @@ alias update-dotfiles='cd ~/dotfiles && git pull'
 alias dotf='cd ~/dotfiles'
 
 # system update
-alias update='sudo apt update && sudo apt upgrade -y'
+alias update='sudo apt update && sudo apt upgrade -y && source ~/.bashrc'
 
 # reboot
 alias reboot='sudo reboot'
