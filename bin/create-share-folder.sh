@@ -26,4 +26,6 @@ mkdir ~/share/pve-ct-unifi/home
 # mounts (todo)
 # ...
 
+# ggf in bashrc touch > smbcredentials + chmod 600
+
 # EOF
