@@ -13,10 +13,33 @@ sudo apt update
 sudo apt install -y \
 powerline \
 dnsutils \
-vim \
+vim \ #test
 byobu \
 ranger \
-htop cifs-utils net-tools html2text fping curl speedtest-cli unzip nmap iperf3 lnav lsof toilet command-not-found bash-completion git iproute2 procps tcpdump man wakeonlan neofetch mlocate telnet nfs-common
+htop \
+cifs-utils \
+net-tools \
+html2text \
+fping \
+curl \
+speedtest-cli \
+unzip \
+nmap \
+iperf3 \
+lnav \
+lsof \
+toilet \
+command-not-found \
+bash-completion \
+iproute2 \
+procps \
+tcpdump \
+man \
+wakeonlan \
+neofetch \
+mlocate \
+telnet \
+nfs-common
 
 # tmp: rcconf
 
