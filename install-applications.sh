@@ -13,7 +13,7 @@ sudo apt update
 sudo apt install -y \
 powerline \
 dnsutils \
-vim \ #test
+vim \
 byobu \
 ranger \
 htop \
