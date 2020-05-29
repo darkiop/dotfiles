@@ -10,6 +10,7 @@ close_color="$(tput sgr0)"
 
 # install software
 sudo apt update
+
 sudo apt install -y \
 powerline \
 dnsutils \
