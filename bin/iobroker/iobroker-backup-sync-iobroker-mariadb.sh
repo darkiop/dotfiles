@@ -9,6 +9,7 @@ if mountpoint -q /mnt/odin/backup
 then
   # run rsync
   sudo rsync -avz --exclude=homematic_* --exclude=iobroker_* --delete /home/darkiop/docker/prod/iobroker-master/opt-iobroker/backups/ /mnt/odin/backup/iobroker-mariadb
+  curl http://$IOBROKER_DOMAIN:8087/set/javascript.0.System.SendeTextperEmail?value=hallo%20hallo234
 else
   # mount
   mount /mnt/odin/backup
