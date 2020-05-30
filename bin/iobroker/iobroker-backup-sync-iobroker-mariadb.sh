@@ -9,7 +9,7 @@ if mountpoint -q /mnt/odin/backup
 then
   # mountpoint exists, run rsync
   sudo rsync -avz --exclude=homematic_* --exclude=iobroker_* --delete /home/darkiop/docker/prod/iobroker-master/opt-iobroker/backups/ /mnt/odin/backup/iobroker-mariadb
-  curl http://$IOBROKER_DOMAIN:8087/set/javascript.0.System.SendeTextperEmail?value=hallo%20hallo234
+  curl http://$IOBROKER_DOMAIN:8087/set/javascript.0.System.SendeTextperEmail?value=iobroker-backup-sync-iobroker-mariadb.sh%20wurde%20ausgefuehrt
 else
   # try to mount
   mount /mnt/odin/backup
@@ -20,6 +20,7 @@ else
     sudo rsync -avz --exclude=homematic_* --exclude=iobroker_* --delete /home/darkiop/docker/prod/iobroker-master/opt-iobroker/backups/ /mnt/odin/backup/iobroker-mariadb
   else
     # exit
+    curl http://$IOBROKER_DOMAIN:8087/set/javascript.0.System.SendeTextperEmail?value=iobroker-backup-sync-iobroker-mariadb.sh%20konnte%20nicht%20ausgeführt%20werden
     exit 0
   fi
 fi
