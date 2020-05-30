@@ -38,6 +38,8 @@ source ~/dotfiles/shells/prompt-koljah-de
 if [ ! -f ~/dotfiles/.local_dotfiles_settings ]; then
   touch ~/dotfiles/.local_dotfiles_settings
   echo "# local settings for dotfiles, e.g. variables" > ~/dotfiles/.local_dotfiles_settings
+else
+  source ~/dotfiles/.local_dotfiles_settings
 fi
 
 # Forces npm to run as iobroker when inside the iobroker installation dir
