@@ -34,6 +34,11 @@ source ~/dotfiles/shells/alias-docker
 source ~/dotfiles/shells/alias-iobroker
 source ~/dotfiles/shells/prompt-koljah-de
 
+# create local settings file
+if [ ! -f ~/local_dotfiles_settings ]; then
+  touch ~/.local_dotfiles_settings
+fi
+
 # Forces npm to run as iobroker when inside the iobroker installation dir
 if [ -f /opt/iobroker/log/iobroker.current.log ]; then
   source /root/.iobroker/npm_command_fix
