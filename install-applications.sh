@@ -40,7 +40,8 @@ wakeonlan \
 neofetch \
 mlocate \
 telnet \
-nfs-common
+nfs-common \
+rsync
 
 # tmp: rcconf
 
