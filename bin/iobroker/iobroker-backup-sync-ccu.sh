@@ -1,3 +1,5 @@
 #!/bin/bash
 
-rsync -avz --exclude=*.tar.gz ~/docker/prod/iobroker-master/opt-iobroker/backups/ /mnt/odin/backup/ccu
+rsync -avz --exclude=mysql_* --exclude=iobroker_* /home/darkiop/docker/prod/iobroker-master/opt-iobroker/backups/ /mnt/odin/backup/ccu
+
+# EOF
