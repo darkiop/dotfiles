@@ -40,7 +40,7 @@ currently there is no package for lsd (ls deluxe) on debian, it has to be instal
 ### key bindings
 
 Key | Function
---- | ---
+:--- | :---
 <kbd>F2</kbd> | Create a new window
 <kbd>F3</kbd> | Move to the previous window
 <kbd>F4</kbd> | Move to the next window
