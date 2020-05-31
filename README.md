@@ -39,7 +39,7 @@ currently there is no package for lsd (ls deluxe) on debian, it has to be instal
 
 ### key bindings
 
-Markdown | Less
+Key | Function
 --- | ---
 <kbd>F2</kbd> | Create a new window
 <kbd>F3</kbd> | Move to the previous window
@@ -50,53 +50,13 @@ Markdown | Less
 <kbd>F7</kbd> | Enter scrollback/search mode
 <kbd>F8</kbd> | Rename the current window
 <kbd>F9</kbd> | Launch the Byobu Configuration Menu
-
-F12
-	
-
-GNU Screen's Escape Key
-
-Alt-Pageup
-	
-
-Scroll back through this window's history
-
-Alt-Pagedown
-	
-
-Scroll forward through this window's history
-
-Shift-F2
-	
-
-Split the screen horizontally
-
-Ctrl-F2
-	
-
-Split the screen vertically
-
-Shift-F3
-	
-
-Move focus to the next split
-
-Shift-F4
-	
-
-Move focus to the previous split
-
-Shift-F5
-	
-
-Collapse all splits
-
-Ctrl-F5
-	
-
-Reconnect any SSH/GPG sockets or agents
-
-Shift-F12
-	
-
-Toggle all of Byobu's keybindings on or off 
+<kbd>F12</kbd> | GNU Screen's Escape Key
+<kbd>Alt-Pageup</kbd> | Scroll back through this window's history
+<kbd>Alt-Pagedown</kbd> | Scroll forward through this window's history
+<kbd>Shift-F2</kbd> | Split the screen horizontally
+<kbd>Ctrl-F2</kbd> | Split the screen vertically
+<kbd>Shift-F3</kbd> | Move focus to the next split
+<kbd>Shift-F4</kbd> | Move focus to the previous split
+<kbd>Shift-F5</kbd> | Collapse all splits
+<kbd>Ctrl-F5</kbd> | Reconnect any SSH/GPG sockets or agents
+<kbd>Shift-F12</kbd> | Toggle all of Byobu's keybindings on or off
