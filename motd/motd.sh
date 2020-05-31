@@ -115,10 +115,11 @@ echo -e "$blue_color"hostname"$close_color          `echo -e "$green_color$get_h
 $blue_color"ip"$close_color                `echo -e "$green_color$get_ip_host$close_color"`
 $blue_color"tasks"$close_color             `echo -e "$green_color$tasks$close_color"`
 $blue_color"load"$close_color              `echo -e "$green_color$get_os_load_1$close_color" / "$green_color$get_os_load_5$close_color" / "$green_color$get_os_load_15$close_color"`
-$blue_color"cpu-temp"$close_color          `echo -e "$green_color$get_cpu_temp$close_color"`
 $blue_color"uptime"$close_color            `echo -e "$green_color$UP$close_color"`
 $blue_color"os"$close_color                `echo -e "$green_color$get_plat_data$close_color"`
 $blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage% $close_color"`/ ` echo -e "$green_color$root_usage_gb$close_color"` "of" `echo -e "$green_color$root_total$close_color"`"
+
+# $blue_color"cpu-temp"$close_color          `echo -e "$green_color$get_cpu_temp$close_color"`
 
 # special motd via hostname
 if [ -f ~/dotfiles/motd/motd-$get_host_name.sh ]; then
@@ -130,7 +131,7 @@ fi
 
 # show updates
 case $HOSTNAME in
-  (iobroker-master|iobroker-hwr)
+  (iobroker-master|iobroker-hwr|pve01|pve-vm-docker)
     echo -e "$light_blue_color"
     printf "Checking for updates ...\n\n"
     if [ "$(which apt-get)" ]; then echo "`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` updates to install." ; fi
