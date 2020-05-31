@@ -33,3 +33,30 @@ currently there is no package for lsd (ls deluxe) on debian, it has to be instal
 - https://github.com/clvv/fasd
 - https://github.com/seebi/dircolors-solarized
 - https://www.linux.com/learn/enhancing-virtual-terminals-byobu
+- https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+
+## byobu
+
+### key bindings
+
+Key | Function
+:--- | :---
+<kbd>F2</kbd> | Create a new window
+<kbd>F3</kbd> | Move to the previous window
+<kbd>F4</kbd> | Move to the next window
+<kbd>F5</kbd> | Refresh all status notifications
+<kbd>F6</kbd> | Detach from the session and logout
+<kbd>Shift</kbd> + <kbd>F6</kbd>| Detach from the session, but do not logout
+<kbd>F7</kbd> | Enter scrollback/search mode
+<kbd>F8</kbd> | Rename the current window
+<kbd>F9</kbd> | Launch the Byobu Configuration Menu
+<kbd>F12</kbd> | GNU Screen's Escape Key
+<kbd>Alt-Pageup</kbd> | Scroll back through this window's history
+<kbd>Alt-Pagedown</kbd> | Scroll forward through this window's history
+<kbd>Shift-F2</kbd> | Split the screen horizontally
+<kbd>Ctrl-F2</kbd> | Split the screen vertically
+<kbd>Shift-F3</kbd> | Move focus to the next split
+<kbd>Shift-F4</kbd> | Move focus to the previous split
+<kbd>Shift-F5</kbd> | Collapse all splits
+<kbd>Ctrl-F5</kbd> | Reconnect any SSH/GPG sockets or agents
+<kbd>Shift-F12</kbd> | Toggle all of Byobu's keybindings on or off
