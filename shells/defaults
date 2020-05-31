@@ -39,6 +39,13 @@ if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
+# Autovervollständigung aktivieren¶
+# Bei der Verwendung von byobu funktioniert die Autovervollständigung nicht. Das kann man leicht beheben, in dem man am Ende der .bashrc folgenden Code anfügt.
+# https://wiki.ubuntuusers.de/byobu/#Autovervollstaendigung-aktivieren
+if [ -f /etc/profile.d/bash_completion.sh ]; then
+     . /etc/profile.d/bash_completion.sh
+fi
+
 # sudo Tab Completion
 complete -cf sudo
 
