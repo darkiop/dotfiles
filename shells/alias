@@ -16,7 +16,10 @@ alias dotf='cd ~/dotfiles'
 alias update='sudo apt update && sudo apt upgrade -y && source ~/.bashrc'
 
 # reboot
-alias reboot='sudo reboot'
+case $HOSTNAME in
+  thor) alias reboot='powershell.exe -command restart-computer';;
+  *) alias reboot='sudo reboot';;
+esac
 
 # ls shortcuts
 alias ls='ls --sort=extension --color=auto'
