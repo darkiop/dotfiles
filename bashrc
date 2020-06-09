@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#
 # https://github.com/darkiop/dotfiles
 
 # ${HOME}/.bashrc: executed by bash(1) for non-login shells.
