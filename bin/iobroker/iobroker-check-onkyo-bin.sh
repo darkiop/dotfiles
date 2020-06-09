@@ -8,5 +8,3 @@ if [ -f /usr/bin/pip3 ]; then
     pip3 install onkyo-eiscp
   fi
 fi
-
-#EOF
