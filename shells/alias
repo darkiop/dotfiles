@@ -21,6 +21,12 @@ case $HOSTNAME in
   *) alias reboot='sudo reboot';;
 esac
 
+# shutdown
+case $HOSTNAME in
+  thor) alias shutdown='powershell.exe -command stop-computer';;
+  *) alias shutdown='sudo shutdown -h now';;
+esac
+
 # ls shortcuts
 alias ls='ls --sort=extension --color=auto'
 alias l='ls -lh'
