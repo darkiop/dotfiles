@@ -4,8 +4,8 @@
 
 dotfiles=/var/services/homes/darkiop/dotfiles
 
-rm $dotfiles/install-synology.sh
-wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/install-synology.sh -O $dotfiles/install-synology.sh
+rm $dotfiles/install-on-synology.sh
+wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/install-synology.sh -O $dotfiles/install-on-synology.sh
 
 rm $dotfiles/motd/motd.sh
 wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/motd/motd.sh -O $dotfiles/motd/motd.sh
