@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# source: https://dl.ubnt.com/unifi/5.12.66/unifi_sh_api
+
 username=ubnt
 password=ubnt
 baseurl=https://DOMAIN:8443
