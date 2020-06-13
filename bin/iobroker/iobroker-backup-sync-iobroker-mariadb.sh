@@ -4,6 +4,8 @@
 # fstab: 192.168.1.43:/volume1/backup /mnt/odin/backup nfs rw 0 0
 # crontab: 30 4 * * * /home/darkiop/dotfiles/bin/iobroker/iobroker-backup-sync-iobroker-mariadb.sh
 
+IOBROKER_DOMAIN="iobroker-master"
+
 # check mountpoint
 if mountpoint -q /mnt/odin/backup
 then
