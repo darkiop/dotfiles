@@ -4,30 +4,39 @@
 # fstab: 192.168.1.43:/volume1/backup /mnt/odin/backup nfs rw 0 0
 # crontab: 30 4 * * * /home/darkiop/dotfiles/bin/iobroker/iobroker-backup-sync-iobroker-mariadb.sh
 
-IOBROKER_DOMAIN="iobroker-master"
+MNT="/mnt/odin/backup"
+BACKUPS="/home/darkiop/docker/prod/iobroker-master/opt-iobroker/backups/"
+RSYNC="sudo rsync -avz --exclude=homematic_* --exclude=iobroker_* --delete $BACKUPS $MNT/iobroker-mariadb"
+IOB_SIMPLEAPI_DOMAIN="iobroker-master"
+IOB_SIMPLEAPI_PORT="8087"
+OID_EMAIL_TITLE="javascript.0.System.SendeTextperEmailBetreff"
+OID_EMAIL_TEXT="javascript.0.System.SendeTextperEmail"
+EMAIL_TITLE="ioBroker%20Backup%20(mariadb)"
+EMAIL_TEXT_TRUE="iobroker-backup-sync-iobroker-mariadb.sh%20wurde%20ausgefuehrt"
+EMAIL_TEXT_FALSE="iobroker-backup-sync-iobroker-mariadb.sh%20konnte%20nicht%20ausgefuehrt%20werden"
 
 # check mountpoint
-if mountpoint -q /mnt/odin/backup
+if mountpoint -q $MNT
 then
   # mountpoint exists, run rsync
-  sudo rsync -avz --exclude=homematic_* --exclude=iobroker_* --delete /home/darkiop/docker/prod/iobroker-master/opt-iobroker/backups/ /mnt/odin/backup/iobroker-mariadb
-  sleep 5
-  curl http://$IOBROKER_DOMAIN:8087/set/javascript.0.System.SendeTextperEmailBetreff?value=ioBroker%20Backup%20MariaDB
-  sleep 5
-  curl http://$IOBROKER_DOMAIN:8087/set/javascript.0.System.SendeTextperEmail?value=iobroker-backup-sync-iobroker-mariadb.sh%20wurde%20ausgefuehrt
+  $RSYNC
+  sleep 2
+  curl http://$IOB_SIMPLEAPI_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TITLE?value=$EMAIL_TITLE >/dev/null 2>&1
+  sleep 2
+  curl http://$IOB_SIMPLEAPI_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TEXT?value=$EMAIL_TEXT_TRUE >/dev/null 2>&1
 else
   # try to mount
-  mount /mnt/odin/backup
+  mount $MNT
   # check mountpoint again
-  if mountpoint -q /mnt/odin/backup
+  if mountpoint -q $MNT
   then
     # mountpoint exists, run rsync
-    sudo rsync -avz --exclude=homematic_* --exclude=iobroker_* --delete /home/darkiop/docker/prod/iobroker-master/opt-iobroker/backups/ /mnt/odin/backup/iobroker-mariadb
+    $RSYNC
   else
     # exit
-    curl http://$IOBROKER_DOMAIN:8087/set/javascript.0.System.SendeTextperEmailBetreff?value=ioBroker%20Backup%20MariaDB
-    sleep 5
-    curl http://$IOBROKER_DOMAIN:8087/set/javascript.0.System.SendeTextperEmail?value=iobroker-backup-sync-iobroker-mariadb.sh%20konnte%20nicht%20ausgefuehrt%20werden
+    curl http://$IOB_SIMPLEAPI_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TITLE?value=$EMAIL_TITLE >/dev/null 2>&1
+    sleep 2
+    curl http://$IOB_SIMPLEAPI_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TEXT?value=$EMAIL_TEXT_FALSE >/dev/null 2>&1
     exit 0
   fi
 fi
