@@ -214,8 +214,6 @@ unifi_list_devices() {
     ${curl_cmd} --data "{}" $baseurl/api/s/$site/stat/device
 }
 
-unifi_requires
-
 unifi_login
 
 unifi_backup
