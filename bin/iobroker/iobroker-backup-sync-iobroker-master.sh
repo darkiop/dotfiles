@@ -28,7 +28,6 @@ else
     curl http://$IOBROKER_DOMAIN:8087/set/javascript.0.System.SendeTextperEmailBetreff?value=ioBroker%20Backup
     sleep 5
     curl http://$IOBROKER_DOMAIN:8087/set/javascript.0.System.SendeTextperEmail?value=iobroker/iobroker-backup-sync-iobroker-master.sh%20konnte%20nicht%20ausgefuehrt%20werden
-    sleep 5
     exit 0
   fi
 fi
