@@ -41,7 +41,8 @@ neofetch \
 mlocate \
 telnet \
 nfs-common \
-rsync
+rsync \
+ncdu
 
 # tmp: rcconf
 
