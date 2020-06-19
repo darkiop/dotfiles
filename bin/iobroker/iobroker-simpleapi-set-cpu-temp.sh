@@ -2,10 +2,10 @@
 # Source: https://forum.iobroker.net/topic/23602/gel%C3%B6st-cpu-temperatur-von-proxmox-vm/63
 
 hostname=$(hostname)
-core0Dp=javascript.0.System.${hostname}.Temperatur.Core_0
-core1Dp=javascript.0.System.${hostname}.Temperatur.Core_1
-core2Dp=javascript.0.System.${hostname}.Temperatur.Core_2
-core3Dp=javascript.0.System.${hostname}.Temperatur.Core_3
+core0Dp=javascript.0.System.${hostname}.CPUTemp0
+core1Dp=javascript.0.System.${hostname}.CPUTemp1
+core2Dp=javascript.0.System.${hostname}.CPUTemp2
+core3Dp=javascript.0.System.${hostname}.CPUTemp3
 
 IPP=XXX.XXX.XXX.XXX:XXXX
 user=
