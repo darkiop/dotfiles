@@ -9,8 +9,12 @@ dotfiles=/var/services/homes/darkiop/dotfiles
 rm $dotfiles/install-on-synology.sh
 wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/install-synology.sh -O $dotfiles/install-on-synology.sh
 
-mkdir $dotfiles/motd
-rm $dotfiles/motd/motd.sh
+if [ ! -d $dotfiles/motd ]; then
+  mkdir $dotfiles/motd
+fi
+if [ -f $dotfiles/motd/motd.sh ]; then
+  rm $dotfiles/motd/motd.sh
+fi
 wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/motd/motd.sh -O $dotfiles/motd/motd.sh
 
 rm $dotfiles/motd/motd-odin.sh
