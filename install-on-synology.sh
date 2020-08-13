@@ -19,4 +19,7 @@ wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/shells
 rm $dotfiles/shells/alias-docker
 wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/shells/alias-docker -O $dotfiles/shells/alias-docker
 
+rm $dotfiles/bin/unifi-backup.sh
+wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/bin/unifi-backup.sh
+
 # EOF
