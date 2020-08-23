@@ -42,7 +42,8 @@ mlocate \
 telnet \
 nfs-common \
 rsync \
-ncdu
+ncdu \
+needrestart
 
 # tmp: rcconf
 
