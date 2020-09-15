@@ -5,4 +5,4 @@
 /usr/syno/bin/synoconfbkp export --filepath=/volume1/backup/dsm/`hostname`_`date +%Y%m%d_%H%M%S`.dss
 
 # delete backups older than 14 days
-find /volume1/backup/dsm/ -name "*.dss" -mtime +14 -exec rm {} \;
+find /volume1/backup/dsm/ -name "`hostname`_*.dss" -mtime +14 -exec rm {} \;
