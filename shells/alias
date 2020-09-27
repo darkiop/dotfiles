@@ -58,3 +58,6 @@ fi
 # fix typo mistakes
 alias cd.='cd ..'
 alias cd..='cd ..'
+
+# wol
+alias wol-thor='/usr/bin/wakeonlan -i 10.1.1.2 0c:9d:92:84:86:49'
