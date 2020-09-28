@@ -4,31 +4,42 @@
 
 dotfiles=/var/services/homes/darkiop/dotfiles
 
+# install script
+if [ -f $dotfiles/motd/motd.sh ]; then
+  rm $dotfiles/install-on-synology.sh
+  wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/install-synology.sh -O $dotfiles/install-on-synology.sh
+fi
 
-
-rm $dotfiles/install-on-synology.sh
-wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/install-synology.sh -O $dotfiles/install-on-synology.sh
-
+# motd
 if [ ! -d $dotfiles/motd ]; then
   mkdir $dotfiles/motd
 fi
 if [ -f $dotfiles/motd/motd.sh ]; then
   rm $dotfiles/motd/motd.sh
+  wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/motd/motd.sh -O $dotfiles/motd/motd.sh
 fi
-wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/motd/motd.sh -O $dotfiles/motd/motd.sh
 
-rm $dotfiles/motd/motd-odin.sh
-wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/motd/motd-odin.sh -O $dotfiles/motd/motd-odin.sh
+# motd for odin
+if [ -f $dotfiles/motd ]; then
+  rm $dotfiles/motd/motd-odin.sh
+  wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/motd/motd-odin.sh -O $dotfiles/motd/motd-odin.sh
+fi
 
-mkdir $dotfiles/shells
-rm $dotfiles/shells/alias
-wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/shells/alias -O $dotfiles/shells/alias
+if [ ! -d $dotfiles/motd ]; then
+  mkdir $dotfiles/shells
+fi
+if [ -f $dotfiles/motd ]; then
+  rm $dotfiles/shells/alias
+  wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/shells/alias -O $dotfiles/shells/alias
+fi
+if [ -f $dotfiles/motd ]; then
+  rm $dotfiles/shells/alias-docker
+  wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/shells/alias-docker -O $dotfiles/shells/alias-docker
+fi
 
-rm $dotfiles/shells/alias-docker
-wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/shells/alias-docker -O $dotfiles/shells/alias-docker
-
-mkdir $dotfiles/bin
-rm $dotfiles/bin/unifi-backup.sh
-wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/bin/unifi-backup.sh -O $dotfiles/bin/unifi-backup.sh
+# bin
+if [ ! -d $dotfiles/bin ]; then
+  mkdir $dotfiles/bin
+fi
 
 # EOF
