@@ -43,7 +43,9 @@ telnet \
 nfs-common \
 rsync \
 ncdu \
-needrestart
+needrestart \
+sensors \
+hddtemp
 
 # tmp: rcconf
 
