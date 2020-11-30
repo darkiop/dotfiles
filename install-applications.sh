@@ -45,7 +45,8 @@ rsync \
 ncdu \
 needrestart \
 sensors \
-hddtemp
+hddtemp \
+parted
 
 # tmp: rcconf
 
