@@ -47,7 +47,7 @@ needrestart \
 hddtemp \
 parted
 
-# tmp: rcconf
+# tmp: rcconf, sensors
 
 # install lsd
 echo
