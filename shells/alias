@@ -1,5 +1,5 @@
-# cd - show content from ~ after cd
-cd() { builtin cd "$@"; ll; }      
+# cd - show content after cd
+cd() { builtin cd "$@"; ls -lah; }
 
 # clear + motd
 alias cls='source ~/.bashrc'
