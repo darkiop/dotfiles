@@ -44,7 +44,6 @@ nfs-common \
 rsync \
 ncdu \
 needrestart \
-sensors \
 hddtemp \
 parted
 
