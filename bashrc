@@ -39,13 +39,7 @@ case $(hostname) in
   (pve01)
     source ~/dotfiles/shells/alias-proxmox
   ;;
-  (pve-ct-iobroker)
-    source ~/dotfiles/shells/alias-iobroker
-  ;;
-  (iobroker-hwr)
-    source ~/dotfiles/shells/alias-iobroker
-  ;;
-  (iobroker-master)
+  (pve-ct-iobroker|iobroker-hwr|iobroker-master)
     source ~/dotfiles/shells/alias-iobroker
   ;;
 esac
