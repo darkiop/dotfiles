@@ -9,6 +9,7 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
+echo -e "$blue_color"Proxmox Version"$close_color   `echo -e "$green_color$(pveversion)$close_color"`"
 echo
 
 echo -e "$blue_color"List Proxmox Container"$close_color"

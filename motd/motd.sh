@@ -117,7 +117,7 @@ $blue_color"tasks"$close_color             `echo -e "$green_color$tasks$close_co
 $blue_color"load"$close_color              `echo -e "$green_color$get_os_load_1$close_color" / "$green_color$get_os_load_5$close_color" / "$green_color$get_os_load_15$close_color"`
 $blue_color"uptime"$close_color            `echo -e "$green_color$UP$close_color"`
 $blue_color"os"$close_color                `echo -e "$green_color$get_plat_data$close_color"`
-$blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage% $close_color"`/ ` echo -e "$green_color$root_usage_gb$close_color"` "of" `echo -e "$green_color$root_total$close_color"`"
+$blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage_gb$close_color"` "of" `echo -e "$green_color$root_total$close_color"` ($root_usage%)"
 
 # $blue_color"cpu-temp"$close_color          `echo -e "$green_color$get_cpu_temp$close_color"`
 
