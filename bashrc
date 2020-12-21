@@ -29,9 +29,26 @@ source ~/dotfiles/shells/functions
 source ~/dotfiles/shells/exports
 source ~/dotfiles/shells/alias
 source ~/dotfiles/shells/alias-git
-source ~/dotfiles/shells/alias-docker
 source ~/dotfiles/shells/alias-iobroker
 source ~/dotfiles/shells/prompt-koljah-de
+
+case $(hostname) in 
+  (pve-vm-docker)
+    source ~/dotfiles/shells/alias-docker
+  ;;
+  (pve01)
+    source ~/dotfiles/shells/alias-proxmox
+  ;;
+  (pve-ct-iobroker)
+    source ~/dotfiles/shells/alias-iobroker
+  ;;
+  (iobroker-hwr)
+    source ~/dotfiles/shells/alias-iobroker
+  ;;
+  (iobroker-master)
+    source ~/dotfiles/shells/alias-iobroker
+  ;;
+esac
 
 # create local settings file
 if [ ! -f ~/dotfiles/.local_dotfiles_settings ]; then
