@@ -40,6 +40,14 @@ for folder in $folders; do
     ln -s $dir/$folder ~/.$folder
 done
 
+# lsd config file
+if [ ! -d ~/.config/lsd ]; then
+  mkdir -p ~./.config/lsd
+  ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
+else
+  ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
+fi
+
 # dircolors
 ln -s $dir/dircolors ~/.dir_colors
 
