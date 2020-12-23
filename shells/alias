@@ -1,9 +1,16 @@
+# ls shortcuts
+alias ls='ls --sort=extension --color=auto'
+alias l='ls -lh'
+alias ll='ls -lah'
+alias la='ls -A'
+alias psg='ps -A | grep'
+alias ..='cd ..'
+
 # lsd shortcuts (if exist)
-if [ -x ~/.cargo/bin/lsd] | [ -x /usr/bin/lsd ]; then
+if [ -x ~/.cargo/bin/lsd ] | [ -x /usr/bin/lsd ]; then
   alias ls='lsd'
   alias l='lsd -lh'
   alias ll='lsd -lah'
-  touch /tmp/123
 fi
 
 # cd - show content after cd
@@ -37,14 +44,6 @@ case $HOSTNAME in
   thor) alias shutdown='powershell.exe -command stop-computer';;
   *) alias shutdown='sudo shutdown -h now';;
 esac
-
-# ls shortcuts
-alias ls='ls --sort=extension --color=auto'
-alias l='ls -lh'
-alias ll='ls -lah'
-alias la='ls -A'
-alias psg='ps -A | grep'
-alias ..='cd ..'
 
 # color for manpages
 alias man="TERMINFO=~/.terminfo TERM=mostlike LESS=C PAGER=less man"
