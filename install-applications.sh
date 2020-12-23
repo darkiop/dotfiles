@@ -57,9 +57,11 @@ if [ $instapp == "y" ]; then
 fi
 
 # install lsd
-# https://github.com/Peltoche/lsd/releases
-#  dpkg-architecture -q DEB_BUILD_ARCH = amd64 & deb
-instlsdarch=$(dpkg-architecture -q DEB_BUILD_ARCH)
+# config: ~/.config/lsd/config.yaml
+# github: https://github.com/Peltoche/lsd
+#         https://github.com/Peltoche/lsd/releases
+# dpkg --print-architecture = amd64 & deb
+instlsdarch=$(dpkg --print-architecture)
 if [ $instlsdarch == "amd64" ]; then
   echo
   echo -e "$blue_color"
