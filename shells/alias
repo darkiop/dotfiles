@@ -1,4 +1,4 @@
-# cd - show content after cd
+# cd - show content from ~ after cd
 cd() { builtin cd "$@"; ls -lah; }
 
 # clear + motd
