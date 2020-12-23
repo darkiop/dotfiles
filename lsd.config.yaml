@@ -103,7 +103,7 @@ no-symlink: false
 # == Total size ==
 # Whether to display the total size of directories.
 # Possible values: false, true
-total-size: true
+total-size: false
 
 # == Symlink arrow ==
 # Specifies how the symlink arrow display, chars in both ascii and utf8
