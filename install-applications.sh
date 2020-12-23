@@ -9,54 +9,78 @@ yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
 # install software
-sudo apt update
-
-sudo apt install -y \
-powerline \
-dnsutils \
-vim \
-byobu \
-ranger \
-htop \
-cifs-utils \
-net-tools \
-html2text \
-fping \
-curl \
-speedtest-cli \
-unzip \
-nmap \
-iperf3 \
-lnav \
-lsof \
-toilet \
-command-not-found \
-bash-completion \
-iproute2 \
-procps \
-tcpdump \
-man \
-wakeonlan \
-neofetch \
-mlocate \
-telnet \
-nfs-common \
-rsync \
-ncdu \
-needrestart \
-hddtemp \
-parted
-
-# tmp: rcconf, sensors
-
-# install lsd
 echo
 echo -e "$blue_color"
-read -p "install lsd with cargo? (y/n):" instlsd
+read -p "Install applications?  (y/n):" instapp
 echo -e "$close_color"
-if [ $instlsd == "y" ]; then
-  sudo apt install -y cargo
-  cargo install lsd
+if [ $instapp == "y" ]; then
+  sudo apt update
+
+  sudo apt install -y \
+  powerline \
+  dnsutils \
+  vim \
+  byobu \
+  ranger \
+  htop \
+  cifs-utils \
+  net-tools \
+  html2text \
+  fping \
+  curl \
+  speedtest-cli \
+  unzip \
+  nmap \
+  iperf3 \
+  lnav \
+  lsof \
+  toilet \
+  command-not-found \
+  bash-completion \
+  iproute2 \
+  procps \
+  tcpdump \
+  man \
+  wakeonlan \
+  neofetch \
+  mlocate \
+  telnet \
+  nfs-common \
+  rsync \
+  ncdu \
+  needrestart \
+  hddtemp \
+  parted
+
+  # tmp: rcconf, sensors
+
+fi
+
+# install lsd
+# https://github.com/Peltoche/lsd/releases
+#  dpkg-architecture -q DEB_BUILD_ARCH = amd64 & deb
+instlsdarch=$(dpkg-architecture -q DEB_BUILD_ARCH)
+if [ $instlsdarch == "amd64" ]; then
+  echo
+  echo -e "$blue_color"
+  read -p "Download & Install lsd.deb from Github? (y/n):" instlsd
+  echo -e "$close_color"
+  if [ $instlsd == "y" ]; then
+    echo "TODO"
+    wget -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
+    sudo dpkg -i ~/lsd.deb
+    rm ~/lsd.deb
+  fi
+else 
+  echo
+  echo -e "$blue_color"
+  read -p "Install lsd with cargo? (y/n):" instlsd
+  echo -e "$close_color"
+  if [ $instlsd == "y" ]; then
+    sudo apt install -y cargo
+    cargo install lsd
+  fi
+
 fi
 
 # EOF
