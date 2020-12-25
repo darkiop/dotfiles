@@ -33,7 +33,7 @@ source ~/dotfiles/shells/alias-iobroker
 source ~/dotfiles/shells/prompt-koljah-de
 
 case $(hostname) in 
-  (pve-vm-docker)
+  (pve-vm-docker|pve-ct-docker)
     source ~/dotfiles/shells/alias-docker
   ;;
   (pve01)
