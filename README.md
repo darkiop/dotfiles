@@ -34,6 +34,9 @@ currently there is no package for lsd (ls deluxe) on debian, it has to be instal
 - https://github.com/seebi/dircolors-solarized
 - https://www.linux.com/learn/enhancing-virtual-terminals-byobu
 - https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+- https://github.com/LeCoupa/awesome-cheatsheets/blob/master/languages/bash.sh
+- https://github.com/chubin/cheat.sh
+- https://github.com/denisidoro/navi
 
 ## byobu
 
