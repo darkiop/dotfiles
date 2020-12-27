@@ -6,11 +6,9 @@ Screenshot with Terminal https://github.com/Eugeny/terminus
 
 ## INSTALL
 ```
-mkdir ~/dotfiles
-cd ~/dotfiles
-git clone https://github.com/darkiop/dotfiles.git .
-./install-applications.sh
-./install-bashrc.sh
+git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
+sh ~/dotfiles/install-applications.sh
+sh ~/dotfiles/install-bashrc.sh
 source ~/.bashrc
 ```
 currently there is no package for lsd (ls deluxe) on debian, it has to be install manually. see https://github.com/Peltoche/lsd
