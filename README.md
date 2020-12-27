@@ -11,7 +11,6 @@ sh ~/dotfiles/install-applications.sh
 sh ~/dotfiles/install-bashrc.sh
 source ~/.bashrc
 ```
-currently there is no package for lsd (ls deluxe) on debian, it has to be install manually. see https://github.com/Peltoche/lsd
 
 ## LINKS
 - http://lnav.org/blog
@@ -35,6 +34,7 @@ currently there is no package for lsd (ls deluxe) on debian, it has to be instal
 - https://github.com/LeCoupa/awesome-cheatsheets/blob/master/languages/bash.sh
 - https://github.com/chubin/cheat.sh
 - https://github.com/denisidoro/navi
+- https://github.com/Peltoche/lsd
 
 ## byobu
 
