@@ -92,7 +92,11 @@ echo -e "$blue_color"
 read -p "Install navi with cargo? (y/n):" instnavi
 echo -e "$close_color"
 if [ $instnavi == "y" ]; then
-  apt install fzf
+  sudo apt install fzf
+  pkgs='cargo'
+  if [ ! dpkg -s $pkgs >/dev/null 2>&1 ]; then
+    sudo apt install -y cargo
+  fi
   cargo install navi
   PATH=$PATH:~/.cargo/bin
   # bash widget (STRG + G runs navi)
