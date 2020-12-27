@@ -11,13 +11,13 @@ if ! dpkg -s $pkgs >/dev/null 2>&1; then
 fi
 
 # create dotfiles dir
-if [ ! -d ~/dotfiles ]; then
-  mkdir ~/dotfiles
-fi
-cd ~/dotfiles
+#if [ ! -d ~/dotfiles ]; then
+#  mkdir ~/dotfiles
+#fi
+#cd ~/dotfiles
 
 # clone from github
-git clone https://github.com/darkiop/dotfiles.git .
+git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
 
 # install
 bash ~/dotfiles/install-applications.sh

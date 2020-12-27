@@ -51,6 +51,14 @@ fi
 # dircolors
 ln -s $dir/dircolors ~/.dir_colors
 
-echo -e $green_color"done. type"$close_color$yellow_color" source ~/.bashrc "$green_color"to load the dotfiles"$close_color
+# load .bashrc
+echo -e "$blue_color"
+read -p "load ~/.bashrc?  (y/n):" instapp
+echo -e "$close_color"
+if [ $instapp == "y" ]; then
+  source ~/.bashrc
+else
+  echo -e $green_color"done. type"$close_color$yellow_color" source ~/.bashrc "$green_color"to load the dotfiles"$close_color
+fi
 
 # EOF

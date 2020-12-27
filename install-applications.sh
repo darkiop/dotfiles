@@ -85,4 +85,21 @@ else
 
 fi
 
+# install navi
+# https://github.com/denisidoro/navi
+echo
+echo -e "$blue_color"
+read -p "Install navi with cargo? (y/n):" instnavi
+echo -e "$close_color"
+if [ $instnavi == "y" ]; then
+  apt install fzf
+  cargo install navi
+  PATH=$PATH:~/.cargo/bin
+  # bash widget (STRG + G runs navi)
+  eval "$(navi widget bash)"
+
+  # load cheats from dotfiles
+  navi --path '~/dotfiles/cheats/'
+fi
+
 # EOF
