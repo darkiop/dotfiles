@@ -103,4 +103,22 @@ if [ $instnavi == "y" ]; then
   PATH=$PATH:~/.cargo/bin
 fi
 
+# install cheat.sh
+# https://github.com/chubin/cheat.sh#installation
+# https://github.com/chubin/cheat.sh#command-line-client-chtsh
+# config: ~/.cht.sh/cht.sh.conf
+echo -e "$blue_color"
+read -p "Install cheat.sh? (y/n):" instcheatsh
+echo -e "$close_color"
+if [ $instcheatsh == "y" ]; then
+  curl https://cht.sh/:cht.sh > $HOME/dotfiles/bin/cht.sh
+
+  chmod +x $HOME/dotfiles/bin/cht.sh
+  if [ ! -d $HOME/.cht.sh ]; then
+    mkdir $HOME/.cht.sh
+  fi
+  ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
+
+fi
+
 # EOF
