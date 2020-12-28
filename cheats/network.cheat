@@ -29,4 +29,3 @@ exportfs
 
 # nfs: show exports from clientside
 showmount -e <ip>
-
