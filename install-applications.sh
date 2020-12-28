@@ -68,7 +68,6 @@ if [ $instlsdarch == "amd64" ]; then
   read -p "Download & Install lsd.deb from Github? (y/n):" instlsd
   echo -e "$close_color"
   if [ $instlsd == "y" ]; then
-    echo "TODO"
     wget -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
     sudo dpkg -i ~/lsd.deb
     rm ~/lsd.deb
@@ -97,10 +96,10 @@ if [ $instnavi == "y" ]; then
   sudo apt install -y cargo
   cargo install navi
   PATH=$PATH:~/.cargo/bin
-  # bash widget (STRG + G runs navi)
+  # bash widget (STRG + G runs navi) --> TODO: instal-bashrc.sh
   eval "$(navi widget bash)"
   # load cheats from dotfiles
-  navi --path '~/dotfiles/cheats/'
+  navi --path $HOME'/dotfiles/cheats/'
 fi
 
 # EOF
