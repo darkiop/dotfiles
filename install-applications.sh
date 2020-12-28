@@ -104,9 +104,6 @@ if [ $instnavi == "y" ]; then
   
   # bash widget (STRG + G runs navi)
   eval "$(navi widget bash)"
-  
-  # load cheats from dotfiles
-  navi --path $HOME'/dotfiles/cheats/'
 fi
 
 # EOF
