@@ -20,10 +20,10 @@ fi
 git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
 
 # install
-bash ~/dotfiles/install-applications.sh
-bash ~/dotfiles/install-bashrc.sh
+bash $HOME/dotfiles/install-applications.sh
+bash $HOME/dotfiles/install-bashrc.sh
 
 # load the new bashrc
-source ~/.bashrc
+bash $HOME/.bashrc
 
 # EOF
