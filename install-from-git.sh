@@ -8,18 +8,22 @@ if [ -d $HOME/dotfiles ]; then
   read -p "dotfiles exists - Re-Install! Are you sure? ~/dotfiles will be deleted! (y/n):" reinstall
   echo -e "$close_color"
   if [ $reinstall == "y" ]; then
-    curl -sL https://raw.githubusercontent.com/darkiop/dotfiles/master/install-reinstall.sh | bash -
+    cd ~
+    echo -e $green_color"delete"$close_color$yellow_color" ~/dotfiles "$green_color"..."$close_color
+    sudo rm -r ~/dotfiles
+    echo
+    echo -e $green_color"reinstall "$close_color$yellow_color" ~/dotfiles "$green_color"..."$close_color
+    git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
+    bash ~/dotfiles/install-bashrc.sh
   else
     echo -e $red_color"exit ..."$close_color
     exit
   fi
 else
   # dotfiles dir do not exist
-  
   # clone from git
   echo -e $green_color"clone"$close_color$yellow_color" dotfiles "$green_color"from github ..."$close_color
   git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
-  
   # install
   bash $HOME/dotfiles/install-applications.sh
   bash $HOME/dotfiles/install-bashrc.sh
