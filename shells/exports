@@ -1,7 +1,18 @@
 export PATH=:$HOME/bin:/usr/local/bin:$PATH
-export EDITOR='vim' ALTERNATE_EDITOR='vim' VISUAL='vim'
+
+export EDITOR='vim'
+export ALTERNATE_EDITOR='vim'
+export VISUAL='vim'
 
 # Bash History
 export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
 export HISTCONTROL=ignoreboth
 export HISTIGNORE='&:clear:ls:cd:[bf]g:exit:[ t\]*'
+
+# colors
+export blue_color="\e[38;5;33m"
+export light_blue_color="\e[38;5;39m"
+export red_color="\e[38;5;196m"
+export green_color="\e[38;5;42m"
+export green_color_bold="\e[1;38;5;42m"
+export yellow_color="\e[38;5;227m"

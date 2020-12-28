@@ -61,12 +61,12 @@ get_proc_ps=$(ps -Afl | wc -l)
 get_swap=$(free -m | tail -n 1 | awk {'print $3'})
 
 # set colors
-blue_color="\e[38;5;33m"
-light_blue_color="\e[38;5;39m"
-red_color="\e[38;5;196m"
-green_color="\e[38;5;42m"
-green_color_bold="\e[1;38;5;42m"
-yellow_color="\e[38;5;227m"
+#blue_color="\e[38;5;33m"
+#light_blue_color="\e[38;5;39m"
+#red_color="\e[38;5;196m"
+#green_color="\e[38;5;42m"
+#green_color_bold="\e[1;38;5;42m"
+#yellow_color="\e[38;5;227m"
 
 # check if colors available
 case $get_host_name in

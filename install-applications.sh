@@ -101,9 +101,6 @@ if [ $instnavi == "y" ]; then
   
   # set PATH
   PATH=$PATH:~/.cargo/bin
-  
-  # bash widget (STRG + G runs navi)
-  eval "$(navi widget bash)"
 fi
 
 # EOF

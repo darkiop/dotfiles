@@ -1,4 +1,15 @@
-#!/bin/bash
+# Functions to aid git workflow
+function ga(){
+    git-add $1
+}
+
+function gc(){
+    git commit -m "$*"
+}
+
+function revert(){
+    git reset --hard $1
+}
 
 # load git-prompt
 if [ -f /etc/bash_completion.d/git-prompt ]; then
