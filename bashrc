@@ -30,7 +30,7 @@ source ~/dotfiles/shells/exports
 source ~/dotfiles/shells/alias
 source ~/dotfiles/shells/alias-git
 source ~/dotfiles/shells/alias-iobroker
-source ~/dotfiles/shells/prompt-koljah-de
+source ~/dotfiles/shells/prompt
 
 case $(hostname) in 
   (pve-vm-docker|pve-ct-docker)
