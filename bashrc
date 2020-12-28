@@ -27,6 +27,7 @@ source ~/dotfiles/shells/exports
 source ~/dotfiles/shells/alias
 source ~/dotfiles/shells/alias-git
 source ~/dotfiles/shells/prompt
+#source ~/dotfiles/shells/prompt-sexy-prompt
 #source ~/dotfiles/shells/prompt-test
 
 # load navi alias if navi is installed
