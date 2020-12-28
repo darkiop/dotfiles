@@ -1,4 +1,61 @@
 % iobroker
 
-# start iobroker
+# starts the js-controller
 iobroker start
+
+# stops the js-controller
+iobroker stop
+
+# setup custom
+iobroker setup custom
+
+# setup objects hosts
+iobroker setup --objects <host>
+
+# setup objects states
+iobroker setup --states <host>
+
+# starts a specified adapter instance
+iobroker start <adapter>.<instance>
+
+# stops a specified adapter instance
+iobroker stop <adapter>.<instance>
+
+# starts js-controller and all adapters
+iobroker start all
+
+# restarts the js-controller
+iobroker restart
+
+# restarts a specified adapter
+iobroker restart <adapter>.<instance>
+
+# shows the host info
+iobroker info
+
+# shows the log for an adapter (--watch, --lines=1000)
+iobroker logs <adapter> --watch --lines=1000
+
+# create a backup
+iobroker backup
+
+# restore a specified backup
+iobroker restore <backup name or path>
+
+# validate a specified backup
+iobroker validate <backup name or path>
+
+# execute the installation fixer script, this updates your ioBroker installation
+iobroker fix
+
+# multihost config
+iobroker multihost <enableORdisable>
+
+# multihost browse
+iobroker multihost browse
+
+# multihost connect
+iobroker multihost connect
+
+# update repository and optionally filter installed/updateable adapters, use --force to bypass hash check
+iobroker update
