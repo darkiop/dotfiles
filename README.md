@@ -7,8 +7,8 @@ Screenshot with Terminal https://github.com/Eugeny/terminus
 ## INSTALL
 ```
 git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
-sh ~/dotfiles/install-applications.sh
-sh ~/dotfiles/install-bashrc.sh
+bash ~/dotfiles/install-applications.sh
+bash ~/dotfiles/install-bashrc.sh
 source ~/.bashrc
 ```
 
