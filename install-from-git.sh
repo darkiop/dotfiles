@@ -9,16 +9,11 @@ if [!dpkg -s git >/dev/null 2>&1]; then
   sudo apt install git -y
 fi
 
-if [!dpkg -s curl >/dev/null 2>&1]; then
-  sudo apt update
-  sudo apt install curl -y
-fi
-
 # git clone
 git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
 
 # install
-bash $HOME/dotfiles/install-applications.sh
-bash $HOME/dotfiles/install-bashrc.sh
+#bash $HOME/dotfiles/install-applications.sh
+#bash $HOME/dotfiles/install-bashrc.sh
 
 # EOF
