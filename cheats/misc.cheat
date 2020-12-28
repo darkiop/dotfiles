@@ -1,0 +1,4 @@
+% misc
+
+# date+time in var
+time=$(date +%Y-%m-%d_%T)
