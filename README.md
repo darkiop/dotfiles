@@ -36,9 +36,18 @@ source ~/.bashrc
 - https://github.com/denisidoro/navi
 - https://github.com/Peltoche/lsd
 
-## byobu
+## TODO
+- https://github.com/chubin/cheat.sh#installation
 
-### key bindings
+## key bindungs
+
+### navi
+
+Key | Function
+:--- | :---
+<kbd>STRG + G</kbd> | navi
+
+### byobu
 
 Key | Function
 :--- | :---
