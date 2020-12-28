@@ -8,4 +8,3 @@ adduser <user>
 
 # add user to group
 usermod -a -G <group> <user>
-
