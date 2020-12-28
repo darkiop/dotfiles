@@ -1,0 +1,10 @@
+% proxmox
+
+# start lxc container
+pct start <id>
+
+# stop lxc container
+pct stop <id>
+
+# reboot lxc container
+pct reboot <id>

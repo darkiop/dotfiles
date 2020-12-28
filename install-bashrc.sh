@@ -42,7 +42,7 @@ done
 
 # lsd config file
 if [ ! -d ~/.config/lsd ]; then
-  mkdir -p ~./.config/lsd
+  mkdir -p ~/.config/lsd
   ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
 else
   ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
@@ -56,7 +56,7 @@ echo -e "$blue_color"
 read -p "load ~/.bashrc?  (y/n):" instapp
 echo -e "$close_color"
 if [ $instapp == "y" ]; then
-  source ~/.bashrc
+  source $HOME/.bashrc
 else
   echo -e $green_color"done. type"$close_color$yellow_color" source ~/.bashrc "$green_color"to load the dotfiles"$close_color
 fi
