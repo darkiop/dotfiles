@@ -4,12 +4,12 @@
 # curl -sL https://raw.githubusercontent.com/darkiop/dotfiles/master/install-from-git.sh | bash -
 
 # check for curl + git and install if necessary
-if ! dpkg -s git >/dev/null 2>&1; then
+if [!dpkg -s git >/dev/null 2>&1]; then
   sudo apt update
   sudo apt install git -y
 fi
 
-if ! dpkg -s curl >/dev/null 2>&1; then
+if [!dpkg -s curl >/dev/null 2>&1]; then
   sudo apt update
   sudo apt install curl -y
 fi
