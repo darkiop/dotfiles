@@ -9,5 +9,35 @@ pct stop <id>
 # reboot lxc container
 pct reboot <id>
 
+# remove container
+pct destroy <id>
+
 # vzdump file extract
 tar -I zstd -xvf archive.tar.zst
+
+# proxmox performance overview
+pveperf
+
+# restart pve-cluster
+service pve-cluster restart
+
+# restart pvedaemon
+service pvedaemon restart
+
+restart pvestatd
+service pvestatd restart
+
+# restart pveproxy
+service pveproxy restart
+
+# restart all proxmox services
+service pve-cluster restart && service pvedaemon restart && service pvestatd restart && service pveproxy restart
+
+# list VMs (sorted)
+sudo cat /etc/pve/.vmlist | grep node | tr -d '":,'| awk '{print $1" "$4" "$6 }' | sort -n | column -t
+
+# list VMs
+qm list
+
+# unlock vm
+qm unlock <id>

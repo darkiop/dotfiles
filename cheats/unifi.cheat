@@ -1,0 +1,10 @@
+# unifi
+
+# unifi-os login
+unifi-os shell
+
+# static arp table for wol
+arp -s <ip> <mac>
+
+# set-inform
+set-inform http://<ip>:8080/inform

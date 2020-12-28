@@ -4,7 +4,7 @@
 #
 # modified by darkiop
 
-# define the color of the simple-bash-prompt, see exports
+# define the color of the simple-bash-prompt
 simple_bash_prompt_bracket_color=$blue_color
 simple_bash_prompt_command_color=$white_color
 simple_bash_prompt_device_color=$blue_color
@@ -22,26 +22,26 @@ simple_bash_prompt_symbol="\\$"
 
 # set the color with the exit status of the last command
 simple_bash_prompt_exit_status_color () {
-  if [ $1 -eq 0 ]; then
-    echo -e $blue_color
-  else
-    echo -e $red_color
-  fi
+    if [ $1 -eq 0 ]; then
+        echo -e $blue_color
+    else
+        echo -e $red_color
+    fi
 }
 
 # check if current directory is a git repo
 simple_bash_prompt_is_git_repo () {
-  git rev-parse 2> /dev/null
+    git rev-parse 2> /dev/null
 }
 
 # print the git branch
 simple_bash_prompt_get_git_branch () {
-  simple_bash_prompt_git_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-  if [ "$simple_bash_prompt_git_branch" = "HEAD" ]; then
-    echo "no branch"
-  else
-    echo $simple_bash_prompt_git_branch
-  fi
+    simple_bash_prompt_git_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+    if [ "$simple_bash_prompt_git_branch" = "HEAD" ]; then
+        echo "no branch"
+    else
+        echo $simple_bash_prompt_git_branch
+    fi
 }
 
 # define the simple-bash-prompt

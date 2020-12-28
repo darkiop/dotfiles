@@ -1,0 +1,4 @@
+% synology
+
+# restart service
+synoservicectl --restart sshd

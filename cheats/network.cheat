@@ -23,3 +23,10 @@ iperf3 -c <server>
 
 # wakeonlan wol
 /usr/bin/wakeonlan -i <ip> <mac>
+
+# nfs: show exports on server
+exportfs
+
+# nfs: show exports from clientside
+showmount -e <ip>
+
