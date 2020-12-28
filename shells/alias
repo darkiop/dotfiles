@@ -1,6 +1,6 @@
-function cheat () {
-  curl "cheat.sh/$1"
-}
+#function cheat () {
+#  curl "cheat.sh/$1"
+#}
 
 # Simplify apt-get search and install
 function show () {
