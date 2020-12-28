@@ -4,26 +4,21 @@
 # curl -sL https://raw.githubusercontent.com/darkiop/dotfiles/master/install-from-git.sh | bash -
 
 # check for curl + git and install if necessary
-pkgs='curl git'
-if ! dpkg -s $pkgs >/dev/null 2>&1; then
+if ! dpkg -s git >/dev/null 2>&1; then
   sudo apt update
-  sudo apt install $pkgs
+  sudo apt install git -y
 fi
 
-# create dotfiles dir
-#if [ ! -d ~/dotfiles ]; then
-#  mkdir ~/dotfiles
-#fi
-#cd ~/dotfiles
+if ! dpkg -s curl >/dev/null 2>&1; then
+  sudo apt update
+  sudo apt install curl -y
+fi
 
-# clone from github
+# git clone
 git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
 
 # install
 bash $HOME/dotfiles/install-applications.sh
 bash $HOME/dotfiles/install-bashrc.sh
-
-# load the new bashrc
-bash $HOME/.bashrc
 
 # EOF
