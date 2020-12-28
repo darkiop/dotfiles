@@ -95,12 +95,18 @@ if [ $instnavi == "y" ]; then
   sudo apt install -y build-essential
   sudo apt install -y fzf
   sudo apt install -y cargo
+  
+  # install navi
   cargo install navi
+  
+  # set PATH
   PATH=$PATH:~/.cargo/bin
+  
   # bash widget (STRG + G runs navi)
   eval "$(navi widget bash)"
+  
   # load cheats from dotfiles
-  navi --path '~/dotfiles/cheats/'
+  navi --path $HOME'/dotfiles/cheats/'
 fi
 
 # EOF
