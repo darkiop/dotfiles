@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo -e "$blue_color"
+echo -e "$red_color"
 read -p "Re-Install! Are you sure? ~/dotfiles will be deleted! (y/n):" reinstall
 echo -e "$close_color"
 if [ $reinstall == "y" ]; then
