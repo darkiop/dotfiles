@@ -1,8 +1,5 @@
 #!/bin/bash
-#
 # dotfiles install skript
-
-# time=$(date +%Y-%m-%d_%T)
 
 blue_color="\e[38;5;33m"
 light_blue_color="\e[38;5;39m"
