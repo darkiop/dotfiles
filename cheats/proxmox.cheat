@@ -8,3 +8,6 @@ pct stop <id>
 
 # reboot lxc container
 pct reboot <id>
+
+# vzdump file extract
+tar -I zstd -xvf archive.tar.zst

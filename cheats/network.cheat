@@ -1,0 +1,25 @@
+% network
+
+# tcpdump: show local traffic on eth0 and port 53
+tcpdump -nt -i eth0 port 53
+
+# nmap: simple scan
+nmap -sT <ip>
+
+# nmap: scan all ports
+nmap -p- <ip>
+
+# nmap: ping scan subnet (x.x.x.x/24)
+nmap -PE -sn -oG - <subnet>
+
+# netstat: show process of open port
+netstat -plant
+
+# iperf: server
+iperf3 -s
+
+# iperf: client
+iperf3 -c <server>
+
+# wakeonlan wol
+/usr/bin/wakeonlan -i <ip> <mac>

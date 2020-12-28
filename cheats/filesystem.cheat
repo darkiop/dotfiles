@@ -1,0 +1,7 @@
+% filesystem
+
+# fdisk list
+fdisk -l
+
+# partionate with cfdisk
+cfdisk /dev/<device>
