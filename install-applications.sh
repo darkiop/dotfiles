@@ -9,13 +9,11 @@ yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
 # install software
-echo
 echo -e "$blue_color"
 read -p "Install applications?  (y/n):" instapp
 echo -e "$close_color"
 if [ $instapp == "y" ]; then
   sudo apt update
-
   sudo apt install -y \
   powerline \
   dnsutils \
@@ -51,9 +49,7 @@ if [ $instapp == "y" ]; then
   needrestart \
   hddtemp \
   parted
-
   # tmp: rcconf, sensors
-
 fi
 
 # install lsd
@@ -82,12 +78,10 @@ else
     sudo apt install -y cargo
     cargo install lsd
   fi
-
 fi
 
 # install navi
 # https://github.com/denisidoro/navi
-echo
 echo -e "$blue_color"
 read -p "Install navi with cargo? (y/n):" instnavi
 echo -e "$close_color"
@@ -95,10 +89,8 @@ if [ $instnavi == "y" ]; then
   sudo apt install -y build-essential
   sudo apt install -y fzf
   sudo apt install -y cargo
-  
   # install navi
   cargo install navi
-  
   # set PATH
   PATH=$PATH:~/.cargo/bin
 fi
@@ -112,13 +104,11 @@ read -p "Install cheat.sh? (y/n):" instcheatsh
 echo -e "$close_color"
 if [ $instcheatsh == "y" ]; then
   curl https://cht.sh/:cht.sh > $HOME/dotfiles/bin/cht.sh
-
   chmod +x $HOME/dotfiles/bin/cht.sh
   if [ ! -d $HOME/.cht.sh ]; then
     mkdir $HOME/.cht.sh
   fi
   ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
-
 fi
 
 # EOF

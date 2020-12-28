@@ -1,5 +1,4 @@
 #!/bin/bash
-# dotfiles install skript
 
 blue_color="\e[38;5;33m"
 light_blue_color="\e[38;5;39m"
