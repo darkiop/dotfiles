@@ -5,7 +5,7 @@
 # crontab: 30 4 * * * /home/darkiop/dotfiles/bin/iobroker/iobroker-backup-sync-ccu.sh
 
 MNT="/mnt/odin/backup"
-BACKUPS="/home/darkiop/docker/prod/iobroker-master/opt-iobroker/backups/"
+BACKUPS="/opt/iobroker/backups/"
 RSYNC="sudo rsync -avz --exclude=mysql_* --exclude=iobroker_* --delete $BACKUPS $MNT/ccu"
 IOB_SIMPLEAPI_DOMAIN="iobroker-master"
 IOB_SIMPLEAPI_PORT="8087"

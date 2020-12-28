@@ -5,7 +5,7 @@
 # crontab: 30 4 * * * /home/darkiop/dotfiles/bin/iobroker/iobroker-backup-sync-iobroker-mariadb.sh
 
 MNT="/mnt/odin/backup"
-BACKUPS="/home/darkiop/docker/prod/iobroker-master/opt-iobroker/backups/"
+BACKUPS="/opt/iobroker/backups/"
 RSYNC="sudo rsync -avz --exclude=homematic_* --exclude=iobroker_* --delete $BACKUPS $MNT/iobroker-mariadb"
 IOB_SIMPLEAPI_DOMAIN="iobroker-master"
 IOB_SIMPLEAPI_PORT="8087"
