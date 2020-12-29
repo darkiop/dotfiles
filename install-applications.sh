@@ -8,6 +8,14 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
+# install submodules
+echo -e "$blue_color"
+read -p "Install essential apps? (y/n):" instsub
+echo -e "$close_color"
+if [ $instapp == "y" ]; then
+  git submodule update --init
+fi
+
 # install software
 echo -e "$blue_color"
 read -p "Install essential apps? (y/n):" instapp
