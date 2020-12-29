@@ -1,0 +1,4 @@
+# install this repos 
+[submodule "vim/amix-vim"]
+  path = vim/amix-vim
+  url = https://github.com/amix/vimrc
