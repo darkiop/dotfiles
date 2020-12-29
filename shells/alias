@@ -40,6 +40,11 @@ function psg() {
   fi
 }
 
+# batcat
+if [ -x /usr/bin/batcat ]; then
+  alias cat='batcat'
+fi
+
 # ls & lsd shortcuts
 if [ -x ~/.cargo/bin/lsd ] | [ -x /usr/bin/lsd ]; then
   alias ls='lsd'

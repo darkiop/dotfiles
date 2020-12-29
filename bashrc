@@ -14,25 +14,29 @@ export NICKNAME="darkiop"
 
 # expand $PATH
 PATH=$PATH:~/dotfiles/bin
-if [ -d ~/.cargo/bin ]; then
-  PATH=$PATH:~/.cargo/bin
+if [ -d $HOME/.cargo/bin ]; then
+  PATH=$PATH:$HOME/.cargo/bin
 fi
-if [ -d ~/.local/bin ]; then
-  PATH=$PATH:~/.local/bin
+if [ -d $HOME/.local/bin ]; then
+  PATH=$PATH:$HOME/.local/bin
 fi
 
 # Distribute bashrc into smaller, more specific files
-source ~/dotfiles/shells/defaults
-source ~/dotfiles/shells/exports
-source ~/dotfiles/shells/alias
-source ~/dotfiles/shells/alias-git
-source ~/dotfiles/shells/prompt
-#source ~/dotfiles/shells/prompt-sexy-prompt
-#source ~/dotfiles/shells/prompt-test
+source $HOME/dotfiles/shells/defaults
+source $HOME/dotfiles/shells/exports
+source $HOME/dotfiles/shells/alias
+source $HOME/dotfiles/shells/prompt
+#source $HOME/dotfiles/shells/prompt-sexy-prompt
+#source $HOME/dotfiles/shells/prompt-test
+
+# load git alias
+if [ -x /usr/bin/git ]; then
+  source $HOME/dotfiles/shells/alias-git
+fi
 
 # load navi alias if navi is installed
-if [ -f ~/.cargo/bin/navi ]; then
-  source ~/dotfiles/shells/alias-navi
+if [ -x $HOME/.cargo/bin/navi ]; then
+  source $HOME/dotfiles/shells/alias-navi
   # bash widget (STRG + G runs navi)
   eval "$(navi widget bash)"
 fi

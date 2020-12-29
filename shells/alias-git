@@ -1,37 +1,3 @@
-# Functions to aid git workflow
-function ga(){
-    git-add $1
-}
-
-function gc(){
-    git commit -m "$*"
-}
-
-function revert(){
-    git reset --hard $1
-}
-
-# load git-prompt
-if [ -f /etc/bash_completion.d/git-prompt ]; then
-    source /etc/bash_completion.d/git-prompt
-fi
-
-# Very useful for stash handling
-function show-stash() 
-{
-    git stash show -p stash@{$1};
-}
-
-function stash-len() 
-{
-    git stash list | wc -l;
-}
-
-function drop-stash() 
-{
-    git stash drop stash@{$1};
-}
-
 alias ga='git add'
 alias gb='git br' 
 alias gd='git diff' 
@@ -46,6 +12,34 @@ alias gbv='git branch -vv'
 alias gr='git reflog'
 alias glf='git ls-files'
 
-# Useful when working on a branch and 
-# want to summarize changes against master
+# Useful when working on a branch and want to summarize changes against master
 alias gdmno='git diff master  --name-only'
+
+# show git log
+alias glog='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
+
+function gc() {
+  git commit -m "$*"
+}
+
+function revert() {
+  git reset --hard $1
+}
+
+# load git-prompt
+if [ -f /etc/bash_completion.d/git-prompt ]; then
+  source /etc/bash_completion.d/git-prompt
+fi
+
+# Very useful for stash handling
+function show-stash() {
+  git stash show -p stash@{$1};
+}
+
+function stash-len() {
+  git stash list | wc -l;
+}
+
+function drop-stash() {
+  git stash drop stash@{$1};
+}
