@@ -10,7 +10,7 @@ close_color="$(tput sgr0)"
 
 # install software
 echo -e "$blue_color"
-read -p "Install essential apps?  (y/n):" instapp
+read -p "Install essential apps? (y/n):" instapp
 echo -e "$close_color"
 if [ $instapp == "y" ]; then
   sudo apt update
