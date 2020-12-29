@@ -92,6 +92,8 @@ if [ $instnavi == "y" ]; then
   cargo install navi
   # set PATH
   PATH=$PATH:~/.cargo/bin
+  # bash widget (STRG + G)
+  eval "$(navi widget bash)"
 fi
 
 # install cheat.sh
@@ -102,12 +104,14 @@ echo -e "$blue_color"
 read -p "Install cheat.sh? (y/n):" instcheatsh
 echo -e "$close_color"
 if [ $instcheatsh == "y" ]; then
-  curl https://cht.sh/:cht.sh > $HOME/dotfiles/bin/cht.sh
+  curl --silent https://cht.sh/:cht.sh > $HOME/dotfiles/bin/cht.sh
   chmod +x $HOME/dotfiles/bin/cht.sh
   if [ ! -d $HOME/.cht.sh ]; then
     mkdir $HOME/.cht.sh
+  fi 
+  if [ ! -L $HOME/.cht.sh/cht.sh.conf ] ; then
+    ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
   fi
-  ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
 fi
 
 # EOF
