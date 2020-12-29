@@ -1,4 +1,10 @@
 % git
 
-# list git submodules
+# submodules list
 git submodule--helper list
+
+# submodules add
+git submodule add <url> <path>
+
+# submodules remove
+git rm --cached <path>
