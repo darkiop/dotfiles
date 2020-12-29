@@ -41,3 +41,6 @@ qm list
 
 # unlock vm
 qm unlock <id>
+
+# show cluster status
+sudo pvecm status
