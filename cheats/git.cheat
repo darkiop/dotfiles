@@ -1,0 +1,4 @@
+% git
+
+# list git submodules
+git submodule--helper list
