@@ -3,4 +3,4 @@ vim/swaps/
 vim/undo/
 .local_dotfiles_settings
 bin/cht.sh
-install-update-from-git.sh
+modules
