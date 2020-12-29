@@ -5,9 +5,9 @@ git status > /dev/null 2>&1 &
 if git diff-index --quiet HEAD --; then
   # no changes
   cd ~/dotfiles
-  git pull > /dev/null 2>&1 &
+  git pull
   cd ~
-  bash ~/.bashrc > /dev/null 2>&1 &
+  bash ~/.bashrc
 else
   # changes
   echo
@@ -15,4 +15,4 @@ else
   echo
 fi
 
-# EOF
+# EOF 
