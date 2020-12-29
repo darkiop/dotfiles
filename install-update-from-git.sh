@@ -3,13 +3,16 @@
 git status > /dev/null 2>&1 &
 
 if git diff-index --quiet HEAD --; then
-    echo 'No changes'
-    cd ~/dotfiles
-    git pull
-    cd ~
-    bash ~/.bashrc
+  # no changes
+  cd ~/dotfiles
+  git pull > /dev/null 2>&1 &
+  cd ~
+  bash ~/.bashrc > /dev/null 2>&1 &
 else
-    echo 'Changes'
+  # changes
+  echo
+  echo -e $red_color"Local changes to the dotfiles were found. Check and commit these or run install-reinstall.sh. "$close_color
+  echo
 fi
 
 # EOF

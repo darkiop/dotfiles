@@ -10,7 +10,7 @@ close_color="$(tput sgr0)"
 
 # install software
 echo -e "$blue_color"
-read -p "Install applications?  (y/n):" instapp
+read -p "Install essential apps?  (y/n):" instapp
 echo -e "$close_color"
 if [ $instapp == "y" ]; then
   sudo apt update
@@ -48,7 +48,8 @@ if [ $instapp == "y" ]; then
   ncdu \
   needrestart \
   hddtemp \
-  parted
+  parted \
+  bat 
   # tmp: rcconf, sensors
 fi
 
@@ -59,9 +60,8 @@ fi
 # dpkg --print-architecture = amd64 & deb
 instlsdarch=$(dpkg --print-architecture)
 if [ $instlsdarch == "amd64" ]; then
-  echo
   echo -e "$blue_color"
-  read -p "Download & Install lsd.deb from Github? (y/n):" instlsd
+  read -p "Install lsd.deb from Github? (y/n):" instlsd
   echo -e "$close_color"
   if [ $instlsd == "y" ]; then
     echo "TODO"
@@ -70,7 +70,6 @@ if [ $instlsdarch == "amd64" ]; then
     rm ~/lsd.deb
   fi
 else 
-  echo
   echo -e "$blue_color"
   read -p "Install lsd with cargo? (y/n):" instlsd
   echo -e "$close_color"
