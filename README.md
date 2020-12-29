@@ -12,7 +12,7 @@ bash ~/dotfiles/install-bashrc.sh
 source ~/.bashrc
 ```
 
-## LINKS (uses and not used in my dotfiles)
+## LINKS (used and not used in my dotfiles)
 - http://lnav.org/blog
 - https://github.com/denisidoro/navi
 - https://github.com/Peltoche/lsd (Siehe auch LinuxUser 2020/02 Seite 14)
@@ -38,6 +38,7 @@ source ~/.bashrc
 - https://github.com/aristocratos/bashtop
 - https://github.com/sharkdp/bat
 - https://drasite.com/blog/Pimp%20my%20terminal#top-from-the-future
+- https://github.com/amix/vimrc
 
 ## TODO
 - https://github.com/chubin/cheat.sh#installation
