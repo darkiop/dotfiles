@@ -123,9 +123,9 @@ fi
 
 # install vimrc-amix
 echo -e "$blue_color"
-read -p "Install vimrc-amix? (y/n):" instvimrc-amix
+read -p "Install vimrc-amix? (y/n):" instvimrcamix
 echo -e "$close_color"
-if [ $instvimrc-amix == "y" ]; then
+if [ $instvimrcamix == "y" ]; then
   bash $HOME/dotfiles/modules/vimrc-amix/install_awesome_parameterized.sh $HOME/dotfiles/modules/vimrc-amix $USER
 fi
 
