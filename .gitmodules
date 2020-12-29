@@ -1,3 +1,4 @@
-[submodule "dotlink"]
-	path = modules/dotlink
-	url = https://github.com/denisidoro/dotlink
+# https://git-scm.com/book/de/v2/Git-Tools-Submodule
+[submodule "modules/vimrc-amix"]
+	path = modules/vimrc-amix
+	url = https://github.com/amix/vimrc

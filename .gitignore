@@ -4,3 +4,4 @@ vim/undo/
 .local_dotfiles_settings
 bin/cht.sh
 modules
+modules/*
