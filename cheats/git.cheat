@@ -8,3 +8,6 @@ git submodule add <url> <path>
 
 # submodules remove
 git rm --cached <path>
+
+# submodules install
+git submodule update --init
