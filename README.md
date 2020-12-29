@@ -37,6 +37,7 @@ source ~/.bashrc
 - https://github.com/Peltoche/lsd
 - https://github.com/aristocratos/bashtop
 - https://github.com/sharkdp/bat
+- https://drasite.com/blog/Pimp%20my%20terminal#top-from-the-future
 
 ## TODO
 - https://github.com/chubin/cheat.sh#installation
