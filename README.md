@@ -36,6 +36,7 @@ source ~/.bashrc
 - https://github.com/denisidoro/navi
 - https://github.com/Peltoche/lsd
 - https://github.com/aristocratos/bashtop
+- https://github.com/sharkdp/bat
 
 ## TODO
 - https://github.com/chubin/cheat.sh#installation
