@@ -10,8 +10,8 @@ close_color="$(tput sgr0)"
 
 # install
 dir=~/dotfiles
-files="bashrc vimrc gitconfig inputrc bash_profile dircolors"
-folders="byobu vim"
+files="bashrc gitconfig inputrc bash_profile dircolors"
+folders="byobu"
 
 echo
 
