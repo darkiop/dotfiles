@@ -10,7 +10,7 @@ close_color="$(tput sgr0)"
 
 # install submodules
 echo -e "$blue_color"
-read -p "Install essential apps? (y/n):" instsub
+read -p "Install submodules? (y/n):" instsub
 echo -e "$close_color"
 if [ $instapp == "y" ]; then
   git submodule update --init
