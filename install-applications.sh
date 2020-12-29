@@ -12,7 +12,7 @@ close_color="$(tput sgr0)"
 echo -e "$blue_color"
 read -p "Install submodules? (y/n):" instsub
 echo -e "$close_color"
-if [ $instapp == "y" ]; then
+if [ $instsub == "y" ]; then
   git submodule update --init
 fi
 
