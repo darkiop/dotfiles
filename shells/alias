@@ -71,7 +71,8 @@ alias reload='source ~/.bashrc'
 alias apt='sudo apt'
 
 # dotfiles update
-alias update-dotfiles='cd ~/dotfiles && git pull && cd && rl'
+#alias update-dotfiles='cd ~/dotfiles && git pull && cd && rl'
+alias update-dotfiles='cd ~/dotfiles && bash install-update-from-git.sh'
 
 # fast switch to dotfiles
 alias dotf='cd ~/dotfiles'
