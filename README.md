@@ -33,8 +33,8 @@ source ~/.bashrc
 - https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 - https://github.com/LeCoupa/awesome-cheatsheets/blob/master/languages/bash.sh
 - https://github.com/chubin/cheat.sh
+- https://github.com/denisidoro/dotfiles
 - https://github.com/denisidoro/navi
-- https://github.com/Peltoche/lsd
 - https://github.com/aristocratos/bashtop
 - https://github.com/sharkdp/bat
 - https://drasite.com/blog/Pimp%20my%20terminal#top-from-the-future
