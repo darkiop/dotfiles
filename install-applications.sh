@@ -15,6 +15,7 @@ echo -e "$close_color"
 if [ $instapp == "y" ]; then
   sudo apt update
   sudo apt install -y \
+  build-essential \
   powerline \
   dnsutils \
   vim \
@@ -85,9 +86,7 @@ echo -e "$blue_color"
 read -p "Install navi with cargo? (y/n):" instnavi
 echo -e "$close_color"
 if [ $instnavi == "y" ]; then
-  sudo apt install -y build-essential
-  sudo apt install -y fzf
-  sudo apt install -y cargo
+  sudo apt install -y build-essential fzf cargo
   # install navi
   cargo install navi
   # set PATH
