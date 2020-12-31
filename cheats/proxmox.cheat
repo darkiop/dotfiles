@@ -9,6 +9,9 @@ pct stop <id>
 # container reboot lxc
 pct reboot <id>
 
+# container create lxc (ubuntu 20.10)
+pct create <id> /var/lib/vz/template/cache/ubuntu-20.10-standard_20.10-1_amd64.tar.gz -arch amd64 -ostype ubuntu -hostname <hostname> -cores <cores> -memory <memory> -swap 512 -storage local-zfs -password -net0 name=eth0,bridge=vmbr0,gw=<gateway>,ip=<ip-cdir>,type=veth
+
 # container delete lxc
 pct destroy <id>
 
