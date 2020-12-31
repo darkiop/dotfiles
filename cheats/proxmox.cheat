@@ -1,16 +1,19 @@
 % proxmox
 
-# start lxc container
+# container start lxc
 pct start <id>
 
-# stop lxc container
+# container stop lxc
 pct stop <id>
 
-# reboot lxc container
+# container reboot lxc
 pct reboot <id>
 
-# remove container
+# container delete lxc
 pct destroy <id>
+
+# container run a command
+pct exec <id> -- bash -c "<command>"
 
 # vzdump file extract
 tar -I zstd -xvf archive.tar.zst
@@ -18,23 +21,23 @@ tar -I zstd -xvf archive.tar.zst
 # proxmox performance overview
 pveperf
 
-# restart pve-cluster
+# pve service cluster restart
 service pve-cluster restart
 
-# restart pvedaemon
+# pve service pvedaemon restart
 service pvedaemon restart
 
-restart pvestatd
+# pve service pvestatd restart
 service pvestatd restart
 
-# restart pveproxy
+# pve service pveproxy restart
 service pveproxy restart
 
-# restart all proxmox services
+# pve service restart all
 service pve-cluster restart && service pvedaemon restart && service pvestatd restart && service pveproxy restart
 
 # list VMs (sorted)
-sudo cat /etc/pve/.vmlist | grep node | tr -d '":,'| awk '{print $1" "$4" "$6 }' | sort -n | column -t
+cat /etc/pve/.vmlist | grep node | tr -d '":,'| awk '{print $1" "$4" "$6 }' | sort -n | column -t
 
 # list VMs
 qm list
@@ -42,5 +45,11 @@ qm list
 # unlock vm
 qm unlock <id>
 
-# show cluster status
-sudo pvecm status
+# cluster show status
+pvecm status
+
+# cluster create
+pvecm create <clustername>
+
+# cluster add
+pvecm add <ip>

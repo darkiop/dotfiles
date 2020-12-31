@@ -59,3 +59,6 @@ iobroker multihost connect
 
 # update repository and optionally filter installed/updateable adapters, use --force to bypass hash check
 iobroker update
+
+# iobroker log tail
+tail -f /opt/iobroker/log/iobroker.current.log
