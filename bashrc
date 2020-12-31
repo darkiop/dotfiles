@@ -20,6 +20,9 @@ fi
 if [ -d $HOME/.local/bin ]; then
   PATH=$PATH:$HOME/.local/bin
 fi
+if [ -x $HOME/dotfiles/modules/fzf/bin/fzf ]; then
+  PATH=$PATH:$HOME/dotfiles/modules/fzf/bin
+fi
 
 # Distribute bashrc into smaller, more specific files
 source $HOME/dotfiles/shells/defaults

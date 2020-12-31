@@ -54,6 +54,10 @@ if [ $instapp == "y" ]; then
   # tmp: rcconf, sensors
 fi
 
+#
+# TODO: batcat nicht aus repo
+#
+
 # install lsd
 # config: ~/.config/lsd/config.yaml
 # github: https://github.com/Peltoche/lsd
@@ -65,7 +69,6 @@ if [ $instlsdarch == "amd64" ]; then
   read -p "Install lsd.deb from Github? (y/n):" instlsd
   echo -e "$close_color"
   if [ $instlsd == "y" ]; then
-    echo "TODO"
     wget -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
     sudo dpkg -i ~/lsd.deb
     rm ~/lsd.deb
@@ -80,19 +83,55 @@ else
   fi
 fi
 
+# install git submodules
+echo -e "$blue_color"
+read -p "Install git submodules? (y/n):" instsub
+echo -e "$close_color"
+if [ $instsub == "y" ]; then
+  git submodule update --init --recursive
+fi
+
+# install vimrc-amix
+echo -e "$blue_color"
+read -p "Install vimrc-amix? (y/n):" instvimrcamix
+echo -e "$close_color"
+if [ $instvimrcamix == "y" ]; then
+  bash $HOME/dotfiles/modules/vimrc-amix/install_awesome_parameterized.sh $HOME/dotfiles/modules/vimrc-amix $USER
+fi
+
 # install navi
 # https://github.com/denisidoro/navi
 echo -e "$blue_color"
-read -p "Install navi with cargo? (y/n):" instnavi
+read -p "Install navi with cargo? (prerequisite: installation of git submodules) (y/n):" instnavi
 echo -e "$close_color"
 if [ $instnavi == "y" ]; then
-  sudo apt install -y build-essential fzf cargo
-  # install navi
-  cargo install navi
-  # set PATH
-  PATH=$PATH:~/.cargo/bin
-  # bash widget (STRG + G)
-  eval "$(navi widget bash)"
+  if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
+    # inst dependencies, fzf = git submodule
+    #bash $HOME/dotfiles/modules/fzf/install --key-bindings --completion --no-update-rc
+    bash $HOME/dotfiles/modules/fzf/install --bin
+    apt install -y build-essential cargo
+    # install navi
+    cargo install navi
+    # set PATH
+    PATH=$PATH:~/.cargo/bin
+    # bash widget (STRG + G)
+    eval "$(navi widget bash)"
+  else
+    echo "Submodule fzf not found, try to install it."
+    git submodule update --init --recursive
+    if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
+      bash $HOME/dotfiles/modules/fzf/install --bin
+      apt install -y build-essential cargo
+      # install navi
+      cargo install navi
+      # set PATH
+      PATH=$PATH:~/.cargo/bin
+      # bash widget (STRG + G)
+      eval "$(navi widget bash)"
+    else
+      echo "Installation of fzf not successful"
+    fi
+  fi
 fi
 
 # install cheat.sh
@@ -111,22 +150,6 @@ if [ $instcheatsh == "y" ]; then
   if [ ! -L $HOME/.cht.sh/cht.sh.conf ] ; then
     ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
   fi
-fi
-
-# install git submodules
-echo -e "$blue_color"
-read -p "Install git submodules? (y/n):" instsub
-echo -e "$close_color"
-if [ $instsub == "y" ]; then
-  git submodule update --init --recursive
-fi
-
-# install vimrc-amix
-echo -e "$blue_color"
-read -p "Install vimrc-amix? (y/n):" instvimrcamix
-echo -e "$close_color"
-if [ $instvimrcamix == "y" ]; then
-  bash $HOME/dotfiles/modules/vimrc-amix/install_awesome_parameterized.sh $HOME/dotfiles/modules/vimrc-amix $USER
 fi
 
 # EOF
