@@ -2,3 +2,6 @@
 [submodule "modules/vimrc-amix"]
 	path = modules/vimrc-amix
 	url = https://github.com/amix/vimrc
+[submodule "modules/fzf"]
+	path = modules/fzf
+	url = https://github.com/junegunn/fzf
