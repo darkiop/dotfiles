@@ -40,8 +40,15 @@ source ~/.bashrc
 - https://drasite.com/blog/Pimp%20my%20terminal#top-from-the-future
 - https://github.com/amix/vimrc
 
-## TODO
-- https://github.com/chubin/cheat.sh#installation
+## todo
+- https://github.com/reujab/silver
+- batcat von github installieren, nicht aus apt repo
+- /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install.sh)"
+
+## special features
+- motd for each hostname (~/dotfiles/motd)
+- navi <kbd>STRG + D</kbd> ((~/dotfiles/cheats)
+- cheat.sh - example, run: "cht.sh man"
 
 ## key bindungs
 
