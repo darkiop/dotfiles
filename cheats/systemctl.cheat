@@ -1,0 +1,4 @@
+% systemctl
+
+# add to startup
+systemctl enable <service>
