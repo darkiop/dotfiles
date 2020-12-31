@@ -20,4 +20,4 @@ ui = true
 pager = true
 
 [submodule]
-  recurse = true
+recurse = true
