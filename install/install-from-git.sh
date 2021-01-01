@@ -1,6 +1,6 @@
 #!/bin/bash
 # install dotfies from github
-# curl -sL https://raw.githubusercontent.com/darkiop/dotfiles/master/install-from-git.sh | bash -
+# curl -sL https://raw.githubusercontent.com/darkiop/dotfiles/master/install/install.sh | bash -
 
 if [ -d $HOME/dotfiles ]; then
   # dotfiles dir exist
@@ -14,7 +14,7 @@ if [ -d $HOME/dotfiles ]; then
     echo
     echo -e $green_color"reinstall "$close_color$yellow_color" ~/dotfiles "$green_color"..."$close_color
     git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
-    bash $HOME/dotfiles/install-bashrc.sh
+    bash $HOME/dotfiles/install/install.sh
   else
     echo -e $red_color"exit ..."$close_color
     exit
@@ -25,8 +25,7 @@ else
   echo -e $green_color"clone"$close_color$yellow_color" dotfiles "$green_color"from github ..."$close_color
   git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
   # install
-  bash $HOME/dotfiles/install-applications.sh
-  bash $HOME/dotfiles/install-bashrc.sh
+  bash $HOME/dotfiles/install/install.sh
 fi
 
 # EOF
