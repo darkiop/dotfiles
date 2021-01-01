@@ -110,7 +110,7 @@ if [ $instnavi == "y" ]; then
     # inst dependencies, fzf = git submodule
     #bash $HOME/dotfiles/modules/fzf/install --key-bindings --completion --no-update-rc
     bash $HOME/dotfiles/modules/fzf/install --bin
-    apt install -y build-essential cargo
+    sudo apt install -y build-essential cargo
     # install navi
     cargo install navi
     # set PATH
@@ -122,7 +122,7 @@ if [ $instnavi == "y" ]; then
     git submodule update --init --recursive
     if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
       bash $HOME/dotfiles/modules/fzf/install --bin
-      apt install -y build-essential cargo
+      sudo apt install -y build-essential cargo
       # install navi
       cargo install navi
       # set PATH
