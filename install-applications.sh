@@ -173,7 +173,7 @@ read -p "run install-bashrc.sh? (y/n):" instbashrc
 echo -e "$close_color"
 if [ $instbashrc == "y" ]; then
   bash $HOME/dotfiles/install-bashrc.sh
-elif
+else
   exit 0
 fi
 
