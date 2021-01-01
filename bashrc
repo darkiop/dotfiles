@@ -29,8 +29,6 @@ source $HOME/dotfiles/shells/defaults
 source $HOME/dotfiles/shells/exports
 source $HOME/dotfiles/shells/alias
 source $HOME/dotfiles/shells/prompt
-#source $HOME/dotfiles/shells/prompt-sexy-prompt
-#source $HOME/dotfiles/shells/prompt-test
 
 # load git alias
 if [ -x /usr/bin/git ]; then
