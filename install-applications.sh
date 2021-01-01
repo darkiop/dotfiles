@@ -111,22 +111,37 @@ if [ $instnavi == "y" ]; then
     #bash $HOME/dotfiles/modules/fzf/install --key-bindings --completion --no-update-rc
     bash $HOME/dotfiles/modules/fzf/install --bin
     sudo apt install -y build-essential cargo
-    # install navi
-    cargo install navi
-    # set PATH
-    PATH=$PATH:~/.cargo/bin
+    
+    # install navi by downloading bin
+    wget -q https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-x86_64-unknown-linux-musl.tar.gz -O $HOME/dotfiles/bin/navi.tar.gz
+    tar xzf $HOME/dotfiles/bin/navi.tar.gz
+    rm $HOME/dotfiles/bin/navi.tar.gz
+    PATH=$PATH:$HOME/dotfiles/bin
+    
+    # install navi with cargo
+    #cargo install navi
+    #PATH=$PATH:~/.cargo/bin
+    
     # bash widget (STRG + G)
-    eval "$(navi widget bash)"
+    #eval "$(navi widget bash)"
   else
     echo "Submodule fzf not found, try to install it."
     git submodule update --init --recursive
     if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
+      # inst dependencies, fzf = git submodule
       bash $HOME/dotfiles/modules/fzf/install --bin
       sudo apt install -y build-essential cargo
-      # install navi
-      cargo install navi
-      # set PATH
-      PATH=$PATH:~/.cargo/bin
+
+      # install navi by downloading bin
+      wget -q https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-x86_64-unknown-linux-musl.tar.gz -O $HOME/dotfiles/bin/navi.tar.gz
+      tar xzf $HOME/dotfiles/bin/navi.tar.gz
+      rm $HOME/dotfiles/bin/navi.tar.gz
+      PATH=$PATH:$HOME/dotfiles/bin
+
+      # install navi with cargo
+      #cargo install navi
+      #PATH=$PATH:~/.cargo/bin
+      
       # bash widget (STRG + G)
       eval "$(navi widget bash)"
     else

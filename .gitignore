@@ -1,5 +1,8 @@
+.local_dotfiles_settings
+bin/cht.sh
+bin/navi
+modules
+modules/*
 vim/backups/
 vim/swaps/
 vim/undo/
-.local_dotfiles_settings
-bin/cht.sh
