@@ -168,8 +168,8 @@ if [ $instcheatsh == "y" ]; then
 fi
 
 # next step, install bashrc
-echo -e "$blue_color"
-read -p "run install-bashrc.sh? (y/n):" instbashrc
+echo -e "$green_color"
+read -p "done. run install-bashrc.sh? (y/n):" instbashrc
 echo -e "$close_color"
 if [ $instbashrc == "y" ]; then
   bash $HOME/dotfiles/install/install-bashrc.sh
