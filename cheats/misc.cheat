@@ -6,6 +6,9 @@ time=$(date +%Y-%m-%d_%T)
 # adduser
 adduser <user>
 
+# adduser (systemuser, no group)
+adduser --system --no-create-home --group <user>
+
 # add user to group
 usermod -a -G <group> <user>
 
