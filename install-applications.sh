@@ -130,7 +130,12 @@ if [ $instnavi == "y" ]; then
       PATH=$PATH:$HOME/dotfiles/bin
     ;;
     (armhf)
-      #https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-armv7-unknown-linux-musleabihf.tar.gz
+      cd $HOME/dotfiles/bin
+      wget -q https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-armv7-unknown-linux-musleabihf.tar.gz -O navi.tar.gz
+      sleep 2
+      tar xzf navi.tar.gz
+      rm navi.tar.gz
+      PATH=$PATH:$HOME/dotfiles/bin
     ;;
   esac
     
@@ -160,6 +165,16 @@ if [ $instcheatsh == "y" ]; then
   if [ ! -L $HOME/.cht.sh/cht.sh.conf ] ; then
     ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
   fi
+fi
+
+# next step, install bashrc
+echo -e "$blue_color"
+read -p "run install-bashrc.sh? (y/n):" instbashrc
+echo -e "$close_color"
+if [ $instbashrc == "y" ]; then
+  bash $HOME/dotfiles/install-bashrc.sh
+elif
+  exit 0
 fi
 
 # EOF
