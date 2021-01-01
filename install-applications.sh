@@ -103,51 +103,44 @@ fi
 # install navi
 # https://github.com/denisidoro/navi
 echo -e "$blue_color"
-read -p "Install navi with cargo? (prerequisite: installation of git submodules) (y/n):" instnavi
+read -p "Install navi? (y/n):" instnavi
 echo -e "$close_color"
 if [ $instnavi == "y" ]; then
+  
+  # first check/install fzf
   if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
-    # inst dependencies, fzf = git submodule
+    # inst fzf (git submodule)
     #bash $HOME/dotfiles/modules/fzf/install --key-bindings --completion --no-update-rc
     bash $HOME/dotfiles/modules/fzf/install --bin
-    sudo apt install -y build-essential cargo
-    
-    # install navi by downloading bin
-    wget -q https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-x86_64-unknown-linux-musl.tar.gz -O $HOME/dotfiles/bin/navi.tar.gz
-    tar xzf $HOME/dotfiles/bin/navi.tar.gz
-    rm $HOME/dotfiles/bin/navi.tar.gz
-    PATH=$PATH:$HOME/dotfiles/bin
-    
-    # install navi with cargo
-    #cargo install navi
-    #PATH=$PATH:~/.cargo/bin
-    
-    # bash widget (STRG + G)
-    #eval "$(navi widget bash)"
   else
-    echo "Submodule fzf not found, try to install it."
+    cd $HOME/dotfiles
     git submodule update --init --recursive
-    if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
-      # inst dependencies, fzf = git submodule
-      bash $HOME/dotfiles/modules/fzf/install --bin
-      sudo apt install -y build-essential cargo
-
-      # install navi by downloading bin
+    bash $HOME/dotfiles/modules/fzf/install --bin
+  fi
+    
+  # install navi by downloading bin
+  instlsdarch=$(dpkg --print-architecture)
+  case $(instlsdarch) in
+    (amd64)
       wget -q https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-x86_64-unknown-linux-musl.tar.gz -O $HOME/dotfiles/bin/navi.tar.gz
+      sleep 2
       tar xzf $HOME/dotfiles/bin/navi.tar.gz
       rm $HOME/dotfiles/bin/navi.tar.gz
       PATH=$PATH:$HOME/dotfiles/bin
-
-      # install navi with cargo
-      #cargo install navi
-      #PATH=$PATH:~/.cargo/bin
-      
-      # bash widget (STRG + G)
-      eval "$(navi widget bash)"
-    else
-      echo "Installation of fzf not successful"
-    fi
-  fi
+    ;;
+    (armhf)
+      #https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-armv7-unknown-linux-musleabihf.tar.gz
+    ;;
+  esac
+    
+  # install navi with cargo
+  #sudo apt install -y build-essential cargo
+  #cargo install navi
+  #PATH=$PATH:~/.cargo/bin
+  
+  # bash widget (STRG + G)
+  eval "$(navi widget bash)"
+  
 fi
 
 # install cheat.sh

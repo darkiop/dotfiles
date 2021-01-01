@@ -38,7 +38,7 @@ if [ -x /usr/bin/git ]; then
 fi
 
 # load navi alias if navi is installed
-if [ -x $HOME/.cargo/bin/navi ]; then
+if [ -x $HOME/.cargo/bin/navi ] || [ -x $HOME/dotfiles/bin/navi ]; then
   source $HOME/dotfiles/shells/alias-navi
   # bash widget (STRG + G runs navi)
   eval "$(navi widget bash)"
