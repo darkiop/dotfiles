@@ -33,7 +33,7 @@ read -p "Install essential apps? (y/n):" instapp
 echo -e "$close_color"
 if [ $instapp == "y" ]; then
   sudo apt update
-  sudo apt install -y \
+  sudo apt install --ignore-missing -y \
   build-essential \
   powerline \
   dnsutils \
@@ -69,9 +69,13 @@ if [ $instapp == "y" ]; then
   needrestart \
   hddtemp \
   parted \
-  bat 
   # tmp: rcconf, sensors
 fi
+
+#
+# TODO bat from git
+# https://ostechnix.com/bat-a-cat-clone-with-syntax-highlighting-and-git-integration/
+#
 
 # install lsd
 # config: ~/.config/lsd/config.yaml
@@ -88,7 +92,7 @@ if [ $instlsdarch == "amd64" ]; then
     sudo dpkg -i ~/lsd.deb
     rm ~/lsd.deb
   fi
-else 
+else
   echo -e "$blue_color"
   read -p "Install lsd with cargo? (y/n):" instlsd
   echo -e "$close_color"
@@ -121,7 +125,7 @@ echo -e "$blue_color"
 read -p "Install navi? (y/n):" instnavi
 echo -e "$close_color"
 if [ $instnavi == "y" ]; then
-  
+
   # first check/install fzf
   if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
     # inst fzf (git submodule)
@@ -132,7 +136,7 @@ if [ $instnavi == "y" ]; then
     git submodule update --init --recursive
     bash $HOME/dotfiles/modules/fzf/install --bin
   fi
-    
+
   # install navi by downloading bin
   instlsdarch=$(dpkg --print-architecture)
   case $instlsdarch in
@@ -153,15 +157,15 @@ if [ $instnavi == "y" ]; then
       PATH=$PATH:$HOME/dotfiles/bin
     ;;
   esac
-    
+
   # install navi with cargo
   #sudo apt install -y build-essential cargo
   #cargo install navi
   #PATH=$PATH:~/.cargo/bin
-  
+
   # bash widget (STRG + G)
   eval "$(navi widget bash)"
-  
+
 fi
 
 # install cheat.sh
@@ -176,7 +180,7 @@ if [ $instcheatsh == "y" ]; then
   chmod +x $HOME/dotfiles/bin/cht.sh
   if [ ! -d $HOME/.cht.sh ]; then
     mkdir $HOME/.cht.sh
-  fi 
+  fi
   if [ ! -L $HOME/.cht.sh/cht.sh.conf ] ; then
     ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
   fi
