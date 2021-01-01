@@ -15,7 +15,7 @@ git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
 bash $HOME/dotfiles/install/install.sh
 ```
 
-## features
+## FEATURES
 - motd for each hostname (~/dotfiles/motd)
 - navi <kbd>STRG</kbd> + <kbd>G</kbd> (~/dotfiles/cheats)
 - cheat.sh (example, run: "cht.sh man")
@@ -50,11 +50,11 @@ bash $HOME/dotfiles/install/install.sh
 - https://drasite.com/blog/Pimp%20my%20terminal#top-from-the-future
 - https://github.com/amix/vimrc
 
-## todo
+## TODO
 - https://github.com/reujab/silver
 - install batcat from github, not from os repo
 
-## key bindungs
+## KEY BINDINGS
 
 ### navi
 
