@@ -88,6 +88,7 @@ echo -e "$blue_color"
 read -p "Install git submodules? (y/n):" instsub
 echo -e "$close_color"
 if [ $instsub == "y" ]; then
+  cd $HOME/dotfiles
   git submodule update --init --recursive
 fi
 
