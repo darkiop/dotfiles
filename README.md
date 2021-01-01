@@ -15,6 +15,13 @@ git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
 bash $HOME/dotfiles/install/install.sh
 ```
 
+## features
+- motd for each hostname (~/dotfiles/motd)
+- navi <kbd>STRG</kbd> + <kbd>G</kbd> (~/dotfiles/cheats)
+- cheat.sh (example, run: "cht.sh man")
+- vimrc from amix
+- byobu
+
 ## LINKS (used and not used in my dotfiles)
 - http://lnav.org/blog
 - https://github.com/denisidoro/navi
@@ -45,12 +52,7 @@ bash $HOME/dotfiles/install/install.sh
 
 ## todo
 - https://github.com/reujab/silver
-- batcat von github installieren, nicht aus apt repo
-
-## special features
-- motd for each hostname (~/dotfiles/motd)
-- navi <kbd>STRG + D</kbd> ((~/dotfiles/cheats)
-- cheat.sh - example, run: "cht.sh man"
+- install batcat from github, not from os repo
 
 ## key bindungs
 
