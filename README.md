@@ -7,7 +7,7 @@ Screenshot with Terminal https://github.com/Eugeny/terminus
 ## INSTALL
 ```
 git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
-bash ~/dotfiles/install/install-apps.sh
+bash $HOME/dotfiles/install/install.sh
 ```
 
 ## LINKS (used and not used in my dotfiles)
