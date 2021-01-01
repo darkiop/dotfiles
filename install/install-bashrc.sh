@@ -61,7 +61,7 @@ echo -e "$close_color"
 if [ $loadbashrc == "y" ]; then
   bash $HOME/.bashrc
 else
-  echo -e $green_color"done. type"$close_color$yellow_color" source ~/.bashrc "$green_color"to load the dotfiles"$close_color
+  echo -e $green_color"done. please "$close_color$yellow_color" relogin "$green_color"to load the dotfiles"$close_color
   echo
 fi
 

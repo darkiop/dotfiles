@@ -11,6 +11,9 @@ close_color="$(tput sgr0)"
 # check if dotfiles dir exist
 if [ ! -d $HOME/dotfiles ]; then
   git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
+else
+  echo -e $green_color"dotfiles found. continue with the installation."$close_color
+  echo
 fi
 
 # install essential apps
