@@ -8,12 +8,18 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
+# check if git is installed
+if [ ! $(which git) ]; then
+   echo -e $red_color"git not found. install it ..."$close_color
+  sudo apt install git -y
+fi
+
 # check if dotfiles dir exist
 if [ ! -d $HOME/dotfiles ]; then
   git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
 else
-  echo -e $green_color"dotfiles found. continue with the installation."$close_color
   echo
+  echo -e $green_color"dotfiles found. continue with the installation process."$close_color
 fi
 
 # install essential apps

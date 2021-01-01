@@ -5,6 +5,11 @@ dotfiles for bash
 Screenshot with Terminal https://github.com/Eugeny/terminus
 
 ## INSTALL
+### direct, with wget
+```
+bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')"
+```
+### clone the repo
 ```
 git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
 bash $HOME/dotfiles/install/install.sh
@@ -41,7 +46,6 @@ bash $HOME/dotfiles/install/install.sh
 ## todo
 - https://github.com/reujab/silver
 - batcat von github installieren, nicht aus apt repo
-- /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install.sh)"
 
 ## special features
 - motd for each hostname (~/dotfiles/motd)
