@@ -120,7 +120,7 @@ if [ $instnavi == "y" ]; then
     
   # install navi by downloading bin
   instlsdarch=$(dpkg --print-architecture)
-  case $(instlsdarch) in
+  case $instlsdarch in
     (amd64)
       wget -q https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-x86_64-unknown-linux-musl.tar.gz -O $HOME/dotfiles/bin/navi.tar.gz
       sleep 2
