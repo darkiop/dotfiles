@@ -8,6 +8,11 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
+# check last apt update and run if necessary (7 days)
+if [ -z "$(find -H /var/lib/apt/lists -maxdepth 0 -mtime -7)" ]; then
+  sudo apt-get update
+fi
+
 # check if git is installed
 if [ ! $(which git) ]; then
    echo -e $red_color"git not found. install it ..."$close_color
