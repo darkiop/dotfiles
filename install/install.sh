@@ -8,7 +8,12 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
-# install software
+# check if dotfiles dir exist
+if [ ! -d $HOME/dotfiles ]; then
+  git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
+fi
+
+# install essential apps
 echo -e "$blue_color"
 read -p "Install essential apps? (y/n):" instapp
 echo -e "$close_color"
@@ -53,10 +58,6 @@ if [ $instapp == "y" ]; then
   bat 
   # tmp: rcconf, sensors
 fi
-
-#
-# TODO: batcat nicht aus repo
-#
 
 # install lsd
 # config: ~/.config/lsd/config.yaml
