@@ -54,11 +54,12 @@ if [ ! -L ~/.config/lsd/config.yaml ] ; then
 fi
 
 # load .bashrc
-echo -e "$blue_color"
-read -p "load ~/.bashrc?  (y/n):" instapp
+echo -e "$green_color"
+echo "dotfiles installed. "
+read -p "load ~/.bashrc?  (y/n):" instbashrc
 echo -e "$close_color"
-if [ $instapp == "y" ]; then
-  bash ~/.bashrc
+if [ $instbashrc == "y" ]; then
+  bash $HOME/.bashrc
 else
   echo -e $green_color"done. type"$close_color$yellow_color" source ~/.bashrc "$green_color"to load the dotfiles"$close_color
   echo
