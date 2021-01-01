@@ -12,7 +12,7 @@ if [ $reinstall == "y" ]; then
   echo
   echo -e $green_color"reinstall "$close_color$yellow_color" ~/dotfiles "$green_color"..."$close_color
   git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
-  bash $HOME/dotfiles/install-bashrc.sh
+  bash $HOME/dotfiles/install/install-bashrc.sh
 else
   echo "n"
 fi
