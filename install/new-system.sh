@@ -71,15 +71,16 @@ infomsg() {
 }
 
 # system updates
-infomsg green "update the system ..."
+infomsg blue "update the system ..."
 apt update
 apt upgrade -y
 
 # install sudo & git
-infomsg green "install git, curl and wget ..."
+infomsg blue "install git, curl and wget ..."
 apt install -y sudo git curl wget
 
 # time & locales
+infomsg blue "setup timezone & locales ..."
 apt-get install -y tzdata
 ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 echo "Europe/Berlin" > /etc/timezone
@@ -90,13 +91,16 @@ dpkg-reconfigure --frontend=noninteractive locales
 update-locale LANG=de_DE.UTF-8
 
 # add user darkiop
+infomsg blue "adduser: darkiop"
 useradd -m -s /bin/bash darkiop
 passwd darkiop
 
 # add user darkiop to group sudo
+infomsg blue "install git, curl and wget ..."
 usermod -a -G sudo darkiop
 
 # install samba
+infomsg blue "install samba ..."
 apt install -y samba-common samba
 
 cat <<EOF > /etc/samba/smb.conf
@@ -125,11 +129,14 @@ cat <<EOF > /etc/samba/smb.conf
 EOF
 
 # add samba user
+infomsg blue "set a password for sambauser ..."
 smbpasswd -a darkiop
 
 # restart smb service
+infomsg blue "restart samba service ..."
 systemctl restart smbd.service
 
 # install dotfiles
+infomsg blue "install dotfiles ..."
 su -c "bash <(wget -qO- https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh)" darkiop
 su darkiop
