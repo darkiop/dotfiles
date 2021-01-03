@@ -136,7 +136,5 @@ smbpasswd -a darkiop
 infomsg blue "restart samba service ..."
 systemctl restart smbd.service
 
-# install dotfiles
-infomsg blue "install dotfiles ..."
-su -c "bash <(wget -qO- https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh)" darkiop
+# switch user
 su darkiop
