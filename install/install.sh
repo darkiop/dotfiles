@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# set colors
 blue_color="\e[38;5;33m"
 light_blue_color="\e[38;5;39m"
 red_color="\e[38;5;196m"
@@ -8,15 +9,155 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
+# help
+help() {
+  cat << EOF
+
+usage: $0 [PARAMETERS]
+
+    --help     Show this message
+    --all      Install with all Options: 1. Essential Apps, 2. LSD, 3. git submodules , 4. vimrc-amix, 5. navi, 6. cheat.sh
+    --apps     
+    --lsd
+    --gitsubm
+    --vimrc
+    --navi
+    --cheatsh
+
+Without a parameter, the script will ask you what you want to install.
+
+EOF
+}
+
+# parameters
+instAPP=0
+instLSD=0
+instGITSUBM=0
+instVIMRC=0
+instNAVI=0
+instCHEATSH=0
+for para in "$@"; do
+  case $para in
+    --help)
+      help
+      exit 0
+      ;;
+    --all)
+      instAPP=1
+      instLSD=1
+      instGITSUBM=1
+      instVIMRC=1
+      instNAVI=1
+      instCHEATSH=1
+      ;;
+    --apps)
+      instAPP=1
+      instLSD=0
+      instGITSUBM=0
+      instVIMRC=0
+      instNAVI=0
+      instCHEATSH=0
+      ;;
+    --lsd)
+      instLSD=1
+      ;;
+    --gitsubm)
+      instGITSUBM=1
+      ;;
+    --vimrc)
+      instVIMRC=1
+      ;;
+    --navi)
+      instNAVI=1
+      ;;
+    --cheatsh)
+      instCHEATSH=1
+      ;;
+    *)
+      echo "unknown parameter: $para"
+      help
+      exit 1
+      ;;
+  esac
+done
+
+# TODO if not root, alias sudo apt
+# check if root, when not define alias with sudo
+if [[ $EUID -ne 0 ]]; then
+  dpkg='sudo '$(which dpkg)
+  apt='sudo '$(which apt)
+else
+  dpkg=$(which dpkg)
+  apt=$(which apt)
+fi
+
+# ask functions
+ask() {
+  local color="$1"
+  case $color in
+    green)
+    color=$green_color
+    ;;
+    blue)
+    color=$blue_color
+    ;;
+    lightblue)
+    color=$light_blue_color
+    ;;
+    yellow)
+    color=$yellow_color
+    ;;
+    red)
+    color=$yellow_color
+    ;;
+  esac
+  while true; do
+    echo -e "$color"
+    read -p "$2 ([y]/n) " -r
+    echo -e "$close_color"
+    REPLY=${REPLY:-"y"}
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      return 1
+    elif [[ $REPLY =~ ^[Nn]$ ]]; then
+      return 0
+    fi
+  done
+}
+
+# info function
+infomsg() {
+  local color="$1"
+  case $color in
+    green)
+    color=$green_color
+    ;;
+    blue)
+    color=$blue_color
+    ;;
+    lightblue)
+    color=$light_blue_color
+    ;;
+    yellow)
+    color=$yellow_color
+    ;;
+    red)
+    color=$yellow_color
+    ;;
+  esac
+  echo -e "$color"
+  echo "$1"
+  echo -e "$close_color"
+}
+
 # check last apt update and run if necessary (7 days)
 if [ -z "$(find -H /var/lib/apt/lists -maxdepth 0 -mtime -7)" ]; then
-  sudo apt-get update
+  $apt update
 fi
 
 # check if git is installed
 if [ ! $(which git) ]; then
-   echo -e $red_color"git not found. install it ..."$close_color
-  sudo apt install git -y
+  echo -e $red_color"git not found. install it ..."$close_color
+  $apt install git -y
 fi
 
 # check if dotfiles dir exist
@@ -27,13 +168,12 @@ else
   echo -e $green_color"dotfiles found. continue with the installation process."$close_color
 fi
 
+# -------------------------------------------------------------
 # install essential apps
-echo -e "$blue_color"
-read -p "Install essential apps? (y/n):" instapp
-echo -e "$close_color"
-if [ $instapp == "y" ]; then
-  sudo apt update
-  sudo apt install --ignore-missing -y \
+# -------------------------------------------------------------
+function instAPP() {
+  $apt update
+  $apt install --ignore-missing -y \
   build-essential \
   powerline \
   dnsutils \
@@ -70,62 +210,103 @@ if [ $instapp == "y" ]; then
   hddtemp \
   parted \
   # tmp: rcconf, sensors
+}
+if [ $instAPP -eq 1 ]; then
+  instAPP
+else
+  ask blue "Install essential apps?"
+  if [ $REPLY == "y" ]; then
+    instAPP
+  fi
 fi
 
-#
-# TODO bat from git
+# -------------------------------------------------------------
+# TODO
+# Install: BAT
 # https://ostechnix.com/bat-a-cat-clone-with-syntax-highlighting-and-git-integration/
-#
+# -------------------------------------------------------------
 
-# install lsd
+
+# -------------------------------------------------------------
+# Install: LSD
 # config: ~/.config/lsd/config.yaml
 # github: https://github.com/Peltoche/lsd
 #         https://github.com/Peltoche/lsd/releases
 # dpkg --print-architecture = amd64 & deb
-instlsdarch=$(dpkg --print-architecture)
-if [ $instlsdarch == "amd64" ]; then
-  echo -e "$blue_color"
-  read -p "Install lsd.deb from Github? (y/n):" instlsd
-  echo -e "$close_color"
-  if [ $instlsd == "y" ]; then
+# -------------------------------------------------------------
+function instLSD() {
+  local arch=$1
+  if [ $arch == "deb" ]; then
     wget -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
-    sudo dpkg -i ~/lsd.deb
+    $dpkg -i ~/lsd.deb
     rm ~/lsd.deb
-  fi
-else
-  echo -e "$blue_color"
-  read -p "Install lsd with cargo? (y/n):" instlsd
-  echo -e "$close_color"
-  if [ $instlsd == "y" ]; then
-    sudo apt install -y cargo
+  elif [ $arch == "cargo" ]; then
+    $apt install -y cargo
     cargo install lsd
   fi
+}
+if [ $instLSD -eq 1 ]; then
+  instlsdarch=$(dpkg --print-architecture)
+  if [ $instlsdarch == "amd64" ]; then
+    instLSD "deb"
+  else
+    ask blue "No .deb file to install. Install LSD with cargo?"
+    if [ $REPLY == "y" ]; then
+      instLSD "cargo"
+    fi
+  fi
+else
+  ask blue "Install lsd.deb from Github?"
+  if [ $REPLY == "y" ]; then
+    instlsdarch=$(dpkg --print-architecture)
+    if [ $instlsdarch == "amd64" ]; then
+      instLSD "deb"
+    else
+      ask blue "No .deb file to install. Install LSD with cargo?"
+      if [ $REPLY == "y" ]; then
+        instLSD "cargo"
+      fi
+    fi
+  fi
 fi
 
-# install git submodules
-echo -e "$blue_color"
-read -p "Install git submodules? (y/n):" instsub
-echo -e "$close_color"
-if [ $instsub == "y" ]; then
+# -------------------------------------------------------------
+# Install: GIT SUBMODULES
+# see: .gitmodules
+# -------------------------------------------------------------
+function instGITSUBM() {
   cd $HOME/dotfiles
   git submodule update --init --recursive
+}
+if [ $instGITSUBM -eq 1 ]; then
+  instGITSUBM
+else
+  ask blue "Install git submodules?"
+  if [ $REPLY == "y" ]; then
+    instGITSUBM
+  fi
 fi
 
-# install vimrc-amix
-echo -e "$blue_color"
-read -p "Install vimrc-amix? (y/n):" instvimrcamix
-echo -e "$close_color"
-if [ $instvimrcamix == "y" ]; then
+# -------------------------------------------------------------
+# Install: vimrc-amix
+# -------------------------------------------------------------
+function instVIMRC() {
   bash $HOME/dotfiles/modules/vimrc-amix/install_awesome_parameterized.sh $HOME/dotfiles/modules/vimrc-amix $USER
+}
+if [ $instVIMRC -eq 1 ]; then
+  instVIMRC
+else
+  ask blue "Install vimrc-amix?"
+  if [ $REPLY == "y" ]; then
+    instVIMRC
+  fi
 fi
 
-# install navi
+# -------------------------------------------------------------
+# Install: NAVI
 # https://github.com/denisidoro/navi
-echo -e "$blue_color"
-read -p "Install navi? (y/n):" instnavi
-echo -e "$close_color"
-if [ $instnavi == "y" ]; then
-
+# -------------------------------------------------------------
+function instNAVI() {
   # first check/install fzf
   if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
     # inst fzf (git submodule)
@@ -136,7 +317,6 @@ if [ $instnavi == "y" ]; then
     git submodule update --init --recursive
     bash $HOME/dotfiles/modules/fzf/install --bin
   fi
-
   # install navi by downloading bin
   instlsdarch=$(dpkg --print-architecture)
   case $instlsdarch in
@@ -157,25 +337,25 @@ if [ $instnavi == "y" ]; then
       PATH=$PATH:$HOME/dotfiles/bin
     ;;
   esac
-
-  # install navi with cargo
-  #sudo apt install -y build-essential cargo
-  #cargo install navi
-  #PATH=$PATH:~/.cargo/bin
-
   # bash widget (STRG + G)
   eval "$(navi widget bash)"
-
+}
+if [ $instNAVI -eq 1 ]; then
+  instNAVI
+else
+  ask blue "Install navi?"
+  if [ $REPLY == "y" ]; then
+    instNAVI
+  fi
 fi
 
+# -------------------------------------------------------------
 # install cheat.sh
 # https://github.com/chubin/cheat.sh#installation
 # https://github.com/chubin/cheat.sh#command-line-client-chtsh
 # config: ~/.cht.sh/cht.sh.conf
-echo -e "$blue_color"
-read -p "Install cheat.sh? (y/n):" instcheatsh
-echo -e "$close_color"
-if [ $instcheatsh == "y" ]; then
+# -------------------------------------------------------------
+function instCHEATSH() {
   curl --silent https://cht.sh/:cht.sh > $HOME/dotfiles/bin/cht.sh
   chmod +x $HOME/dotfiles/bin/cht.sh
   if [ ! -d $HOME/.cht.sh ]; then
@@ -184,16 +364,24 @@ if [ $instcheatsh == "y" ]; then
   if [ ! -L $HOME/.cht.sh/cht.sh.conf ] ; then
     ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
   fi
+}
+if [ $instCHEATSH -eq 1 ]; then
+  instCHEATSH
+else
+  ask blue "Install cheat.sh?"
+  if [ $REPLY == "y" ]; then
+    instCHEATSH
+  fi
 fi
 
+# -------------------------------------------------------------
 # next step, install bashrc
-echo -e "$green_color"
-read -p "done. run install-bashrc.sh? (y/n):" instbashrc
-echo -e "$close_color"
-if [ $instbashrc == "y" ]; then
-  bash $HOME/dotfiles/install/install-bashrc.sh
+# -------------------------------------------------------------
+ask green "done. run install-bashrc.sh?"
+if [ $REPLY == "y" ]; then
+  source $HOME/dotfiles/install/install-bashrc.sh
 else
-  exit 0
+  exit
 fi
 
 # EOF
