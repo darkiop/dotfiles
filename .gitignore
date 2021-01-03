@@ -6,3 +6,5 @@ modules/*
 vim/backups/
 vim/swaps/
 vim/undo/
+vimrc
+workspace.code-workspace
