@@ -80,21 +80,14 @@ infomsg green "install git, curl and wget ..."
 apt install -y sudo git curl wget
 
 # time & locales
-ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 apt-get install -y tzdata
-dpkg-reconfigure -f noninteractive tzdata
-
-#pkg-reconfigure locales
-
+ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 echo "Europe/Berlin" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen
 echo 'LANG="de_DE.UTF-8"'>/etc/default/locale
 dpkg-reconfigure --frontend=noninteractive locales
 update-locale LANG=de_DE.UTF-8
-
-
-
 
 # add user darkiop
 useradd -m -s /bin/bash darkiop
@@ -130,9 +123,6 @@ cat <<EOF > /etc/samba/smb.conf
   read only = No
   valid users = %S
 EOF
-
-# check samba config
-testparm
 
 # add samba user
 smbpasswd -a darkiop
