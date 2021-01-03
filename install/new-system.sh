@@ -66,7 +66,7 @@ infomsg() {
     ;;
   esac
   echo -e "$color"
-  echo "$1"
+  echo "$2"
   echo -e "$close_color"
 }
 
