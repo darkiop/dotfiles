@@ -130,13 +130,11 @@ else
 fi
 
 # show updates
-case $HOSTNAME in
-  (iobroker-master|iobroker-hwr|pve01|pve-vm-docker|pve-ct-unifi|pve-ct-pihole)
-    echo -e "$light_blue_color"
-    printf "Checking for updates ...\n\n"
-    if [ "$(which apt-get)" ]; then echo "`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` updates to install." ; fi
-    printf "\n"
-  ;;
-esac
+if [ $(which apt) ]; then
+  echo -e "$light_blue_color"
+  printf "Checking for updates ...\n\n"
+  if [ "$(which apt-get)" ]; then echo "`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` updates to install." ; fi
+  printf "\n"
+fi
 
 # EOF
