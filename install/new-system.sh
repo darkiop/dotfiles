@@ -131,5 +131,5 @@ smbpasswd -a darkiop
 systemctl restart smbd.service
 
 # install dotfiles
-su -c bash <(wget -qO- https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh) darkiop
+su -c "bash <(wget -qO- https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh)" darkiop
 su darkiop
