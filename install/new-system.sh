@@ -8,7 +8,7 @@ apt update
 apt upgrade -y
 
 # install sudo & git
-apt install sudo git
+apt install -Y sudo git curl
 
 # add user darkiop
 adduser darkiop
@@ -25,10 +25,8 @@ dpkg-reconfigure locales
 su darkiop
 
 # install dotfiles
-if [ -d ~/dotfiles ]; then
-  mkdir ~/dotfiles
-fi
-git clone https://github.com/darkiop/dotfiles.git ~/dotfiles
-~/dotfiles/install-applications.sh
-~/dotfiles/install-bashrc.sh
-source ~/.bashrc
+#bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')"
+#bash $HOME/dotfiles/install/install.sh
+
+sudo su -c "bash <(wget -qO- https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh)
+rm install.sh
