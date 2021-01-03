@@ -140,9 +140,6 @@ smbpasswd -a darkiop
 # restart smb service
 systemctl restart smbd.service
 
-# switch user
-su darkiop
-
 # install dotfiles
-bash <(wget -qO- https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh)
-rm install.sh
+su -c bash <(wget -qO- https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh) darkiop
+su darkiop
