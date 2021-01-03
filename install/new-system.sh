@@ -71,12 +71,12 @@ infomsg() {
 }
 
 # system updates
-infomsg green_color "update the system ..."
+infomsg green "update the system ..."
 apt update
 apt upgrade -y
 
 # install sudo & git
-infomsg green_color "install git, curl and wget ..."
+infomsg green "install git, curl and wget ..."
 apt install -y sudo git curl wget
 
 # time & locales
