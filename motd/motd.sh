@@ -134,14 +134,14 @@ if [ $(which apt) ]; then
   echo -e "$light_blue_color"
   printf "Checking for updates ..."
   echo -e "$close_color"
-  updatesList=""
   updates="$(apt-get -s dist-upgrade | awk '/^Inst/ { print $2 }')"
+  updatesText=""
   if [ $updates ]; then
-    updatesList="$green_color:$close_color $yellow_color$updates$close_color"
+    updatesText="$green_color:$close_color $yellow_color$updates$close_color"
   fi
   if [ "$(which apt-get)" ]; then
     echo
-    echo -e $green_color"`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` updates to install"$close_color$updatesList
+    echo -e $green_color"`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` updates to install"$close_color$updatesText
     echo
   fi
 fi
