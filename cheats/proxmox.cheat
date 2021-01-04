@@ -56,3 +56,12 @@ pvecm create <clustername>
 
 # cluster add
 pvecm add <ip>
+
+# change dir vz
+cd /var/lib/vz
+
+# change dir container config files
+cd /etc/pve/lxc
+
+# change dir vm config
+cd /etc/pve/qemu-server
