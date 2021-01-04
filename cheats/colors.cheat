@@ -1,0 +1,110 @@
+% colors
+
+# bold
+printf "\\e[1m<text>\\e[0m\\n"
+
+# bg
+printf "\\e[30m<text>\\e[0m\\n"
+
+# red
+printf "\\e[31m<text>\\e[0m\\n"
+
+# green
+printf "\\e[32m<text>\\e[0m\\n"
+
+# yellow
+printf "\\e[33m<text>\\e[0m\\n"
+
+# blue
+printf "\\e[34m<text>\\e[0m\\n"
+
+# purple
+printf "\\e[35m<text>\\e[0m\\n"
+
+# aqua
+printf "\\e[36m<text>\\e[0m\\n"
+
+# gray
+printf "\\e[37m<text>\\e[0m\\n"
+
+# light bg/gray
+printf "\\e[90m<text>\\e[0m\\n"
+
+# light red
+printf "\\e[91m<text>\\e[0m\\n"
+
+# light green
+printf "\\e[92m<text>\\e[0m\\n"
+
+# light yellow
+printf "\\e[93m<text>\\e[0m\\n"
+
+# light blue
+printf "\\e[94m<text>\\e[0m\\n"
+
+# light purple
+printf "\\e[95m<text>\\e[0m\\n"
+
+# light aqua
+printf "\\e[96m<text>\\e[0m\\n"
+
+# light gray
+printf "\\e[97m<text>\\e[0m\\n"
+
+# light dark gray
+printf "\\e[98m<text>\\e[0m\\n"
+
+
+# bg and bold
+printf "\\e[30;1m<text>\\e[0m\\n"
+
+# red and bold
+printf "\\e[31;1m<text>\\e[0m\\n"
+
+# green and bold
+printf "\\e[32;1m<text>\\e[0m\\n"
+
+# yellow and bold
+printf "\\e[33;1m<text>\\e[0m\\n"
+
+# blue and bold
+printf "\\e[34;1m<text>\\e[0m\\n"
+
+# purple and bold
+printf "\\e[35;1m<text>\\e[0m\\n"
+
+# aqua and bold
+printf "\\e[36;1m<text>\\e[0m\\n"
+
+# gray and bold
+printf "\\e[37;1m<text>\\e[0m\\n"
+
+# dark gray and bold
+printf "\\e[38;1m<text>\\e[0m\\n"
+
+# light bg and bold
+printf "\\e[90;1m<text>\\e[0m\\n"
+
+# light red and bold
+printf "\\e[91;1m<text>\\e[0m\\n"
+
+# light green and bold
+printf "\\e[92;1m<text>\\e[0m\\n"
+
+# light yellow and bold
+printf "\\e[93;1m<text>\\e[0m\\n"
+
+# light blue and bold
+printf "\\e[94;1m<text>\\e[0m\\n"
+
+# light purple and bold
+printf "\\e[95;1m<text>\\e[0m\\n"
+
+# light aqua and bold
+printf "\\e[96;1m<text>\\e[0m\\n"
+
+# light gray and bold
+printf "\\e[97;1m<text>\\e[0m\\n"
+
+# light dark gray and bold
+printf "\\e[98;1m<text>\\e[0m\\n"
