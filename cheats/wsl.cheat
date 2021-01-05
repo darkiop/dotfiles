@@ -1,0 +1,13 @@
+% wsl
+
+# wsl shuutdown
+wsl --shutdown
+
+# wsl set version 2
+wsl --set-version <subsystem> 2
+
+# wsl set default version
+wsl --set-default-version 2
+
+# wsl list installed
+wsl -l -v
