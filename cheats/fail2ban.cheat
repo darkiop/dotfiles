@@ -1,0 +1,7 @@
+% security, fail2bain, firewall
+
+# fail2ban status
+fail2ban-client status
+
+# fail2ban status <service>
+fail2ban-client status <service>
