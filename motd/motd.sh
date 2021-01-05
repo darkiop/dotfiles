@@ -39,11 +39,6 @@ case $get_host_name in
     get_ip_host=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
   ;;
   
-  (iobroker-master)    
-    get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
-    #get_cpu_temp=$(($(cat /sys/class/hwmon/hwmon0/temp1_input)/1000))"°C"
-    get_ip_host=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1);;
-
   (*)
     get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
     get_ip_host=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1)
@@ -59,14 +54,6 @@ get_os_loadavg=`echo -e "$get_os_load_1" / " $get_os_load_5 $get_os_load_15"`
 
 get_proc_ps=$(ps -Afl | wc -l)
 get_swap=$(free -m | tail -n 1 | awk {'print $3'})
-
-# set colors
-#blue_color="\e[38;5;33m"
-#light_blue_color="\e[38;5;39m"
-#red_color="\e[38;5;196m"
-#green_color="\e[38;5;42m"
-#green_color_bold="\e[1;38;5;42m"
-#yellow_color="\e[38;5;227m"
 
 # check if colors available
 case $get_host_name in
