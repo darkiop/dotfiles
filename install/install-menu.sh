@@ -1,0 +1,388 @@
+#!/bin/bash
+
+# set colors
+blue_color="\e[38;5;33m"
+light_blue_color="\e[38;5;39m"
+red_color="\e[38;5;196m"
+green_color="\e[38;5;42m"
+green_color_bold="\e[1;38;5;42m"
+yellow_color="\e[38;5;227m"
+close_color="$(tput sgr0)"
+
+# check if root, when not define alias with sudo
+if [[ $EUID -ne 0 ]]; then
+  dpkg='sudo '$(which dpkg)
+  apt='sudo '$(which apt)
+else
+  dpkg=$(which dpkg)
+  apt=$(which apt)
+fi
+
+# -------------------------------------------------------------
+# Check if git is installed
+# -------------------------------------------------------------
+function checkgit() {
+  if [ ! $(which git) ]; then
+    message red "git not found. install it ..."
+    $apt install git -y
+  fi
+}
+
+# -------------------------------------------------------------
+# Ask
+# ask blue "Question?"
+# if [ $REPLY == "y" ]; then
+#   do something ...
+# fi
+# -------------------------------------------------------------
+function ask() {
+  local color="$1"
+  case $color in
+    green)
+    color=$green_color
+    ;;
+    blue)
+    color=$blue_color
+    ;;
+    lightblue)
+    color=$light_blue_color
+    ;;
+    yellow)
+    color=$yellow_color
+    ;;
+    red)
+    color=$yellow_color
+    ;;
+  esac
+  while true; do
+    echo -e "$color"
+    read -p "$2 ([y]/n) " -r
+    echo -e "$close_color"
+    REPLY=${REPLY:-"y"}
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      return 1
+    elif [[ $REPLY =~ ^[Nn]$ ]]; then
+      return 0
+    fi
+  done
+}
+
+# -------------------------------------------------------------
+# Message
+# -------------------------------------------------------------
+function message() {
+  local color="$1"
+  case $color in
+    green)
+    color=$green_color
+    ;;
+    blue)
+    color=$blue_color
+    ;;
+    lightblue)
+    color=$light_blue_color
+    ;;
+    yellow)
+    color=$yellow_color
+    ;;
+    red)
+    color=$yellow_color
+    ;;
+  esac
+  echo -e "$color"
+  echo "$2"
+  echo -e "$close_color"
+}
+
+# -------------------------------------------------------------
+# Menu
+# -------------------------------------------------------------
+function manageMenu() {
+  echo
+  echo -e $yellow_color
+cat << EOF
+  ▌   ▐  ▗▀▖▗▜       
+▞▀▌▞▀▖▜▀ ▐  ▄▐ ▞▀▖▞▀▘
+▌ ▌▌ ▌▐ ▖▜▀ ▐▐ ▛▀ ▝▀▖
+▝▀▘▝▀  ▀ ▐  ▀▘▘▝▀▘▀▀
+EOF
+echo -e $close_color
+
+  echo
+	echo "   1) Install dotfiles (incl. 2-8)"
+	echo "   2) Install Apps"
+	echo "   3) Install LSD"
+  echo "   4) Install git submodules"
+  echo "   5) Install vimrc"
+  echo "   6) Install navi"
+  echo "   7) Install cheat.sh"
+  echo "   8) Install .bashrc"
+	echo "   9) Exit"
+  echo
+	until [[ ${MENU_OPTION} =~ ^[1-9]$ ]]; do
+		read -rp "Select an option [1-9]: " MENU_OPTION
+	done
+	case "${MENU_OPTION}" in
+	1)
+		instDOTF
+		;;
+	2)
+		instAPP
+		;;
+	3)
+		instLSD
+		;;
+	4)
+		instGITSUBM
+		;;
+	5)
+		instVIMRC
+		;;
+	6)
+		instNAVI
+		;;
+	7)
+		instCHEATSH
+		;;
+	8)
+		instBASHRC
+		;;
+	9)
+    echo
+    message yellow "Exit."
+		exit 0
+		;;
+	esac
+}
+
+# -------------------------------------------------------------
+# Install dotfiles (all)
+# -------------------------------------------------------------
+function instDOTF() {
+  checkgit
+  message blue "Install complete dotfiles"
+  instAPP
+  instLSD
+  instGITSUBM
+  instVIMRC
+  instNAVI
+  instCHEATSH
+  instBASHRC
+}
+
+# -------------------------------------------------------------
+# Install essential Apps
+# -------------------------------------------------------------
+function instAPP() {
+  message blue "Install essential Apps"
+  $apt update
+  $apt install --ignore-missing -y \
+  build-essential \
+  powerline \
+  dnsutils \
+  vim \
+  byobu \
+  ranger \
+  htop \
+  cifs-utils \
+  net-tools \
+  html2text \
+  fping \
+  curl \
+  speedtest-cli \
+  unzip \
+  nmap \
+  iperf3 \
+  lnav \
+  lsof \
+  toilet \
+  command-not-found \
+  bash-completion \
+  iproute2 \
+  procps \
+  tcpdump \
+  man \
+  wakeonlan \
+  neofetch \
+  mlocate \
+  telnet \
+  nfs-common \
+  rsync \
+  ncdu \
+  needrestart \
+  hddtemp \
+  parted \
+  # tmp: rcconf, sensors
+}
+
+# -------------------------------------------------------------
+# Install: LSD
+# config: ~/.config/lsd/config.yaml
+# github: https://github.com/Peltoche/lsd
+#         https://github.com/Peltoche/lsd/releases
+# dpkg --print-architecture = amd64 & deb
+# -------------------------------------------------------------
+function instLSD() {
+  message blue "Install LSD"
+  local arch=$(dpkg --print-architecture)
+  if [ $arch == "amd64" ]; then
+    wget -q -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
+    $dpkg -i ~/lsd.deb
+    rm ~/lsd.deb
+  else
+    ask blue "No .deb file to install. Install LSD with cargo?"
+    if [ $REPLY == "y" ]; then
+      instLSD "cargo"
+    fi
+  fi
+}
+
+# -------------------------------------------------------------
+# Install: git submodules
+# see: .gitmodules
+# -------------------------------------------------------------
+function instGITSUBM() {
+  message blue "Install git submodules"
+  cd $HOME/dotfiles
+  git submodule--helper list | awk '{print $4}'
+  git submodule update --init --recursive
+  echo
+}
+
+# -------------------------------------------------------------
+# Install: vimrc-amix
+# -------------------------------------------------------------
+function instVIMRC() {
+  message blue "Install vimrc ..."
+  bash $HOME/dotfiles/modules/vimrc-amix/install_awesome_parameterized.sh $HOME/dotfiles/modules/vimrc-amix $USER
+  echo
+}
+
+# -------------------------------------------------------------
+# Install: navi
+# https://github.com/denisidoro/navi
+# -------------------------------------------------------------
+function instNAVI() {
+  message blue "Install navi"
+  # first check/install fzf
+  if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
+    # inst fzf (git submodule)
+    #bash $HOME/dotfiles/modules/fzf/install --key-bindings --completion --no-update-rc
+    bash $HOME/dotfiles/modules/fzf/install --bin
+  else
+    instGITSUBM
+    cd $HOME/dotfiles
+    bash $HOME/dotfiles/modules/fzf/install --bin
+  fi
+  # install navi by downloading bin
+  arch=$(dpkg --print-architecture)
+  case $arch in
+    (amd64)
+      cd $HOME/dotfiles/bin
+      wget -q https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-x86_64-unknown-linux-musl.tar.gz -O navi.tar.gz
+      sleep 2
+      tar xzf navi.tar.gz
+      rm navi.tar.gz
+      PATH=$PATH:$HOME/dotfiles/bin
+    ;;
+    (armhf)
+      cd $HOME/dotfiles/bin
+      wget -q https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-armv7-unknown-linux-musleabihf.tar.gz -O navi.tar.gz
+      sleep 2
+      tar xzf navi.tar.gz
+      rm navi.tar.gz
+      PATH=$PATH:$HOME/dotfiles/bin
+    ;;
+  esac
+  # bash widget (STRG + G)
+  eval "$(navi widget bash)" 2>&1> /dev/null
+}
+
+# -------------------------------------------------------------
+# Install cheat.sh
+# https://github.com/chubin/cheat.sh#installation
+# https://github.com/chubin/cheat.sh#command-line-client-chtsh
+# config: ~/.cht.sh/cht.sh.conf
+# -------------------------------------------------------------
+function instCHEATSH() {
+  message blue "Install cheat.sh"
+  message blue "download and save cheat.sh to dotfiles/bin"
+  curl https://cht.sh/:cht.sh > $HOME/dotfiles/bin/cht.sh
+  chmod +x $HOME/dotfiles/bin/cht.sh
+  echo
+  if [ ! -d $HOME/.cht.sh ]; then
+    message blue "create directory ~/.cht.sh"
+    mkdir $HOME/.cht.sh
+  fi
+  if [ ! -L $HOME/.cht.sh/cht.sh.conf ] ; then
+    message blue "create symlink ~/.cht.sh/cht.sh.conf"
+    ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
+  fi
+}
+
+# -------------------------------------------------------------
+# Install .bashrc
+# -------------------------------------------------------------
+function instBASHRC() {
+  message blue "Install .bashrc"
+
+  # install
+  dir=~/dotfiles
+  files="bashrc gitconfig inputrc bash_profile dircolors"
+  folders="byobu"
+
+  # delete old symlinks
+  echo -e $green_color"delete"$close_color$yellow_color" old "$green_color"symlinks ..."$close_color
+  for file in $files; do
+    if [ -f ~/.$file ]; then
+      echo "delete: ~/.$file"
+      rm ~/.$file
+    fi
+  done
+  for folder in $folders; do
+    if [ -d ~/.$folder ]; then
+      echo "delete: ~/.$folder";
+      rm -r ~/.$folder
+    fi
+  done
+
+  echo
+
+  # new symlinks for files and folders
+  echo -e $green_color"create"$close_color$yellow_color" new "$green_color"symlinks ..."$close_color
+  for file in $files; do
+      echo "create: ~/.$file"
+      ln -s $dir/$file ~/.$file
+  done
+  for folder in $folders; do
+      echo "create: ~/.$folder"
+      ln -s $dir/$folder ~/.$folder
+  done
+
+  # lsd config file
+  if [ ! -L ~/.config/lsd/config.yaml ] ; then
+    if [ ! -d ~/.config/lsd ]; then
+      mkdir -p ~/.config/lsd
+      ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
+    else
+      ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
+    fi
+  fi
+
+  # load .bashrc
+  echo -e "$green_color"
+  echo "dotfiles installed. "
+  echo
+  read -p "load ~/.bashrc?  (y/n):" loadbashrc
+  echo -e "$close_color"
+  if [ $loadbashrc == "y" ]; then
+    bash $HOME/.bashrc
+  else
+    echo -e $green_color"done. please "$close_color$yellow_color"relogin "$green_color"to load the dotfiles"$close_color
+    echo
+  fi
+}
+
+manageMenu
+
+# EOF
