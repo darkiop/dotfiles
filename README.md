@@ -52,6 +52,7 @@ bash $HOME/dotfiles/install/install.sh
 - https://drasite.com/blog/Pimp%20my%20terminal#top-from-the-future
 - https://github.com/amix/vimrc
 - https://github.com/starship/starship
+- https://ichi.pro/de/das-essential-bash-spickzettel-15514461037920
 
 ## TODO
 - https://github.com/reujab/silver or https://github.com/starship/starship
