@@ -30,6 +30,8 @@ lsusb
 # hardware list block devices
 lsblk
 
+# cut: show some columns
+
 # print only the third column
 cut -f 3 <file>
 
