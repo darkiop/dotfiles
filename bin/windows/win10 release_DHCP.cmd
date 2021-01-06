@@ -1,0 +1,9 @@
+@echo off
+
+echo Release IP ...
+ipconfig /release
+echo Delete DNS Cache ...
+ipconfig /flushdns
+echo Get new IP from DHCP ...
+ipconfig /renew
+
