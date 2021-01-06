@@ -1,0 +1,9 @@
+% wireguard
+
+# wireguard status
+wg
+
+# generate qr code
+qrencode -t ansiutf8 -l L <<file>
+
+$ file: ls
