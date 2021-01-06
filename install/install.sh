@@ -92,7 +92,7 @@ else
 fi
 
 # ask functions
-ask() {
+function ask() {
   local color="$1"
   case $color in
     green)
@@ -125,7 +125,7 @@ ask() {
 }
 
 # info function
-infomsg() {
+function message() {
   local color="$1"
   case $color in
     green)
