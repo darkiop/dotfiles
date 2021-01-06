@@ -97,8 +97,7 @@ function message() {
 # -------------------------------------------------------------
 # Menu
 # -------------------------------------------------------------
-function manageMenu() {
-  echo
+function show_menu(){
   echo -e $yellow_color
 cat << EOF
   ▌   ▐  ▗▀▖▗▜       
@@ -106,57 +105,19 @@ cat << EOF
 ▌ ▌▌ ▌▐ ▖▜▀ ▐▐ ▛▀ ▝▀▖
 ▝▀▘▝▀  ▀ ▐  ▀▘▘▝▀▘▀▀
 EOF
-echo -e $close_color
-
+  echo -e $close_color
+  printf "${yellow_color}1)${close_color} Install all\n"
+  printf "${yellow_color}2)${close_color} Install Apps \n"
+  printf "${yellow_color}3)${close_color} Install lsd\n"
+  printf "${yellow_color}4)${close_color} Install git submodules\n"
+  printf "${yellow_color}5)${close_color} Install vimrc\n"
+  printf "${yellow_color}6)${close_color} Install navi\n"
+  printf "${yellow_color}7)${close_color} Install cheat.sh\n"
+  printf "${yellow_color}8)${close_color} Install .bashrc\n"
+  printf "${yellow_color}9)${close_color} Re-Install\n"
   echo
-	echo "   1) Install dotfiles (incl. 2-8)"
-	echo "   2) Install Apps"
-	echo "   3) Install lsd"
-  echo "   4) Install git submodules"
-  echo "   5) Install vimrc"
-  echo "   6) Install navi"
-  echo "   7) Install cheat.sh"
-  echo "   8) Install .bashrc"
-  echo "   9) Re-Install all"
-	echo "   10) Exit"
-  echo
-	until [[ ${MENU_OPTION} =~ ^[1-10]$ ]]; do
-		read -rp "Select an option [1-10]: " MENU_OPTION
-	done
-	case "${MENU_OPTION}" in
-	1)
-		instDOTF
-		;;
-	2)
-		instAPP
-		;;
-	3)
-		instLSD
-		;;
-	4)
-		instGITSUBM
-		;;
-	5)
-		instVIMRC
-		;;
-	6)
-		instNAVI
-		;;
-	7)
-		instCHEATSH
-		;;
-	8)
-		instBASHRC
-		;;
-	9)
-		reinstall
-		;;
-	10)
-    echo
-    message yellow "Exit."
-		exit 0
-		;;
-	esac
+  printf "Please choose an option or ${red_color}x${close_color} to exit: "
+  read opt
 }
 
 # -------------------------------------------------------------
@@ -188,7 +149,7 @@ function reinstall() {
     git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
     bash $HOME/dotfiles/install/install-menu.sh all
   else
-    echo "n"
+    exit
   fi
 }
 
@@ -405,11 +366,65 @@ function instBASHRC() {
   fi
 }
 
-# run the script
-if [ $1 == 'all' ]; then
+# -------------------------------------------------------------
+# RUN THE SCRIPT
+# -------------------------------------------------------------
+if [[ $1 == 'all' ]]; then
   instDOTF
 else
-  manageMenu
+  show_menu
+  while [ $opt != '' ];
+    do
+    if [ $opt = '' ]; then
+      exit;
+    else
+      case $opt in
+        1) clear;
+          instDOTF
+          exit
+        ;;
+        2) clear;
+          instAPP
+          show_menu;
+        ;;
+        3) clear;
+          instLSD
+          clear
+          show_menu;
+        ;;
+        4) clear;
+          instGITSUBM
+          show_menu;
+        ;;
+        5) clear;
+          instVIMRC
+          show_menu;
+        ;;
+        6) clear;
+          instNAVI
+          show_menu;
+        ;;
+        7) clear;
+          instCHEATSH
+          show_menu;
+        ;;
+        8) clear;
+          instBASHRC
+        ;;
+        9) clear;
+          reinstall
+          show_menu;
+        ;;
+        x)exit;
+        ;;
+        \n)exit;
+        ;;
+        *)clear;
+          show_menu;
+        ;;
+      esac
+    fi
+  done
 fi
 
 # EOF
