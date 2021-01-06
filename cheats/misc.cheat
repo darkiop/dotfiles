@@ -17,3 +17,15 @@ find <dir> -type d -exec chmod 755 -R {} +
 
 # find dirs and set chmod 644
 find <dir> -type f -exec chmod 644 -R {} +
+
+# hardware overview
+lshw -short
+
+# hardware cpu
+lscpu
+
+# hardware usb
+lsusb
+
+# hardware list block devices
+lsblk
