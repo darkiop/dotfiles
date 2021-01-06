@@ -1,13 +1,13 @@
 % compression
 
 # Create a tar containing files
-tar cf <name>.tar <files>
+tar cf <name>.tar <path>
 
 # Extract the files from a tar
 tar xf <tar_file>
 
 # Create a tar with Gzip compression
-tar czf <name>.tar.gz <files> 
+tar czf <name>.tar.gz <path> 
 
 # Extract a tar using Gzip
 tar xzf <ta rgz_file>
