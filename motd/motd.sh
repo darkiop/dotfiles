@@ -123,7 +123,7 @@ if [ $(which apt) ]; then
   echo -e "$close_color"
   updates="$(apt-get -s dist-upgrade | awk '/^Inst/ { print $2 }')"
   #updatesText=""
-  updatesText="$green_color:$close_color $yellow_color$updates$close_color"
+  updatesText="$green_color$close_color $yellow_color$updates$close_color"
   #if [ $updates ]; then
   #  updatesText="$green_color:$close_color $yellow_color$updates$close_color"
   #fi
