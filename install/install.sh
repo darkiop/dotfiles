@@ -9,79 +9,6 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
-# help
-help() {
-  cat << EOF
-
-usage: $0 [PARAMETERS]
-
-    --help     Show this message
-    --all      Install with all Options: 1. Essential Apps, 2. LSD, 3. git submodules , 4. vimrc-amix, 5. navi, 6. cheat.sh
-    --apps     
-    --lsd
-    --gitsubm
-    --vimrc
-    --navi
-    --cheatsh
-
-Without a parameter, the script will ask you what you want to install.
-
-EOF
-}
-
-# parameters
-instAPP=0
-instLSD=0
-instGITSUBM=0
-instVIMRC=0
-instNAVI=0
-instCHEATSH=0
-for para in "$@"; do
-  case $para in
-    --help)
-      help
-      exit 0
-      ;;
-    --all)
-      instAPP=1
-      instLSD=1
-      instGITSUBM=1
-      instVIMRC=1
-      instNAVI=1
-      instCHEATSH=1
-      ;;
-    --apps)
-      instAPP=1
-      instLSD=0
-      instGITSUBM=0
-      instVIMRC=0
-      instNAVI=0
-      instCHEATSH=0
-      ;;
-    --lsd)
-      instLSD=1
-      ;;
-    --gitsubm)
-      instGITSUBM=1
-      ;;
-    --vimrc)
-      instVIMRC=1
-      ;;
-    --navi)
-      instNAVI=1
-      ;;
-    --cheatsh)
-      instCHEATSH=1
-      ;;
-    *)
-      echo "unknown parameter: $para"
-      help
-      exit 1
-      ;;
-  esac
-done
-
-# TODO if not root, alias sudo apt
 # check if root, when not define alias with sudo
 if [[ $EUID -ne 0 ]]; then
   dpkg='sudo '$(which dpkg)
@@ -91,7 +18,23 @@ else
   apt=$(which apt)
 fi
 
-# ask functions
+# -------------------------------------------------------------
+# Check if git is installed
+# -------------------------------------------------------------
+function checkgit() {
+  if [ ! $(which git) ]; then
+    message red "git not found. install it ..."
+    $apt install git -y
+  fi
+}
+
+# -------------------------------------------------------------
+# Ask
+# ask blue "Question?"
+# if [ $REPLY == "y" ]; then
+#   do something ...
+# fi
+# -------------------------------------------------------------
 function ask() {
   local color="$1"
   case $color in
@@ -108,7 +51,7 @@ function ask() {
     color=$yellow_color
     ;;
     red)
-    color=$yellow_color
+    color=$red_color
     ;;
   esac
   while true; do
@@ -124,7 +67,9 @@ function ask() {
   done
 }
 
-# info function
+# -------------------------------------------------------------
+# Message
+# -------------------------------------------------------------
 function message() {
   local color="$1"
   case $color in
@@ -141,7 +86,7 @@ function message() {
     color=$yellow_color
     ;;
     red)
-    color=$yellow_color
+    color=$red_color
     ;;
   esac
   echo -e "$color"
@@ -149,29 +94,109 @@ function message() {
   echo -e "$close_color"
 }
 
-# check last apt update and run if necessary (7 days)
-if [ -z "$(find -H /var/lib/apt/lists -maxdepth 0 -mtime -7)" ]; then
-  $apt update
-fi
-
-# check if git is installed
-if [ ! $(which git) ]; then
-  echo -e $red_color"git not found. install it ..."$close_color
-  $apt install git -y
-fi
-
-# check if dotfiles dir exist
-if [ ! -d $HOME/dotfiles ]; then
-  git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
-else
+# -------------------------------------------------------------
+# Menu
+# -------------------------------------------------------------
+function manageMenu() {
   echo
-  echo -e $green_color"dotfiles found. continue with the installation process."$close_color
-fi
+  echo -e $yellow_color
+cat << EOF
+  ▌   ▐  ▗▀▖▗▜       
+▞▀▌▞▀▖▜▀ ▐  ▄▐ ▞▀▖▞▀▘
+▌ ▌▌ ▌▐ ▖▜▀ ▐▐ ▛▀ ▝▀▖
+▝▀▘▝▀  ▀ ▐  ▀▘▘▝▀▘▀▀
+EOF
+echo -e $close_color
+
+  echo
+	echo "   1) Install dotfiles (incl. 2-8)"
+	echo "   2) Install Apps"
+	echo "   3) Install lsd"
+  echo "   4) Install git submodules"
+  echo "   5) Install vimrc"
+  echo "   6) Install navi"
+  echo "   7) Install cheat.sh"
+  echo "   8) Install .bashrc"
+  echo "   9) Re-Install all"
+	echo "   10) Exit"
+  echo
+	until [[ ${MENU_OPTION} =~ ^[1-10]$ ]]; do
+		read -rp "Select an option [1-10]: " MENU_OPTION
+	done
+	case "${MENU_OPTION}" in
+	1)
+		instDOTF
+		;;
+	2)
+		instAPP
+		;;
+	3)
+		instLSD
+		;;
+	4)
+		instGITSUBM
+		;;
+	5)
+		instVIMRC
+		;;
+	6)
+		instNAVI
+		;;
+	7)
+		instCHEATSH
+		;;
+	8)
+		instBASHRC
+		;;
+	9)
+		reinstall
+		;;
+	10)
+    echo
+    message yellow "Exit."
+		exit 0
+		;;
+	esac
+}
 
 # -------------------------------------------------------------
-# install essential apps
+# Install dotfiles (all)
+# -------------------------------------------------------------
+function instDOTF() {
+  checkgit
+  message yellow "+++ Install complete dotfiles +++"
+  instAPP
+  instLSD
+  instGITSUBM
+  instVIMRC
+  instNAVI
+  instCHEATSH
+  instBASHRC
+}
+
+# -------------------------------------------------------------
+# Re-Install: dotfiles
+# -------------------------------------------------------------
+function reinstall() {
+  ask red "Re-Install! Are you sure? ~/dotfiles will be deleted. (y/n):"
+  if [ $REPLY == "y" ]; then
+    cd $HOME
+    message red "delete ~/dotfiles"
+    sudo rm -r $HOME/dotfiles
+    echo
+    message green "reinstall ~/dotfiles"
+    git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
+    bash $HOME/dotfiles/install/install-menu.sh all
+  else
+    echo "n"
+  fi
+}
+
+# -------------------------------------------------------------
+# Install essential Apps
 # -------------------------------------------------------------
 function instAPP() {
+  message blue "[ Install essential Apps ]"
   $apt update
   $apt install --ignore-missing -y \
   build-essential \
@@ -211,115 +236,69 @@ function instAPP() {
   parted \
   # tmp: rcconf, sensors
 }
-if [ $instAPP -eq 1 ]; then
-  instAPP
-else
-  ask blue "Install essential apps?"
-  if [ $REPLY == "y" ]; then
-    instAPP
-  fi
-fi
 
 # -------------------------------------------------------------
-# TODO
-# Install: BAT
-# https://ostechnix.com/bat-a-cat-clone-with-syntax-highlighting-and-git-integration/
-# -------------------------------------------------------------
-
-
-# -------------------------------------------------------------
-# Install: LSD
+# Install: lsd
 # config: ~/.config/lsd/config.yaml
 # github: https://github.com/Peltoche/lsd
 #         https://github.com/Peltoche/lsd/releases
 # dpkg --print-architecture = amd64 & deb
 # -------------------------------------------------------------
 function instLSD() {
-  local arch=$1
-  if [ $arch == "deb" ]; then
-    wget -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
+  message blue "[ Install lsd ]"
+  local arch=$(dpkg --print-architecture)
+  if [ $arch == "amd64" ]; then
+    wget -q -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
     $dpkg -i ~/lsd.deb
     rm ~/lsd.deb
-  elif [ $arch == "cargo" ]; then
-    $apt install -y cargo
-    cargo install lsd
-  fi
-}
-if [ $instLSD -eq 1 ]; then
-  instlsdarch=$(dpkg --print-architecture)
-  if [ $instlsdarch == "amd64" ]; then
-    instLSD "deb"
   else
-    ask blue "No .deb file to install. Install LSD with cargo?"
+    ask blue "No .deb file to install. Install lsd with cargo?"
     if [ $REPLY == "y" ]; then
       instLSD "cargo"
     fi
   fi
-else
-  ask blue "Install lsd.deb from Github?"
-  if [ $REPLY == "y" ]; then
-    instlsdarch=$(dpkg --print-architecture)
-    if [ $instlsdarch == "amd64" ]; then
-      instLSD "deb"
-    else
-      ask blue "No .deb file to install. Install LSD with cargo?"
-      if [ $REPLY == "y" ]; then
-        instLSD "cargo"
-      fi
-    fi
-  fi
-fi
+}
 
 # -------------------------------------------------------------
-# Install: GIT SUBMODULES
+# Install: git submodules
 # see: .gitmodules
 # -------------------------------------------------------------
 function instGITSUBM() {
+  message blue "[ Install git submodules ]"
   cd $HOME/dotfiles
+  git submodule--helper list | awk '{print $4}'
   git submodule update --init --recursive
+  echo
 }
-if [ $instGITSUBM -eq 1 ]; then
-  instGITSUBM
-else
-  ask blue "Install git submodules?"
-  if [ $REPLY == "y" ]; then
-    instGITSUBM
-  fi
-fi
 
 # -------------------------------------------------------------
 # Install: vimrc-amix
 # -------------------------------------------------------------
 function instVIMRC() {
+  message blue "[ Install vimrc ]"
   bash $HOME/dotfiles/modules/vimrc-amix/install_awesome_parameterized.sh $HOME/dotfiles/modules/vimrc-amix $USER
+  echo
 }
-if [ $instVIMRC -eq 1 ]; then
-  instVIMRC
-else
-  ask blue "Install vimrc-amix?"
-  if [ $REPLY == "y" ]; then
-    instVIMRC
-  fi
-fi
 
 # -------------------------------------------------------------
-# Install: NAVI
+# Install: navi
 # https://github.com/denisidoro/navi
 # -------------------------------------------------------------
 function instNAVI() {
+  message blue "[ Install navi]"
   # first check/install fzf
   if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
     # inst fzf (git submodule)
     #bash $HOME/dotfiles/modules/fzf/install --key-bindings --completion --no-update-rc
     bash $HOME/dotfiles/modules/fzf/install --bin
   else
+    instGITSUBM
     cd $HOME/dotfiles
-    git submodule update --init --recursive
     bash $HOME/dotfiles/modules/fzf/install --bin
   fi
   # install navi by downloading bin
-  instlsdarch=$(dpkg --print-architecture)
-  case $instlsdarch in
+  arch=$(dpkg --print-architecture)
+  case $arch in
     (amd64)
       cd $HOME/dotfiles/bin
       wget -q https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-x86_64-unknown-linux-musl.tar.gz -O navi.tar.gz
@@ -338,50 +317,99 @@ function instNAVI() {
     ;;
   esac
   # bash widget (STRG + G)
-  eval "$(navi widget bash)"
+  eval "$(navi widget bash)" 2>&1> /dev/null
 }
-if [ $instNAVI -eq 1 ]; then
-  instNAVI
-else
-  ask blue "Install navi?"
-  if [ $REPLY == "y" ]; then
-    instNAVI
-  fi
-fi
 
 # -------------------------------------------------------------
-# install cheat.sh
+# Install cheat.sh
 # https://github.com/chubin/cheat.sh#installation
 # https://github.com/chubin/cheat.sh#command-line-client-chtsh
 # config: ~/.cht.sh/cht.sh.conf
 # -------------------------------------------------------------
 function instCHEATSH() {
-  curl --silent https://cht.sh/:cht.sh > $HOME/dotfiles/bin/cht.sh
+  message blue "[ Install cheat.sh]"
+  message blue "download and save cheat.sh to dotfiles/bin"
+  curl https://cht.sh/:cht.sh > $HOME/dotfiles/bin/cht.sh
   chmod +x $HOME/dotfiles/bin/cht.sh
+  echo
   if [ ! -d $HOME/.cht.sh ]; then
+    message blue "create directory ~/.cht.sh"
     mkdir $HOME/.cht.sh
   fi
   if [ ! -L $HOME/.cht.sh/cht.sh.conf ] ; then
+    message blue "create symlink ~/.cht.sh/cht.sh.conf"
     ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
   fi
 }
-if [ $instCHEATSH -eq 1 ]; then
-  instCHEATSH
-else
-  ask blue "Install cheat.sh?"
-  if [ $REPLY == "y" ]; then
-    instCHEATSH
-  fi
-fi
 
 # -------------------------------------------------------------
-# next step, install bashrc
+# Install .bashrc
 # -------------------------------------------------------------
-ask green "done. run install-bashrc.sh?"
-if [ $REPLY == "y" ]; then
-  source $HOME/dotfiles/install/install-bashrc.sh
+function instBASHRC() {
+  message blue "[ Install .bashrc ]"
+
+  # install
+  dir=~/dotfiles
+  files="bashrc gitconfig inputrc bash_profile dircolors"
+  folders="byobu"
+
+  # delete old symlinks
+  echo -e $green_color"delete"$close_color$yellow_color" old "$green_color"symlinks ..."$close_color
+  for file in $files; do
+    if [ -f ~/.$file ]; then
+      echo "delete: ~/.$file"
+      rm ~/.$file
+    fi
+  done
+  for folder in $folders; do
+    if [ -d ~/.$folder ]; then
+      echo "delete: ~/.$folder";
+      rm -r ~/.$folder
+    fi
+  done
+
+  echo
+
+  # new symlinks for files and folders
+  echo -e $green_color"create"$close_color$yellow_color" new "$green_color"symlinks ..."$close_color
+  for file in $files; do
+      echo "create: ~/.$file"
+      ln -s $dir/$file ~/.$file
+  done
+  for folder in $folders; do
+      echo "create: ~/.$folder"
+      ln -s $dir/$folder ~/.$folder
+  done
+
+  # lsd config file
+  if [ ! -L ~/.config/lsd/config.yaml ] ; then
+    if [ ! -d ~/.config/lsd ]; then
+      mkdir -p ~/.config/lsd
+      ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
+    else
+      ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
+    fi
+  fi
+
+  # load .bashrc
+  echo -e "$green_color"
+  echo "dotfiles installed. "
+  echo
+  read -p "load ~/.bashrc?  (y/n):" loadbashrc
+  echo -e "$close_color"
+  if [ $loadbashrc == "y" ]; then
+    bash $HOME/.bashrc
+  else
+    echo -e $green_color"done. please "$close_color$yellow_color"relogin "$green_color"to load the dotfiles"$close_color
+    echo
+  fi
+}
+
+# run the script
+if [ $1 == 'all' ]; then
+  instDOTF
 else
-  exit
+  manageMenu
 fi
 
 # EOF
