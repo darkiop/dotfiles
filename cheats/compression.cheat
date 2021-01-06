@@ -10,7 +10,7 @@ tar xf <tar_file>
 tar czf <name>.tar.gz <path> 
 
 # Extract a tar using Gzip
-tar xzf <ta rgz_file>
+tar xzf <path>
 
 # Compress file and appends .gz to its name
 gzip <path>
