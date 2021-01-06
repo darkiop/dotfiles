@@ -29,3 +29,64 @@ lsusb
 
 # hardware list block devices
 lsblk
+
+# print only the third column
+cut -f 3 <file>
+
+# print only the 2nd and 3rd columns
+cut -f 2-3 <file>
+
+# for each line, print only from the 9th to the 19th character
+cut -c 9-19 <file>
+
+# the file uses ';' as delimiter, instead a tab
+cut -f 1 -d ';' <file>
+
+# awk: the same than cut, but more flexible with delimiters, with more filters, and more computacionally complex
+
+# print only the 3rd column
+awk '{print $3}' <file>
+
+# print the 2nd and 3rd columns, separated with a comma
+awk '{print $2 ", " $3}' <file>
+
+# print the sum of the 2nd and 3rd columns
+awk '{print $2 + $3}' <file>
+
+# print those lines whose length is longer than 20 characters
+awk 'length($0) > 20' <file>
+
+# print those lines where the value of the second column is greater than 100
+awk '$2 > 100' <file>
+
+# print the number of lines, words, and characters in the text file
+wc <file>
+
+# print the number of lines, words, and characters for each of the files in the current directory
+ls -1 | wc 
+
+# sort the lines of the file
+sort <file>
+
+# sort the lines in reverse order
+sort -r <file>
+
+# sort the lines in random order
+sort -R <file>
+
+# sort the lines numerically according the 3rd column
+sort -t $'\t' -k 3n,3 <file>
+
+# uniq: shows the consecutive non-repeated or duplicated lines of a file
+
+# skips consecutive duplicated lines
+uniq <file>
+
+# show only consecutive duplicated lines
+uniq -d <file>
+
+# show only lines that are not duplicated
+uniq -u <file>
+
+# for each line, show the number of times it is duplicated
+uniq -c <file>
