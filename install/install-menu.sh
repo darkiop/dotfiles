@@ -51,7 +51,7 @@ function ask() {
     color=$yellow_color
     ;;
     red)
-    color=$yellow_color
+    color=$red_color
     ;;
   esac
   while true; do
@@ -86,7 +86,7 @@ function message() {
     color=$yellow_color
     ;;
     red)
-    color=$yellow_color
+    color=$red_color
     ;;
   esac
   echo -e "$color"
@@ -111,16 +111,17 @@ echo -e $close_color
   echo
 	echo "   1) Install dotfiles (incl. 2-8)"
 	echo "   2) Install Apps"
-	echo "   3) Install LSD"
+	echo "   3) Install lsd"
   echo "   4) Install git submodules"
   echo "   5) Install vimrc"
   echo "   6) Install navi"
   echo "   7) Install cheat.sh"
   echo "   8) Install .bashrc"
-	echo "   9) Exit"
+  echo "   9) Re-Install all"
+	echo "   10) Exit"
   echo
-	until [[ ${MENU_OPTION} =~ ^[1-9]$ ]]; do
-		read -rp "Select an option [1-9]: " MENU_OPTION
+	until [[ ${MENU_OPTION} =~ ^[1-10]$ ]]; do
+		read -rp "Select an option [1-10]: " MENU_OPTION
 	done
 	case "${MENU_OPTION}" in
 	1)
@@ -148,6 +149,9 @@ echo -e $close_color
 		instBASHRC
 		;;
 	9)
+		reinstall
+		;;
+	10)
     echo
     message yellow "Exit."
 		exit 0
@@ -160,7 +164,7 @@ echo -e $close_color
 # -------------------------------------------------------------
 function instDOTF() {
   checkgit
-  message blue "Install complete dotfiles"
+  message yellow "+++ Install complete dotfiles +++"
   instAPP
   instLSD
   instGITSUBM
@@ -171,10 +175,28 @@ function instDOTF() {
 }
 
 # -------------------------------------------------------------
+# Re-Install: dotfiles
+# -------------------------------------------------------------
+function reinstall() {
+  ask red "Re-Install! Are you sure? ~/dotfiles will be deleted. (y/n):"
+  if [ $REPLY == "y" ]; then
+    cd $HOME
+    message red "delete ~/dotfiles"
+    sudo rm -r $HOME/dotfiles
+    echo
+    message green "reinstall ~/dotfiles"
+    git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
+    bash $HOME/dotfiles/install/install-menu.sh all
+  else
+    echo "n"
+  fi
+}
+
+# -------------------------------------------------------------
 # Install essential Apps
 # -------------------------------------------------------------
 function instAPP() {
-  message blue "Install essential Apps"
+  message blue "[ Install essential Apps ]"
   $apt update
   $apt install --ignore-missing -y \
   build-essential \
@@ -216,21 +238,21 @@ function instAPP() {
 }
 
 # -------------------------------------------------------------
-# Install: LSD
+# Install: lsd
 # config: ~/.config/lsd/config.yaml
 # github: https://github.com/Peltoche/lsd
 #         https://github.com/Peltoche/lsd/releases
 # dpkg --print-architecture = amd64 & deb
 # -------------------------------------------------------------
 function instLSD() {
-  message blue "Install LSD"
+  message blue "[ Install lsd ]"
   local arch=$(dpkg --print-architecture)
   if [ $arch == "amd64" ]; then
     wget -q -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
     $dpkg -i ~/lsd.deb
     rm ~/lsd.deb
   else
-    ask blue "No .deb file to install. Install LSD with cargo?"
+    ask blue "No .deb file to install. Install lsd with cargo?"
     if [ $REPLY == "y" ]; then
       instLSD "cargo"
     fi
@@ -242,7 +264,7 @@ function instLSD() {
 # see: .gitmodules
 # -------------------------------------------------------------
 function instGITSUBM() {
-  message blue "Install git submodules"
+  message blue "[ Install git submodules ]"
   cd $HOME/dotfiles
   git submodule--helper list | awk '{print $4}'
   git submodule update --init --recursive
@@ -253,7 +275,7 @@ function instGITSUBM() {
 # Install: vimrc-amix
 # -------------------------------------------------------------
 function instVIMRC() {
-  message blue "Install vimrc ..."
+  message blue "[ Install vimrc ]"
   bash $HOME/dotfiles/modules/vimrc-amix/install_awesome_parameterized.sh $HOME/dotfiles/modules/vimrc-amix $USER
   echo
 }
@@ -263,7 +285,7 @@ function instVIMRC() {
 # https://github.com/denisidoro/navi
 # -------------------------------------------------------------
 function instNAVI() {
-  message blue "Install navi"
+  message blue "[ Install navi]"
   # first check/install fzf
   if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
     # inst fzf (git submodule)
@@ -305,7 +327,7 @@ function instNAVI() {
 # config: ~/.cht.sh/cht.sh.conf
 # -------------------------------------------------------------
 function instCHEATSH() {
-  message blue "Install cheat.sh"
+  message blue "[ Install cheat.sh]"
   message blue "download and save cheat.sh to dotfiles/bin"
   curl https://cht.sh/:cht.sh > $HOME/dotfiles/bin/cht.sh
   chmod +x $HOME/dotfiles/bin/cht.sh
@@ -324,7 +346,7 @@ function instCHEATSH() {
 # Install .bashrc
 # -------------------------------------------------------------
 function instBASHRC() {
-  message blue "Install .bashrc"
+  message blue "[ Install .bashrc ]"
 
   # install
   dir=~/dotfiles
@@ -383,6 +405,11 @@ function instBASHRC() {
   fi
 }
 
-manageMenu
+# run the script
+if [ $1 == 'all' ]; then
+  instDOTF
+else
+  manageMenu
+fi
 
 # EOF
