@@ -108,6 +108,11 @@ $blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage_gb$
 
 # $blue_color"cpu-temp"$close_color          `echo -e "$green_color$get_cpu_temp$close_color"`
 
+# special infos for proxmox
+if [ -x /usr/bin/pveversion ]; then
+  source ~/dotfiles/motd/motd-proxmox.sh
+fi
+
 # special motd via hostname
 if [ -f ~/dotfiles/motd/motd-$get_host_name.sh ]; then
   source ~/dotfiles/motd/motd-$get_host_name.sh
