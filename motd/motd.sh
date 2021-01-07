@@ -129,7 +129,7 @@ if [ $(which apt) ]; then
   #fi
   if [ "$(which apt-get)" ]; then
     echo
-    echo -e $green_color"`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` updates to install"$close_color$updatesText
+    echo -e $yellow_color"`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` "$green_color"updates to install"$close_color$updatesText
     echo
   fi
 fi
