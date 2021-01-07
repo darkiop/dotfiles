@@ -521,7 +521,11 @@ function setupNewSystem() {
   #
   function instSAMBA() {
     # install samba
-    DEBIAN_FRONTEND=noninteractive
+    # https://unix.stackexchange.com/questions/546470/skip-prompt-when-installing-samba
+    echo "samba-common samba-common/workgroup string WORKGROUP" | debconf-set-selections
+    echo "samba-common samba-common/dhcp boolean true" | debconf-set-selections
+    echo "samba-common samba-common/do_debconf boolean true" | debconf-set-selections
+    
     apt install -yq samba-common samba
 
     cat <<EOF > /etc/samba/smb.conf
