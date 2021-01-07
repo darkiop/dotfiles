@@ -115,7 +115,8 @@ EOF
   printf "${yellow_color}7)${close_color} Install cheat.sh\n"
   printf "${yellow_color}8)${close_color} Install bat\n"
   printf "${yellow_color}9)${close_color} Install .bashrc\n"
-  printf "${yellow_color}10)${close_color} Re-Install\n"
+  printf "${yellow_color}10)${close_color} Complete Re-Install\n"
+  printf "${yellow_color}11)${close_color} Update from github (git pull)\n"
   echo
   printf "Please choose an option or ${red_color}x${close_color} to exit: "
   read opt
@@ -365,6 +366,28 @@ function instBAT() {
 }
 
 # -------------------------------------------------------------
+# Update from github (git pull)
+# -------------------------------------------------------------
+function instUPDATEFROMGIT() {
+  git status > /dev/null 2>&1 &
+  if git diff-index --quiet HEAD --; then
+    # no changes
+    echo
+    echo -e $red_color"No changes to the dotfiles were found. Update ..."$close_color
+    echo
+    cd ~/dotfiles
+    git pull
+    cd ~
+    bash ~/.bashrc
+  else
+    # changes
+    echo
+    echo -e $red_color"Local changes to the dotfiles were found. Check and commit these or run install-reinstall.sh."$close_color
+    echo
+  fi
+}
+
+# -------------------------------------------------------------
 # Install .bashrc
 # -------------------------------------------------------------
 function instBASHRC() {
@@ -468,6 +491,10 @@ else
         ;;
         10) clear;
           reinstall
+          show_menu;
+        ;;
+        11) clear;
+          instUPDATEFROMGIT
           show_menu;
         ;;
         x)exit;
