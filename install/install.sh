@@ -459,9 +459,8 @@ function setupNewSystem() {
   # Install System Updates
   #
   function instSYSUPDATES() {
-    message blue "update the system ..."
-    $apt update
-    $apt upgrade -y
+    apt update
+    apt upgrade -y
   }
   ask blue "Install system updates?"
   if [ $REPLY == "y" ]; then
@@ -473,7 +472,6 @@ function setupNewSystem() {
   #
   ask blue "Install sudo, git, curl & wget?"
   if [ $REPLY == "y" ]; then
-    message blue "[ install sudo, git, curl & wget ]"
     apt install -y sudo git curl wget
   fi
 
