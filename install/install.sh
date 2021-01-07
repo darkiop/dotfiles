@@ -441,7 +441,6 @@ function instBASHRC() {
   fi
 }
 
-# TODO
 # -------------------------------------------------------------
 # Setup new system
 # add user
@@ -516,7 +515,7 @@ function setupNewSystem() {
   # install samba and create shares
   #
   function instSAMBA() {
-    # install samba
+
     # https://unix.stackexchange.com/questions/546470/skip-prompt-when-installing-samba
     echo "samba-common samba-common/workgroup string WORKGROUP" | debconf-set-selections
     echo "samba-common samba-common/dhcp boolean true" | debconf-set-selections
@@ -555,7 +554,6 @@ EOF
     smbpasswd -a $REPLY
 
     # restart smb service
-    message blue "restart samba service ..."
     systemctl restart smbd.service
   }
   ask blue "Install Samba?"
