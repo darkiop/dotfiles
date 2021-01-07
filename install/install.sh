@@ -281,16 +281,20 @@ function instNAVI() {
   arch=$(dpkg --print-architecture)
   case $arch in
     (amd64)
+      release="v2.13.1"
+      version="navi-v2.13.1-x86_64-unknown-linux-musl"
+      downloadurl="https://github.com/denisidoro/navi/releases/download/$release/$version.tar.gz"
       cd $HOME/dotfiles/bin
-      wget -q https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-x86_64-unknown-linux-musl.tar.gz -O navi.tar.gz
-      sleep 2
+      wget -O navi.tar.gz $downloadurl
       tar xzf navi.tar.gz
       rm navi.tar.gz
     ;;
     (armhf)
+      release="v2.13.1"
+      version="navi-v2.13.1-armv7-unknown-linux-musleabihf"
+      downloadurl="https://github.com/denisidoro/navi/releases/download/$release/$version.tar.gz"
       cd $HOME/dotfiles/bin
-      wget -q https://github.com/denisidoro/navi/releases/download/v2.13.1/navi-v2.13.1-armv7-unknown-linux-musleabihf.tar.gz -O navi.tar.gz
-      sleep 2
+      wget -O navi.tar.gz $downloadurl
       tar xzf navi.tar.gz
       rm navi.tar.gz
     ;;
@@ -321,7 +325,6 @@ function instCHEATSH() {
   fi
 }
 
-# TODO
 # -------------------------------------------------------------
 # Install: bat
 # https://github.com/sharkdp/bat
