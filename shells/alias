@@ -58,11 +58,13 @@ if [ -x ~/.cargo/bin/lsd ] | [ -x /usr/bin/lsd ]; then
   alias l='lsd -lh'
   alias ll='lsd -lah'
   alias la='lsd -A'
+  alias lt='lsd --tree'
 else
   alias ls='ls --sort=extension --color=auto'
   alias l='ls -lh'
   alias ll='ls -lah'
   alias la='ls -A'
+  alias lt='ls --tree'
 fi
 
 # cd - show content after cd
