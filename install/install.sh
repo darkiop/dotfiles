@@ -208,16 +208,19 @@ function instAPP() {
 # -------------------------------------------------------------
 function instLSD() {
   message blue "[ Install lsd ]"
+  # install lsd by downloading bin from github
   arch=$(dpkg --print-architecture)
   case $arch in
     (amd64)
       wget -q -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
+      sleep 2
       $dpkg -i ~/lsd.deb
       rm ~/lsd.deb
     ;;
     (armhf)
       version="lsd-0.19.0-arm-unknown-linux-gnueabihf"
       wget -q -O ~/lsd.tar.gz https://github.com/Peltoche/lsd/releases/download/0.19.0/$version.tar.gz
+      sleep 2
       tar xzf ~/lsd.tar.gz
       cp $version/lsd $HOME/dotfiles/bin
       rm ~/lsd.tar.gz
@@ -272,7 +275,7 @@ function instNAVI() {
     cd $HOME/dotfiles
     bash $HOME/dotfiles/modules/fzf/install --bin
   fi
-  # install navi by downloading bin
+  # install navi by downloading bin from github
   arch=$(dpkg --print-architecture)
   case $arch in
     (amd64)
@@ -281,7 +284,6 @@ function instNAVI() {
       sleep 2
       tar xzf navi.tar.gz
       rm navi.tar.gz
-      PATH=$PATH:$HOME/dotfiles/bin
     ;;
     (armhf)
       cd $HOME/dotfiles/bin
@@ -289,7 +291,6 @@ function instNAVI() {
       sleep 2
       tar xzf navi.tar.gz
       rm navi.tar.gz
-      PATH=$PATH:$HOME/dotfiles/bin
     ;;
   esac
   # bash widget (STRG + G)

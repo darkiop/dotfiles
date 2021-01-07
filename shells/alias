@@ -53,7 +53,7 @@ if [ -x /usr/bin/batcat ]; then
 fi
 
 # ls & lsd shortcuts
-if [ -x ~/.cargo/bin/lsd ] | [ -x /usr/bin/lsd ]; then
+if [ -x ~/dotfiles/bin/lsd ]; then
   alias ls='lsd'
   alias l='lsd -lh'
   alias ll='lsd -lah'

@@ -5,15 +5,12 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# User Info
-export USERNAME="Thorsten Walk"
-export NICKNAME="darkiop"
-
-# load default bashrc 
+# load default bashrc
 #source /etc/skel/.bashrc
 
 # expand $PATH
 PATH=$PATH:~/dotfiles/bin
+
 if [ -d $HOME/.cargo/bin ]; then
   PATH=$PATH:$HOME/.cargo/bin
 fi
@@ -49,9 +46,6 @@ fi
 
 # load alias for special hosts
 case $(hostname) in 
-  #(pve-ct-docker)
-  #  source ~/dotfiles/shells/alias-docker
-  #;;
   (pve01)
     source ~/dotfiles/shells/alias-proxmox
   ;;
