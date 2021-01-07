@@ -1,5 +1,4 @@
 # check if root, when not define alias with sudo
 if [[ $EUID -ne 0 ]]; then
-  alias pct='sudo pct'
-  alias qm='sudo qm'
+  alias wg='sudo '$(which wg)
 fi
