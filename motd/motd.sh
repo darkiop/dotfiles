@@ -116,9 +116,6 @@ fi
 # special motd via hostname
 if [ -f ~/dotfiles/motd/motd-$get_host_name.sh ]; then
   source ~/dotfiles/motd/motd-$get_host_name.sh
-else
-  # print empty line
-  echo
 fi
 
 # show updates
