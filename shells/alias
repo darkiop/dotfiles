@@ -1,14 +1,21 @@
+# check if root, when not define alias with sudo
+if [[ $EUID -ne 0 ]]; then
+  alias apt='sudo '$(which apt)
+  alias reboot='sudo '$(which reboot)
+  alias shutdown='sudo '$(which shutdown)
+fi
+
 #function cheat () {
 #  curl "cheat.sh/$1"
 #}
 
-# Simplify apt-get search and install
+# Simplify apt search and install
 function show () {
   apt-cache search $1
 }
 
 function giveme () {
-  sudo apt-get install "$@"
+  apt install "$@"
 }
 
 function extract () {
@@ -67,9 +74,6 @@ alias cls='source ~/.bashrc'
 alias rl='source ~/.bashrc'
 alias reload='source ~/.bashrc'
 
-# apt
-alias apt='sudo apt'
-
 # dotfiles update
 #alias update-dotfiles='cd ~/dotfiles && git pull && cd && rl'
 alias update-dotfiles='cd ~/dotfiles && bash install-update-from-git.sh'
@@ -78,18 +82,17 @@ alias update-dotfiles='cd ~/dotfiles && bash install-update-from-git.sh'
 alias dotf='cd ~/dotfiles'
 
 # system update
-alias update='sudo apt update && sudo apt upgrade -y && source ~/.bashrc'
+alias update='apt update && apt upgrade -y && source ~/.bashrc'
 
 # reboot
 case $HOSTNAME in
   thor) alias reboot='powershell.exe -command restart-computer';;
-  *) alias reboot='sudo reboot';;
 esac
 
 # shutdown
 case $HOSTNAME in
   thor) alias shutdown='powershell.exe -command stop-computer';;
-  *) alias shutdown='sudo shutdown -h now';;
+  *) alias shutdown='shutdown -h now';;
 esac
 
 # color for manpages
