@@ -218,9 +218,11 @@ function instLSD() {
       rm ~/lsd.deb
     ;;
     (armhf)
+      release="0.19.0"
       version="lsd-0.19.0-arm-unknown-linux-gnueabihf"
+      downloadurl="https://github.com/Peltoche/lsd/releases/download/$release/$version.tar.gz"
       cd $HOME
-      wget -q -O $HOME/lsd.tar.gz https://github.com/Peltoche/lsd/releases/download/0.19.0/$version.tar.gz
+      wget -q -O $HOME/lsd.tar.gz $downloadurl
       sleep 2
       tar xzf $HOME/lsd.tar.gz
       cp $version/lsd $HOME/dotfiles/bin
