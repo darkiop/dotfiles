@@ -503,12 +503,13 @@ function setupNewSystem() {
   function addNewUser() {
     # add user
     read -p 'User: ';
-    message green "adduser: $REPLY"
     useradd -m -s /bin/bash $REPLY
     passwd $REPLY
     # mv user to group sudo
-    message blue "add user $REPLY to group sudo"
-    usermod -a -G sudo $REPLY
+    if [ -x $(which sudo) ]; then
+      message green "add user $REPLY to group sudo"
+      usermod -a -G sudo $REPLY
+    fi
   }
   ask blue "Create User?"
   if [ $REPLY == "y" ]; then
@@ -520,6 +521,7 @@ function setupNewSystem() {
   #
   function instSAMBA() {
     # install samba
+    DEBIAN_FRONTEND=noninteractive
     apt install -y samba-common samba
 
     cat <<EOF > /etc/samba/smb.conf
