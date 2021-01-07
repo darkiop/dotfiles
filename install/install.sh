@@ -505,11 +505,7 @@ function setupNewSystem() {
     read -p 'Username: ';
     useradd -m -s /bin/bash $REPLY
     passwd $REPLY
-    # mv user to group sudo
-    if [ -x $(which sudo) ]; then
-      message green "add user $REPLY to group sudo"
-      usermod -a -G sudo $REPLY
-    fi
+    usermod -a -G sudo $REPLY
   }
   ask blue "Create a personal User?"
   if [ $REPLY == "y" ]; then
