@@ -47,6 +47,11 @@ function psg() {
   fi
 }
 
+# bat alias
+if [ -x ~/dotfiles/bin/bat ]; then
+  alias cat='bat'
+fi
+
 # ls & lsd shortcuts
 if [ -x ~/dotfiles/bin/lsd ]; then
   alias ls='lsd'
