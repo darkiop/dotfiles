@@ -204,8 +204,6 @@ function instAPP() {
 # Install: lsd
 # config: ~/.config/lsd/config.yaml
 # github: https://github.com/Peltoche/lsd
-#         https://github.com/Peltoche/lsd/releases
-# dpkg --print-architecture = amd64 & deb
 # -------------------------------------------------------------
 function instLSD() {
   message blue "[ Install lsd ]"
@@ -213,16 +211,22 @@ function instLSD() {
   arch=$(dpkg --print-architecture)
   case $arch in
     (amd64)
-      wget -q -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
-      $dpkg -i ~/lsd.deb
-      rm ~/lsd.deb
+      release="0.19.0"
+      version="lsd-0.19.0-x86_64-unknown-linux-gnu"
+      downloadurl="https://github.com/Peltoche/lsd/releases/download/$release/$version.tar.gz"
+      cd $HOME
+      wget -O $HOME/lsd.tar.gz $downloadurl
+      tar xzf $HOME/lsd.tar.gz
+      cp $version/lsd $HOME/dotfiles/bin
+      rm $HOME/lsd.tar.gz
+      rm -r $HOME/$version
     ;;
     (armhf)
       release="0.19.0"
       version="lsd-0.19.0-arm-unknown-linux-gnueabihf"
       downloadurl="https://github.com/Peltoche/lsd/releases/download/$release/$version.tar.gz"
       cd $HOME
-      wget -q -O $HOME/lsd.tar.gz $downloadurl
+      wget -O $HOME/lsd.tar.gz $downloadurl
       tar xzf $HOME/lsd.tar.gz
       cp $version/lsd $HOME/dotfiles/bin
       rm $HOME/lsd.tar.gz
