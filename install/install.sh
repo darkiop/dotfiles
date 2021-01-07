@@ -213,7 +213,6 @@ function instLSD() {
   case $arch in
     (amd64)
       wget -q -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
-      sleep 2
       $dpkg -i ~/lsd.deb
       rm ~/lsd.deb
     ;;
@@ -223,7 +222,6 @@ function instLSD() {
       downloadurl="https://github.com/Peltoche/lsd/releases/download/$release/$version.tar.gz"
       cd $HOME
       wget -q -O $HOME/lsd.tar.gz $downloadurl
-      sleep 2
       tar xzf $HOME/lsd.tar.gz
       cp $version/lsd $HOME/dotfiles/bin
       rm $HOME/lsd.tar.gz
