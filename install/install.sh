@@ -133,6 +133,7 @@ function instDOTF() {
   instVIMRC
   instNAVI
   instCHEATSH
+  instBAT
   instBASHRC
 }
 
