@@ -113,8 +113,9 @@ EOF
   printf "${yellow_color}5)${close_color} Install vimrc\n"
   printf "${yellow_color}6)${close_color} Install navi\n"
   printf "${yellow_color}7)${close_color} Install cheat.sh\n"
-  printf "${yellow_color}8)${close_color} Install .bashrc\n"
-  printf "${yellow_color}9)${close_color} Re-Install\n"
+  printf "${yellow_color}8)${close_color} Install bat\n"
+  printf "${yellow_color}9)${close_color} Install .bashrc\n"
+  printf "${yellow_color}10)${close_color} Re-Install\n"
   echo
   printf "Please choose an option or ${red_color}x${close_color} to exit: "
   read opt
@@ -326,8 +327,34 @@ function instCHEATSH() {
 # https://github.com/sharkdp/bat
 # https://ostechnix.com/bat-a-cat-clone-with-syntax-highlighting-and-git-integration/
 # -------------------------------------------------------------
-function instBATCAT() {
-  exit
+function instBAT() {
+  message blue "[ Install bat ]"
+  # install bat by downloading bin from github
+  arch=$(dpkg --print-architecture)
+  case $arch in
+    (amd64)
+      release="v0.17.1"
+      version="bat-v0.17.1-x86_64-unknown-linux-gnu"
+      downloadurl="https://github.com/sharkdp/bat/releases/download/$release/$version.tar.gz"
+      cd $HOME
+      wget -O $HOME/bat.tar.gz $downloadurl
+      tar xzf $HOME/bat.tar.gz
+      cp $version/bat $HOME/dotfiles/bin
+      rm $HOME/bat.tar.gz
+      rm -r $HOME/$version
+    ;;
+    (armhf)
+      release="v0.17.1"
+      version="bat-v0.17.1-arm-unknown-linux-gnueabihf"
+      downloadurl="https://github.com/sharkdp/bat/releases/download/$release/$version.tar.gz"
+      cd $HOME
+      wget -O $HOME/bat.tar.gz $downloadurl
+      tar xzf $HOME/bat.tar.gz
+      cp $version/bat $HOME/dotfiles/bin
+      rm $HOME/bat.tar.gz
+      rm -r $HOME/$version
+    ;;
+  esac
 }
 
 # -------------------------------------------------------------
@@ -426,9 +453,13 @@ else
           show_menu;
         ;;
         8) clear;
-          instBASHRC
+          instBAT
+          show_menu;
         ;;
         9) clear;
+          instBASHRC
+        ;;
+        10) clear;
           reinstall
           show_menu;
         ;;

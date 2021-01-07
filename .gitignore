@@ -2,6 +2,7 @@
 bin/cht.sh
 bin/navi
 bin/lsd
+bin/bat
 modules
 modules/*
 vim/backups/
