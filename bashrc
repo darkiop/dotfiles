@@ -42,11 +42,16 @@ if [ -x $HOME/dotfiles/bin/navi ]; then
   eval "$(navi widget bash)"
 fi
 
+# load docker alias
+if [[ -x $(which docker) ]]; then
+  source ~/dotfiles/shells/alias-docker
+fi
+
 # load alias for special hosts
 case $(hostname) in 
-  (pve-ct-docker)
-    source ~/dotfiles/shells/alias-docker
-  ;;
+  #(pve-ct-docker)
+  #  source ~/dotfiles/shells/alias-docker
+  #;;
   (pve01)
     source ~/dotfiles/shells/alias-proxmox
   ;;
