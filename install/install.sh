@@ -505,7 +505,7 @@ function setupNewSystem() {
   function addNewUser() {
     # add user
     read -p 'User: ';
-    message blue "adduser: $REPLY"
+    message green "adduser: $REPLY"
     useradd -m -s /bin/bash $REPLY
     passwd $REPLY
     # mv user to group sudo
@@ -550,12 +550,12 @@ function setupNewSystem() {
 EOF
 
     # add samba user
-    infomsg blue "Set a password for Samba User"
+    message blue "Create a password for Samba User"
     read -p 'User: ';
     smbpasswd -a $REPLY
 
     # restart smb service
-    infomsg blue "restart samba service ..."
+    message blue "restart samba service ..."
     systemctl restart smbd.service
   }
   ask blue "Install Samba?"
