@@ -195,8 +195,7 @@ function instAPP() {
   ncdu \
   needrestart \
   hddtemp \
-  parted \
-  gdebi \
+  parted
   # tmp: rcconf, sensors
 }
 
