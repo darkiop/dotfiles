@@ -117,6 +117,7 @@ EOF
   printf "${yellow_color}9)${close_color} Install .bashrc\n"
   printf "${yellow_color}10)${close_color} Complete Re-Install\n"
   printf "${yellow_color}11)${close_color} Update from github (git pull)\n"
+  printf "${yellow_color}12)${close_color} Setup a new System\n"
   echo
   printf "Please choose an option or ${red_color}x${close_color} to exit: "
   read opt
@@ -440,6 +441,130 @@ function instBASHRC() {
   fi
 }
 
+# TODO
+# -------------------------------------------------------------
+# Setup new system
+# add user
+# install samba
+# -------------------------------------------------------------
+function setupNewSystem() {
+
+  # check if root
+	if [ "${EUID}" -ne 0 ]; then
+		message red "You need to run 'Setup a new System' as root. Exit."
+		exit 1
+	fi
+
+  # 
+  # Install System Updates
+  #
+  function instSYSUPDATES() {
+    message blue "update the system ..."
+    $apt update
+    $apt upgrade -y
+  }
+  ask blue "Install system updates?"
+  if [ $REPLY == "y" ]; then
+    instSYSUPDATES
+  fi
+
+  # 
+  # Install sudo & git
+  #
+  ask blue "Install sudo, git, curl & wget?"
+  if [ $REPLY == "y" ]; then
+    message blue "[ install sudo, git, curl & wget ]"
+    apt install -y sudo git curl wget
+  fi
+
+  # 
+  # timezone, locales
+  #
+  function instTIMEZONELOCALES() {
+    # timezone
+    apt install -y tzdata
+    timezone="Europe/Berlin"
+    ln -fs /usr/share/zoneinfo/$timezone /etc/localtime
+    echo $timezone > /etc/timezone
+    dpkg-reconfigure -f noninteractive tzdata
+    # locales
+    locales="de_DE.UTF-8"
+    sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen
+    echo 'LANG="de_DE.UTF-8"'>/etc/default/locale
+    dpkg-reconfigure --frontend=noninteractive locales
+    update-locale LANG=de_DE.UTF-8
+  }
+  ask blue "Setup timezone & locales?"
+  if [ $REPLY == "y" ]; then
+    instTIMEZONELOCALES
+  fi
+
+  #
+  # adduser
+  #
+  function addNewUser() {
+    # add user
+    read -p 'User: ';
+    message blue "adduser: $REPLY"
+    useradd -m -s /bin/bash $REPLY
+    passwd $REPLY
+    # mv user to group sudo
+    message blue "add user $REPLY to group sudo"
+    usermod -a -G sudo $REPLY
+  }
+  ask blue "Create User?"
+  if [ $REPLY == "y" ]; then
+    addNewUser
+  fi
+
+  #
+  # install samba and create shares
+  #
+  function instSAMBA() {
+    # install samba
+    apt install -y samba-common samba
+
+    cat <<EOF > /etc/samba/smb.conf
+[global]
+  log file = /var/log/samba/log.%m
+  logging = file
+  map to guest = Bad User
+  max log size = 1000
+  obey pam restrictions = Yes
+  pam password change = Yes
+  panic action = /usr/share/samba/panic-action %d
+  passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .
+  passwd program = /usr/bin/passwd %u
+  server role = standalone server
+  unix password sync = Yes
+  usershare allow guests = Yes
+  idmap config * : backend = tdb
+
+[homes]
+  browseable = No
+  comment = Home Directories
+  create mask = 0700
+  directory mask = 0700
+  read only = No
+  valid users = %S
+EOF
+
+    # add samba user
+    infomsg blue "Set a password for Samba User"
+    read -p 'User: ';
+    smbpasswd -a $REPLY
+
+    # restart smb service
+    infomsg blue "restart samba service ..."
+    systemctl restart smbd.service
+  }
+  ask blue "Install Samba?"
+  if [ $REPLY == "y" ]; then
+    instSAMBA
+  fi
+}
+
+
 # -------------------------------------------------------------
 # RUN THE SCRIPT
 # -------------------------------------------------------------
@@ -495,6 +620,10 @@ else
         ;;
         11) clear;
           instUPDATEFROMGIT
+          show_menu;
+        ;;
+        12) clear;
+          setupNewSystem
           show_menu;
         ;;
         x)exit;
