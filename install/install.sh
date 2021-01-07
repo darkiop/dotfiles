@@ -195,6 +195,7 @@ function instAPP() {
   needrestart \
   hddtemp \
   parted \
+  gdebi \
   # tmp: rcconf, sensors
 }
 
@@ -207,15 +208,29 @@ function instAPP() {
 # -------------------------------------------------------------
 function instLSD() {
   message blue "[ Install lsd ]"
-  local arch=$(dpkg --print-architecture)
-  if [ $arch == "amd64" ]; then
-    wget -q -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
-    $dpkg -i ~/lsd.deb
-    rm ~/lsd.deb
-  else
-    ask blue "No .deb file to install. Install lsd with cargo?"
-    if [ $REPLY == "y" ]; then
-      instLSD "cargo"
+  arch=$(dpkg --print-architecture)
+  case $arch in
+    (amd64)
+      wget -q -O ~/lsd.deb https://github.com/Peltoche/lsd/releases/download/0.19.0/lsd_0.19.0_amd64.deb
+      $dpkg -i ~/lsd.deb
+      rm ~/lsd.deb
+    ;;
+    (armhf)
+      version="lsd-0.19.0-arm-unknown-linux-gnueabihf"
+      wget -q -O ~/lsd.tar.gz https://github.com/Peltoche/lsd/releases/download/0.19.0/$version.tar.gz
+      tar xzf ~/lsd.tar.gz
+      cp $version/lsd $HOME/dotfiles/bin
+      rm ~/lsd.tar.gz
+      rm -r ~/$version
+    ;;
+  esac
+  # config file
+  if [ ! -L ~/.config/lsd/config.yaml ] ; then
+    if [ ! -d ~/.config/lsd ]; then
+      mkdir -p ~/.config/lsd
+      ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
+    else
+      ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
     fi
   fi
 }
@@ -303,6 +318,16 @@ function instCHEATSH() {
   fi
 }
 
+# TODO
+# -------------------------------------------------------------
+# Install: bat
+# https://github.com/sharkdp/bat
+# https://ostechnix.com/bat-a-cat-clone-with-syntax-highlighting-and-git-integration/
+# -------------------------------------------------------------
+function instBATCAT() {
+  exit
+}
+
 # -------------------------------------------------------------
 # Install .bashrc
 # -------------------------------------------------------------
@@ -341,16 +366,6 @@ function instBASHRC() {
       echo "create: ~/.$folder"
       ln -s $dir/$folder ~/.$folder
   done
-
-  # lsd config file
-  if [ ! -L ~/.config/lsd/config.yaml ] ; then
-    if [ ! -d ~/.config/lsd ]; then
-      mkdir -p ~/.config/lsd
-      ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
-    else
-      ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
-    fi
-  fi
 
   # load .bashrc
   echo -e "$green_color"
