@@ -44,15 +44,19 @@ if [[ -x $(which docker) ]]; then
   source ~/dotfiles/shells/alias-docker
 fi
 
-# load alias for special hosts
-case $(hostname) in 
-  (pve01)
-    source ~/dotfiles/shells/alias-proxmox
-  ;;
-  (pve-ct-iobroker|iobroker-hwr)
-    source ~/dotfiles/shells/alias-iobroker
-  ;;
-esac
+# load proxmox alias
+if [[ -x $(which pveversion) ]]; then
+  source ~/dotfiles/shells/alias-proxmox
+fi
+
+# load iobroker alias
+if [ -d /opt/iobroker ]; then
+  source ~/dotfiles/shells/alias-iobroker
+  # Forces npm to run as iobroker when inside the iobroker installation dir
+  if [ -f /root/.iobroker/npm_command_fix ]; then
+    source /root/.iobroker/npm_command_fix
+  fi
+fi
 
 # create local settings file
 if [ ! -f ~/dotfiles/.local_dotfiles_settings ]; then
@@ -60,11 +64,6 @@ if [ ! -f ~/dotfiles/.local_dotfiles_settings ]; then
   echo "# local settings for dotfiles, e.g. variables" > ~/dotfiles/.local_dotfiles_settings
 else
   source ~/dotfiles/.local_dotfiles_settings
-fi
-
-# Forces npm to run as iobroker when inside the iobroker installation dir
-if [ -f /opt/iobroker/log/iobroker.current.log ]; then
-  source /root/.iobroker/npm_command_fix
 fi
 
 # clear screen & show motd
