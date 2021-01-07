@@ -219,12 +219,13 @@ function instLSD() {
     ;;
     (armhf)
       version="lsd-0.19.0-arm-unknown-linux-gnueabihf"
-      wget -q -O ~/lsd.tar.gz https://github.com/Peltoche/lsd/releases/download/0.19.0/$version.tar.gz
+      cd $HOME
+      wget -q -O $HOME/lsd.tar.gz https://github.com/Peltoche/lsd/releases/download/0.19.0/$version.tar.gz
       sleep 2
-      tar xzf ~/lsd.tar.gz
+      tar xzf $HOME/lsd.tar.gz
       cp $version/lsd $HOME/dotfiles/bin
-      rm ~/lsd.tar.gz
-      rm -r ~/$version
+      rm $HOME/lsd.tar.gz
+      rm -r $HOME/$version
     ;;
   esac
   # config file
