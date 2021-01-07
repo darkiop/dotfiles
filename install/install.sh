@@ -502,7 +502,7 @@ function setupNewSystem() {
   #
   function addNewUser() {
     # add user
-    read -p 'User: ';
+    read -p 'Username: ';
     useradd -m -s /bin/bash $REPLY
     passwd $REPLY
     # mv user to group sudo
@@ -511,7 +511,7 @@ function setupNewSystem() {
       usermod -a -G sudo $REPLY
     fi
   }
-  ask blue "Create User?"
+  ask blue "Create a personal User?"
   if [ $REPLY == "y" ]; then
     addNewUser
   fi
@@ -522,7 +522,7 @@ function setupNewSystem() {
   function instSAMBA() {
     # install samba
     DEBIAN_FRONTEND=noninteractive
-    apt install -y samba-common samba
+    apt install -yq samba-common samba
 
     cat <<EOF > /etc/samba/smb.conf
 [global]
