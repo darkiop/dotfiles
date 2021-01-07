@@ -1,11 +1,8 @@
-case $HOSTNAME in
-  (odin) alias docker='sudo docker';;
-  (odin) alias docker-compose='sudo docker-compose';;
-  (pve-vm-docker) alias docker='sudo docker';;
-  (pve-vm-docker) alias docker-compose='sudo docker-compose';;
-  (pve-ct-docker) alias docker='sudo docker';;
-  (pve-ct-docker) alias docker-compose='sudo docker-compose';;
-esac
+# check if root, when not define alias with sudo
+if [[ $EUID -ne 0 ]]; then
+  alias docker='sudo '$(which docker)
+  alias docker-compose='sudo docker-compose '$(which docker)
+fi
 
 alias dk='docker'
 alias dklc='docker ps -l'  # List last Docker container
@@ -26,7 +23,7 @@ alias dkip='docker image prune -a -f'
 alias dkvp='docker volume prune -f'
 alias dksp='docker system prune -a -f'
 
-# ...
+# start a container and show log
 alias dsl='~/dotfiles/bin/docker-start-and-log-f.sh'
 
 # https://docs.docker.com/engine/reference/commandline/ps/
