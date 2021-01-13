@@ -1,12 +1,7 @@
+workspace.code-workspace
 .local_dotfiles_settings
 bin/cht.sh
 bin/navi
 bin/lsd
 bin/bat
 modules
-modules/*
-vim/backups/
-vim/swaps/
-vim/undo/
-vimrc
-workspace.code-workspace
