@@ -1,6 +1,3 @@
-# path
-export PATH=:$HOME/bin:/usr/local/bin:$PATH
-
 # editors
 export EDITOR='vim'
 export ALTERNATE_EDITOR='vim'
