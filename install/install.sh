@@ -129,6 +129,8 @@ EOF
 function instDOTF() {
   checkgit
   message yellow "+++ Install complete dotfiles +++"
+  message blue "[ clone dotfiles repo from github ]"
+  git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
   instAPP
   instLSD
   instGITSUBM
