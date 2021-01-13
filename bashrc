@@ -8,18 +8,8 @@
 # load default bashrc
 #source /etc/skel/.bashrc
 
-# expand $PATH
-PATH=$PATH:~/dotfiles/bin
-
-if [ -d $HOME/.cargo/bin ]; then
-  PATH=$PATH:$HOME/.cargo/bin
-fi
-if [ -d $HOME/.local/bin ]; then
-  PATH=$PATH:$HOME/.local/bin
-fi
-if [ -x $HOME/dotfiles/modules/fzf/bin/fzf ]; then
-  PATH=$PATH:$HOME/dotfiles/modules/fzf/bin
-fi
+# $PATH
+source $HOME/shells/path
 
 # Distribute bashrc into smaller, more specific files
 source $HOME/dotfiles/shells/defaults
@@ -47,6 +37,11 @@ fi
 # load proxmox alias
 if [[ -x $(which pveversion) ]]; then
   source ~/dotfiles/shells/alias-proxmox
+fi
+
+# load wireguard alias
+if [[ -x $(which wg) ]]; then
+  source ~/dotfiles/shells/alias-wireguard
 fi
 
 # load iobroker alias
