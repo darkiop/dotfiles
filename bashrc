@@ -8,8 +8,20 @@
 # load default bashrc
 #source /etc/skel/.bashrc
 
-# $PATH
-source $HOME/shells/path
+# define and load directorys for personal $PATH
+pathadd() {
+  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+      PATH="$1${PATH:+":$PATH"}"
+  fi
+}
+pathadd "/usr/local/bin"
+pathadd "/usr/bin"
+pathadd "/bin"
+pathadd "$HOME/bin"
+pathadd "$HOME/dotfiles/bin"
+pathadd "$HOME/dotfiles/modules/fzf/bin"
+pathadd "$HOME/.local/bin"
+pathadd "$HOME/.cargo/bin"
 
 # Distribute bashrc into smaller, more specific files
 source $HOME/dotfiles/shells/defaults
