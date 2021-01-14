@@ -1,0 +1,7 @@
+% bitwarden
+
+# create admin token
+openssl rand -base64 48
+
+# edit bitwarden config
+vi /etc/bitwarden_rs.env
