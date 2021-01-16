@@ -95,17 +95,28 @@ function message() {
 }
 
 # -------------------------------------------------------------
-# Menu
+# main menu
 # -------------------------------------------------------------
-function show_menu(){
-  echo -e $yellow_color
-cat << EOF
-  ▌   ▐  ▗▀▖▗▜       
-▞▀▌▞▀▖▜▀ ▐  ▄▐ ▞▀▖▞▀▘
-▌ ▌▌ ▌▐ ▖▜▀ ▐▐ ▛▀ ▝▀▖
-▝▀▘▝▀  ▀ ▐  ▀▘▘▝▀▘▀▀
-EOF
-  echo -e $close_color
+function show_main_menu(){
+  echo
+  echo -e $green_color"[ darkiop/dotfiles ]"$close_color
+  echo
+  printf "${yellow_color}1)${close_color} Install dotfiles\n"
+  printf "${yellow_color}2)${close_color} Re-Install dotfiles \n"
+  printf "${yellow_color}3)${close_color} Update from github\n"
+  printf "${yellow_color}4)${close_color} Setup a new System\n"
+  echo
+  printf "Please choose an option or ${red_color}x${close_color} to exit: "
+  read opt_main_menu
+}
+
+# -------------------------------------------------------------
+# sub menu dotfiles
+# -------------------------------------------------------------
+function show_sub_menu_dotfiles(){
+  echo
+  echo -e $green_color"[ Install dotfiles ]"$close_color
+  echo
   printf "${yellow_color}1)${close_color} Install all\n"
   printf "${yellow_color}2)${close_color} Install Apps \n"
   printf "${yellow_color}3)${close_color} Install lsd\n"
@@ -115,12 +126,9 @@ EOF
   printf "${yellow_color}7)${close_color} Install cheat.sh\n"
   printf "${yellow_color}8)${close_color} Install bat\n"
   printf "${yellow_color}9)${close_color} Install .bashrc\n"
-  printf "${yellow_color}10)${close_color} Complete Re-Install\n"
-  printf "${yellow_color}11)${close_color} Update from github (git pull)\n"
-  printf "${yellow_color}12)${close_color} Setup a new System\n"
   echo
-  printf "Please choose an option or ${red_color}x${close_color} to exit: "
-  read opt
+  printf "Please choose an opt_main_menuion or ${red_color}x${close_color} to exit: "
+  read opt_sub_menu_dotfiles
 }
 
 # -------------------------------------------------------------
@@ -129,8 +137,8 @@ EOF
 function instDOTF() {
   checkgit
   message yellow "+++ Install complete dotfiles +++"
-  message blue "[ clone dotfiles repo from github ]"
   if [ ! -d $HOME/dotfiles ]; then
+    message blue "[ clone dotfiles repo from github ]"
     git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
   fi
   instAPP
@@ -321,7 +329,6 @@ function instNAVI() {
 # -------------------------------------------------------------
 function instCHEATSH() {
   message blue "[ Install cheat.sh]"
-  message blue "download and save cheat.sh to dotfiles/bin"
   curl https://cht.sh/:cht.sh > $HOME/dotfiles/bin/cht.sh
   chmod +x $HOME/dotfiles/bin/cht.sh
   echo
@@ -374,21 +381,23 @@ function instBAT() {
 # Update from github (git pull)
 # -------------------------------------------------------------
 function instUPDATEFROMGIT() {
-  git status > /dev/null 2>&1 &
-  if git diff-index --quiet HEAD --; then
-    # no changes
-    echo
-    echo -e $red_color"No changes to the dotfiles were found. Update ..."$close_color
-    echo
-    cd ~/dotfiles
-    git pull
-    cd ~
-    bash ~/.bashrc
-  else
-    # changes
-    echo
-    echo -e $red_color"Local changes to the dotfiles were found. Check and commit these or run install-reinstall.sh."$close_color
-    echo
+  if [ -d $HOME/dotfiles ]; then
+    git status > /dev/null 2>&1 &
+    if git diff-index --quiet HEAD --; then
+      # no changes
+      echo
+      echo -e $red_color"No changes to the dotfiles were found. Update ..."$close_color
+      echo
+      cd ~/dotfiles
+      git pull
+      cd ~
+      bash ~/.bashrc
+    else
+      # changes
+      echo
+      echo -e $red_color"Local changes to the dotfiles were found. Check and commit these or run install-reinstall.sh."$close_color
+      echo
+    fi
   fi
 }
 
@@ -432,11 +441,15 @@ function instBASHRC() {
   done
 
   # load .bashrc
-  echo -e "$green_color"
+  echo -e "$yellow_color"
   echo "dotfiles installed. "
   echo
-  read -p "load ~/.bashrc?  (y/n):" loadbashrc
+  read -p "load ~/.bashrc? (y/n):" loadbashrc
   echo -e "$close_color"
+  case $loadbashrc in
+
+  esac
+
   if [ $loadbashrc == "y" ]; then
     bash $HOME/.bashrc
   else
@@ -566,78 +579,104 @@ EOF
   fi
 }
 
-
 # -------------------------------------------------------------
 # RUN THE SCRIPT
 # -------------------------------------------------------------
 if [[ $1 == 'all' ]]; then
   instDOTF
 else
-  show_menu
-  while [ $opt != '' ];
-    do
-    if [ $opt = '' ]; then
-      exit;
-    else
-      case $opt in
-        1) clear;
-          instDOTF
-          exit
-        ;;
-        2) clear;
-          instAPP
-          show_menu;
-        ;;
-        3) clear;
-          instLSD
-          clear
-          show_menu;
-        ;;
-        4) clear;
-          instGITSUBM
-          show_menu;
-        ;;
-        5) clear;
-          instVIMRC
-          show_menu;
-        ;;
-        6) clear;
-          instNAVI
-          show_menu;
-        ;;
-        7) clear;
-          instCHEATSH
-          show_menu;
-        ;;
-        8) clear;
-          instBAT
-          show_menu;
-        ;;
-        9) clear;
-          instBASHRC
-        ;;
-        10) clear;
-          reinstall
-          show_menu;
-        ;;
-        11) clear;
-          instUPDATEFROMGIT
-          show_menu;
-        ;;
-        12) clear;
-          setupNewSystem
-          show_menu;
-        ;;
-        x)exit;
-        ;;
-        \n)exit;
-        ;;
-        *)clear;
-          show_menu;
-        ;;
-      esac
-    fi
-  done
+  show_main_menu
+  if [ $opt_main_menu = '' ]; then
+    exit;
+  else
+    case $opt_main_menu in
+      1) # show sub menu dotfiles
+        show_sub_menu_dotfiles
+        case $opt_sub_menu_dotfiles in
+          1) # install dotfiles
+            clear
+            instDOTF
+            exit
+          ;;
+          2) # install apps
+            clear
+            instAPP
+            show_main_menu
+          ;;
+          3) # install lsd
+            clear
+            instLSD
+            clear
+            show_main_menu
+          ;;
+          4) # install git submodules
+            clear
+            instGITSUBM
+            show_main_menu
+          ;;
+          5) # install vimrc
+            clear
+            instVIMRC
+            show_main_menu
+          ;;
+          6) # install navi
+            clear
+            instNAVI
+            show_main_menu
+          ;;
+          7) # install cheat.sh
+            clear
+            instCHEATSH
+            show_main_menu
+          ;;
+          8) # install bat
+            clear
+            instBAT
+            show_main_menu
+          ;;
+          9) # install .bashrc
+            clear
+            instBASHRC
+          ;;
+          x) # exit
+            exit
+          ;;
+          \n) # typo - show main menu again
+            show_main_menu
+          ;;
+          *) # typo - show main menu again
+            clear
+            show_main_menu
+          ;;
+        esac
+      ;;
+      2) # reinstall
+        clear
+        reinstall
+        show_main_menu
+      ;;
+      3) # update from git
+        clear
+        instUPDATEFROMGIT
+        show_main_menu
+      ;;
+      4) # setup a new system
+        clear
+        setupNewSystem
+        show_main_menu
+      ;;
+      x) # exit
+        exit
+      ;;
+      \n) # typo - show main menu again
+        show_main_menu
+      ;;
+      *) # typo - show main menu again
+        clear
+        show_main_menu
+      ;;
+    esac
+  fi
 fi
 
 # EOF
