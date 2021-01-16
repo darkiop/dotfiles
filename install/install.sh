@@ -414,6 +414,7 @@ function instBASHRC() {
 
   # delete old symlinks
   echo -e $green_color"delete"$close_color$yellow_color" old "$green_color"symlinks ..."$close_color
+  echo
   for file in $files; do
     if [ -f ~/.$file ]; then
       echo "delete: ~/.$file"
@@ -431,6 +432,7 @@ function instBASHRC() {
 
   # new symlinks for files and folders
   echo -e $green_color"create"$close_color$yellow_color" new "$green_color"symlinks ..."$close_color
+  echo
   for file in $files; do
       echo "create: ~/.$file"
       ln -s $dir/$file ~/.$file
@@ -441,21 +443,20 @@ function instBASHRC() {
   done
 
   # load .bashrc
-  echo -e "$yellow_color"
-  echo "dotfiles installed. "
   echo
+  echo -e "$yellow_color[ dotfiles installed ]$close_color"
+  echo -e "$red_color"
   read -p "load ~/.bashrc? (y/n):" loadbashrc
   echo -e "$close_color"
   case $loadbashrc in
-
+    y|Y)
+      bash $HOME/.bashrc
+    ;;
+    n|N|*)
+      message yellow "Do nothing and exit."
+      exit
+    ;;
   esac
-
-  if [ $loadbashrc == "y" ]; then
-    bash $HOME/.bashrc
-  else
-    echo -e $green_color"done. please "$close_color$yellow_color"relogin "$green_color"to load the dotfiles"$close_color
-    echo
-  fi
 }
 
 # -------------------------------------------------------------
@@ -594,48 +595,38 @@ else
         show_sub_menu_dotfiles
         case $opt_sub_menu_dotfiles in
           1) # install dotfiles
-            clear
             instDOTF
             exit
           ;;
           2) # install apps
-            clear
             instAPP
             show_main_menu
           ;;
           3) # install lsd
-            clear
             instLSD
-            clear
             show_main_menu
           ;;
           4) # install git submodules
-            clear
             instGITSUBM
             show_main_menu
           ;;
           5) # install vimrc
-            clear
             instVIMRC
             show_main_menu
           ;;
           6) # install navi
-            clear
             instNAVI
             show_main_menu
           ;;
           7) # install cheat.sh
-            clear
             instCHEATSH
             show_main_menu
           ;;
           8) # install bat
-            clear
             instBAT
             show_main_menu
           ;;
           9) # install .bashrc
-            clear
             instBASHRC
           ;;
           x) # exit
@@ -645,23 +636,19 @@ else
             show_main_menu
           ;;
           *) # typo - show main menu again
-            clear
             show_main_menu
           ;;
         esac
       ;;
       2) # reinstall
-        clear
         reinstall
         show_main_menu
       ;;
       3) # update from git
-        clear
         instUPDATEFROMGIT
         show_main_menu
       ;;
       4) # setup a new system
-        clear
         setupNewSystem
         show_main_menu
       ;;
@@ -672,7 +659,6 @@ else
         show_main_menu
       ;;
       *) # typo - show main menu again
-        clear
         show_main_menu
       ;;
     esac
