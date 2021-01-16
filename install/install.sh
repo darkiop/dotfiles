@@ -156,17 +156,20 @@ function instDOTF() {
 # -------------------------------------------------------------
 function reinstall() {
   ask red "Re-Install! Are you sure? ~/dotfiles will be deleted. (y/n):"
-  if [ $REPLY == "y" ]; then
-    cd $HOME
-    message red "delete ~/dotfiles"
-    sudo rm -r $HOME/dotfiles
-    echo
-    message green "reinstall ~/dotfiles"
-    git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
-    bash $HOME/dotfiles/install/install-menu.sh all
-  else
-    exit
-  fi
+  case $REPLY in
+    y|Y)
+      cd $HOME
+      message red "delete ~/dotfiles"
+      sudo rm -r $HOME/dotfiles
+      echo
+      message green "reinstall ~/dotfiles"
+      git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
+      bash $HOME/dotfiles/install/install.sh all
+    ;;
+    n|N|*)
+      show_main_menu
+    ;;
+  esac
 }
 
 # -------------------------------------------------------------
