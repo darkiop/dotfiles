@@ -10,13 +10,23 @@ yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
 # check if root, when not define alias with sudo
-if [[ $EUID -ne 0 ]]; then
+if [ "${EUID}" -ne 0 ]; then
   dpkg='sudo '$(which dpkg)
   apt='sudo '$(which apt)
 else
   dpkg=$(which dpkg)
   apt=$(which apt)
 fi
+
+# -------------------------------------------------------------
+# check if root
+# -------------------------------------------------------------
+function checkRoot() {
+  if [ "${EUID}" -ne 0 ]; then
+    message red "You need to run this as root. Exit."
+    exit 1
+  fi
+}
 
 # -------------------------------------------------------------
 # Check if git is installed
@@ -69,6 +79,7 @@ function ask() {
 
 # -------------------------------------------------------------
 # Message
+# message color "text"
 # -------------------------------------------------------------
 function message() {
   local color="$1"
@@ -127,8 +138,26 @@ function show_sub_menu_dotfiles(){
   printf "${yellow_color}8)${close_color} Install bat\n"
   printf "${yellow_color}9)${close_color} Install .bashrc\n"
   echo
-  printf "Please choose an opt_main_menuion or ${red_color}x${close_color} to exit: "
+  printf "Please choose an option or ${red_color}x${close_color} to exit: "
   read opt_sub_menu_dotfiles
+}
+
+# -------------------------------------------------------------
+# sub menu system-setup
+# -------------------------------------------------------------
+function show_sub_menu_system_setup(){
+  echo
+  echo -e $green_color"[ initial System Setup ]"$close_color
+  echo
+  printf "${yellow_color}1)${close_color} all (updates, sudo & git, timezone & locales, add new user, install samba) \n"
+  printf "${yellow_color}2)${close_color} System Updates \n"
+  printf "${yellow_color}3)${close_color} Install sudo & git\n"
+  printf "${yellow_color}4)${close_color} Setup timezone & locales\n"
+  printf "${yellow_color}5)${close_color} Add a new User\n"
+  printf "${yellow_color}6)${close_color} Install Samba\n"
+  echo
+  printf "Please choose an option or ${red_color}x${close_color} to exit: "
+  read opt_sub_menu_system_setup
 }
 
 # -------------------------------------------------------------
@@ -469,11 +498,7 @@ function instBASHRC() {
 # -------------------------------------------------------------
 function setupNewSystem() {
 
-  # check if root
-	if [ "${EUID}" -ne 0 ]; then
-		message red "You need to run 'Setup a new System' as root. Exit."
-		exit 1
-	fi
+  checkRoot
 
   # 
   # Install System Updates
@@ -483,9 +508,14 @@ function setupNewSystem() {
     apt upgrade -y
   }
   ask blue "Install system updates?"
-  if [ $REPLY == "y" ]; then
-    instSYSUPDATES
-  fi
+  case $REPLY in
+    y|Y)
+      instSYSUPDATES
+    ;;
+    n|N|*)
+      show_sub_menu_system_setup
+    ;;
+  esac
 
   # 
   # Install sudo & git
@@ -532,55 +562,48 @@ function setupNewSystem() {
     addNewUser
   fi
 
-  #
-  # install samba and create shares
-  #
-  function instSAMBA() {
-
-    # https://unix.stackexchange.com/questions/546470/skip-prompt-when-installing-samba
-    echo "samba-common samba-common/workgroup string WORKGROUP" | debconf-set-selections
-    echo "samba-common samba-common/dhcp boolean true" | debconf-set-selections
-    echo "samba-common samba-common/do_debconf boolean true" | debconf-set-selections
-    
-    apt install -yq samba-common samba
-
-    cat <<EOF > /etc/samba/smb.conf
-[global]
-  log file = /var/log/samba/log.%m
-  logging = file
-  map to guest = Bad User
-  max log size = 1000
-  obey pam restrictions = Yes
-  pam password change = Yes
-  panic action = /usr/share/samba/panic-action %d
-  passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .
-  passwd program = /usr/bin/passwd %u
-  server role = standalone server
-  unix password sync = Yes
-  usershare allow guests = Yes
-  idmap config * : backend = tdb
-
-[homes]
-  browseable = No
-  comment = Home Directories
-  create mask = 0700
-  directory mask = 0700
-  read only = No
-  valid users = %S
-EOF
-
-    # add samba user
-    message blue "Create a password for Samba User"
-    read -p 'User: ';
-    smbpasswd -a $REPLY
-
-    # restart smb service
-    systemctl restart smbd.service
-  }
   ask blue "Install Samba?"
   if [ $REPLY == "y" ]; then
     instSAMBA
   fi
+}
+
+# -------------------------------------------------------------
+# install samba and create shares
+# -------------------------------------------------------------
+function instSAMBA() {
+
+  # https://unix.stackexchange.com/questions/546470/skip-prompt-when-installing-samba
+  echo "samba-common samba-common/workgroup string WORKGROUP" | debconf-set-selections
+  echo "samba-common samba-common/dhcp boolean true" | debconf-set-selections
+  echo "samba-common samba-common/do_debconf boolean true" | debconf-set-selections
+  
+  apt install -yq samba-common samba
+  
+  cp /etc/samba/smb.conf /etc/samba/smb.conf.bak  
+  
+  if [ -d $HOME/dotfiles ]; then
+    cp $HOME/dotfiles/config/smb.conf /etc/samba/smb.conf
+  else
+    ask yellow "dotfiles not found, install?"
+    case $REPLY in
+      y|Y)
+        instDOTF
+      ;;
+      n|N|*)
+        message yellow "Do nothing and exit."
+        exit
+      ;;
+    esac
+  fi
+
+  # add samba user
+  message blue "Create a user for samba:"
+  read -p 'User: ';
+  smbpasswd -a $REPLY
+
+  # restart smb service
+  systemctl restart smbd.service
 }
 
 # -------------------------------------------------------------
@@ -652,8 +675,43 @@ else
         show_main_menu
       ;;
       4) # setup a new system
-        setupNewSystem
-        show_main_menu
+        show_sub_menu_system_setup
+        case $opt_sub_menu_system_setup in
+          1) # install all
+            setupNewSystem
+            instSAMBA
+            exit
+          ;;
+          2) # system udates
+            setupNewSystem
+            show_main_menu
+          ;;
+          3) # install sudo & git
+            setupNewSystem
+            show_main_menu
+          ;;
+          4) # setup timezone & locales
+            setupNewSystem
+            show_main_menu
+          ;;
+          5) # add a new user
+            setupNewSystem
+            show_main_menu
+          ;;
+          6) # install samba
+            instSAMBA
+            show_main_menu
+          ;;
+          x) # exit
+            exit
+          ;;
+          \n) # typo - show main menu again
+            show_main_menu
+          ;;
+          *) # typo - show main menu again
+            show_main_menu
+          ;;
+        esac
       ;;
       x) # exit
         exit
