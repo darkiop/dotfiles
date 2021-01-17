@@ -161,15 +161,24 @@ function show_sub_menu_system_setup(){
 }
 
 # -------------------------------------------------------------
+# clone repo from github
+# -------------------------------------------------------------
+function cloneREPO() {
+  if [ ! -d $HOME/dotfiles ]; then
+    message blue "[ clone dotfiles repo from github ]"
+    git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
+  else
+    message yellow "dotfiles directory already exist. Do nothing and exit."
+  fi
+}
+
+# -------------------------------------------------------------
 # Install dotfiles (all)
 # -------------------------------------------------------------
 function instDOTF() {
   checkgit
   message yellow "+++ Install complete dotfiles +++"
-  if [ ! -d $HOME/dotfiles ]; then
-    message blue "[ clone dotfiles repo from github ]"
-    git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
-  fi
+  cloneREPO
   instAPP
   instLSD
   instGITSUBM
@@ -192,7 +201,7 @@ function reinstall() {
       sudo rm -r $HOME/dotfiles
       echo
       message green "reinstall ~/dotfiles"
-      git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
+      cloneREPO
       bash $HOME/dotfiles/install/install.sh all
     ;;
     n|N|*)
@@ -573,6 +582,8 @@ function setupNewSystem() {
 # -------------------------------------------------------------
 function instSAMBA() {
 
+  message blue "[ Install Samba ]"
+
   # https://unix.stackexchange.com/questions/546470/skip-prompt-when-installing-samba
   echo "samba-common samba-common/workgroup string WORKGROUP" | debconf-set-selections
   echo "samba-common samba-common/dhcp boolean true" | debconf-set-selections
@@ -588,7 +599,7 @@ function instSAMBA() {
     ask yellow "dotfiles not found, install?"
     case $REPLY in
       y|Y)
-        instDOTF
+        cloneREPO
       ;;
       n|N|*)
         message yellow "Do nothing and exit."
