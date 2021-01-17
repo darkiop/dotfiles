@@ -6,15 +6,13 @@ Screenshot with Terminal https://github.com/Eugeny/terminus
 
 ## INSTALL
 
-### with wget
-
-#### with menu
+### with menu
 
 ```
 bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')"
 ```
 
-#### install all without questions
+### install all without questions
 
 ```
 bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')" '' all
