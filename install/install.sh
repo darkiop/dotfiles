@@ -164,7 +164,6 @@ function show_sub_menu_system_setup(){
 # clone repo from github
 # -------------------------------------------------------------
 function cloneREPO() {
-  checkgit
   if [ ! -d $HOME/dotfiles ]; then
     message blue "[ clone dotfiles repo from github ]"
     git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
@@ -375,11 +374,11 @@ function instCHEATSH() {
   chmod +x $HOME/dotfiles/bin/cht.sh
   echo
   if [ ! -d $HOME/.cht.sh ]; then
-    message blue "create directory ~/.cht.sh"
+    message yellow "create directory ~/.cht.sh"
     mkdir $HOME/.cht.sh
   fi
   if [ ! -L $HOME/.cht.sh/cht.sh.conf ] ; then
-    message blue "create symlink ~/.cht.sh/cht.sh.conf"
+    message yellow "create symlink ~/.cht.sh/cht.sh.conf"
     ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
   fi
 }
@@ -600,6 +599,7 @@ function instSAMBA() {
     ask yellow "dotfiles not found, install?"
     case $REPLY in
       y|Y)
+        checkgit
         cloneREPO
       ;;
       n|N|*)
