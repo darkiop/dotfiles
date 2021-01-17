@@ -6,9 +6,18 @@ Screenshot with Terminal https://github.com/Eugeny/terminus
 
 ## INSTALL
 
-### direct, with wget
+### with wget
+
+#### with menu
+
 ```
-bash <(wget -qO- https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh)
+bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')"
+```
+
+#### install all without questions
+
+```
+bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')" '' all
 ```
 
 ### clone the repo
@@ -18,45 +27,49 @@ bash $HOME/dotfiles/install/install.sh
 ```
 
 ## FEATURES
-- motd for each hostname (~/dotfiles/motd)
 - navi <kbd>STRG</kbd> + <kbd>G</kbd> (~/dotfiles/cheats)
 - cheat.sh (example, run: "cht.sh man")
-- vimrc from amix
+- vimrc
+- motd for each hostname (~/dotfiles/motd)
 - byobu
 
 ## LINKS (used and not used in my dotfiles)
-- http://lnav.org/blog
+
+### other dotfile projects
+- https://github.com/1995parham/dotfiles
+- https://github.com/denisidoro/dotfiles
+
+### other tools in use
+- https://github.com/koljah-de/simple-bash-prompt
+- https://github.com/chubin/cheat.sh
 - https://github.com/denisidoro/navi
-- https://github.com/Peltoche/lsd (Siehe auch LinuxUser 2020/02 Seite 14)
+- https://github.com/Peltoche/lsd
+- https://github.com/sharkdp/bat
+- https://github.com/amix/vimrc
+- http://lnav.org
+
+### other
+- https://github.com/vim-airline/vim-airline
+- https://github.com/vim-airline/vim-airline-themes
+- https://github.com/starship/starship
 - https://github.com/Eugeny/terminus
 - https://github.com/ryanoasis/nerd-fonts
 - https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack#quick-installation
-- https://github.com/koljah-de/simple-bash-prompt
-- https://github.com/vim-airline/vim-airline
-- https://github.com/vim-airline/vim-airline-themes
 - https://github.com/ranger/ranger
-- https://wiki.ubuntuusers.de/Bash/Prompt/
+- https://wiki.ubuntuusers.de/Bash/Prompt
 - https://github.com/brantb/solarized
 - https://github.com/Bash-it/bash-it
 - https://github.com/tmux
-- https://github.com/clvv/fasd
 - https://github.com/seebi/dircolors-solarized
+- https://github.com/clvv/fasd
 - https://www.linux.com/learn/enhancing-virtual-terminals-byobu
 - https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 - https://github.com/LeCoupa/awesome-cheatsheets/blob/master/languages/bash.sh
-- https://github.com/chubin/cheat.sh
-- https://github.com/denisidoro/dotfiles
-- https://github.com/denisidoro/navi
 - https://github.com/aristocratos/bashtop
-- https://github.com/sharkdp/bat
 - https://drasite.com/blog/Pimp%20my%20terminal#top-from-the-future
-- https://github.com/amix/vimrc
-- https://github.com/starship/starship
 - https://ichi.pro/de/das-essential-bash-spickzettel-15514461037920
-
-## TODO
-- https://github.com/reujab/silver or https://github.com/starship/starship
-- install batcat from github, not from os repo
+- https://github.com/reujab/silver
+- https://github.com/existme/notes
 
 ## KEY BINDINGS
 
@@ -64,7 +77,7 @@ bash $HOME/dotfiles/install/install.sh
 
 Key | Function
 :--- | :---
-<kbd>STRG + G</kbd> | navi
+<kbd>STRG + G</kbd> | show navi menu
 
 ### byobu
 
