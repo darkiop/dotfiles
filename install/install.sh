@@ -164,6 +164,7 @@ function show_sub_menu_system_setup(){
 # clone repo from github
 # -------------------------------------------------------------
 function cloneREPO() {
+  checkgit
   if [ ! -d $HOME/dotfiles ]; then
     message blue "[ clone dotfiles repo from github ]"
     git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
