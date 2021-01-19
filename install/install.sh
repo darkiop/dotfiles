@@ -576,7 +576,8 @@ function instSAMBA() {
   if getent passwd $REPLY > /dev/null 2>&1; then
     smbpasswd -a $REPLY
   else
-    message blue "[ user $REPLY does not exist in passwd. Please create it first ]"
+    message yellow "[ user $REPLY does not exist in passwd. Please create it first ]"
+    createUSER
   fi
 
   # restart smb service
