@@ -578,6 +578,7 @@ function instSAMBA() {
   else
     message yellow "[ user $REPLY does not exist in passwd. Please create it first ]"
     createUSER
+    instSAMBA
   fi
 
   # restart smb service
