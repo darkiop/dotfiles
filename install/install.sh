@@ -292,9 +292,9 @@ function instLSD() {
   if [ ! -L ~/.config/lsd/config.yaml ] ; then
     if [ ! -d ~/.config/lsd ]; then
       mkdir -p ~/.config/lsd
-      ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
+      ln -s ~/dotfiles/config/lsd.config.yaml ~/.config/lsd/config.yaml
     else
-      ln -s ~/dotfiles/lsd.config.yaml ~/.config/lsd/config.yaml
+      ln -s ~/dotfiles/config/lsd.config.yaml ~/.config/lsd/config.yaml
     fi
   fi
 }
@@ -379,7 +379,7 @@ function instCHEATSH() {
   fi
   if [ ! -L $HOME/.cht.sh/cht.sh.conf ] ; then
     message yellow "create symlink ~/.cht.sh/cht.sh.conf"
-    ln -s $HOME/dotfiles/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
+    ln -s $HOME/dotfiles/config/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
   fi
 }
 
@@ -501,88 +501,49 @@ function instBASHRC() {
 }
 
 # -------------------------------------------------------------
-# Setup new system
-# add user
-# install samba
+# install system updates
 # -------------------------------------------------------------
-function setupNewSystem() {
-
-  checkRoot
-
-  # 
-  # Install System Updates
-  #
-  function instSYSUPDATES() {
-    apt update
-    apt upgrade -y
-  }
-  ask blue "Install system updates?"
-  case $REPLY in
-    y|Y)
-      instSYSUPDATES
-    ;;
-    n|N|*)
-      show_sub_menu_system_setup
-    ;;
-  esac
-
-  # 
-  # Install sudo & git
-  #
-  ask blue "Install sudo, git, curl & wget?"
-  if [ $REPLY == "y" ]; then
-    apt install -y sudo git curl wget
-  fi
-
-  # 
-  # timezone, locales
-  #
-  function instTIMEZONELOCALES() {
-    # timezone
-    apt install -y tzdata
-    timezone="Europe/Berlin"
-    ln -fs /usr/share/zoneinfo/$timezone /etc/localtime
-    echo $timezone > /etc/timezone
-    dpkg-reconfigure -f noninteractive tzdata
-    # locales
-    locales="de_DE.UTF-8"
-    sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen
-    echo 'LANG="de_DE.UTF-8"'>/etc/default/locale
-    dpkg-reconfigure --frontend=noninteractive locales
-    update-locale LANG=de_DE.UTF-8
-  }
-  ask blue "Setup timezone & locales?"
-  if [ $REPLY == "y" ]; then
-    instTIMEZONELOCALES
-  fi
-
-  #
-  # adduser
-  #
-  function addNewUser() {
-    # add user
-    read -p 'Username: ';
-    useradd -m -s /bin/bash $REPLY
-    passwd $REPLY
-    usermod -a -G sudo $REPLY
-  }
-  ask blue "Create a personal User?"
-  if [ $REPLY == "y" ]; then
-    addNewUser
-  fi
-
-  ask blue "Install Samba?"
-  if [ $REPLY == "y" ]; then
-    instSAMBA
-  fi
+function instSYSUPDATES() {
+  $apt update
+  $apt upgrade -y
 }
 
 # -------------------------------------------------------------
-# install samba and create shares
+# setup timezone & locales
+# -------------------------------------------------------------
+function instTIMEZONELOCALES() {
+  message blue "[ setup timezone & locales ]"
+  # timezone
+  apt install -y tzdata
+  timezone="Europe/Berlin"
+  ln -fs /usr/share/zoneinfo/$timezone /etc/localtime
+  echo $timezone > /etc/timezone
+  dpkg-reconfigure -f noninteractive tzdata
+  # locales
+  locales="de_DE.UTF-8"
+  sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen
+  echo 'LANG="de_DE.UTF-8"'>/etc/default/locale
+  dpkg-reconfigure --frontend=noninteractive locales
+  update-locale LANG=de_DE.UTF-8
+}
+
+# -------------------------------------------------------------
+# create a new personal user
+# -------------------------------------------------------------
+function createUSER() {
+  message blue "[ create a personal user ]"
+  read -p 'Username: ';
+  useradd -m -s /bin/bash $REPLY
+  passwd $REPLY
+  usermod -a -G sudo $REPLY
+}
+
+# -------------------------------------------------------------
+# install samba and create home share
 # -------------------------------------------------------------
 function instSAMBA() {
 
-  message blue "[ Install Samba ]"
+  message blue "[ install samba and create shares ]"
 
   # https://unix.stackexchange.com/questions/546470/skip-prompt-when-installing-samba
   echo "samba-common samba-common/workgroup string WORKGROUP" | debconf-set-selections
@@ -612,7 +573,11 @@ function instSAMBA() {
   # add samba user
   message blue "Create a user for samba:"
   read -p 'User: ';
-  smbpasswd -a $REPLY
+  if getent passwd $REPLY > /dev/null 2>&1; then
+    smbpasswd -a $REPLY
+  else
+    message blue "[ user $REPLY does not exist in passwd. Please create it first ]"
+  fi
 
   # restart smb service
   systemctl restart smbd.service
@@ -667,13 +632,10 @@ else
           9) # install .bashrc
             instBASHRC
           ;;
-          x) # exit
+          x|X) # exit
             exit
           ;;
-          \n) # typo - show main menu again
-            show_main_menu
-          ;;
-          *) # typo - show main menu again
+          *|\n) # typo - show main menu again
             show_main_menu
           ;;
         esac
@@ -686,52 +648,48 @@ else
         instUPDATEFROMGIT
         show_main_menu
       ;;
-      4) # setup a new system
+      4) # show sub menu setup a new system
         show_sub_menu_system_setup
         case $opt_sub_menu_system_setup in
           1) # install all
-            setupNewSystem
+            instSYSUPDATES
+            instTIMEZONELOCALES
+            createUSER
             instSAMBA
             exit
           ;;
           2) # system udates
-            setupNewSystem
+            instSYSUPDATES
             show_main_menu
           ;;
           3) # install sudo & git
-            setupNewSystem
+            # TODO
             show_main_menu
           ;;
           4) # setup timezone & locales
-            setupNewSystem
+            instTIMEZONELOCALES
             show_main_menu
           ;;
           5) # add a new user
-            setupNewSystem
+            createUSER
             show_main_menu
           ;;
           6) # install samba
             instSAMBA
             show_main_menu
           ;;
-          x) # exit
+          x|X) # exit
             exit
           ;;
-          \n) # typo - show main menu again
-            show_main_menu
-          ;;
-          *) # typo - show main menu again
+          *|\n) # typo - show main menu again
             show_main_menu
           ;;
         esac
       ;;
-      x) # exit
+      x|X) # exit
         exit
       ;;
-      \n) # typo - show main menu again
-        show_main_menu
-      ;;
-      *) # typo - show main menu again
+      *|\n) # typo - show main menu again
         show_main_menu
       ;;
     esac
