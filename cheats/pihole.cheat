@@ -1,0 +1,37 @@
+% pihole
+
+# list whitelist
+pihole -w -l
+
+# list blacklist
+pihole -b -l
+
+# update pihole
+pihole -up
+
+# reconfigure pihole
+pihole -r
+
+# show log
+pihole -t
+
+# update domains
+pihole -g
+
+# query adlist - exact match
+pihole -q -exact <domain>
+
+# query adlist - all matches
+pihole -q -all <domain>
+
+# show pihole status
+pihole status
+
+# enable pihole
+pihole enable
+
+# disable pihole
+pihole disable
+
+# restartdns
+pihole restartdns
