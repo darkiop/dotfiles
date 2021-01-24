@@ -1,41 +1,41 @@
 % network
 
-# tcpdump: show local traffic on eth0 and port 53
+# show local traffic on eth0 and port 53
 tcpdump -nt -i eth0 port 53
 
-# nmap: simple scan
+# simple scan
 nmap -sT <ip>
 
-# nmap: scan all ports
+# scan all ports
 nmap -p- <ip>
 
-# nmap: ping scan subnet (x.x.x.x/24)
+# ping scan subnet (x.x.x.x/24)
 nmap -PE -sn -oG - <subnet>
 
-# netstat: show process of open port
-netstat -plant
-
-# iperf: server
+# start server
 iperf3 -s
 
-# iperf: client
+# connect to server
 iperf3 -c <server>
 
 # wakeonlan wol
 /usr/bin/wakeonlan -i <ip> <mac>
 
-# nfs: show exports on server
+# nfs - show exports on server
 exportfs
 
-# nfs: show exports from clientside
+# nfs - show exports from clientside
 showmount -e <ip>
 
-# Kill a process running on a given port
+# kill process running on a given port
 lsof -i :<port> \
    | awk '{l=$2} END {print l}' \
    | xargs kill
 
-# List IP addresses connected on a given port
+# show process of open port
+netstat -plant
+
+# list IPs connected on a given port
 netstat -tn 2>/dev/null \
    | grep :<port> \
    | awk '{print $5}' \
@@ -45,7 +45,7 @@ netstat -tn 2>/dev/null \
    | sort -nr \
    | head
 
-# Find primary, local IP address
+# find primary, local IP address
 ifconfig \
   | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' \
   | grep -Eo '([0-9]*\.){3}[0-9]*' \
