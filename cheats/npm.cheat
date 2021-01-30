@@ -1,0 +1,4 @@
+% npm
+
+# update npm global
+npm install -g npm
