@@ -21,9 +21,6 @@ apt list -a <package-name>
 # Search in repository (packages and description)
 apt search <query>
 
-# Check updates for installed packages
-apt list --upgradeable
-
 # Update all installed packages
 apt upgrade
 
