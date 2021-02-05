@@ -9,6 +9,9 @@ apt list
 # List all installed packages
 apt list --installed
 
+# List all upgradable packages
+apt list --upgradable
+
 # Info about package (including description)
 apt show -a <package-name>
 
