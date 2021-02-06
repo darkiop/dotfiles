@@ -7,7 +7,7 @@
 MNT="/mnt/odin/backup"
 BACKUPS="/opt/iobroker/backups/"
 RSYNC="sudo rsync -avz --exclude=mysql_* --exclude=homematic_* --delete $BACKUPS $MNT/iobroker-master"
-IOB_SIMPLEAPI_DOMAIN="iobroker-master"
+IOB_SIMPLEAPI_DOMAIN="pve-ct-iobroker"
 IOB_SIMPLEAPI_PORT="8087"
 OID_EMAIL_TITLE="javascript.0.System.SendeTextperEmailBetreff"
 OID_EMAIL_TEXT="javascript.0.System.SendeTextperEmail"
