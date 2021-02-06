@@ -542,7 +542,8 @@ function instTIMEZONELOCALES() {
 # create a new personal user
 # -------------------------------------------------------------
 function createUSER() {
-  message blue "[ create a personal user ]"
+  check_if_user_is_root
+  message blue "[ create a new user ]"
   read -p 'Username: ';
   useradd -m -s /bin/bash $REPLY
   passwd $REPLY
