@@ -9,7 +9,7 @@ green_color_bold="\e[1;38;5;42m"
 yellow_color="\e[38;5;227m"
 close_color="$(tput sgr0)"
 
-# check if root, when not define alias with sudo
+# first check if root, when not define alias with sudo
 if [ "${EUID}" -ne 0 ]; then
   dpkg='sudo '$(which dpkg)
   apt='sudo '$(which apt)
@@ -19,9 +19,9 @@ else
 fi
 
 # -------------------------------------------------------------
-# check if root
+# check if user is root
 # -------------------------------------------------------------
-function checkRoot() {
+function check_if_user_is_root() {
   if [ "${EUID}" -ne 0 ]; then
     message red "You need to run this as root. Exit."
     exit 1
@@ -29,9 +29,19 @@ function checkRoot() {
 }
 
 # -------------------------------------------------------------
-# Check if git is installed
+# check if sudo is installed
 # -------------------------------------------------------------
-function checkgit() {
+function check_if_sudo_is_installed() {
+  if [ ! $(which sudo) ]; then
+    message red "sudo not found. install it ..."
+    $apt install sudo -y
+  fi
+}
+
+# -------------------------------------------------------------
+# check if git is installed
+# -------------------------------------------------------------
+function check_if_git_is_installed() {
   if [ ! $(which git) ]; then
     message red "git not found. install it ..."
     $apt install git -y
@@ -40,10 +50,11 @@ function checkgit() {
 
 # -------------------------------------------------------------
 # Ask
-# ask blue "Question?"
-# if [ $REPLY == "y" ]; then
-#   do something ...
-# fi
+# example: 
+#   ask blue "Question?"
+#   if [ $REPLY == "y" ]; then
+#     do something ...
+#   fi
 # -------------------------------------------------------------
 function ask() {
   local color="$1"
@@ -79,7 +90,7 @@ function ask() {
 
 # -------------------------------------------------------------
 # Message
-# message color "text"
+# example: message color "text"
 # -------------------------------------------------------------
 function message() {
   local color="$1"
@@ -122,9 +133,9 @@ function show_main_menu(){
 }
 
 # -------------------------------------------------------------
-# sub menu dotfiles
+# submenu dotfiles
 # -------------------------------------------------------------
-function show_sub_menu_dotfiles(){
+function show_submenu_dotfiles(){
   echo
   echo -e $green_color"[ Install dotfiles ]"$close_color
   echo
@@ -143,13 +154,13 @@ function show_sub_menu_dotfiles(){
 }
 
 # -------------------------------------------------------------
-# sub menu system-setup
+# submenu system-setup
 # -------------------------------------------------------------
-function show_sub_menu_system_setup(){
+function show_submenu_system_setup(){
   echo
   echo -e $green_color"[ initial System Setup ]"$close_color
   echo
-  printf "${yellow_color}1)${close_color} all (updates, sudo & git, timezone & locales, add new user, install samba) \n"
+  printf "${yellow_color}1)${close_color} all (updates, timezone & locales, add new user, install samba) \n"
   printf "${yellow_color}2)${close_color} System Updates \n"
   printf "${yellow_color}3)${close_color} Install sudo & git\n"
   printf "${yellow_color}4)${close_color} Setup timezone & locales\n"
@@ -176,7 +187,8 @@ function cloneREPO() {
 # Install dotfiles (all)
 # -------------------------------------------------------------
 function instDOTF() {
-  checkgit
+  check_if_sudo_is_installed
+  check_if_git_is_installed
   message yellow "+++ Install complete dotfiles +++"
   cloneREPO
   instAPP
@@ -560,7 +572,7 @@ function instSAMBA() {
     ask yellow "dotfiles not found, install?"
     case $REPLY in
       y|Y)
-        checkgit
+        check_if_git_is_installed
         cloneREPO
       ;;
       n|N|*)
@@ -589,6 +601,7 @@ function instSAMBA() {
 # RUN THE SCRIPT
 # -------------------------------------------------------------
 if [[ $1 == 'all' ]]; then
+  # skip menu and install all
   instDOTF
 else
   show_main_menu
@@ -597,7 +610,7 @@ else
   else
     case $opt_main_menu in
       1) # show sub menu dotfiles
-        show_sub_menu_dotfiles
+        show_submenu_dotfiles
         case $opt_sub_menu_dotfiles in
           1) # install dotfiles
             instDOTF
@@ -651,7 +664,7 @@ else
         show_main_menu
       ;;
       4) # show sub menu setup a new system
-        show_sub_menu_system_setup
+        show_submenu_system_setup
         case $opt_sub_menu_system_setup in
           1) # install all
             instSYSUPDATES
@@ -664,19 +677,15 @@ else
             instSYSUPDATES
             show_main_menu
           ;;
-          3) # install sudo & git
-            # TODO
-            show_main_menu
-          ;;
-          4) # setup timezone & locales
+          3) # setup timezone & locales
             instTIMEZONELOCALES
             show_main_menu
           ;;
-          5) # add a new user
+          4) # add a new user
             createUSER
             show_main_menu
           ;;
-          6) # install samba
+          5) # install samba
             instSAMBA
             show_main_menu
           ;;
