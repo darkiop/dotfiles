@@ -1,9 +1,6 @@
 # dotfiles
 dotfiles for bash
 
-![Screenshot](screenshot.png)
-Screenshot with Terminal https://github.com/Eugeny/terminus
-
 ## INSTALL
 
 ### with menu
