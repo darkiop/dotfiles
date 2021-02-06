@@ -162,10 +162,9 @@ function show_submenu_system_setup(){
   echo
   printf "${yellow_color}1)${close_color} all (updates, timezone & locales, add new user, install samba) \n"
   printf "${yellow_color}2)${close_color} System Updates \n"
-  printf "${yellow_color}3)${close_color} Install sudo & git\n"
-  printf "${yellow_color}4)${close_color} Setup timezone & locales\n"
-  printf "${yellow_color}5)${close_color} Add a new User\n"
-  printf "${yellow_color}6)${close_color} Install Samba\n"
+  printf "${yellow_color}3)${close_color} Setup timezone & locales\n"
+  printf "${yellow_color}4)${close_color} Add a new User\n"
+  printf "${yellow_color}5)${close_color} Install Samba\n"
   echo
   printf "Please choose an option or ${red_color}x${close_color} to exit: "
   read opt_sub_menu_system_setup
