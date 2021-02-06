@@ -1,6 +1,7 @@
 # check if root, when not define alias with sudo
 if [[ $EUID -ne 0 ]]; then
   alias apt='sudo '$(which apt)
+  alias apt-get='sudo '$(which apt-get)
   alias reboot='sudo '$(which reboot)
   alias shutdown='sudo '$(which shutdown)
 fi
