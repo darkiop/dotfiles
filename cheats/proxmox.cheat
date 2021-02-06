@@ -18,6 +18,9 @@ pct destroy <id>
 # container run a command
 pct exec <id> -- bash -c "<command>"
 
+# open a console
+pct console <id>
+
 # vzdump file extract
 tar -I zstd -xvf archive.tar.zst
 
