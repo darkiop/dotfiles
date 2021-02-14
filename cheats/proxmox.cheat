@@ -25,7 +25,7 @@ pct console <id>
 tar -I zstd -xvf archive.tar.zst
 
 # connect to console
-lxc-attach --name <lxclist>
+sudo lxc-attach --name <id>
 
 # proxmox performance overview
 pveperf
@@ -73,4 +73,3 @@ cd /etc/pve/lxc
 cd /etc/pve/qemu-server
 
 $ images: ls /var/lib/vz/template/cache/
-$ lxclist: sudo /usr/sbin/pct list
