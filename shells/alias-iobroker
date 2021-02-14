@@ -2,4 +2,4 @@
 alias iofix='curl -sL https://iobroker.net/fix.sh | bash -'
 
 alias ioblnav='lnav /opt/iobroker/log/iobroker.current.log'
-alias iobl='lnav /opt/iobroker/log/iobroker.current.log'
+alias iobl='tail -f /opt/iobroker/log/iobroker.current.log'
