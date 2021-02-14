@@ -73,4 +73,4 @@ cd /etc/pve/lxc
 cd /etc/pve/qemu-server
 
 $ images: ls /var/lib/vz/template/cache/
-$ lxclist: /usr/sbin/pct list
+$ lxclist: sudo /usr/sbin/pct list
