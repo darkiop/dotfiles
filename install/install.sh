@@ -554,7 +554,7 @@ function createUSER() {
 # install samba and create home share
 # -------------------------------------------------------------
 function instSAMBA() {
-
+  check_if_user_is_root
   message blue "[ install samba and create shares ]"
 
   # https://unix.stackexchange.com/questions/546470/skip-prompt-when-installing-samba
@@ -574,6 +574,7 @@ function instSAMBA() {
       y|Y)
         check_if_git_is_installed
         cloneREPO
+        cp $HOME/dotfiles/config/smb.conf /etc/samba/smb.conf
       ;;
       n|N|*)
         message yellow "Do nothing and exit."
