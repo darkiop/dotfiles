@@ -22,7 +22,6 @@ pathadd "$HOME/.cargo/bin"
 
 # Distribute bashrc into smaller, more specific files
 source $HOME/dotfiles/shells/defaults
-source $HOME/dotfiles/shells/exports
 source $HOME/dotfiles/shells/alias
 source $HOME/dotfiles/shells/prompt
 

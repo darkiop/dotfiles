@@ -1,7 +1,28 @@
-## History options
+# editors
+export EDITOR='vim'
+export ALTERNATE_EDITOR='vim'
+export VISUAL='vim'
 
+# colors
+# https://bashcolors.com
+export blue_color="\e[38;5;39m"
+export light_blue_color="\e[38;5;81m"
+export red_color="\e[38;5;196m"
+export green_color_bold="\e[1;38;5;119m"
+export yellow_color="\e[38;5;227m"
+export white_color="\e[37m"
+export close_color="$(tput sgr0)"
+
+# navi
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+
+# history options
+
+export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
 # Don't put duplicate lines or lines starting with space in the history.
-HISTCONTROL=ignoreboth
+
+export HISTCONTROL=ignoreboth
+export HISTIGNORE='&:clear:ls:cd:[bf]g:exit:[ t\]*'
 
 # Append to the history file, don't overwrite it
 shopt -s histappend
@@ -13,16 +34,23 @@ HISTFILESIZE=2000000
 # Save and reload history after each command finishes
 export PROMPT_COMMAND="history -a;history -c; history -r; $PROMPT_COMMAND"
 
-## end of History options
-
-force_color_prompt=yes
+# color prompt
+if [ -n "$force_color_prompt" ]; then
+  if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+    # We have color support; assume it's compliant with Ecma-48
+    # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+    # a case would tend to support setf rather than setaf.)
+    color_prompt=yes
+  else
+    color_prompt=
+  fi
+fi
 
 # Key-bindings
 #set -o vi
 set -o emacs
 
-# Check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
+# Check the window size after each command and, if necessary, update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
 # Make less more friendly for non-text input files, see lesspipe(1)
@@ -31,17 +59,14 @@ shopt -s checkwinsize
 # Set variable identifying the chroot you work in
 # (used in the prompt below)
 if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
+  debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# Enable programmable completion features
+# enable tab completion features
 if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
-
-# Autovervollständigung aktivieren¶
-# Bei der Verwendung von byobu funktioniert die Autovervollständigung nicht. Das kann man leicht beheben, in dem man am Ende der .bashrc folgenden Code anfügt.
-# https://wiki.ubuntuusers.de/byobu/#Autovervollstaendigung-aktivieren
+# the same for byobu (https://wiki.ubuntuusers.de/byobu/#Autovervollstaendigung-aktivieren)
 if [ -f /etc/profile.d/bash_completion.sh ]; then
      . /etc/profile.d/bash_completion.sh
 fi
