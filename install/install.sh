@@ -1,15 +1,16 @@
 #!/bin/bash
 
-# set colors
-blue_color="\e[38;5;33m"
-light_blue_color="\e[38;5;39m"
+# colors
+# https://bashcolors.com
+blue_color="\e[38;5;39m"
+light_blue_color="\e[38;5;81m"
 red_color="\e[38;5;196m"
-green_color="\e[38;5;42m"
-green_color_bold="\e[1;38;5;42m"
+green_color_bold="\e[1;38;5;119m"
 yellow_color="\e[38;5;227m"
+white_color="\e[37m"
 close_color="$(tput sgr0)"
 
-# first check if root, when not define alias with sudo
+# first check if root, when not define a alias with sudo
 if [ "${EUID}" -ne 0 ]; then
   dpkg='sudo '$(which dpkg)
   apt='sudo '$(which apt)
@@ -19,7 +20,7 @@ else
 fi
 
 # -------------------------------------------------------------
-# check if user is root
+# check if user is root and if not exit
 # -------------------------------------------------------------
 function check_if_user_is_root() {
   if [ "${EUID}" -ne 0 ]; then
@@ -539,7 +540,7 @@ function instTIMEZONELOCALES() {
 }
 
 # -------------------------------------------------------------
-# create a new personal user
+# create a user
 # -------------------------------------------------------------
 function createUSER() {
   check_if_user_is_root
