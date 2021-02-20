@@ -6,8 +6,8 @@
 
 MNT="/mnt/odin/backup"
 BACKUPS="/opt/iobroker/backups/"
-RSYNC="sudo rsync -avz --exclude=homematic_* --exclude=grafana_* --exclude=javascripts_* --exclude=iobroker_* --exclude=redis_* --delete $BACKUPS $MNT/iobroker-mariadb"
-IOB_SIMPLEAPI_DOMAIN="pve-ct-iobroker"
+RSYNC="sudo rsync -avz --exclude=homematic_* --exclude=grafana_* --exclude=javascripts_* --exclude=iobroker_* --exclude=redis_* --delete $BACKUPS $MNT/mariadb"
+IOB_SIMPLEAPI_DOMAIN="pve-vm-iobroker"
 IOB_SIMPLEAPI_PORT="8087"
 OID_EMAIL_TITLE="javascript.0.System.SendeTextperEmailBetreff"
 OID_EMAIL_TEXT="javascript.0.System.SendeTextperEmail"
