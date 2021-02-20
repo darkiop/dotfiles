@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Kopiert iobroker-mariadb Backups nach NFS Mount /mnt/odin/backup/iobroker-mariadb
+# Kopiert MariaDB Backups nach NFS Mount /mnt/odin/backup/mariadb
 # fstab: 192.168.1.43:/volume1/backup /mnt/odin/backup nfs rw 0 0
-# crontab: 30 4 * * * /home/darkiop/dotfiles/bin/iobroker/iobroker-backup-sync-iobroker-mariadb.sh
+# crontab: 30 4 * * * /home/darkiop/dotfiles/bin/iobroker/iobroker-backup-sync-mariadb.sh
 
 MNT="/mnt/odin/backup"
 BACKUPS="/opt/iobroker/backups/"

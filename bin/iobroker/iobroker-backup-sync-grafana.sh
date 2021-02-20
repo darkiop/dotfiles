@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Kopiert iobroker-master Backups nach NFS Mount /mnt/odin/backup/iobroker-master
+# Kopiert iobroker Backups nach NFS Mount /mnt/odin/backup/iobroker
 # fstab: 192.168.1.43:/volume1/backup /mnt/odin/backup nfs rw 0 0
-# crontab: 30 4 * * * /home/darkiop/dotfiles/bin/iobroker/iobroker-backup-sync-iobroker-master.sh
+# crontab: 30 4 * * * /home/darkiop/dotfiles/bin/iobroker/iobroker-backup-sync-grafana.sh
 
 MNT="/mnt/odin/backup"
 BACKUPS="/opt/iobroker/backups/"
@@ -11,9 +11,9 @@ IOB_SIMPLEAPI_DOMAIN="pve-vm-iobroker"
 IOB_SIMPLEAPI_PORT="8087"
 OID_EMAIL_TITLE="javascript.0.System.SendeTextperEmailBetreff"
 OID_EMAIL_TEXT="javascript.0.System.SendeTextperEmail"
-EMAIL_TITLE="ioBroker%20Backup%20(iobroker-master)"
-EMAIL_TEXT_TRUE="iobroker-backup-sync-iobroker-master.sh%20wurde%20ausgefuehrt"
-EMAIL_TEXT_FALSE="iobroker-backup-sync-iobroker-master.sh%20konnte%20nicht%20ausgefuehrt%20werden"
+EMAIL_TITLE="ioBroker%20Backup%20(grafana)"
+EMAIL_TEXT_TRUE="iobroker-backup-sync-grafana.sh%20wurde%20ausgefuehrt"
+EMAIL_TEXT_FALSE="iobroker-backup-sync-grafana.sh%20konnte%20nicht%20ausgefuehrt%20werden"
 
 # check mountpoint
 if mountpoint -q $MNT
