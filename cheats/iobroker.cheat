@@ -62,3 +62,6 @@ iobroker update
 
 # iobroker log tail
 tail -f /opt/iobroker/log/iobroker.current.log
+
+# iobroker log tail - adapter
+tail -f -n 20000 /opt/iobroker/log/iobroker.current.log | grep <adapter>
