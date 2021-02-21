@@ -82,7 +82,7 @@ alias reload='source ~/.bashrc'
 alias update-dotfiles='cd ~/dotfiles && bash install-update-from-git.sh'
 
 # fast switch to dotfiles
-alias dotf='cd ~/dotfiles'
+alias dotf='cd ~/dotfiles && git status'
 
 # system update
 alias update='apt update && apt upgrade -y && source ~/.bashrc'
