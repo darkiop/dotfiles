@@ -3,6 +3,15 @@
 # wireguard status
 wg
 
+# wireguard status with watch
+watch -n 0.5 "wg"
+
+# wireguard up
+wg-quick up wg0
+
+# wireguard down
+wg-quick down wg0
+
 # generate qr code
 qrencode -t ansiutf8 -l L <<file>
 
