@@ -1,10 +1,79 @@
 % unifi
 
-# unifi-os login
+# udmp: unifi-os login
 unifi-os shell
 
-# static arp table for wol
+# udmp: static arp table for wol
 arp -s <ip> <mac>
 
 # set-inform
 set-inform http://<ip>:8080/inform
+
+# udmp: show dhcp leases
+cat /mnt/data/udapi-config/dnsmasq.lease 
+
+# udmp: show config (wireless)
+cat /mnt/data/udapi-config/unifi
+
+# udmp: show unifi server settings
+cat /mnt/data/unifi-os/unifi-core/config/settings.yaml
+
+# udmp: show unifi server discovery log
+cat /mnt/data/unifi-os/unifi-core/logs/discovery.log
+
+# udmp: show unifi server http error log
+cat /mnt/data/unifi-os/unifi-core/logs/errors.log
+
+# udmp: show unifi server http log
+cat /mnt/data/unifi-os/unifi-core/logs/http.log
+
+# udmp: show unifi system log
+cat /mnt/data/unifi-os/unifi-core/logs/system.log
+
+# udmp: show unifi server log
+cat /mnt/data/unifi-os/unifi/logs/server.log
+
+# udmp: show system messages
+cat /var/log/messages
+
+# udmp: factory reset
+factory-reset.sh 
+
+# udmp: show interfaces
+ifconfig
+
+# udmp: show interfaces
+ip a
+
+# udmp: show interface summary
+ifstat
+
+# udmp: show version info
+info
+
+# udmp: show ipsec state
+ipsec statusall
+
+# udmp: show ip routes
+netstat -rtn
+
+# udmp: shut down udmp
+poweroff
+
+# udmp: show system hardware and installed software
+ubnt-device-info summary
+
+# udmp: show fan speed
+ubnt-fan-speed
+
+# udmp: create a support file
+ubnt-make-support-file <file.tar.gz>
+
+# udmp: show cpu temp
+ubnt-systool cputemp
+
+# udmp: show mac addresses
+ubnt-tools hwaddr
+
+# udmp: Zeige andere UniFi Geräte im Netzwerk
+ubnt-tools ubnt-discover

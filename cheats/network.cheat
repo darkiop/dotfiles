@@ -12,6 +12,15 @@ nmap -p- <ip>
 # ping scan subnet (x.x.x.x/24)
 nmap -PE -sn -oG - <subnet>
 
+# show all IPs of a subnet with hostnames
+nmap -sL 192.168.1.1/24
+
+# ping scan of a subnet
+nmap -PE -sn -oG - 192.168.1.1/24
+
+# extended ping scan of a subnet
+nmap -sP -oG - 192.168.1.1/24
+
 # start server
 iperf3 -s
 
