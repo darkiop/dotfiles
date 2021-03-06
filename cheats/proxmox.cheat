@@ -72,4 +72,7 @@ cd /etc/pve/lxc
 # change dir vm config
 cd /etc/pve/qemu-server
 
+# install darkmode
+wget https://raw.githubusercontent.com/Weilbyte/PVEDiscordDark/master/PVEDiscordDark.py && sudo python3 PVEDiscordDark.py && rm PVEDiscordDark.py
+
 $ images: ls /var/lib/vz/template/cache/
