@@ -1,4 +1,4 @@
-% wsl
+% wsl - windows subsystem for linux
 
 # wsl shuutdown
 wsl --shutdown
