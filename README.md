@@ -100,7 +100,7 @@ Key | Function
 <kbd>F12</kbd> | GNU Screen's Escape Key
 <kbd>ALT</kbd> + <kbd>Pageup</kbd> | Scroll back through this window's history
 <kbd>Alt</kbd> + <kbd>Pagedown</kbd> | Scroll forward through this window's history
-<kbd>SHIFT-F2</kbd> | Split the screen horizontally
+<kbd>SHIFT</kbd> + <kbd>F2</kbd> | Split the screen horizontally
 <kbd>CTRL</kbd> + <kbd>F2</kbd> | Split the screen vertically
 <kbd>SHIFT</kbd> + <kbd>F3</kbd> | Move focus to the next split
 <kbd>SHIFT</kbd> + <kbd>F4</kbd> | Move focus to the previous split
