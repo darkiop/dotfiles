@@ -35,3 +35,6 @@ pihole disable
 
 # restartdns
 pihole restartdns
+
+# create a pihole-config-backup
+pihole -a teleporter
