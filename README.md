@@ -30,11 +30,11 @@ bash $HOME/dotfiles/install/install.sh
 
 ## LINKS (used and not used in my dotfiles)
 
-### other dotfile projects
+### inspired by other dotfile projects
 - https://github.com/1995parham/dotfiles
 - https://github.com/denisidoro/dotfiles
 
-### other tools in use
+### projects used by my dotfiles
 - https://github.com/koljah-de/simple-bash-prompt
 - https://github.com/chubin/cheat.sh
 - https://github.com/denisidoro/navi
@@ -43,7 +43,7 @@ bash $HOME/dotfiles/install/install.sh
 - https://github.com/amix/vimrc
 - http://lnav.org
 
-### other
+### misc
 - https://github.com/vim-airline/vim-airline
 - https://github.com/vim-airline/vim-airline-themes
 - https://github.com/starship/starship
@@ -51,20 +51,20 @@ bash $HOME/dotfiles/install/install.sh
 - https://github.com/ryanoasis/nerd-fonts
 - https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack#quick-installation
 - https://github.com/ranger/ranger
-- https://wiki.ubuntuusers.de/Bash/Prompt
 - https://github.com/brantb/solarized
 - https://github.com/Bash-it/bash-it
 - https://github.com/tmux
 - https://github.com/seebi/dircolors-solarized
 - https://github.com/clvv/fasd
-- https://www.linux.com/learn/enhancing-virtual-terminals-byobu
 - https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 - https://github.com/LeCoupa/awesome-cheatsheets/blob/master/languages/bash.sh
 - https://github.com/aristocratos/bashtop
-- https://drasite.com/blog/Pimp%20my%20terminal#top-from-the-future
-- https://ichi.pro/de/das-essential-bash-spickzettel-15514461037920
 - https://github.com/reujab/silver
 - https://github.com/existme/notes
+- https://drasite.com/blog/Pimp%20my%20terminal#top-from-the-future
+- https://ichi.pro/de/das-essential-bash-spickzettel-15514461037920
+- https://wiki.ubuntuusers.de/Bash/Prompt
+- https://www.linux.com/learn/enhancing-virtual-terminals-byobu
 
 ## KEY BINDINGS
 
