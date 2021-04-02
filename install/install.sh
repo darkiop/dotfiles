@@ -383,12 +383,24 @@ function instNAVI() {
 function instDATEGREP() {
   message blue "[ Install dategrep]"
   if [ -f $HOME/dotfiles/modules/dategrep/build-standalone ]; then
-    perl $HOME/dotfiles/modules/dategrep/build-standalone
-    cp $HOME/dotfiles/modules/dategrep/dategrep $HOME/dotfiles/bin/dategrep
+    cd $HOME/dotfiles/modules/dategrep
+    ./build-standalone
+    if [ -f $HOME/dotfiles/modules/dategrep/dategrep ]; then
+      cp $HOME/dotfiles/modules/dategrep/dategrep $HOME/dotfiles/bin/dategrep
+    else 
+      message red "dategrep not installed"
+    fi
+    cd $HOME
   else
     instGITSUBM
-    perl $HOME/dotfiles/modules/dategrep/build-standalone
-    cp $HOME/dotfiles/modules/dategrep/dategrep $HOME/dotfiles/bin/dategrep
+    cd $HOME/dotfiles/modules/dategrep
+    ./build-standalone
+    if [ -f $HOME/dotfiles/modules/dategrep/dategrep ]; then
+      cp $HOME/dotfiles/modules/dategrep/dategrep $HOME/dotfiles/bin/dategrep
+    else 
+      message red "dategrep not installed"
+    fi
+    cd $HOME
   fi
 }
 

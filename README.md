@@ -23,10 +23,16 @@ bash $HOME/dotfiles/install/install.sh
 
 ## FEATURES
 - navi <kbd>STRG</kbd> + <kbd>G</kbd> (~/dotfiles/cheats)
-- cheat.sh (example, run: "cht.sh man")
+- cheat.sh
+    example, run: "cht.sh man"
 - vimrc
 - motd for each hostname (~/dotfiles/motd)
 - byobu
+- dategrep
+    dategrep --start "12:00" --end "12:15" syslog
+    dategrep --end "12:15" --format "%b %d %H:%M:%S" syslog
+    dategrep --last-minutes 5 syslog
+    cat syslog | dategrep --end "12:15"
 
 ## LINKS (used and not used in my dotfiles)
 
@@ -41,6 +47,7 @@ bash $HOME/dotfiles/install/install.sh
 - https://github.com/Peltoche/lsd
 - https://github.com/sharkdp/bat
 - https://github.com/amix/vimrc
+- https://github.com/mdom/dategrep
 - http://lnav.org
 
 ### misc
