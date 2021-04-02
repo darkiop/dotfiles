@@ -12,6 +12,9 @@ tcpdump -D
 # capture from any network device
 tcpdump -i any
 
+# do not convert addresses (and show ip and port)
+tcpdump -n
+
 # capture from a specific network interface
 tcpdump -i <interface>
 
@@ -37,7 +40,10 @@ tcpdump net <subnet>/<mask
 tcpdump <protocol>
 
 # save traffic in file
-tcpdump -w <filename>.pcap
+tcpdump -p -s0 -w <filename>.pcap
+
+# human date-time
+tcpdump -tttt
 
 # simple scan
 nmap -sT <ip>
