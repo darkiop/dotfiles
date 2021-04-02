@@ -278,8 +278,8 @@ function instLSD() {
   arch=$(dpkg --print-architecture)
   case $arch in
     (amd64)
-      release="0.19.0"
-      version="lsd-0.19.0-x86_64-unknown-linux-gnu"
+      release="0.20.1"
+      version="lsd-0.20.1-x86_64-unknown-linux-gnu"
       downloadurl="https://github.com/Peltoche/lsd/releases/download/$release/$version.tar.gz"
       cd $HOME
       wget -O $HOME/lsd.tar.gz $downloadurl
@@ -289,8 +289,8 @@ function instLSD() {
       rm -r $HOME/$version
     ;;
     (armhf)
-      release="0.19.0"
-      version="lsd-0.19.0-arm-unknown-linux-gnueabihf"
+      release="0.20.1"
+      version="lsd-0.20.1-arm-unknown-linux-gnueabihf"
       downloadurl="https://github.com/Peltoche/lsd/releases/download/$release/$version.tar.gz"
       cd $HOME
       wget -O $HOME/lsd.tar.gz $downloadurl
