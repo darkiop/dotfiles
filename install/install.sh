@@ -148,7 +148,8 @@ function show_submenu_dotfiles(){
   printf "${yellow_color}6)${close_color} Install navi\n"
   printf "${yellow_color}7)${close_color} Install cheat.sh\n"
   printf "${yellow_color}8)${close_color} Install bat\n"
-  printf "${yellow_color}9)${close_color} Install .bashrc\n"
+  printf "${yellow_color}9)${close_color} Install dategrep\n"
+  printf "${yellow_color}10)${close_color} Install .bashrc\n"
   echo
   printf "Please choose an option or ${red_color}x${close_color} to exit: "
   read opt_sub_menu_dotfiles
