@@ -30,20 +30,6 @@ lsusb
 # hardware list block devices
 lsblk
 
-# cut: show some columns
-
-# print only the third column
-cut -f 3 <file>
-
-# print only the 2nd and 3rd columns
-cut -f 2-3 <file>
-
-# for each line, print only from the 9th to the 19th character
-cut -c 9-19 <file>
-
-# the file uses ';' as delimiter, instead a tab
-cut -f 1 -d ';' <file>
-
 # awk: the same than cut, but more flexible with delimiters, with more filters, and more computacionally complex
 
 # print only the 3rd column
@@ -60,6 +46,9 @@ awk 'length($0) > 20' <file>
 
 # print those lines where the value of the second column is greater than 100
 awk '$2 > 100' <file>
+
+# print the numer of lines
+wc -l <file>
 
 # print the number of lines, words, and characters in the text file
 wc <file>
