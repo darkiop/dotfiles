@@ -9,4 +9,7 @@ dategrep --end "<time>" <logfile>
 # show last minutes of a logfile
 dategrep --last-minutes <minutes> <logfile>
 
+# use of a dategrep with a pipe
+cat /var/log/syslog | dategrep --end "10:00"
+
 $ logfile: ls
