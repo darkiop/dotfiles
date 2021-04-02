@@ -6,9 +6,12 @@ if [[ $EUID -ne 0 ]]; then
   alias shutdown='sudo '$(which shutdown)
 fi
 
-#function cheat () {
-#  curl "cheat.sh/$1"
-#}
+# password generator
+genpasswd() {
+	local l=$1
+    [ "$l" == "" ] && l=24
+    tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
+}
 
 # Simplify apt search and install
 function show () {
