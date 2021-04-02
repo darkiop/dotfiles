@@ -1,0 +1,12 @@
+% dategrep
+
+# grep a timerange from logile (example: begin: 08:00 end: 08:30)
+dategrep --start "<begin>" --end "<end>" <logfile>
+
+# show a log file up to the time (example: time: 10:00)
+dategrep --end "<time>" <logfile>
+
+# show last minutes of a logfile
+dategrep --last-minutes <minutes> <logfile>
+
+$ logfile: ls
