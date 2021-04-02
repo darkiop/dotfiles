@@ -198,6 +198,7 @@ function instDOTF() {
   instNAVI
   instCHEATSH
   instBAT
+  instDATEGREP
   instBASHRC
 }
 
@@ -372,6 +373,22 @@ function instNAVI() {
   esac
   # bash widget (STRG + G)
   eval "$(navi widget bash)" 2>&1> /dev/null
+}
+
+# -------------------------------------------------------------
+# Install: dategrep
+# https://github.com/mdom/dategrep
+# -------------------------------------------------------------
+function instDATEGREP() {
+  message blue "[ Install dategrep]"
+  if [ -f $HOME/dotfiles/modules/dategrep/build-standalone ]; then
+    perl $HOME/dotfiles/modules/dategrep/build-standalone
+    cp $HOME/dotfiles/modules/dategrep/dategrep $HOME/dotfiles/bin/dategrep
+  else
+    instGITSUBM
+    perl $HOME/dotfiles/modules/dategrep/build-standalone
+    cp $HOME/dotfiles/modules/dategrep/dategrep $HOME/dotfiles/bin/dategrep
+  fi
 }
 
 # -------------------------------------------------------------
@@ -646,7 +663,11 @@ else
             instBAT
             show_main_menu
           ;;
-          9) # install .bashrc
+          9) # install dategrep
+            instDATEGREP
+            show_main_menu
+          ;;
+          10) # install .bashrc
             instBASHRC
           ;;
           x|X) # exit

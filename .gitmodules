@@ -5,9 +5,6 @@
 [submodule "modules/fzf"]
 	path = modules/fzf
 	url = https://github.com/junegunn/fzf
-[submodule "modules/modules/dategrep"]
-	path = modules/modules/dategrep
-	url = https://github.com/mdom/dategrep
 [submodule "modules/dategrep"]
 	path = modules/dategrep
 	url = https://github.com/mdom/dategrep
