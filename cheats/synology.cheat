@@ -2,3 +2,6 @@
 
 # restart service
 synoservicectl --restart sshd
+
+# unmount encrypted shared folder
+synoshare --enc_unmount <folder>
