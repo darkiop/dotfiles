@@ -4,6 +4,8 @@ if [[ $EUID -ne 0 ]]; then
   #alias apt-get='sudo '$(which apt-get)
   alias reboot='sudo '$(which reboot)
   alias shutdown='sudo '$(which shutdown)
+  alias systemctl='sudo '$(which systemctl)
+  alias journalctl='sudo '$(which journalctl)
 fi
 
 # password generator
