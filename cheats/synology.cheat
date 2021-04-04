@@ -1,7 +1,7 @@
 % synology
 
-# restart service
-synoservicectl --restart sshd
+# restart service (sshd, ...)
+synoservicectl --restart <service>
 
 # unmount encrypted shared folder
 synoshare --enc_unmount <folder>
