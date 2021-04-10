@@ -1,7 +1,10 @@
 % network
 
-# show local traffic on eth0 and port 53
-tcpdump -nt -i eth0 port 53
+# show ip interfaces and addresses
+ip a
+
+# show routing table
+ip r
 
 # simple scan
 nmap -sT <ip>
@@ -28,7 +31,7 @@ iperf3 -s
 iperf3 -c <server>
 
 # wakeonlan wol
-/usr/bin/wakeonlan -i <ip> <mac>
+wakeonlan -i <ip> <mac>
 
 # nfs - show exports on server
 exportfs
@@ -36,13 +39,13 @@ exportfs
 # nfs - show exports from clientside
 showmount -e <ip>
 
+# show process of open port
+netstat -plant
+
 # kill process running on a given port
 lsof -i :<port> \
    | awk '{l=$2} END {print l}' \
    | xargs kill
-
-# show process of open port
-netstat -plant
 
 # list IPs connected on a given port
 netstat -tn 2>/dev/null \
@@ -54,12 +57,12 @@ netstat -tn 2>/dev/null \
    | sort -nr \
    | head
 
-# find primary, local IP address
+# show primary, local IP address
 ifconfig \
   | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' \
   | grep -Eo '([0-9]*\.){3}[0-9]*' \
   | grep -v '127.0.0.1' \
   | tail -n1
 
-# Find external, public IP address
+# show external/public IP address
 dig +short myip.opendns.com @resolver1.opendns.com

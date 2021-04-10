@@ -1,0 +1,40 @@
+% tcpdump
+
+# show all network interfaces
+tcpdump -D
+
+# capture from any network device
+tcpdump -i any
+
+# do not convert addresses (and show ip and port)
+tcpdump -n
+
+# capture from a specific network interface
+tcpdump -i <interface>
+
+# show local traffic on eth0 and port 53
+tcpdump -nt -i eth0 port 53
+
+# show traffic by port
+tcpdump port <port>
+
+# show traffic to or from host
+tcpdump host <ip>
+
+# filter by source
+tcpdump src <ip>
+
+# filter by destination
+tcpdump dst <ip>
+
+# finding packets by network
+tcpdump net <subnet>/<mask
+
+# show traffic by protocol (icmp, udp, tcp, ...)
+tcpdump <protocol>
+
+# save traffic in file
+tcpdump -p -s0 -w <filename>.pcap
+
+# human date-time
+tcpdump -tttt

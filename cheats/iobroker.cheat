@@ -16,10 +16,10 @@ iobroker setup --objects <host>
 iobroker setup --states <host>
 
 # starts a specified adapter instance
-iobroker start <adapter>.<instance>
+iobroker start <iobroker_disabled_instances>
 
 # stops a specified adapter instance
-iobroker stop <adapter>.<instance>
+iobroker stop <iobroker_enabled_instances>
 
 # starts js-controller and all adapters
 iobroker start all
@@ -28,13 +28,13 @@ iobroker start all
 iobroker restart
 
 # restarts a specified adapter
-iobroker restart <adapter>.<instance>
+iobroker restart <iobroker_enabled_instances>
 
 # shows the host info
 iobroker info
 
-# shows the log for an adapter (--watch, --lines=1000)
-iobroker logs <adapter> --watch --lines=1000
+# shows the log for an adapter
+iobroker logs <iobroker_enabled_instances> --watch
 
 # create a backup
 iobroker backup
@@ -64,4 +64,7 @@ iobroker update
 tail -f /opt/iobroker/log/iobroker.current.log
 
 # iobroker log tail - adapter
-tail -f -n 20000 /opt/iobroker/log/iobroker.current.log | grep <adapter>
+tail -f -n 50 /opt/iobroker/log/iobroker.current.log | grep <iobroker_enabled_instances>
+
+$ iobroker_enabled_instances: iobroker list instances | grep enabled | awk '{print substr($0,18)}' | sed 's/\:[[:space:]].*//' | awk '{$1=$1;print}'
+$ iobroker_disabled_instances: iobroker list instances | grep disabled | awk '{print substr($0,18)}' | sed 's/\:[[:space:]].*//' | awk '{$1=$1;print}'
