@@ -12,9 +12,11 @@ if [ ! -d $HOME/dotfiles ]; then
 fi
 
 # download install script
-if [ -f $dotfiles/motd/motd.sh ]; then
+if [ -f $dotfiles/install/install-on-synology.sh ]; then
   rm $dotfiles/install-on-synology.sh
-  wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/install-synology.sh -O $dotfiles/install-on-synology.sh
+  wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/install/install-on-synology.sh -O $dotfiles/install/install-on-synology.sh
+else
+  wget --no-cache https://raw.githubusercontent.com/darkiop/dotfiles/master/install/install-on-synology.sh -O $dotfiles/install/install-on-synology.sh
 fi
 
 
