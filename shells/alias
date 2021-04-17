@@ -90,7 +90,7 @@ alias update-dotfiles='cd ~/dotfiles && bash install-update-from-git.sh'
 alias dotf='cd ~/dotfiles && git status'
 
 # system update
-alias update='apt update && apt upgrade -y && source ~/.bashrc'
+alias update='apt update && apt upgrade -y && apt autoremove -y && source ~/.bashrc'
 
 # reboot
 case $HOSTNAME in
