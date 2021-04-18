@@ -1,33 +1,36 @@
 % systemd - systemctl, service
 
-# Start service
+# list failed units
+systemctl --failed
+
+# start service
 systemctl start <service_inactive>
 
-# Stop service
+# stop service
 systemctl stop <service_active>
 
-# Enable service
+# enable service
 systemctl enable <service_disabled>
 
-# Disable service
+# disable service
 systemctl disable <service_enabled>
 
-# Restart service
+# restart service
 systemctl restart <service>
 
-# Reload service
+# reload service
 systemctl reload <service_active>
 
-# Service status
+# service status
 systemctl status <service>
 
-# List running services
+# list running services
 systemctl list-units --type=service --state=running
 
-# List enabled services
+# list enabled services
 systemctl list-unit-files --type=service --state=enabled
 
-# List disabled services
+# list disabled services
 systemctl list-unit-files --type=service --state=disabled
 
 # show live log of unit
