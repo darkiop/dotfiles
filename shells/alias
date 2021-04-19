@@ -9,7 +9,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # ps tree / forest
-#alias ps='ps --forest'
+alias ps='ps --forest'
 
 # password generator
 genpasswd() {
