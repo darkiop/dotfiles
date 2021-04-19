@@ -8,6 +8,9 @@ if [[ $EUID -ne 0 ]]; then
   alias journalctl='sudo '$(which journalctl)
 fi
 
+# ps tree / forest
+#alias ps='ps --forest'
+
 # password generator
 genpasswd() {
 	local l=$1
