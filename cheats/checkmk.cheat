@@ -1,0 +1,21 @@
+% checkmk
+
+# create a site
+omd create <site>
+
+# start a site
+omd start <site>
+
+# stop a site
+omd stop <site>
+
+# install a package
+mkp install <path-to-package>
+
+# list installed packages
+mkp list
+
+# remove a package
+mkp remove <mkplist>
+
+$ mkplist: mkp list
