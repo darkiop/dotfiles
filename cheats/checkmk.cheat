@@ -9,6 +9,9 @@ omd start <site>
 # stop a site
 omd stop <site>
 
+# restart
+omd restart
+
 # install a package
 mkp install <path-to-package>
 
@@ -16,6 +19,4 @@ mkp install <path-to-package>
 mkp list
 
 # remove a package
-mkp remove <mkplist>
-
-$ mkplist: mkp list
+mkp remove <package>
