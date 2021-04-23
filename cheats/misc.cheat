@@ -81,3 +81,6 @@ uniq -u <file>
 
 # for each line, show the number of times it is duplicated
 uniq -c <file>
+
+# tree view from current folder
+tree -L 3 .

@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# TODO: install checkmk agent + plugins
 
 # colors
 # https://bashcolors.com
@@ -265,7 +267,8 @@ function instAPP() {
   ncdu \
   needrestart \
   hddtemp \
-  parted
+  parted \
+  tree
   # tmp: rcconf, sensors
 }
 
