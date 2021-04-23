@@ -26,6 +26,66 @@ metrics='-'
 echo "$status $servicename $metrics $statusdetail"
 
 #
+# ioBroker Process: io.hm-rega.0
+#
+iobProcess=$(pidof io.hm-rega.0)
+if [ "$?" -ne 0 ]; then
+  status=2
+  statusdetail='not running'
+else
+  status=0
+  statusdetail='running'
+fi
+servicename='ioBroker.io.hm-rega.0'
+metrics='-'
+echo "$status $servicename $metrics $statusdetail"
+
+#
+# ioBroker Process: io.hm-rpc.1
+#
+iobProcess=$(pidof io.hm-rpc.1)
+if [ "$?" -ne 0 ]; then
+  status=2
+  statusdetail='not running'
+else
+  status=0
+  statusdetail='running'
+fi
+servicename='ioBroker.io.hm-rpc.1'
+metrics='-'
+echo "$status $servicename $metrics $statusdetail"
+
+#
+# ioBroker Process: io.smartmeter.0
+#
+iobProcess=$(pidof io.smartmeter.0)
+if [ "$?" -ne 0 ]; then
+  status=2
+  statusdetail='not running'
+else
+  status=0
+  statusdetail='running'
+fi
+servicename='ioBroker.io.smartmeter.0'
+metrics='-'
+echo "$status $servicename $metrics $statusdetail"
+
+#
+# ioBroker Process: io.smartmeter.1
+#
+iobProcess=$(pidof io.smartmeter.1)
+if [ "$?" -ne 0 ]; then
+  status=2
+  statusdetail='not running'
+else
+  status=0
+  statusdetail='running'
+fi
+servicename='ioBroker.io.smartmeter.1'
+metrics='-'
+echo "$status $servicename $metrics $statusdetail"
+
+#
 # ioBroker Process: io.javascript.0
 #
 iobProcess=$(pidof io.javascript.0)
