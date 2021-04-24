@@ -1,19 +1,17 @@
 #!/bin/bash
 # CheckMK-Documentation: https://docs.checkmk.com/latest/de/localchecks.html
+# Installation (on client): /usr/lib/check_mk_agent/local
 #
-# Install: /usr/lib/check_mk_agent/local
-#
-#                  |----| |---------| |--------------| |-----------------------------------------|
-# example output: "STATUS SERVICENAME METRICS=73;80;90 STATUS DETAIL TEXT WHICH CAN CONTAIN SPACES"
-#
-# Status: 0 = OK | 1 = WARN | 2 = CRIT | 3 = UNKNOWN | P = dynamic
-#
-# iobProcess=$(/usr/bin/ps -o cmd -C "node" --no-headers | grep ^iobroker.js-controller 1>&2 | echo $?)
+#           |----| |---------| |--------------| |-----------------------------------------|
+# Example  "STATUS SERVICENAME METRICS=73;80;90 STATUS DETAIL TEXT WHICH CAN CONTAIN SPACES"
+# Status:  0 = OK | 1 = WARN | 2 = CRIT | 3 = UNKNOWN | P = dynamic
+# Metrics: value;warn_lower:warn_upper;crit_lower:crit_upper
 
 #
 # ioBroker Process: iobroker.js-controller
 #
 iobProcess=$(pidof iobroker.js-controller)
+#iobProcess=$(/usr/bin/ps -o cmd -C "node" --no-headers | grep ^iobroker.js-controller 1>&2 | echo $?)
 if [ "$?" -ne 0 ]; then
   status=2
   statusdetail='not running'
@@ -123,6 +121,18 @@ status=0
 servicename='ioBroker.NumberOfProcesses'
 metrics='-'
 statusdetail=$iobNumberOfProcesses
+echo "$status $servicename $metrics $statusdetail"
+
+
+#
+# number of updates
+#
+# parameter=value;warn_lower:warn_upper;crit_lower:crit_upper
+iobNumberOfUpdates=$(iobroker update | grep Updateable | wc -l)
+status=P
+servicename='ioBroker.iobNumberOfUpdates'
+metrics='$iobNumberOfUpdates;5:6;7:8'
+statusdetail=$iobNumberOfUpdates
 echo "$status $servicename $metrics $statusdetail"
 
 #
