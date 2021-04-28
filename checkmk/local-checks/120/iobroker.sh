@@ -5,7 +5,7 @@
 #           |----| |---------| |--------------| |-----------------------------------------|
 # Example  "STATUS SERVICENAME METRICS=73;80;90 STATUS DETAIL TEXT WHICH CAN CONTAIN SPACES"
 # Status:  0 = OK | 1 = WARN | 2 = CRIT | 3 = UNKNOWN | P = dynamic
-# Metrics: value;warn_lower:warn_upper;crit_lower:crit_upper
+# Metrics: metrics=value;warn;crit;min;max
 
 #
 # ioBroker Process: iobroker.js-controller
@@ -99,6 +99,21 @@ metrics='-'
 echo "$status $servicename $metrics $statusdetail"
 
 #
+# ioBroker Process: io.stiebel-isg.0
+#
+iobProcess=$(pidof io.stiebel-isg.0)
+if [ "$?" -ne 0 ]; then
+  status=2
+  statusdetail='not running'
+else
+  status=0
+  statusdetail='running'
+fi
+servicename='ioBroker.io.stiebel-isg.0'
+metrics='-'
+echo "$status $servicename $metrics $statusdetail"
+
+#
 # ioBroker Status
 #
 iobStatus=$(iobroker status | head -n1)
@@ -116,41 +131,21 @@ echo "$status $servicename $metrics $statusdetail"
 # number of processes
 # TODO metrics
 #
-iobNumberOfProcesses=$(/usr/bin/ps -o cmd -C "node" --no-headers | wc -l)
+NumberOfProcesses=$(/usr/bin/ps -o cmd -C "node" --no-headers | wc -l)
 status=0
 servicename='ioBroker.NumberOfProcesses'
 metrics='-'
-statusdetail=$iobNumberOfProcesses
+statusdetail=$NumberOfProcesses
 echo "$status $servicename $metrics $statusdetail"
-
 
 #
 # number of updates
 #
-# parameter=value;warn_lower:warn_upper;crit_lower:crit_upper
-iobNumberOfUpdates=$(iobroker update | grep Updateable | wc -l)
+NumberOfUpdates=$(iobroker update | grep Updateable | wc -l)
 status=P
-servicename='ioBroker.iobNumberOfUpdates'
-metrics='$iobNumberOfUpdates;5:6;7:8'
-statusdetail=$iobNumberOfUpdates
-echo "$status $servicename $metrics $statusdetail"
-
-#
-# ioBroker getvalue
-# TODO metrics
-# TODO error handling (iobroker is not runnig)
-#
-iobGetvalue=$(iobroker state getvalue smartmeter.1.1-0:16_7_0__255.value)
-if [[ $iobGetvalue -gt 400 && $iobGetvalue -lt 1000 ]]; then
-  status=1
-elif [ "$iobGetvalue" -ge "1000" ]; then
-  status=2
-else
-  status=0
-fi
-servicename='ioBroker.GetValueTest'
-metrics='-'
-statusdetail=$iobGetvalue
+servicename='ioBroker.NumberOfUpdates'
+metrics="count=$NumberOfUpdates;16;20;;"
+statusdetail='number of updates'
 echo "$status $servicename $metrics $statusdetail"
 
 # EOF
