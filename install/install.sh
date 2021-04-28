@@ -477,7 +477,8 @@ function instUPDATEFROMGIT() {
       cd ~/dotfiles
       git pull
       cd ~
-      bash ~/.bashrc
+      #bash ~/.bashrc
+      su - $USER
     else
       # changes
       echo
@@ -528,15 +529,16 @@ function instBASHRC() {
       ln -s $dir/$folder ~/.$folder
   done
 
-  # load .bashrc
+  # load dotfiles
   echo
   echo -e "$yellow_color[ dotfiles installed ]$close_color"
   echo -e "$red_color"
-  read -p "load ~/.bashrc? (y/n):" loadbashrc
+  read -p "Relogin to load dotfiles? (y/n):" relogin
   echo -e "$close_color"
-  case $loadbashrc in
+  case $relogin in
     y|Y)
-      bash $HOME/.bashrc
+      #bash $HOME/.bashrc
+      su - $USER
     ;;
     n|N|*)
       message yellow "Do nothing and exit."
