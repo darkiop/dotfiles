@@ -69,6 +69,11 @@ else
   source ~/dotfiles/.local_dotfiles_settings
 fi
 
+# load custom keybindings
+if [ ! -f ~/dotfiles/custom-keyboard-bindings ]; then
+  source ~/dotfiles/custom-keyboard-bindings
+fi
+
 # clear screen & show motd
 clear
 source ~/dotfiles/motd/motd.sh
