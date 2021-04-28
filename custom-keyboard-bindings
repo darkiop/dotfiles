@@ -2,4 +2,4 @@
 bind -x '"\C-s":git status'
 
 # STRG + i = dotfiles install menu
-bind -x '"\C-i":/home/$USER/dotfiles/install/install.sh'
+bind -x '"\C-i":bash /home/$USER/dotfiles/install/install.sh'

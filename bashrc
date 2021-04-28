@@ -70,7 +70,7 @@ else
 fi
 
 # load custom keybindings
-if [ ! -f ~/dotfiles/custom-keyboard-bindings ]; then
+if [ -f ~/dotfiles/custom-keyboard-bindings ]; then
   source ~/dotfiles/custom-keyboard-bindings
 fi
 
