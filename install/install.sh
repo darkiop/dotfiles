@@ -123,6 +123,7 @@ function message() {
 # main menu
 # -------------------------------------------------------------
 function show_main_menu(){
+  unset opt_main_menu
   echo
   echo -e $green_color"[ darkiop/dotfiles ]"$close_color
   echo
