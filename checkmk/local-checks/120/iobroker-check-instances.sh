@@ -8,22 +8,6 @@
 # Metrics: metrics=value;warn;crit;min;max
 
 #
-# ioBroker Process: iobroker.js-controller
-#
-iobProcess=$(pidof iobroker.js-controller)
-#iobProcess=$(/usr/bin/ps -o cmd -C "node" --no-headers | grep ^iobroker.js-controller 1>&2 | echo $?)
-if [ "$?" -ne 0 ]; then
-  status=2
-  statusdetail='not running'
-else
-  status=0
-  statusdetail='running'
-fi
-servicename='ioBroker.iobroker.js-controller'
-metrics='-'
-echo "$status $servicename $metrics $statusdetail"
-
-#
 # ioBroker Process: io.hm-rega.0
 #
 iobProcess=$(pidof io.hm-rega.0)
@@ -111,41 +95,6 @@ else
 fi
 servicename='ioBroker.io.stiebel-isg.0'
 metrics='-'
-echo "$status $servicename $metrics $statusdetail"
-
-#
-# ioBroker Status
-#
-iobStatus=$(iobroker status | head -n1)
-if [[ $iobStatus == *"not"* ]]; then
-  status=2
-else
-  status=0
-fi
-servicename='ioBroker.Status'
-metrics='-'
-statusdetail=$iobStatus
-echo "$status $servicename $metrics $statusdetail"
-
-#
-# number of processes
-# TODO metrics
-#
-NumberOfProcesses=$(/usr/bin/ps -o cmd -C "node" --no-headers | wc -l)
-status=0
-servicename='ioBroker.NumberOfProcesses'
-metrics='-'
-statusdetail=$NumberOfProcesses
-echo "$status $servicename $metrics $statusdetail"
-
-#
-# number of updates
-#
-NumberOfUpdates=$(iobroker update | grep Updateable | wc -l)
-status=P
-servicename='ioBroker.NumberOfUpdates'
-metrics="count=$NumberOfUpdates;16;20;;"
-statusdetail='number of updates'
 echo "$status $servicename $metrics $statusdetail"
 
 # EOF
