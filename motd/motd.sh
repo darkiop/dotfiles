@@ -2,7 +2,8 @@
 # https://github.com/fedya/omv_motd.git
 # modified by thwalk
 
-HOSTNAME=$(hostname)
+# hostname
+get_host_name=$(hostname)
 
 # uptime
 upSeconds="$(/usr/bin/cut -d. -f1 /proc/uptime)"
@@ -25,7 +26,7 @@ if [ -d /home ]; then
 fi
 
 # get os version & ip & cputemp
-case $HOSTNAME in
+case $get_host_name in
   (odin)
     get_plat_data="Synology DSM "$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
     get_cpu_temp=$(($(cat /sys/class/hwmon/hwmon0/temp1_input)/1000))"°C"
@@ -46,24 +47,24 @@ get_proc_ps=$(ps -Afl | wc -l)
 get_swap=$(free -m | tail -n 1 | awk {'print $3'})
 
 # set close_color
-case $HOSTNAME in
+case $get_host_name in
   (odin)  close_color="";;
   (*)     close_color="$(tput sgr0)";;
 esac
 
 # set title of terminal
-trap 'echo -ne "\033]0;${USER}@${HOSTNAME}\007"' DEBUG
+trap 'echo -ne "\033]0;${USER}@${get_host_name}\007"' DEBUG
 
 # read task file
 if [ -f ~/dotfiles/motd/tasks-$HOSTNAME ]; then
-  tasks="$(cat ~/dotfiles/motd/tasks-$(HOSTNAME))"
+  tasks="$(cat ~/dotfiles/motd/tasks-$(get_host_name))"
 else
   tasks="$(cat ~/dotfiles/motd/tasks)"
 fi
 
 # use toilet for title of motd
 # show all available fonts: https://gist.github.com/itzg/b889534a029855c018813458ff24f23c
-case $HOSTNAME in
+case $get_host_name in
   (odin)
     clear
     echo -e "$yellow_color"
@@ -78,14 +79,14 @@ EOF
   (*)
     if [ -x "$(command -v toilet)" ]; then
       echo -e "$yellow_color"
-      toilet -f smblock -w 150 $HOSTNAME
+      toilet -f smblock -w 150 $get_host_name
       echo -e "$close_color"
     fi
   ;;
 esac
 
 # echo infos
-echo -e "$blue_color"hostname"$close_color          `echo -e "$green_color$HOSTNAME$close_color"`
+echo -e "$blue_color"hostname"$close_color          `echo -e "$green_color$get_host_name$close_color"`
 $blue_color"ip"$close_color                `echo -e "$green_color$get_ip_host$close_color"`
 $blue_color"tasks"$close_color             `echo -e "$green_color$tasks$close_color"`
 $blue_color"load"$close_color              `echo -e "$green_color$get_os_load_1$close_color" / "$green_color$get_os_load_5$close_color" / "$green_color$get_os_load_15$close_color"`
@@ -100,8 +101,8 @@ if [ -x /usr/bin/pveversion ]; then
 fi
 
 # special motd by hostname
-if [ -f ~/dotfiles/motd/motd-$HOSTNAME.sh ]; then
-  source ~/dotfiles/motd/motd-$HOSTNAME.sh
+if [ -f ~/dotfiles/motd/motd-$get_host_name.sh ]; then
+  source ~/dotfiles/motd/motd-$get_host_name.sh
 else
   echo
 fi
