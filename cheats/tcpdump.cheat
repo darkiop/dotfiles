@@ -38,3 +38,6 @@ tcpdump -p -s0 -w <filename>.pcap
 
 # human date-time
 tcpdump -tttt
+
+# 
+tcpdump -tttt -n -i any src <srcIP> and dst <dstIP>

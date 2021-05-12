@@ -84,3 +84,6 @@ uniq -c <file>
 
 # tree view from current folder
 tree -L 3 .
+
+# show all env variables
+env | sort

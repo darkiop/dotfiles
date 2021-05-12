@@ -1,0 +1,7 @@
+% postfix
+
+# clear queue
+postsuper -d ALL
+
+# show queue
+postqueue -p

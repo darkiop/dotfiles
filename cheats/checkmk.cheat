@@ -9,6 +9,9 @@ omd start <site>
 # stop a site
 omd stop <site>
 
+# login to site
+su - <site>
+
 # restart
 omd restart
 
@@ -20,3 +23,6 @@ mkp list
 
 # remove a package
 mkp remove <package>
+
+# check if check mk agent runs
+telnet localhost 6556
