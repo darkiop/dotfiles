@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo -e "$light_blue_color"Proxmox Version"$close_color   `echo -e "$green_color$(pveversion)$close_color"`"
+echo -e "$blue_color"Proxmox Version"$close_color   `echo -e "$green_color$(pveversion)$close_color"`"
 echo
 echo -e "$light_blue_color"List Proxmox Container"$close_color"
 echo
