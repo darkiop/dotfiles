@@ -1,0 +1,25 @@
+#!/bin/bash
+# https://github.com/ypid-bot/check_mk/blob/master/agents/plugins/mk_apt
+#
+# extended with: --allow-downgrades
+
+UPGRADE=upgrade
+DO_UPDATE=yes
+function check_apt_update {
+    if [ "$DO_UPDATE" = yes ] ; then
+        apt-get update -qq 2> /dev/null
+    fi
+    apt-get -o 'Debug::NoLocking=true' --allow-downgrades -s -qq "$UPGRADE" | grep -v '^Conf'
+}
+
+if type apt-get > /dev/null ; then
+    echo '<<<apt:sep(0)>>>'
+    out=$(check_apt_update)
+    if [ -z "$out" ]; then
+        echo "No updates pending for installation"
+    else
+        echo "$out"
+    fi
+fi
+
+# EOF
