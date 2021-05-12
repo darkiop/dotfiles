@@ -47,6 +47,9 @@ awk 'length($0) > 20' <file>
 # print those lines where the value of the second column is greater than 100
 awk '$2 > 100' <file>
 
+# remove first line with sed
+sed '1d'
+
 # print the numer of lines
 wc -l <file>
 
