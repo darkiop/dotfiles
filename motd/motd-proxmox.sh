@@ -8,8 +8,6 @@ echo -e $yellow_color"`pct list` "$close_color
 echo
 echo -e "$light_blue_color"List Proxmox Virtual Machines"$close_color"
 echo
-# | sed -e 's/^[ \t]*//' = remove leading zeros
-#sudo qm list | sed -e 's/^[ \t]*//'
 echo -e $yellow_color"`qm list | sed -e 's/^[ \t]*//'` "$close_color
 
 #EOF
