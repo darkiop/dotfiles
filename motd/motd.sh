@@ -62,7 +62,7 @@ case $get_host_name in
 esac
 
 # set title of terminal
-trap 'echo -ne "\033]0;${HOSTNAME}\007"' DEBUG
+trap 'echo -ne "\033]0;${USER}@${HOSTNAME}\007"' DEBUG
 
 # read task file
 if [ -f ~/dotfiles/motd/tasks-$get_host_name ]; then
