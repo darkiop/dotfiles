@@ -2,6 +2,8 @@
 # https://github.com/fedya/omv_motd.git
 # modified by thwalk
 
+HOSTNAME=$(HOSTNAME)
+
 # uptime
 upSeconds="$(/usr/bin/cut -d. -f1 /proc/uptime)"
 secs=$((${upSeconds}%60))
