@@ -19,56 +19,17 @@ fi
 echo
 numberofprocesses=$(iobroker list instances | grep enabled | wc -l)
 echo -e $light_blue_color"ioBroker instances ("$numberofprocesses")"$green_color
+
 processList=(
-"iobroker.js-controller"
-"io.admin.0"
-"io.alexa2.0"
-"io.backitup.0"
-"io.discovery.0"
-"io.echarts.0"
-"io.email.0"
-"io.harmony.0"
-"io.hm-rega.0"
-"io.hs100.0"
-"io.info.0"
-"io.iot.0"
-"io.javascript.0"
-"io.kecontact.0"
-"io.linkeddevices.0"
-"io.linux-control.0"
-"io.logparser.0"
-"io.mercedesme.0"
-"io.musiccast.0"
-"io.mqtt.0"
-"io.pi-hole.0"
-"io.ping.0"
-"io.robonect.0"
-"io.simple-api.0"
-"io.smartmeter.0"
-"io.smartmeter.1"
-"io.socketio.0"
-"io.sourceanalytix.0"
-"io.sql.0"
-"io.statistics.0"
-"io.trashschedule.0"
-"io.vis-inventwo.0"
-"io.web.0"
-"io.tr-064.0"
-"io.bring.0"
-"io.hue.0"
-"io.telegram.0"
-"io.mihome-vacuum.0"
-"io.hm-rpc.1"
-"io.hm-rpc.2"
-"io.proxmox.0"
-"io.wlanthermo-nano.0"
+  "system.adapter.hs100.0.alive",
+  "system.adapter.telegram.0.alive"
 )
 
 services=${#processList[@]}
 
 echo
 for (( i=0; i<${services}; i++)); do
-if [ "$(pidof ${processList[$i]})" ]; then
+if [ "$(iobroker state getvalue ${processList[$i]} | tail -n 1)" ]; then
   state="$green_color[Running]$close_color"
 else
   state="$red_color[Stopped]$close_color"
