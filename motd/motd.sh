@@ -17,33 +17,22 @@ root_total=$(df -h / | awk '/\// {print $(NF-4)}')
 
 # size of /home
 if [ -d /home ]; then
+  home_usage=$(df -h /home | awk '/\// {print $(NF-1)}' | sed 's/%//g')
   home_usage_gb=$(df -h /home | awk '/\// {print $(NF-3)}')
   home_total=$(df -h /home | awk '/\// {print $(NF-4)}')
 fi
 
-# get hostname
-get_host_name=$(hostname)
-
 # get os version & ip & cputemp
-case $get_host_name in
-  
+case $HOSTNAME in
   (odin)
     get_plat_data="Synology DSM "$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
     get_cpu_temp=$(($(cat /sys/class/hwmon/hwmon0/temp1_input)/1000))"°C"
     get_ip_host=$(/sbin/ip -o -4 addr list ovs_eth0 | awk '{print $4}' | cut -d/ -f1)
   ;;
-  
-  (iobroker-hwr)
-    get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
-    get_cpu_temp=$(sudo vcgencmd measure_temp | egrep -o '[0-9]*\.[0-9]*')"°C"
-    get_ip_host=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
-  ;;
-  
   (*)
     get_plat_data=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
     get_ip_host=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1)
   ;;
-
 esac
 
 # cpu load av
@@ -51,12 +40,11 @@ get_os_load_1=$(cat /proc/loadavg | awk '{ print $1 }')
 get_os_load_5=$(cat /proc/loadavg | awk '{ print $2 }')
 get_os_load_15=$(cat /proc/loadavg | awk '{ print $3 }')
 get_os_loadavg=`echo -e "$get_os_load_1" / " $get_os_load_5 $get_os_load_15"`
-
 get_proc_ps=$(ps -Afl | wc -l)
 get_swap=$(free -m | tail -n 1 | awk {'print $3'})
 
-# check if colors available
-case $get_host_name in
+# set close_color
+case $HOSTNAME in
   (odin)  close_color="";;
   (*)     close_color="$(tput sgr0)";;
 esac
@@ -65,8 +53,8 @@ esac
 trap 'echo -ne "\033]0;${USER}@${HOSTNAME}\007"' DEBUG
 
 # read task file
-if [ -f ~/dotfiles/motd/tasks-$get_host_name ]; then
-  tasks="$(cat ~/dotfiles/motd/tasks-$(hostname))"
+if [ -f ~/dotfiles/motd/tasks-$HOSTNAME ]; then
+  tasks="$(cat ~/dotfiles/motd/tasks-$(HOSTNAME))"
 else
   tasks="$(cat ~/dotfiles/motd/tasks)"
 fi
@@ -74,48 +62,44 @@ fi
 # use toilet for title of motd
 # show all available fonts: https://gist.github.com/itzg/b889534a029855c018813458ff24f23c
 case $HOSTNAME in
-(odin)
-clear
-echo -e "$yellow_color"
+  (odin)
+    clear
+    echo -e "$yellow_color"
 cat << EOF
      ▌▗    
 ▞▀▖▞▀▌▄ ▛▀▖
 ▌ ▌▌ ▌▐ ▌ ▌
 ▝▀ ▝▀▘▀▘▘ ▘
 EOF
-echo
-;;
-(*)
-if [ -x "$(command -v toilet)" ]; then
-  echo -e "$yellow_color"
-  toilet -f smblock -w 150 $get_host_name
-  echo -e "$close_color"
-else 
-  echo -e "$yellow_color$get_host_name$close_color
-  $yellow_color"──────────────────────────────────────────────────""$close_color
-fi
-;;
+    echo
+    ;;
+  (*)
+    if [ -x "$(command -v toilet)" ]; then
+      echo -e "$yellow_color"
+      toilet -f smblock -w 150 $HOSTNAME
+      echo -e "$close_color"
+    fi
+  ;;
 esac
 
 # echo infos
-echo -e "$blue_color"hostname"$close_color          `echo -e "$green_color$get_host_name$close_color"`
+echo -e "$blue_color"hostname"$close_color          `echo -e "$green_color$HOSTNAME$close_color"`
 $blue_color"ip"$close_color                `echo -e "$green_color$get_ip_host$close_color"`
 $blue_color"tasks"$close_color             `echo -e "$green_color$tasks$close_color"`
 $blue_color"load"$close_color              `echo -e "$green_color$get_os_load_1$close_color" / "$green_color$get_os_load_5$close_color" / "$green_color$get_os_load_15$close_color"`
 $blue_color"uptime"$close_color            `echo -e "$green_color$UP$close_color"`
 $blue_color"os"$close_color                `echo -e "$green_color$get_plat_data$close_color"`
-$blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage_gb$close_color"` "of" `echo -e "$green_color$root_total$close_color"` ($root_usage%)"
+$blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage_gb$close_color"` "of" `echo -e "$green_color$root_total$close_color"` ($root_usage%)
+$blue_color"usage of /home"$close_color    `echo -e "$green_color$home_usage_gb$close_color"` "of" `echo -e "$green_color$home_total$close_color"` ($home_usage%)"
 
-# $blue_color"cpu-temp"$close_color          `echo -e "$green_color$get_cpu_temp$close_color"`
-
-# special infos for proxmox
+# special motd for proxmox
 if [ -x /usr/bin/pveversion ]; then
   source ~/dotfiles/motd/motd-proxmox.sh
 fi
 
-# special motd via hostname
-if [ -f ~/dotfiles/motd/motd-$get_host_name.sh ]; then
-  source ~/dotfiles/motd/motd-$get_host_name.sh
+# special motd by hostname
+if [ -f ~/dotfiles/motd/motd-$HOSTNAME.sh ]; then
+  source ~/dotfiles/motd/motd-$HOSTNAME.sh
 else
   echo
 fi
