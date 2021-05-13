@@ -99,8 +99,8 @@ if [ -d /opt/vaultwarden/vaultvarden-$vaultwardenVersion ]; then
 fi
 
 # install dependencys
-apt update
-apt install -y git wget curl nodejs npm build-essential pkg-config
+$apt update
+$apt install -y git wget curl nodejs npm build-essential pkg-config
 
 # create system user for vaultwarden
 if [ ! `id -u $vaultwardenUser 2>/dev/null || echo -1` -ge 0 ]; then 
