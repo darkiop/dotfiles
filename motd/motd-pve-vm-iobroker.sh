@@ -13,10 +13,10 @@ if [ -f $(which iobroker) ]; then
   fi
     echo
     echo -e $light_blue_color"pve-vm-iobroker js-controller: $green_color$iobversion$close_color / $jscontroller_alive_state"$close_color
+    echo
 fi
 
 # iobroker process-check
-#echo
 #numberofprocesses=$(iobroker list instances | grep enabled | wc -l)
 #echo -e $light_blue_color"ioBroker instances ("$numberofprocesses")"$green_color
 #
