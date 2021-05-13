@@ -8,10 +8,8 @@ bwWebVersion="2.19.0d"
 
 # first check if root, when not define a alias with sudo
 if [ "${EUID}" -ne 0 ]; then
-  dpkg='sudo '$(which dpkg)
   apt='sudo '$(which apt)
 else
-  dpkg=$(which dpkg)
   apt=$(which apt)
 fi
 
