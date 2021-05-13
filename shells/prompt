@@ -13,9 +13,15 @@ simple_bash_prompt_git_branch_color=$yellow_color
 simple_bash_prompt_git_color=$yellow_color
 simple_bash_prompt_user_color=$light_blue_color
 simple_bash_prompt_separator_color=$white_color
-simple_bash_prompt_symbol_color=$white_color
 simple_bash_prompt_reset=$white_color
 simple_bash_prompt_date_color=$green_color
+
+# red bash prompt symbol if root
+if [ "${EUID}" -ne 0 ]; then
+    simple_bash_prompt_symbol_color=$white_color
+else
+    simple_bash_prompt_symbol_color=$red_color
+fi
 
 # define the prompt terminator character
 simple_bash_prompt_symbol="\\$"
