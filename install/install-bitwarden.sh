@@ -13,12 +13,14 @@ if [ "${EUID}" -ne 0 ]; then
   cat='sudo '$(which cat)
   sed='sudo '$(which sed)
   chown='sudo '$(which chown)
+  mkdir='sudo '$(which mkdir)
 else
   apt=$(which apt)
   adduser=$(which adduser)
   cat=$(which cat)
   sed=$(which sed)
   chown=$(which chown)
+  mkdir=$(which mkdir)
 fi
 
 # colors - https://bashcolors.com
@@ -91,7 +93,7 @@ function message() {
 # check if vaultwarden is installed
 if [ -d /opt/vaultwarden/vaultvarden-$vaultwardenVersion ]; then
   # TODO: check if installed and ask
-  ask yellow "vaultwarden installion found, delete and reinstall?"
+  ask yellow "Vaultwarden installion found, delete and reinstall?"
   case $REPLY in
     y|Y)
       message yellow "Delete old files ..."
@@ -104,6 +106,8 @@ if [ -d /opt/vaultwarden/vaultvarden-$vaultwardenVersion ]; then
       exit
     ;;
   esac
+else
+  message yellow "No Vaultwarden installation found, run installation ..."
 fi
 
 # install dependencys
@@ -117,17 +121,17 @@ fi
 
 # vaultvarden main directory
 if [ ! -d /opt/vaultwarden ]; then
-  mkdir /opt/vaultwarden
+  $mkdir /opt/vaultwarden
 fi
 
 # vaultvarden lib directory
 if [ ! -d /var/lib/vaultwarden ]; then
-  mkdir /var/lib/vaultwarden
+  $mkdir /var/lib/vaultwarden
 fi
 
 # vaultvarden data directory
 if [ ! -d /var/lib/vaultwarden/data ]; then
-  mkdir /var/lib/vaultwarden/data
+  $cmkdir /var/lib/vaultwarden/data
 fi
 
 # download and install vaultvarden
