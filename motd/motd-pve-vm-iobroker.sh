@@ -14,9 +14,9 @@ if [ -f $(which iobroker) ]; then
     jscontroller_alive_state=$red_color'alive'
   fi
     echo
-    echo -e $light_blue_color"js-controller: $green_color$iobversion$close_color / $jscontroller_alive_state"$close_color
-    echo -e $light_blue_color"node: "$green_color$"nodeversion"$close_color
-    echo -e $light_blue_color"npm: "$green_color$"npmversion"$close_color
+    echo -e $light_blue_color"js-controller: "$green_color$iobversion$close_color / $jscontroller_alive_state$close_color
+    echo -e $light_blue_color"node: "$green_color$nodeversion$close_color
+    echo -e $light_blue_color"npm: "$green_color$npmversion$close_color
     echo
 fi
 
