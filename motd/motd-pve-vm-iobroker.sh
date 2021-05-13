@@ -4,6 +4,8 @@
 if [ -f $(which iobroker) ]; then
   # get version
   iobversion=$(iobroker version)
+  npmversion=$(npm -v)
+  nodeversion=$(node -v)
   # get host info
   jscontroller_alive_state=$(iobroker state getvalue system.host.pve-vm-iobroker.alive | tail -n 1)
   if [ $jscontroller_alive_state == 'true' ]; then
@@ -12,7 +14,9 @@ if [ -f $(which iobroker) ]; then
     jscontroller_alive_state=$red_color'alive'
   fi
     echo
-    echo -e $light_blue_color"pve-vm-iobroker js-controller: $green_color$iobversion$close_color / $jscontroller_alive_state"$close_color
+    echo -e $light_blue_color"js-controller: $green_color$iobversion$close_color / $jscontroller_alive_state"$close_color
+    echo -e $light_blue_color"node: "$green_color$"nodeversion"$close_color
+    echo -e $light_blue_color"npm: "$green_color$"npmversion"$close_color
     echo
 fi
 
