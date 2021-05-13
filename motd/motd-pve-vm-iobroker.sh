@@ -16,25 +16,25 @@ if [ -f $(which iobroker) ]; then
 fi
 
 # iobroker process-check
-echo
-numberofprocesses=$(iobroker list instances | grep enabled | wc -l)
-echo -e $light_blue_color"ioBroker instances ("$numberofprocesses")"$green_color
-
-processList=(
-  "system.adapter.hs100.0.alive",
-  "system.adapter.telegram.0.alive"
-)
-
-services=${#processList[@]}
-
-echo
-for (( i=0; i<${services}; i++)); do
-if [ "$(iobroker state getvalue ${processList[$i]} | tail -n 1)" ]; then
-  state="$green_color[Running]$close_color"
-else
-  state="$red_color[Stopped]$close_color"
-fi
-echo -e "$state ${processList[$i]}"
-done
+#echo
+#numberofprocesses=$(iobroker list instances | grep enabled | wc -l)
+#echo -e $light_blue_color"ioBroker instances ("$numberofprocesses")"$green_color
+#
+#processList=(
+#  "system.adapter.hs100.0.alive",
+#  "system.adapter.telegram.0.alive"
+#)
+#
+#services=${#processList[@]}
+#
+#echo
+#for (( i=0; i<${services}; i++)); do
+#if [ "$(iobroker state getvalue ${processList[$i]} | tail -n 1)" ]; then
+#  state="$green_color[Running]$close_color"
+#else
+#  state="$red_color[Stopped]$close_color"
+#fi
+#echo -e "$state ${processList[$i]}"
+#done
 
 #EOF
