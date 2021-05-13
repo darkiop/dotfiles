@@ -8,6 +8,6 @@ echo -e $yellow_color"`pct list` "$close_color
 echo
 echo -e "$light_blue_color"List Proxmox Virtual Machines"$close_color"
 echo
-echo -e $yellow_color"`qm list | sed -e 's/^[ \t]*//'` "$close_color
+echo -e $yellow_color"`qm list | sed -e 's/^[ \t]*//' | sed '1d' | awk '{print $1,$2,$3}' | column -t`"$close_color
 
 #EOF
