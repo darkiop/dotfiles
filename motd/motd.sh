@@ -2,9 +2,6 @@
 # https://github.com/fedya/omv_motd.git
 # modified by thwalk
 
-# hostname
-get_host_name=$(hostname)
-
 # uptime
 upSeconds="$(/usr/bin/cut -d. -f1 /proc/uptime)"
 secs=$((${upSeconds}%60))
@@ -24,6 +21,9 @@ if [ -d /home ]; then
   home_usage_gb=$(df -h /home | awk '/\// {print $(NF-3)}')
   home_total=$(df -h /home | awk '/\// {print $(NF-4)}')
 fi
+
+# get hostname
+get_host_name=$(hostname)
 
 # get os version & ip & cputemp
 case $get_host_name in
@@ -53,18 +53,18 @@ case $get_host_name in
 esac
 
 # set title of terminal
-trap 'echo -ne "\033]0;${USER}@${get_host_name}\007"' DEBUG
+trap 'echo -ne "\033]0;${USER}@${get_host_name}:${PWD}\007"' DEBUG
 
 # read task file
-if [ -f ~/dotfiles/motd/tasks-$HOSTNAME ]; then
-  tasks="$(cat ~/dotfiles/motd/tasks-$(get_host_name))"
+if [ -f ~/dotfiles/motd/tasks-${get_host_name} ]; then
+  tasks="$(cat ~/dotfiles/motd/tasks-${get_host_name})"
 else
   tasks="$(cat ~/dotfiles/motd/tasks)"
 fi
 
 # use toilet for title of motd
 # show all available fonts: https://gist.github.com/itzg/b889534a029855c018813458ff24f23c
-case $get_host_name in
+case ${get_host_name} in
   (odin)
     clear
     echo -e "$yellow_color"
