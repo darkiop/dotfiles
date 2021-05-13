@@ -74,9 +74,9 @@ function message() {
 }
 
 # check if vaultwarden is installed
-if [ ! -d /opt/vaultwarden/vaultvarden-$vaultwardenVersion ]; then
+if [ -d /opt/vaultwarden/vaultvarden-$vaultwardenVersion ]; then
   # TODO: check if installed and ask
-  ask yellow "dotfiles not found, install?"
+  ask yellow "vaultwarden installion found, delete and reinstall?"
   case $REPLY in
     y|Y)
       message yellow "Delete old files ..."
