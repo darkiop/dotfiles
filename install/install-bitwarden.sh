@@ -9,8 +9,16 @@ bwWebVersion="2.19.0d"
 # first check if root, when not define a alias with sudo
 if [ "${EUID}" -ne 0 ]; then
   apt='sudo '$(which apt)
+  adduser='sudo '$(which adduser)
+  cat='sudo '$(which cat)
+  sed='sudo '$(which sed)
+  chown='sudo '$(which chown)
 else
   apt=$(which apt)
+  adduser=$(which adduser)
+  cat=$(which cat)
+  sed=$(which sed)
+  chown=$(which chown)
 fi
 
 # colors - https://bashcolors.com
@@ -104,7 +112,7 @@ $apt install -y git wget curl nodejs npm build-essential pkg-config
 
 # create system user for vaultwarden
 if [ ! `id -u $vaultwardenUser 2>/dev/null || echo -1` -ge 0 ]; then 
-  adduser --system --no-create-home --group vaultwarden
+  $adduser --system --no-create-home --group vaultwarden
 fi
 
 # vaultvarden main directory
@@ -143,7 +151,7 @@ tar xf bw_web_v$bwWebVersion.tar.gz
 rm bw_web_v$bwWebVersion.tar.gz
 
 # create systemd service file
-cat <<'EOF' > /etc/systemd/system/vaultwarden.service
+$cat <<'EOF' > /etc/systemd/system/vaultwarden.service
 [Unit]
 Description=Bitwarden Server (vaultwarden)
 Documentation=https://github.com/dani-garcia/vaultwarden
@@ -159,20 +167,20 @@ AmbientCapabilities=CAP_NET_BIND_SERVICE
 [Install]
 WantedBy=multi-user.target
 EOF
-sed -i 's/VERSION/'$vaultwardenVersion'/g' /etc/systemd/system/vaultwarden.service
+$sed -i 's/VERSION/'$vaultwardenVersion'/g' /etc/systemd/system/vaultwarden.service
 
 # create vaultwarden env file
-cat <<'EOF' > /etc/vaultwarden.env
+$cat <<'EOF' > /etc/vaultwarden.env
 WEB_VAULT_FOLDER=/opt/vaultwarden/vaultwarden-VERSION/target/release/web-vault
 WEB_VAULT_ENABLED=true
 SIGNUPS_ALLOWED=false
 EOF
-sed -i 's/VERSION/'$vaultwardenVersion'/g' /etc/vaultwarden.env
+$sed -i 's/VERSION/'$vaultwardenVersion'/g' /etc/vaultwarden.env
 
 # set owner rights
-chown -R vaultwarden:vaultwarden /opt/vaultwarden
-chown -R vaultwarden:vaultwarden /var/lib/vaultwarden
-chown vaultwarden:vaultwarden /etc/vaultwarden.env
-chown vaultwarden:vaultwarden /etc/systemd/system/vaultwarden.service
+$chown -R vaultwarden:vaultwarden /opt/vaultwarden
+$chown -R vaultwarden:vaultwarden /var/lib/vaultwarden
+$chown vaultwarden:vaultwarden /etc/vaultwarden.env
+$chown vaultwarden:vaultwarden /etc/systemd/system/vaultwarden.service
 
 # EOF
