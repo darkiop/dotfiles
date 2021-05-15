@@ -88,6 +88,7 @@ Key | Function
 <kbd>CTRL</kbd> + <kbd>R</kbd> | reverse-search
 <kbd>CTRL</kbd> + <kbd>C</kbd> | interupt command
 <kbd>CTRL</kbd> + <kbd>L</kbd> | clear screen
+<kbd>ALTGR</kbd> + <kbd>Mousewhell</kbd> | bash history
 
 ### navi
 
