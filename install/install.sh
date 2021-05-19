@@ -554,7 +554,7 @@ function instBASHRC() {
 function instSYSUPDATES() {
   $apt update
   $apt upgrade -y
-  $apt install unattended-upgrades
+  $apt install unattended-upgrades -y
 }
 
 # -------------------------------------------------------------
