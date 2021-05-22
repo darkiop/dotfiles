@@ -72,3 +72,6 @@ dig +short myip.opendns.com @resolver1.opendns.com
 
 # ping with timestamp
 ping <host> | while read pong; do echo "$(date): $pong"; done
+
+# show routing table
+route -n
