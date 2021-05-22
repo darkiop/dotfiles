@@ -61,7 +61,9 @@ else
     fi
     echo "AuthenticationMethods publickey" >> /etc/ssh/sshd_config.d/my.conf
     echo "AllowUsers $SSHUSER" >> /etc/ssh/sshd_config.d/my.conf
-
+    
+    echo "If the port has been adjusted, it must also be adjusted in the firewall configuration!"
+    
     service ssh restart
   else
     echo "SSHUSER and SSHPORT are not set." >&2;
