@@ -1,11 +1,27 @@
 #!/bin/bash
+# setup sshd_cnfig
+#
+# argument 1 = user
+# argument 2 = port
+#
+# sshd_config adjustments:
+#  PermitRootLogin no
+#  PermitEmptyPasswords no
+#  StrictModes yes
+#  PubkeyAuthentication yes
+
+# check if root
+if [ "${EUID}" -ne 0 ]; then
+  echo "You need to run this as root." >&2;
+  exit 1
+fi
 
 # check arguments
 if [ $# -lt 2 ]; then
   echo "2 arguments required: $0 user sshport"
   exit 1
 else
-  
+ 
   # check if user is valid
   re='^[0-9]+$'
   if [[ $1 =~ $re ]] ; then
