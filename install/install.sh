@@ -1,6 +1,9 @@
 #!/bin/bash
 #
 # TODO: install checkmk agent + plugins
+# TODO: install all without apps
+# TODO: fail2ban
+# TODO: sshd config
 
 # colors
 # https://bashcolors.com
