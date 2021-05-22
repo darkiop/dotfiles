@@ -7,6 +7,7 @@ vaultwardenVersion="1.21.0"
 bwWebVersion="2.19.0d"
 
 # first check if root, when not define a alias with sudo
+# TODO: test with sudo
 if [ "${EUID}" -ne 0 ]; then
   apt='sudo '$(which apt)
   adduser='sudo '$(which adduser)
@@ -131,7 +132,7 @@ fi
 
 # vaultvarden data directory
 if [ ! -d /var/lib/vaultwarden/data ]; then
-  $cmkdir /var/lib/vaultwarden/data
+  $mkdir /var/lib/vaultwarden/data
 fi
 
 # download and install vaultvarden
