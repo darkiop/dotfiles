@@ -45,10 +45,19 @@ else
     fi
     echo "AuthenticationMethods publickey" >> /etc/ssh/sshd_config.d/my.conf
     echo "AllowUsers $SSHUSER" >> /etc/ssh/sshd_config.d/my.conf
+
+    service ssh restart
   else
     echo "SSHUSER and SSHPORT are not set." >&2;
     exit 1
   fi
 
+  # update fail2ban ssh port
+  if [ -f /etc/fail2ban/jail.local ]; then
+    sed -i "/^\[sshd\]$/,/^\[/s/port[[:blank:]]*=.*/port = $SSHPORT/" /etc/fail2ban/jail.local
+    service fail2ban restart
+  fi
+
 fi
+
 # EOF

@@ -7,3 +7,5 @@ if [ -f /etc/fail2ban/jail.conf ]; then
   sed -i 's/^maxretry[[:blank:]]*= 5/maxretry = 3/g' /etc/fail2ban/jail.local
   service fail2ban restart
 fi
+
+# EOF
