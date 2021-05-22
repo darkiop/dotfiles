@@ -27,10 +27,10 @@ else
   fi
 
   # check port range
-  if [ $2 -ge 1024 ] && [ $2 -le 65535 ]; then
+  if [ $2 -ge 1024 ] && [ $2 -le 65535 ] || [ $2 == 22 ]; then
     SSHPORT=$2
   else
-    echo "Port not in specified range: 1024 - 65535" >&2;
+    echo "Port not in specified range: 22 or 1024 - 65535" >&2;
     exit 1
   fi
 
