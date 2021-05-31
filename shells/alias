@@ -1,7 +1,6 @@
 # check if root, when not define alias with sudo
 if [[ $EUID -ne 0 ]]; then
   alias apt='sudo '$(which apt)
-  #alias apt-get='sudo '$(which apt-get)
   alias reboot='sudo '$(which reboot)
   alias shutdown='sudo '$(which shutdown)
   alias systemctl='sudo '$(which systemctl)
@@ -66,7 +65,7 @@ if [ -x ~/dotfiles/bin/lsd ]; then
   alias ls='lsd'
   alias l='lsd -lh'
   alias ll='lsd -lah'
-  alias la='lsd -A'
+  alias la='lsd -Ah'
   alias lt='lsd --tree'
 else
   alias ls='ls --sort=extension --color=auto'
@@ -86,8 +85,7 @@ alias rl='source ~/.bashrc'
 alias reload='source ~/.bashrc'
 
 # dotfiles update
-#alias update-dotfiles='cd ~/dotfiles && git pull && cd && rl'
-alias update-dotfiles='cd ~/dotfiles && bash install-update-from-git.sh'
+alias update-dotfiles='cd ~/dotfiles && git pull && rl'
 
 # fast switch to dotfiles
 alias dotf='cd ~/dotfiles && git status'
@@ -112,7 +110,6 @@ alias man="TERMINFO=~/.terminfo TERM=mostlike LESS=C PAGER=less man"
 # color
 if [ -x /usr/bin/dircolors ]; then
   test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-  #alias ls='ls --color=auto'
   alias grep='grep --color=auto'
   alias fgrep='fgrep --color=auto'
   alias egrep='egrep --color=auto'
