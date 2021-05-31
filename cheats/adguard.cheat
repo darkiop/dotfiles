@@ -1,0 +1,16 @@
+% adguard
+
+# start
+/opt/AdGuardHome/AdGuardHome -s start
+
+# stop
+/opt/AdGuardHome/AdGuardHome -s stop
+
+# restart
+/opt/AdGuardHome/AdGuardHome -s restart
+
+# reload config
+/opt/AdGuardHome/AdGuardHome -s reload
+
+# status
+/opt/AdGuardHome/AdGuardHome -s status
