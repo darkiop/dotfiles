@@ -90,3 +90,9 @@ tree -L 3 .
 
 # show all env variables
 env | sort
+
+# run unattended-upgrade for debug
+unattended-upgrade -d
+
+# log named / bind9 query log
+tail -f /var/log/named/queries.log
