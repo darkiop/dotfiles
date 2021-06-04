@@ -56,11 +56,11 @@ else
     sed -i "s/#PermitEmptyPasswords no/PermitEmptyPasswords no/g" /etc/ssh/sshd_config
     sed -i "s/#StrictModes yes/StrictModes yes/g" /etc/ssh/sshd_config
     sed -i "s/#PubkeyAuthentication yes/PubkeyAuthentication yes/g" /etc/ssh/sshd_config
-    if [ -f /etc/ssh/sshd_config.d/my.conf ]; then
-      rm /etc/ssh/sshd_config.d/my.conf
+    if [ -f /etc/ssh/sshd_config.d/my-ssh-config.conf ]; then
+      rm /etc/ssh/sshd_config.d/my-ssh-config.conf
     fi
-    echo "AuthenticationMethods publickey" >> /etc/ssh/sshd_config.d/my.conf
-    echo "AllowUsers $SSHUSER" >> /etc/ssh/sshd_config.d/my.conf
+    echo "AuthenticationMethods publickey" >> /etc/ssh/sshd_config.d/my-ssh-config.conf
+    echo "AllowUsers $SSHUSER" >> /etc/ssh/sshd_config.d/my-ssh-config.conf
     
     echo "If the port has been adjusted, it must also be adjusted in the firewall configuration!"
     
