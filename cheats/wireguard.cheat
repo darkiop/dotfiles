@@ -12,7 +12,13 @@ wg-quick up wg0
 # wireguard down
 wg-quick down wg0
 
+# generate keys
+wg genkey | tee privatekey | wg pubkey > publickey
+
 # generate qr code
 qrencode -t ansiutf8 -l L <<file>
+
+# enable wg0 at startup
+systemctl enable wg-quick@wg0
 
 $ file: ls

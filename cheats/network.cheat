@@ -42,16 +42,16 @@ exportfs
 # nfs - show exports from clientside
 showmount -e <ip>
 
-# show process of open port
-netstat -plant
-
 # kill process running on a given port
 lsof -i :<port> \
    | awk '{l=$2} END {print l}' \
    | xargs kill
 
+# show process of open port
+netstat -plant
+
 # list IPs connected on a given port
-netstat -tn 2>/dev/null \
+netstat -tn 2>/ssdev/null \
    | grep :<port> \
    | awk '{print $5}' \
    | cut -d: -f1 \
