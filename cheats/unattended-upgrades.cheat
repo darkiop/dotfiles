@@ -1,16 +1,28 @@
 % unattended-upgrades
 
 # install
-apt-get install unattended-upgrades
+apt install unattended-upgrades
 
-# config
-vi /etc/apt/apt.conf.d/50unattended-upgrades
-
-# activate (/etc/apt/apt.conf.d/20auto-upgrades)
+# activate unattended-upgrades (/etc/apt/apt.conf.d/20auto-upgrades)
 echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections; dpkg-reconfigure -f noninteractive unattended-upgrades
 
-# autorun config
+# show auto-upgrades config
 cat /etc/apt/apt.conf.d/20auto-upgrades
+
+# show unattended-upgrades config
+cat /etc/apt/apt.conf.d/50unattended-upgrades
 
 # debug run
 unattended-upgrade -d
+
+# show timer config
+systemctl cat apt-daily{,-upgrade}.timer
+
+# show timers
+systemctl --all list-timers apt-daily{,-upgrade}.timer
+
+# show unattended-upgrades log
+tail -f /var/log/unattended-upgrades/unattended-upgrades.log
+
+# show unattended-upgrades dpkg log
+tail -f /var/log/unattended-upgrades/unattended-upgrades-dpkg.log
