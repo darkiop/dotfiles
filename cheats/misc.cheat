@@ -97,11 +97,5 @@ tail -f /var/log/named/queries.log
 # set a new hostname (change /etc/hosts manually!)
 hostnamectl set-hostname <hostname>
 
-# 
-fg
-
-#
-bg
-
-#
-jobs
+# search log file, grep timestamp
+cat <logfile> | egrep "Jun 14 08:[2-5]"

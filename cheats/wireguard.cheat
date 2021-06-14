@@ -6,14 +6,17 @@ wg
 # wireguard status with watch
 watch -n 0.5 "wg"
 
-# wireguard up
+# wireguard interface wg0 up
 wg-quick up wg0
 
-# wireguard down
+# wireguard interface wg0 down
 wg-quick down wg0
 
-# generate keys
+# generate keys (private + public)
 wg genkey | tee privatekey | wg pubkey > publickey
+
+# generate presharedkey
+wg genpsk
 
 # generate qr code
 qrencode -t ansiutf8 -l L <<file>

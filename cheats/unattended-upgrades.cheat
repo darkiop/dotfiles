@@ -15,10 +15,10 @@ cat /etc/apt/apt.conf.d/50unattended-upgrades
 # debug run
 unattended-upgrade -d
 
-# show timer config
+# show systemd timer config
 systemctl cat apt-daily{,-upgrade}.timer
 
-# show timers
+# show systemd timers
 systemctl --all list-timers apt-daily{,-upgrade}.timer
 
 # show unattended-upgrades log
