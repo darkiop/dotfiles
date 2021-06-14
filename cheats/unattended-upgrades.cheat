@@ -1,0 +1,13 @@
+% unattended-upgrades
+
+# install
+apt-get install unattended-upgrades
+
+# config
+vi /etc/apt/apt.conf.d/50unattended-upgrades
+
+# activate (/etc/apt/apt.conf.d/20auto-upgrades)
+echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections; dpkg-reconfigure -f noninteractive unattended-upgrades
+
+# debug run
+unattended-upgrade -d
