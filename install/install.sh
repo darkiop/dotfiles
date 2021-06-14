@@ -564,6 +564,7 @@ function instSYSUPDATES() {
 # setup timezone & locales
 # -------------------------------------------------------------
 function instTIMEZONELOCALES() {
+  check_if_user_is_root
   message blue "[ setup timezone & locales ]"
   # timezone
   apt install -y tzdata
