@@ -9,6 +9,9 @@ fi
 if [ ! -f /usr/lib/check_mk_agent/plugins/mk_apt ]; then
   if [ -f $HOME/dotfiles/checkmk/plugins/mk_apt ]; then
     ln -s $HOME/dotfiles/checkmk/plugins/mk_apt /usr/lib/check_mk_agent/plugins/mk_apt
+    echo
+    ls -l /usr/lib/check_mk_agent/plugins/
+    echo
   fi
 fi
 
