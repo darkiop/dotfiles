@@ -1,0 +1,16 @@
+% dotfiles
+
+# install
+bash ~/dotfiles/install/install.sh
+
+# config fail2ban
+bash ~/dotfiles/install/config-fail2ban.sh
+
+# config sshd
+bash ~/dotfiles/install/config-sshd_config.sh
+
+# config unattended-upgrades
+bash ~/dotfiles/install/config-unattended-upgrades.sh
+
+# install checkmk mk_apt plugin
+bash ~/dotfiles/install/install-check-mk-apt-plugin.sh
