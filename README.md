@@ -38,7 +38,7 @@ dategrep --last-minutes 5 syslog
 cat syslog | dategrep --end "12:15"
 ```
 
-## LINKS (used and not used in my dotfiles)
+## LINKS
 
 ### inspired by other dotfile projects
 - https://github.com/1995parham/dotfiles
@@ -76,6 +76,7 @@ cat syslog | dategrep --end "12:15"
 - https://ichi.pro/de/das-essential-bash-spickzettel-15514461037920
 - https://wiki.ubuntuusers.de/Bash/Prompt
 - https://www.linux.com/learn/enhancing-virtual-terminals-byobu
+- https://www.cheatsheet.wtf/bash/
 
 ## KEY BINDINGS
 
