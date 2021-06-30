@@ -4,7 +4,7 @@
 #
 #           |----| |---------| |--------------| |-----------------------------------------|
 # Example  "STATUS SERVICENAME METRICS=73;80;90 STATUS DETAIL TEXT WHICH CAN CONTAIN SPACES"
-# Status:  0 = OK | 1 = WARN | 2 = CRIT | 3 = UNKNOWN | P = dynamic
+# Status:  0 = OK | 1 = WARN | 2 = CRIT | 3 = UNKNOWN | P = dynamic (based on metrics)
 # Metrics: metrics=value;warn;crit;min;max
 
 #
