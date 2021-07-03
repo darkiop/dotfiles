@@ -60,7 +60,6 @@ cat syslog | dategrep --end "12:15"
 - https://github.com/vim-airline/vim-airline
 - https://github.com/vim-airline/vim-airline-themes
 - https://github.com/starship/starship
-- https://github.com/Eugeny/terminus
 - https://github.com/ryanoasis/nerd-fonts
 - https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack#quick-installation
 - https://github.com/ranger/ranger
@@ -79,6 +78,9 @@ cat syslog | dategrep --end "12:15"
 - https://wiki.ubuntuusers.de/Bash/Prompt
 - https://www.linux.com/learn/enhancing-virtual-terminals-byobu
 - https://www.cheatsheet.wtf/bash/
+
+## terminal
+- https://github.com/Eugeny/tabby
 
 ## KEY BINDINGS
 
