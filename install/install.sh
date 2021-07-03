@@ -237,6 +237,7 @@ function instAPP() {
   message blue "[ Install essential Apps ]"
   $apt update
   $apt install --ignore-missing -y \
+  sudo \
   build-essential \
   powerline \
   dnsutils \
