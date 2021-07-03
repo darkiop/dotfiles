@@ -10,7 +10,7 @@ pct stop <id>
 pct reboot <id>
 
 # container create lxc
-pct create <id> <images> -arch amd64 -ostype ubuntu -hostname <hostname> -cores <cores> -memory <memory> -swap 512 -storage local-zfs -password -net0 name=eth0,bridge=vmbr0,gw=<gateway>,ip=<ip-cdir>,type=veth
+pct create <id> <images> -arch amd64 -ostype ubuntu -hostname <hostname> -cores <cores> -memory <memory> -swap 512 -storage <storage> -password -net0 name=eth0,bridge=vmbr0,gw=<gateway>,ip=<ip-cdir>,type=veth
 
 # container delete lxc
 pct destroy <id>
@@ -63,10 +63,10 @@ pvecm create <clustername>
 # cluster add
 pvecm add <ip>
 
-# change dir vz
+# dir vz
 cd /var/lib/vz
 
-# change dir container config files
+# dir container config files
 cd /etc/pve/lxc
 
 # change dir vm config
@@ -75,4 +75,4 @@ cd /etc/pve/qemu-server
 # install darkmode
 wget https://raw.githubusercontent.com/Weilbyte/PVEDiscordDark/master/PVEDiscordDark.py && sudo python3 PVEDiscordDark.py && rm PVEDiscordDark.py
 
-$ images: ls /var/lib/vz/template/cache/
+$ images: pveam list <storage>
