@@ -75,4 +75,10 @@ cd /etc/pve/qemu-server
 # install darkmode
 wget https://raw.githubusercontent.com/Weilbyte/PVEDiscordDark/master/PVEDiscordDark.py && sudo python3 PVEDiscordDark.py && rm PVEDiscordDark.py
 
+# enable verbose syslog
+echo "1" >/etc/pve/.debug
+
+# disable verbose syslog
+echo "0" >/etc/pve/.debug
+
 $ images: pveam list <storage>

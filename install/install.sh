@@ -257,7 +257,6 @@ function instAPP() {
   lnav \
   lsof \
   toilet \
-  command-not-found \
   bash-completion \
   iproute2 \
   procps \
