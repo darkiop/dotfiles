@@ -1,7 +1,7 @@
 # dotfiles
 dotfiles for bash
 
-![grafik](https://user-images.githubusercontent.com/205119/124277060-e91a3500-db44-11eb-8d1c-c7b7e90302fd.png)
+![grafik](https://user-images.githubusercontent.com/205119/124277060-e91a3500-db44-11eb-8d1c-c7b7e90302fd.png =250x)
 
 ## INSTALL
 
