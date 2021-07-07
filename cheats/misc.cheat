@@ -99,3 +99,6 @@ hostnamectl set-hostname <hostname>
 
 # search log file, grep timestamp
 cat <logfile> | egrep "Jun 14 08:[2-5]"
+
+# remove all comment lines
+grep -o '^[^#]*' <file> > <newfile>
