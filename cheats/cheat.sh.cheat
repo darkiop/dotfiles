@@ -1,4 +1,4 @@
-% cheat
+% cheat.sh
 
 # cheat.sh for command
 curl "cheat.sh/<command>"
