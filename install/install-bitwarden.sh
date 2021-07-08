@@ -3,8 +3,12 @@
 # vaultwarden install script
 
 vaultwardenUser=vaultwarden
-vaultwardenVersion="1.21.0"
-bwWebVersion="2.19.0d"
+
+# https://github.com/dani-garcia/vaultwarden/releases/
+vaultwardenVersion="1.22.1"
+
+# https://github.com/dani-garcia/bw_web_builds/releases
+bwWebVersion="2.20.4b"
 
 # first check if root, when not define a alias with sudo
 # TODO: test with sudo
@@ -150,7 +154,7 @@ cargo build --features sqlite --release
 pushd target/release
 
 # download an install webvault
-cd /opt/vaultwarden/vaultwarden-$vaultwardenVersion
+cd /opt/vaultwarden/vaultwarden-$vaultwardenVersion/target/release
 wget https://github.com/dani-garcia/bw_web_builds/releases/download/v$bwWebVersion/bw_web_v$bwWebVersion.tar.gz
 tar xf bw_web_v$bwWebVersion.tar.gz
 rm bw_web_v$bwWebVersion.tar.gz
