@@ -105,6 +105,7 @@ if [ -d /opt/vaultwarden/vaultvarden-$vaultwardenVersion ]; then
       rm -r /opt/vaultwarden/vaultvarden-$vaultwardenVersion
       rm -r /etc/systemd/system/vaultwarden.service
       rm -r /etc/vaultwarden.env
+      rm -r /var/lib/vaultwarden
     ;;
     n|N|*)
       message yellow "Do nothing and exit."
