@@ -1,0 +1,19 @@
+% redis, redis-sentinel
+
+# check if redis-server is running / listen
+ss -ltpn | grep redis-server
+
+# redis command line client
+redis-cli
+
+# info repclication
+redis-cli info replication
+
+# temp shutdown for debug
+redis-cli debug sleep 60
+
+# sentinel: check sentinel status
+redis-cli -h localhost -p 26379 info sentinel
+
+# sentinel: get current master address
+redis-cli -p 26379 sentinel get-master-addr-by-name mymaster
