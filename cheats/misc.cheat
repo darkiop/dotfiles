@@ -102,3 +102,6 @@ cat <logfile> | egrep "Jun 14 08:[2-5]"
 
 # remove all comment lines
 grep -o '^[^#]*' <file> > <newfile>
+
+# remove all comment lines and sort output
+grep -o '^[^#]*' <file> | sort -n > <newfile>
