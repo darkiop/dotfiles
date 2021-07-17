@@ -16,7 +16,7 @@ ssh -i <file> <user>@<server>
 ssh-copy-id -i <file> <user>@<server>
 
 # sshfs mount
-sshfs <user>@<server>:<source-path> <target-path> -o follow_symlinks -o idmap=user -o uid=$(id -u) -o gid=$(id -g) -o IdentityFile=<ssh-key-file>
+sshfs <user>@<server>:<source-path> <target-path> -o follow_symlinks -o idmap=user -o uid=$(id -u) -o gid=$(id -g) -o IdentityFile=~/.ssh/<ssh-key-file>
 
 # sshfs umount
 fusermount -u <mounted-sshfs>
