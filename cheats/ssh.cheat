@@ -4,4 +4,7 @@
 ssh-keygen -t rsa -b 4096
 
 # generate a key pair - custom path
-ssh-keygen -t rsa -b 4096 -f <path>_rsa
+ssh-keygen -t rsa -b 4096 -f <path>_rsa -C <comment>
+
+# connect to ssh server, with a special keyfile
+ssh -i <path-to-rsa-key> <user>@<server>
