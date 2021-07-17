@@ -7,7 +7,7 @@ ssh-keygen -t rsa -b 4096
 ssh-keygen -t rsa -b 4096 -f <path>_rsa -C <comment>
 
 # connect to ssh server, with a special keyfile
-ssh -i <path-to-rsa-key> <user>@<server>
+ssh -i <file> <user>@<server>
 
 # copy ssh id to server
 ssh-copy-id -i <file> <user>@<server>
