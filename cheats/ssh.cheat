@@ -18,6 +18,9 @@ ssh-copy-id -i <file> <user>@<server>
 # copy ssh id to server - without ssh-copy-id
 cat <file> | ssh <user>@<server> "mkdir ~/.ssh; cat >> ~/.ssh/authorized_keys"
 
+# copy ssh id to server - my local key
+cat .ssh/authorized_keys | grep thor-local | ssh <user>@<server> "mkdir ~/.ssh; cat >> ~/.ssh/authorized_keys"
+
 # sshfs mount
 sshfs <user>@<server>:<source-path> <target-path> -o follow_symlinks -o idmap=user -o uid=$(id -u) -o gid=$(id -g) -o IdentityFile=~/.ssh/<ssh-key-file>
 
