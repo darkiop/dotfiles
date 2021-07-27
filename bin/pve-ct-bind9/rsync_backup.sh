@@ -1,14 +1,14 @@
 #!/bin/bash
 
 DATE=$(date +%Y%m%d_%H%M%S)
-BACKUP_NAME="test"
-BACKUP_COMPLETE_NAME="$BACKUP_NAME-$DATE"
+BACKUP_NAME="bind9"
+BACKUP_NAME_DATE="$BACKUP_NAME-$DATE"
 BACKUP_OBJECTS="/etc/bind/ /var/cache/bind/"
 BACKUP_PATH_LOCAL="/home/darkiop/backups/$BACKUP_NAME"
 BACKUP_PATH_REMOTE="/mnt/odin/backup"
 BACKUP_FILES=`find $BACKUP_PATH_LOCAL -name "$BACKUP_NAME-*.gz" | wc -l | sed 's/\ //g'`
 KEEP=8
-IOB_SIMPLEAPI_DOMAIN="pve-vm-iobroker"
+IOB_DOMAIN="pve-vm-iobroker"
 IOB_SIMPLEAPI_PORT="8087"
 OID_EMAIL_TITLE="javascript.0.System.SendeTextperEmailBetreff"
 OID_EMAIL_TEXT="javascript.0.System.SendeTextperEmail"
@@ -16,8 +16,15 @@ EMAIL_TITLE=$BACKUP_NAME"%20backup"
 EMAIL_TEXT_TRUE=$EMAIL_TITLE"%20ausgefuehrt"
 EMAIL_TEXT_FALSE=$EMAIL_TITLE"%20konnte%20nicht%20ausgefuehrt%20werden"
 
+function check_if_user_is_root() {
+  if [ "${EUID}" -ne 0 ]; then
+    echo "You need to run this as root. Exit."
+    exit 1
+  fi
+}
+
 function targz_to_local_path() {
-  tar czf $BACKUP_PATH_LOCAL/$BACKUP_COMPLETE_NAME.tar.gz $BACKUP_OBJECTS
+  tar czf $BACKUP_PATH_LOCAL/$BACKUP_NAME_DATE.tar.gz $BACKUP_OBJECTS
 }
 
 function rsync_to_remote_path() {
@@ -38,9 +45,9 @@ function send_email_with_iobroker() {
   # TODO email nur wenn false
 
   sleep 2
-  curl http://$IOB_SIMPLEAPI_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TITLE?value=$EMAIL_TITLE >/dev/null 2>&1
+  curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TITLE?value=$EMAIL_TITLE > /dev/null 2>&1
   sleep 2
-  curl http://$IOB_SIMPLEAPI_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TEXT?value=$EMAIL_TEXT_TRUE >/dev/null 2>&1
+  curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TEXT?value=$EMAIL_TEXT_TRUE > /dev/null 2>&1
 
 }
 
@@ -57,9 +64,10 @@ then
   targz_to_local_path
   rsync_to_remote_path
   sleep 2
-  curl http://$IOB_SIMPLEAPI_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TITLE?value=$EMAIL_TITLE >/dev/null 2>&1
+  curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TITLE?value=$EMAIL_TITLE > /dev/null 2>&1
   sleep 2
-  curl http://$IOB_SIMPLEAPI_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TEXT?value=$EMAIL_TEXT_TRUE >/dev/null 2>&1
+  curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TEXT?value=$EMAIL_TEXT_TRUE > /dev/null 2>&1
+  exit 0
 else
   # try to mount
   mount $BACKUP_PATH_REMOTE
@@ -73,10 +81,10 @@ else
     rsync_to_remote_path
   else
     # exit
-    curl http://$IOB_SIMPLEAPI_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TITLE?value=$EMAIL_TITLE >/dev/null 2>&1
+    curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TITLE?value=$EMAIL_TITLE > /dev/null 2>&1
     sleep 2
-    curl http://$IOB_SIMPLEAPI_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TEXT?value=$EMAIL_TEXT_FALSE >/dev/null 2>&1
-    exit 0
+    curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TEXT?value=$EMAIL_TEXT_FALSE > /dev/null 2>&1
+    exit 1
   fi
 fi
 
