@@ -9,7 +9,7 @@ BACKUP_OBJECTS="/etc/bind/ /var/cache/bind/"
 BACKUP_PATH_LOCAL="/home/darkiop/backups/$BACKUP_NAME"
 BACKUP_PATH_REMOTE="/mnt/odin/backup"
 BACKUP_FILES=`find $BACKUP_PATH_LOCAL -name "$BACKUP_NAME-*.gz" | wc -l | sed 's/\ //g'`
-KEEP=8
+BACKUP_KEEP=8
 IOB_DOMAIN="pve-vm-iobroker"
 IOB_SIMPLEAPI_PORT="8087"
 OID_EMAIL_TITLE="javascript.0.System.SendeTextperEmailBetreff"
@@ -35,7 +35,7 @@ function rsync_to_remote_path() {
 }
 
 function cleanup() {
-  while [ $BACKUP_FILES -ge $KEEP ]
+  while [ $BACKUP_FILES -ge $BACKUP_KEEP ]
   do
     ls -tr1 $BACKUP_PATH_LOCAL/$BACKUP_NAME-*.gz | head -n 1 | xargs rm -f 
     echo "deleting old backup files [$BACKUP_FILES] ..."
