@@ -1,6 +1,8 @@
 #!/bin/bash
 
 DATE=$(date +%Y%m%d_%H%M%S)
+BACKUP_USER="darkiop"
+BACKUP_GROUP="darkiop"
 BACKUP_NAME="bind9"
 BACKUP_NAME_DATE="$BACKUP_NAME-$DATE"
 BACKUP_OBJECTS="/etc/bind/ /var/cache/bind/"
@@ -25,6 +27,7 @@ function check_if_user_is_root() {
 
 function targz_to_local_path() {
   tar czf $BACKUP_PATH_LOCAL/$BACKUP_NAME_DATE.tar.gz $BACKUP_OBJECTS
+  chown $BACKUP_USER:$BACKUP_GROUP $BACKUP_PATH_LOCAL/$BACKUP_NAME_DATE.tar.gz
 }
 
 function rsync_to_remote_path() {
