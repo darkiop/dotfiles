@@ -26,7 +26,7 @@ else
   re='^[0-9]+$'
   if [[ $1 =~ $re ]] ; then
     echo "Not a valid user." >&2;
-    exit 1
+    exit 1  
   fi
 
   # check if user exist
