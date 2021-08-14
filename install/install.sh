@@ -5,6 +5,9 @@
 # TODO: fail2ban
 # TODO: sshd config
 
+# always exit on error
+set -e
+
 # colors
 # https://bashcolors.com
 blue_color="\e[38;5;39m"
