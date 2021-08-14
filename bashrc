@@ -70,8 +70,8 @@ else
 fi
 
 # load custom keybindings
-if [ -f ~/dotfiles/custom-keyboard-bindings ]; then
-  source ~/dotfiles/custom-keyboard-bindings
+if [ -f ~/dotfiles/config/custom-keyboard-bindings ]; then
+  source ~/dotfiles/config/custom-keyboard-bindings
 fi
 
 # clear screen & show motd
