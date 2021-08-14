@@ -105,3 +105,6 @@ grep -o '^[^#]*' <file> > <newfile>
 
 # remove all comment lines and sort output
 grep -o '^[^#]*' <file> | sort -n > <newfile>
+
+# default editor
+select-editor
