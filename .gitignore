@@ -1,5 +1,5 @@
 workspace.code-workspace
-.local_dotfiles_settings
+config/.local_dotfiles_settings
 bin/cht.sh
 bin/navi
 bin/lsd

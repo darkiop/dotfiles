@@ -62,11 +62,11 @@ if [ -d /opt/iobroker ]; then
 fi
 
 # create a local settings file
-if [ ! -f ~/dotfiles/.local_dotfiles_settings ]; then
-  touch ~/dotfiles/.local_dotfiles_settings
-  echo "# local settings for dotfiles, e.g. variables" > ~/dotfiles/.local_dotfiles_settings
+if [ ! -f ~/dotfiles/config/.local_dotfiles_settings ]; then
+  touch ~/dotfiles/config/.local_dotfiles_settings
+  echo "# local settings for dotfiles, e.g. variables" > ~/dotfiles/config/.local_dotfiles_settings
 else
-  source ~/dotfiles/.local_dotfiles_settings
+  source ~/dotfiles/config/.local_dotfiles_settings
 fi
 
 # load custom keybindings
