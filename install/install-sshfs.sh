@@ -20,7 +20,9 @@ fi
 hosts=(pve01 pve-ct-adguard)
 let i=1
 for dir in "${hosts[@]}"; do
-  mkdir -p $SSHFSDIR/$dir
+  if [ $HOSTNAME != $dir ]; then
+    mkdir -p $SSHFSDIR/$dir
+  fi
 done
 
 # create ssh key
