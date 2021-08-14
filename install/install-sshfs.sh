@@ -3,10 +3,10 @@
 # WORK IN PROGRESS
 
 SSHFSDIR=$HOME'/sshfs'
+HOSTS=(pve01 pve-ct-adguard pve-ct-grafana pve-ct-checkmk pve-ct-mariadb pve-ct-wireguard pve-ct-bind9 pve-ct-heimdall pve-ct-bitwarden pve-ct-cockpit pve-vm-raspberyymatic pve-vm-iobroker pve-vm-pbs odin udmp)
 
 # install sshfs
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' sshfs|grep "install ok installed")
-if [ "" = "$PKG_OK" ]; then
+if [ "" = "$(dpkg-query -W --showformat='${Status}\n' sshfs|grep "install ok installed")" ]; then
   sudo apt install sshfs -y
 fi
 
@@ -16,24 +16,22 @@ if [ ! -d $SSHFSDIR ]; then
 fi
 
 # create folder for sshfs
-#hosts=(pve01 pve-ct-adguard pve-ct-grafana pve-ct-checkmk pve-ct-mariadb pve-ct-wireguard pve-ct-bind9 pve-ct-heimdall pve-ct-bitwarden pve-ct-cockpit pve-vm-raspberyymatic pve-vm-iobroker pve-vm-pbs)
-hosts=(pve01 pve-ct-adguard)
 let i=1
-for dir in "${hosts[@]}"; do
-  if [ $HOSTNAME != $dir ]; then
+for dir in "${HOSTS[@]}"; do
+  if [ $dir != $HOSTNAME ]; then
     mkdir -p $SSHFSDIR/$dir
   fi
 done
 
-# create ssh key
+# create local ssh key
 if [ ! -f $HOME/.ssh/id_rsa ]; then
   ssh-keygen -t rsa -b 4096
 fi
 
 # copy public ssh key to remote hosts
-for remote in "${hosts[@]}"; do
-  if [ $HOSTNAME != $dir ]; then
-    ssh-copy-id -i $HOME/.ssh/id_rsa.pub $remote
+for remotessh in "${HOSTS[@]}"; do
+  if [ $remotessh != $HOSTNAME ]; then
+    ssh-copy-id -i $HOME/.ssh/id_rsa.pub $remotessh
   fi
 done
 
