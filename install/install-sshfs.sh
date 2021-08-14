@@ -30,7 +30,9 @@ fi
 
 # copy public ssh key to remote hosts
 for remote in "${hosts[@]}"; do
-  ssh-copy-id -i $HOME/.ssh/id_rsa.pub $remote
+  if [ $HOSTNAME != $dir ]; then
+    ssh-copy-id -i $HOME/.ssh/id_rsa.pub $remote
+  fi
 done
 
 # fstab
