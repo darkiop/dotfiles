@@ -272,7 +272,8 @@ function instAPP() {
   needrestart \
   hddtemp \
   parted \
-  tree
+  tree \
+  sshfs
   # tmp: rcconf, sensors
 }
 
