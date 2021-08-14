@@ -1,8 +1,5 @@
 #!/bin/bash
-#
-# dieses Skript kann man beliebig oft ausführen
 
-# Anzahl der Sicherungen die aufgehoben werden sollen
 PASSWORD=XXX
 KEEP=10
 DATE=$(date +%Y%m%d_%H%M)
