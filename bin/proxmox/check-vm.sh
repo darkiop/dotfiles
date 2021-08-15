@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DATE=$(date +%Y-%m-%d %H:%M:%S)
+DATE=$(date +%Y-%m-%d_%H:%M:%S)
 LOGFILE="/var/log/check_vm.log"
 
 # check if root
