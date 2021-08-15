@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DATE=$(date +%Y-%m-%d_%H:%M:%S)
+DATE=$(date +%Y-%m-%d %H:%M:%S)
 LOGFILE="/var/log/check_vm.log"
 
 # check if root
@@ -37,8 +37,8 @@ if [ "$?" = 0 ]; then
   echo "VM $VM is online"
   echo $DATE" - VM $VM is online" >> ${LOGFILE}
 else
-  echo "VM $VM is offline. Restarting VM $VM"
-  echo $DATE" - VM $VM offline. Restarting VM $VM" >> ${LOGFILE}
+  echo "VM $VM is offline. Restarting."
+  echo $DATE" - VM $VM offline. Restarting." >> ${LOGFILE}
   /usr/sbin/qm stop $VM
   /usr/sbin/qm start $VM
 fi
