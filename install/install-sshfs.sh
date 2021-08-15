@@ -3,7 +3,9 @@
 # WORK IN PROGRESS
 
 SSHFSDIR=$HOME'/sshfs'
-HOSTS=(pve01 pve-ct-adguard pve-ct-grafana pve-ct-checkmk pve-ct-mariadb pve-ct-wireguard pve-ct-bind9 pve-ct-heimdall pve-ct-bitwarden pve-ct-cockpit pve-vm-raspberyymatic pve-vm-iobroker pve-vm-pbs odin udmp)
+SSHFSOPTIONS="uid=1000,gid=100,umask=0,IdentityFile=/home/darkiop/.ssh/id_rsa,nonempty"
+#HOSTS=(pve01 pve-ct-adguard pve-ct-grafana pve-ct-checkmk pve-ct-mariadb pve-ct-wireguard pve-ct-bind9 pve-ct-heimdall pve-ct-bitwarden pve-ct-cockpit pve-vm-raspberyymatic pve-vm-iobroker pve-vm-pbs odin udmp)
+HOSTS=(pve-ct-cockpit pve-ct-wireguard)
 
 # install sshfs
 if [ "" = "$(dpkg-query -W --showformat='${Status}\n' sshfs|grep "install ok installed")" ]; then
@@ -35,8 +37,6 @@ for remotessh in "${HOSTS[@]}"; do
   fi
 done
 
-# fstab
-#$cat <<'EOF' >> /etc/fstab
-#sshfs#darkiop@pve01:/home/darkiop/ /home/darkiop/sshfs/pve01/home-darkiop fuse uid=1000,gid=100,umask=0,allow_other,_netdev,IdentityFile=/home/darkiop/.ssh/id_rsa,nonempty 0 0
-#EOF
-#$sed -i 's/VERSION/'$vaultwardenVersion'/g' /etc/systemd/system/vaultwarden.service
+# mount
+# wip
+sshfs -o $SSHFSOPTIONS darkiop@pve-ct-wireguard:/home/darkiop/ /home/darkiop/sshfs/pve-ct-wireguard/home-darkiop
