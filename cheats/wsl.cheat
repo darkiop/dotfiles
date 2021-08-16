@@ -11,3 +11,6 @@ wsl --set-default-version 2
 
 # wsl list installed
 wsl -l -v
+
+# wsl terminate, e.g. 'Debian'
+wsl --terminate <name>
