@@ -108,3 +108,9 @@ grep -o '^[^#]*' <file> | sort -n > <newfile>
 
 # default editor
 select-editor
+
+# lsattr - list file attributes on a Linux second extended file system 
+lsattr
+
+# chattr - change file attributes on a Linux file system 
+chattr
