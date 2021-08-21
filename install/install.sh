@@ -10,13 +10,13 @@ set -e
 
 # colors
 # https://bashcolors.com
-blue_color="\e[38;5;39m"
-light_blue_color="\e[38;5;81m"
-red_color="\e[38;5;196m"
-green_color_bold="\e[1;38;5;119m"
-yellow_color="\e[38;5;227m"
-white_color="\e[37m"
-close_color="$(tput sgr0)"
+COLOR_BLUE="\e[38;5;39m"
+COLOR_LIGHT_BLUE="\e[38;5;81m"
+COLOR_RED="\e[38;5;196m"
+COLOR_GREEN_BOLD="\e[1;38;5;119m"
+COLOR_YELLOW="\e[38;5;227m"
+COLOR_WHITE="\e[37m"
+COLOR_CLOSE="$(tput sgr0)"
 
 # first check if root, when not define a alias with sudo
 if [ "${EUID}" -ne 0 ]; then
@@ -69,25 +69,25 @@ function ask() {
   local color="$1"
   case $color in
     green)
-    color=$green_color
+    color=$COLOR_GREEN
     ;;
     blue)
-    color=$blue_color
+    color=$COLOR_BLUE
     ;;
     lightblue)
-    color=$light_blue_color
+    color=$COLOR_LIGHT_BLUE
     ;;
     yellow)
-    color=$yellow_color
+    color=$COLOR_YELLOW
     ;;
     red)
-    color=$red_color
+    color=$COLOR_RED
     ;;
   esac
   while true; do
     echo -e "$color"
     read -p "$2 ([y]/n) " -r
-    echo -e "$close_color"
+    echo -e "$COLOR_CLOSE"
     REPLY=${REPLY:-"y"}
     if [[ $REPLY =~ ^[Yy]$ ]]; then
       return 1
@@ -105,24 +105,24 @@ function message() {
   local color="$1"
   case $color in
     green)
-    color=$green_color
+    color=$COLOR_GREEN
     ;;
     blue)
-    color=$blue_color
+    color=$COLOR_BLUE
     ;;
     lightblue)
-    color=$light_blue_color
+    color=$COLOR_LIGHT_BLUE
     ;;
     yellow)
-    color=$yellow_color
+    color=$COLOR_YELLOW
     ;;
     red)
-    color=$red_color
+    color=$COLOR_RED
     ;;
   esac
   echo -e "$color"
   echo "$2"
-  echo -e "$close_color"
+  echo -e "$COLOR_CLOSE"
 }
 
 # -------------------------------------------------------------
@@ -131,14 +131,14 @@ function message() {
 function show_main_menu(){
   unset opt_main_menu
   echo
-  echo -e $green_color"[ darkiop/dotfiles ]"$close_color
+  echo -e $COLOR_GREEN"[ darkiop/dotfiles ]"$COLOR_CLOSE
   echo
-  printf "${yellow_color}1)${close_color} Install dotfiles\n"
-  printf "${yellow_color}2)${close_color} Re-Install dotfiles \n"
-  printf "${yellow_color}3)${close_color} Update from github\n"
-  printf "${yellow_color}4)${close_color} Setup a new System\n"
+  printf "${COLOR_YELLOW}1)${COLOR_CLOSE} Install dotfiles\n"
+  printf "${COLOR_YELLOW}2)${COLOR_CLOSE} Re-Install dotfiles \n"
+  printf "${COLOR_YELLOW}3)${COLOR_CLOSE} Update from github\n"
+  printf "${COLOR_YELLOW}4)${COLOR_CLOSE} Setup a new System\n"
   echo
-  printf "Please choose an option or ${red_color}x${close_color} to exit: "
+  printf "Please choose an option or ${COLOR_RED}x${COLOR_CLOSE} to exit: "
   read opt_main_menu
 }
 
@@ -147,20 +147,20 @@ function show_main_menu(){
 # -------------------------------------------------------------
 function show_submenu_dotfiles(){
   echo
-  echo -e $green_color"[ Install dotfiles ]"$close_color
+  echo -e $COLOR_GREEN"[ Install dotfiles ]"$COLOR_CLOSE
   echo
-  printf "${yellow_color}1)${close_color} Install all\n"
-  printf "${yellow_color}2)${close_color} Install Apps \n"
-  printf "${yellow_color}3)${close_color} Install lsd\n"
-  printf "${yellow_color}4)${close_color} Install git submodules\n"
-  printf "${yellow_color}5)${close_color} Install vimrc\n"
-  printf "${yellow_color}6)${close_color} Install navi\n"
-  printf "${yellow_color}7)${close_color} Install cheat.sh\n"
-  printf "${yellow_color}8)${close_color} Install bat\n"
-  printf "${yellow_color}9)${close_color} Install dategrep\n"
-  printf "${yellow_color}10)${close_color} Install .bashrc\n"
+  printf "${COLOR_YELLOW}1)${COLOR_CLOSE} Install all\n"
+  printf "${COLOR_YELLOW}2)${COLOR_CLOSE} Install Apps \n"
+  printf "${COLOR_YELLOW}3)${COLOR_CLOSE} Install lsd\n"
+  printf "${COLOR_YELLOW}4)${COLOR_CLOSE} Install git submodules\n"
+  printf "${COLOR_YELLOW}5)${COLOR_CLOSE} Install vimrc\n"
+  printf "${COLOR_YELLOW}6)${COLOR_CLOSE} Install navi\n"
+  printf "${COLOR_YELLOW}7)${COLOR_CLOSE} Install cheat.sh\n"
+  printf "${COLOR_YELLOW}8)${COLOR_CLOSE} Install bat\n"
+  printf "${COLOR_YELLOW}9)${COLOR_CLOSE} Install dategrep\n"
+  printf "${COLOR_YELLOW}10)${COLOR_CLOSE} Install .bashrc\n"
   echo
-  printf "Please choose an option or ${red_color}x${close_color} to exit: "
+  printf "Please choose an option or ${COLOR_RED}x${COLOR_CLOSE} to exit: "
   read opt_sub_menu_dotfiles
 }
 
@@ -169,15 +169,15 @@ function show_submenu_dotfiles(){
 # -------------------------------------------------------------
 function show_submenu_system_setup(){
   echo
-  echo -e $green_color"[ initial System Setup ]"$close_color
+  echo -e $COLOR_GREEN"[ initial System Setup ]"$COLOR_CLOSE
   echo
-  printf "${yellow_color}1)${close_color} all (updates, timezone & locales, add new user, install samba) \n"
-  printf "${yellow_color}2)${close_color} System Updates \n"
-  printf "${yellow_color}3)${close_color} Setup timezone & locales\n"
-  printf "${yellow_color}4)${close_color} Add a new User\n"
-  printf "${yellow_color}5)${close_color} Install Samba\n"
+  printf "${COLOR_YELLOW}1)${COLOR_CLOSE} all (updates, timezone & locales, add new user, install samba) \n"
+  printf "${COLOR_YELLOW}2)${COLOR_CLOSE} System Updates \n"
+  printf "${COLOR_YELLOW}3)${COLOR_CLOSE} Setup timezone & locales\n"
+  printf "${COLOR_YELLOW}4)${COLOR_CLOSE} Add a new User\n"
+  printf "${COLOR_YELLOW}5)${COLOR_CLOSE} Install Samba\n"
   echo
-  printf "Please choose an option or ${red_color}x${close_color} to exit: "
+  printf "Please choose an option or ${COLOR_RED}x${COLOR_CLOSE} to exit: "
   read opt_sub_menu_system_setup
 }
 
@@ -480,7 +480,7 @@ function instUPDATEFROMGIT() {
     if git diff-index --quiet HEAD --; then
       # no changes
       echo
-      echo -e $red_color"No changes to the dotfiles were found. Update ..."$close_color
+      echo -e $COLOR_RED"No changes to the dotfiles were found. Update ..."$COLOR_CLOSE
       echo
       cd ~/dotfiles
       git pull
@@ -490,7 +490,7 @@ function instUPDATEFROMGIT() {
     else
       # changes
       echo
-      echo -e $red_color"Local changes to the dotfiles were found. Check and commit these or run install-reinstall.sh."$close_color
+      echo -e $COLOR_RED"Local changes to the dotfiles were found. Check and commit these or run install-reinstall.sh."$COLOR_CLOSE
       echo
     fi
   fi
@@ -508,7 +508,7 @@ function instBASHRC() {
   folders="byobu"
 
   # delete old symlinks
-  echo -e $green_color"delete"$close_color$yellow_color" old "$green_color"symlinks ..."$close_color
+  echo -e $COLOR_GREEN"delete"$COLOR_CLOSE$COLOR_YELLOW" old "$COLOR_GREEN"symlinks ..."$COLOR_CLOSE
   echo
   for file in $files; do
     if [ -f ~/.$file ]; then
@@ -526,7 +526,7 @@ function instBASHRC() {
   echo
 
   # new symlinks for files and folders
-  echo -e $green_color"create"$close_color$yellow_color" new "$green_color"symlinks ..."$close_color
+  echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" new "$COLOR_GREEN"symlinks ..."$COLOR_CLOSE
   echo
   for file in $files; do
       echo "create: ~/.$file"
@@ -539,10 +539,10 @@ function instBASHRC() {
 
   # load dotfiles
   echo
-  echo -e "$yellow_color[ dotfiles installed ]$close_color"
-  echo -e "$red_color"
+  echo -e "$COLOR_YELLOW[ dotfiles installed ]$COLOR_CLOSE"
+  echo -e "$COLOR_RED"
   read -p "Relogin to load dotfiles? (y/n):" relogin
-  echo -e "$close_color"
+  echo -e "$COLOR_CLOSE"
   case $relogin in
     y|Y)
       #bash $HOME/.bashrc

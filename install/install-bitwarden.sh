@@ -29,38 +29,38 @@ else
 fi
 
 # colors - https://bashcolors.com
-blue_color="\e[38;5;39m"
-light_blue_color="\e[38;5;81m"
-red_color="\e[38;5;196m"
-green_color_bold="\e[1;38;5;119m"
-yellow_color="\e[38;5;227m"
-white_color="\e[37m"
-close_color="$(tput sgr0)"
+COLOR_BLUE="\e[38;5;39m"
+COLOR_LIGHT_BLUE="\e[38;5;81m"
+COLOR_RED="\e[38;5;196m"
+COLOR_GREEN_BOLD="\e[1;38;5;119m"
+COLOR_YELLOW="\e[38;5;227m"
+COLOR_WHITE="\e[37m"
+COLOR_CLOSE="$(tput sgr0)"
 
 # ask function
 function ask() {
   local color="$1"
   case $color in
     green)
-    color=$green_color
+    color=$COLOR_GREEN
     ;;
     blue)
-    color=$blue_color
+    color=$COLOR_BLUE
     ;;
     lightblue)
-    color=$light_blue_color
+    color=$COLOR_LIGHT_BLUE
     ;;
     yellow)
-    color=$yellow_color
+    color=$COLOR_YELLOW
     ;;
     red)
-    color=$red_color
+    color=$COLOR_RED
     ;;
   esac
   while true; do
     echo -e "$color"
     read -p "$2 ([y]/n) " -r
-    echo -e "$close_color"
+    echo -e "$COLOR_CLOSE"
     REPLY=${REPLY:-"y"}
     if [[ $REPLY =~ ^[Yy]$ ]]; then
       return 1
@@ -75,24 +75,24 @@ function message() {
   local color="$1"
   case $color in
     green)
-    color=$green_color
+    color=$COLOR_GREEN
     ;;
     blue)
-    color=$blue_color
+    color=$COLOR_BLUE
     ;;
     lightblue)
-    color=$light_blue_color
+    color=$COLOR_LIGHT_BLUE
     ;;
     yellow)
-    color=$yellow_color
+    color=$COLOR_YELLOW
     ;;
     red)
-    color=$red_color
+    color=$COLOR_RED
     ;;
   esac
   echo -e "$color"
   echo "$2"
-  echo -e "$close_color"
+  echo -e "$COLOR_CLOSE"
 }
 
 # check if vaultwarden is installed

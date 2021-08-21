@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # load colors
-blue_color="\e[38;5;33m"
-light_blue_color="\e[38;5;39m"
-red_color="\e[38;5;196m"
-green_color="\e[38;5;42m"
-green_color_bold="\e[1;38;5;42m"
-yellow_color="\e[38;5;227m"
-close_color="$(tput sgr0)"
+COLOR_BLUE="\e[38;5;33m"
+COLOR_LIGHT_BLUE="\e[38;5;39m"
+COLOR_RED="\e[38;5;196m"
+COLOR_GREEN="\e[38;5;42m"
+COLOR_GREEN_BOLD="\e[1;38;5;42m"
+COLOR_YELLOW="\e[38;5;227m"
+COLOR_CLOSE="$(tput sgr0)"
 
 # iobroker process-check
 echo
-echo -e $light_blue_color"ioBroker instances:"$green_color
+echo -e $COLOR_LIGHT_BLUE"ioBroker instances:"$COLOR_GREEN
 
 # grep ^+                          = select only instances with +
 # cut -f1 -d":"                    = remove all after ':'
@@ -28,9 +28,9 @@ services=${#process[@]}
 echo
 for (( i=0; i<${services}; i++)); do
 if [ "$(pidof ${process[$i]})" ]; then
-  state="$green_color[Running]$close_color"
+  state="$COLOR_GREEN[Running]$COLOR_CLOSE"
 else
-  state="$red_color[Stopped]$close_color"
+  state="$COLOR_RED[Stopped]$COLOR_CLOSE"
 fi
 echo -e "$state ${process[$i]}"
 done

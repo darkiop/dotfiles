@@ -9,20 +9,20 @@ if [ -f $(which iobroker) ]; then
   # get host info
   jscontroller_alive_state=$(iobroker state getvalue system.host.pve-vm-iobroker.alive | tail -n 1)
   if [ $jscontroller_alive_state == 'true' ]; then
-    jscontroller_alive_state=$green_color'alive'
+    jscontroller_alive_state=$COLOR_GREEN'alive'
   elif [ $jscontroller_alive_state == 'false' ]; then
-    jscontroller_alive_state=$red_color'alive'
+    jscontroller_alive_state=$COLOR_RED'alive'
   fi
     echo
-    echo -e $light_blue_color"js-controller: "$green_color$iobversion$close_color / $jscontroller_alive_state$close_color
-    echo -e $light_blue_color"node: "$green_color$nodeversion$close_color
-    echo -e $light_blue_color"npm: "$green_color$npmversion$close_color
+    echo -e $COLOR_LIGHT_BLUE"js-controller: "$COLOR_GREEN$iobversion$COLOR_CLOSE / $jscontroller_alive_state$COLOR_CLOSE
+    echo -e $COLOR_LIGHT_BLUE"node: "$COLOR_GREEN$nodeversion$COLOR_CLOSE
+    echo -e $COLOR_LIGHT_BLUE"npm: "$COLOR_GREEN$npmversion$COLOR_CLOSE
     echo
 fi
 
 # iobroker process-check
 #numberofprocesses=$(iobroker list instances | grep enabled | wc -l)
-#echo -e $light_blue_color"ioBroker instances ("$numberofprocesses")"$green_color
+#echo -e $COLOR_LIGHT_BLUE"ioBroker instances ("$numberofprocesses")"$COLOR_GREEN
 #
 #processList=(
 #  "system.adapter.hs100.0.alive",
@@ -34,9 +34,9 @@ fi
 #echo
 #for (( i=0; i<${services}; i++)); do
 #if [ "$(iobroker state getvalue ${processList[$i]} | tail -n 1)" ]; then
-#  state="$green_color[Running]$close_color"
+#  state="$COLOR_GREEN[Running]$COLOR_CLOSE"
 #else
-#  state="$red_color[Stopped]$close_color"
+#  state="$COLOR_RED[Stopped]$COLOR_CLOSE"
 #fi
 #echo -e "$state ${processList[$i]}"
 #done

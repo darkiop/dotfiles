@@ -8,16 +8,7 @@ export VISUAL='vim'
 #
 # SET COLORS (https://bashcolors.com)
 #
-export blue_color="\e[38;5;39m"
-export light_blue_color="\e[38;5;81m"
-export red_color="\e[38;5;196m"
-export green_color="\e[38;5;83m"
-export green_color_bold="\e[1;38;5;83m"
-export yellow_color="\e[38;5;227m"
-export white_color="\e[37m"
-export orange_color="\e[38;5;214m"
-export purple_color="\e[38;5;99m"
-export close_color="$(tput sgr0)"
+source $HOME/dotfiles/shells/colors.sh
 
 #
 # SET NAVI OPTIONS

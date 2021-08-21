@@ -8,23 +8,23 @@
 #
 # SET PROMPT COLORS
 #
-COLOR_BRACKET=$blue_color
-COLOR_COMMAND=$white_color
-COLOR_HOST=$blue_color
-COLOR_DIR=$orange_color
-COLOR_USER=$light_blue_color
-COLOR_SEPARATOR=$white_color
-COLOR_RESET=$white_color
-COLOR_DATE=$green_color
-COLOR_GIT=$yellow_color
-COLOR_GIT_BRANCH=$yellow_color
-COLOR_SUDO_ACTIVE=$purple_color
-COLOR_SSH_ACTIVE=$light_blue_color
+COLOR_BRACKET=$COLOR_BLUE
+COLOR_COMMAND=$COLOR_WHITE
+COLOR_HOST=$COLOR_BLUE
+COLOR_DIR=$COLOR_ORANGE
+COLOR_USER=$COLOR_LIGHT_BLUE
+COLOR_SEPARATOR=$COLOR_WHITE
+COLOR_RESET=$COLOR_WHITE
+COLOR_DATE=$COLOR_GREEN
+COLOR_GIT=$COLOR_YELLOW
+COLOR_GIT_BRANCH=$COLOR_YELLOW
+COLOR_SUDO_ACTIVE=$COLOR_PURPLE
+COLOR_SSH_ACTIVE=$COLOR_LIGHT_BLUE
 if [ "${EUID}" -ne 0 ]; then
-  COLOR_SYMBOL=$white_color
+  COLOR_SYMBOL=$COLOR_WHITE
 else
   # root
-  COLOR_SYMBOL=$red_color
+  COLOR_SYMBOL=$COLOR_RED
 fi
 
 # define the prompt terminator character
@@ -36,9 +36,9 @@ IP=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1)
 # set the color with the exit status of the last command
 COLOR_EXIT_STATUS () {
   if [ $1 -eq 0 ]; then
-    echo -e $blue_color
+    echo -e $COLOR_BLUE
   else
-    echo -e $red_color
+    echo -e $COLOR_RED
   fi
 }
 

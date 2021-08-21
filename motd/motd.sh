@@ -46,10 +46,10 @@ get_os_loadavg=`echo -e "$get_os_load_1" / " $get_os_load_5 $get_os_load_15"`
 get_proc_ps=$(ps -Afl | wc -l)
 get_swap=$(free -m | tail -n 1 | awk {'print $3'})
 
-# set close_color
+# set COLOR_CLOSE
 case $get_host_name in
-  (odin)  close_color="";;
-  (*)     close_color="$(tput sgr0)";;
+  (odin)  COLOR_CLOSE="";;
+  (*)     COLOR_CLOSE="$(tput sgr0)";;
 esac
 
 # set title of terminal
@@ -67,7 +67,7 @@ fi
 case ${get_host_name} in
   (odin)
     clear
-    echo -e "$yellow_color"
+    echo -e "$COLOR_YELLOW"
 cat << EOF
      ▌▗    
 ▞▀▖▞▀▌▄ ▛▀▖
@@ -78,22 +78,22 @@ EOF
     ;;
   (*)
     if [ -x "$(command -v toilet)" ]; then
-      echo -e "$yellow_color"
+      echo -e "$COLOR_YELLOW"
       toilet -f smblock -w 150 $get_host_name
-      echo -e "$close_color"
+      echo -e "$COLOR_CLOSE"
     fi
   ;;
 esac
 
 # echo infos
-echo -e "$blue_color"hostname"$close_color          `echo -e "$green_color$get_host_name$close_color"`
-$blue_color"ip"$close_color                `echo -e "$green_color$get_ip_host$close_color"`
-$blue_color"tasks"$close_color             `echo -e "$green_color$tasks$close_color"`
-$blue_color"load"$close_color              `echo -e "$green_color$get_os_load_1$close_color" / "$green_color$get_os_load_5$close_color" / "$green_color$get_os_load_15$close_color"`
-$blue_color"uptime"$close_color            `echo -e "$green_color$UP$close_color"`
-$blue_color"os"$close_color                `echo -e "$green_color$get_plat_data$close_color"`
-$blue_color"usage of /"$close_color        `echo -e "$green_color$root_usage_gb$close_color"` "of" `echo -e "$green_color$root_total$close_color"` ($root_usage%)
-$blue_color"usage of /home"$close_color    `echo -e "$green_color$home_usage_gb$close_color"` "of" `echo -e "$green_color$home_total$close_color"` ($home_usage%)"
+echo -e "$COLOR_BLUE"hostname"$COLOR_CLOSE          `echo -e "$COLOR_GREEN$get_host_name$COLOR_CLOSE"`
+$COLOR_BLUE"ip"$COLOR_CLOSE                `echo -e "$COLOR_GREEN$get_ip_host$COLOR_CLOSE"`
+$COLOR_BLUE"tasks"$COLOR_CLOSE             `echo -e "$COLOR_GREEN$tasks$COLOR_CLOSE"`
+$COLOR_BLUE"load"$COLOR_CLOSE              `echo -e "$COLOR_GREEN$get_os_load_1$COLOR_CLOSE" / "$COLOR_GREEN$get_os_load_5$COLOR_CLOSE" / "$COLOR_GREEN$get_os_load_15$COLOR_CLOSE"`
+$COLOR_BLUE"uptime"$COLOR_CLOSE            `echo -e "$COLOR_GREEN$UP$COLOR_CLOSE"`
+$COLOR_BLUE"os"$COLOR_CLOSE                `echo -e "$COLOR_GREEN$get_plat_data$COLOR_CLOSE"`
+$COLOR_BLUE"usage of /"$COLOR_CLOSE        `echo -e "$COLOR_GREEN$root_usage_gb$COLOR_CLOSE"` "of" `echo -e "$COLOR_GREEN$root_total$COLOR_CLOSE"` ($root_usage%)
+$COLOR_BLUE"usage of /home"$COLOR_CLOSE    `echo -e "$COLOR_GREEN$home_usage_gb$COLOR_CLOSE"` "of" `echo -e "$COLOR_GREEN$home_total$COLOR_CLOSE"` ($home_usage%)"
 
 # special motd for proxmox
 if [ -x /usr/bin/pveversion ]; then
@@ -109,12 +109,12 @@ fi
 
 # show updates
 if [ $(which apt) ]; then
-  echo -e "$light_blue_color"Checking for updates ..."$close_color"
+  echo -e "$COLOR_LIGHT_BLUE"Checking for updates ..."$COLOR_CLOSE"
   updates="$(apt-get -s dist-upgrade | awk '/^Inst/ { print $2 }')"
-  updatesText="$green_color$close_color $yellow_color$updates$close_color"
+  updatesText="$COLOR_GREEN$COLOR_CLOSE $COLOR_YELLOW$updates$COLOR_CLOSE"
   if [ "$(which apt-get)" ]; then
     echo
-    echo -e $yellow_color"`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` "$green_color"updates to install"$close_color$updatesText
+    echo -e $COLOR_YELLOW"`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` "$COLOR_GREEN"updates to install"$COLOR_CLOSE$updatesText
     echo
   fi
 fi
