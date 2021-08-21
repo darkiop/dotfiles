@@ -243,9 +243,8 @@ function reinstall() {
       message red "delete ~/dotfiles"
       sudo rm -r $HOME/dotfiles
       echo
-      message green "reinstall ~/dotfiles"
-      cloneREPO
-      bash $HOME/dotfiles/install/install.sh all
+      message green "Re-Install ~/dotfiles (all)"
+      bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')" '' all
     ;;
     n|N|*)
       show_main_menu
