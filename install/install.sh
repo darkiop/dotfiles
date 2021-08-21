@@ -18,6 +18,11 @@ else
 fi
 
 # -------------------------------------------------------------
+# update apt repos
+# -------------------------------------------------------------
+$apt update
+
+# -------------------------------------------------------------
 # load color vars
 # https://bashcolors.com
 # -------------------------------------------------------------
@@ -45,7 +50,6 @@ function check_if_user_is_root() {
 function check_if_sudo_is_installed() {
   if [ ! $(which sudo) ]; then
     message red "sudo not found. install it ..."
-    $apt update
     $apt install sudo -y
   fi
 }
@@ -56,7 +60,6 @@ function check_if_sudo_is_installed() {
 function check_if_curl_is_installed() {
   if [ ! $(which curl) ]; then
     message red "curl not found. install it ..."
-    $apt update
     $apt install curl -y
   fi
 }
