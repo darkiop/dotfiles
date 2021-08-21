@@ -18,21 +18,16 @@ else
 fi
 
 # -------------------------------------------------------------
-# check if curl is installed and install it if not
-# -------------------------------------------------------------
-if [ "" = "$(dpkg-query -W --showformat='${Status}\n' curl|grep "install ok installed")" ]; then
-  $apt install curl -y
-fi
-
-# -------------------------------------------------------------
 # load color vars
 # https://bashcolors.com
 # -------------------------------------------------------------
-if [ ! -f $HOME/dotfiles/shells/colors ]; then
-  source <(curl -s https://raw.githubusercontent.com/darkiop/dotfiles/master/shells/colors)
-else 
-  source $HOME/dotfiles/shells/colors
-fi
+function loadColors () {
+  if [ ! -f $HOME/dotfiles/shells/colors ]; then
+    source <(curl -s https://raw.githubusercontent.com/darkiop/dotfiles/master/shells/colors)
+  else 
+    source $HOME/dotfiles/shells/colors
+  fi
+}
 
 # -------------------------------------------------------------
 # check if user is root and if not exit
@@ -51,6 +46,16 @@ function check_if_sudo_is_installed() {
   if [ ! $(which sudo) ]; then
     message red "sudo not found. install it ..."
     $apt install sudo -y
+  fi
+}
+
+# -------------------------------------------------------------
+# check if curl is installed
+# -------------------------------------------------------------
+function check_if_curl_is_installed() {
+  if [ ! $(which curl) ]; then
+    message red "curl not found. install it ..."
+    $apt install curl -y
   fi
 }
 
@@ -204,11 +209,14 @@ function cloneREPO() {
 # Install dotfiles (all)
 # -------------------------------------------------------------
 function instDOTF() {
+  message yellow "+++ Install dotfiles (all) +++"
   check_if_sudo_is_installed
+  check_if_curl_is_installed
+  loadColors
+  instSYSUPDATES
   check_if_git_is_installed
-  message yellow "+++ Install complete dotfiles +++"
   cloneREPO
-  instAPP
+  instAPPS
   instLSD
   instGITSUBM
   instVIMRC
@@ -243,7 +251,7 @@ function reinstall() {
 # -------------------------------------------------------------
 # Install essential Apps
 # -------------------------------------------------------------
-function instAPP() {
+function instAPPS() {
   message blue "[ Install essential Apps ]"
   $apt update
   $apt install --ignore-missing -y \
@@ -671,7 +679,7 @@ else
             exit
           ;;
           2) # install apps
-            instAPP
+            instAPPS
             show_main_menu
           ;;
           3) # install lsd
