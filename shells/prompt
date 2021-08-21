@@ -60,17 +60,14 @@ GIT_BRANCH () {
 # check sudo
 CHECK_IF_SUDO_IS_ACTIVE () {
   if [ "${EUID}" -ne 0 ]; then
-    local checksudo
-    checksudo=$(sudo -nv 2>&1)
-    if [ $? -eq 0 ]; then
-      return 0
-    elif echo $checksudo | grep -q '^sudo:'; then
-      return 0
+    CAN_I_RUN_SUDO=$(sudo -n uptime 2>&1 | grep "load" | wc -l)
+    if [ ${CAN_I_RUN_SUDO} -gt 0 ]; then
+      return 0 # true
     else
-      return 1
+      return 1 # false
     fi
   else
-    return 1
+    return 1 # false
   fi
 }
 
