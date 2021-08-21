@@ -1,4 +1,4 @@
-# TODOs abd IDEAs
+# TODOs & IDEAs
 
 ## SUDO
 - install.sh: change /etc/sudoers: "#includedir /etc/sudoers.d" -> "includedir /etc/sudoers.d"
