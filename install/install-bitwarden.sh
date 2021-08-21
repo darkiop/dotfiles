@@ -28,14 +28,15 @@ else
   mkdir=$(which mkdir)
 fi
 
-# colors - https://bashcolors.com
-COLOR_BLUE="\e[38;5;39m"
-COLOR_LIGHT_BLUE="\e[38;5;81m"
-COLOR_RED="\e[38;5;196m"
-COLOR_GREEN_BOLD="\e[1;38;5;119m"
-COLOR_YELLOW="\e[38;5;227m"
-COLOR_WHITE="\e[37m"
-COLOR_CLOSE="$(tput sgr0)"
+# -------------------------------------------------------------
+# load color vars
+# https://bashcolors.com
+# -------------------------------------------------------------
+if [ ! -f $HOME/dotfiles/shells/colors ]; then
+  source <(curl -s https://raw.githubusercontent.com/darkiop/dotfiles/master/shells/colors)
+else 
+  source $HOME/dotfiles/shells/colors
+fi
 
 # ask function
 function ask() {
