@@ -4,76 +4,115 @@
 #
 # modified by darkiop
 
-# define the color of the simple-bash-prompt
-simple_bash_prompt_bracket_color=$blue_color
-simple_bash_prompt_command_color=$white_color
-simple_bash_prompt_device_color=$blue_color
-simple_bash_prompt_dir_color=$white_color
-simple_bash_prompt_git_branch_color=$yellow_color
-simple_bash_prompt_git_color=$yellow_color
-simple_bash_prompt_user_color=$light_blue_color
-simple_bash_prompt_separator_color=$white_color
-simple_bash_prompt_reset=$white_color
-simple_bash_prompt_date_color=$green_color
-
-# red bash prompt symbol if root
+#
+# SET PROMPT COLORS
+#
+COLOR_BRACKET=$blue_color
+COLOR_COMMAND=$white_color
+COLOR_DEVICE=$blue_color
+COLOR_DIR=$orange_color
+COLOR_USER=$light_blue_color
+COLOR_SEPARATOR=$white_color
+COLOR_RESET=$white_color
+COLOR_DATE=$green_color
+COLOR_GIT=$yellow_color
+COLOR_GIT_BRANCH=$yellow_color
+COLOR_SUDO_ACTIVE=$purple_color
+COLOR_SSH_ACTIVE=$purple_color
 if [ "${EUID}" -ne 0 ]; then
-    simple_bash_prompt_symbol_color=$white_color
+  COLOR_SYMBOL=$white_color
 else
-    simple_bash_prompt_symbol_color=$red_color
+  # root
+  COLOR_SYMBOL=$red_color
 fi
 
 # define the prompt terminator character
-simple_bash_prompt_symbol="\\$"
+SYMBOL="\\$"
 
 # set the color with the exit status of the last command
-simple_bash_prompt_exit_status_color () {
-    if [ $1 -eq 0 ]; then
-        echo -e $blue_color
-    else
-        echo -e $red_color
-    fi
+COLOR_EXIT_STATUS () {
+  if [ $1 -eq 0 ]; then
+    echo -e $blue_color
+  else
+    echo -e $red_color
+  fi
 }
 
-# check if current directory is a git repo
-simple_bash_prompt_is_git_repo () {
-    git rev-parse 2> /dev/null
+# git: check if current directory is a git repo
+CHECK_IF_GIT_REPO () {
+  git rev-parse 2> /dev/null
 }
 
-# print the git branch
-simple_bash_prompt_get_git_branch () {
-    simple_bash_prompt_git_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-    if [ "$simple_bash_prompt_git_branch" = "HEAD" ]; then
-        echo "no branch"
-    else
-        echo $simple_bash_prompt_git_branch
-    fi
+# git: print the branch
+GIT_BRANCH () {
+  simple_bash_prompt_git_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+  if [ "$simple_bash_prompt_git_branch" = "HEAD" ]; then
+    echo "no branch"
+   else
+    echo $simple_bash_prompt_git_branch
+  fi
 }
 
-# define the simple-bash-prompt
-simple_bash_prompt_build_prompt () {
-simple_bash_prompt_exit_status=$?
-simple_bash_prompt="\[\$(simple_bash_prompt_exit_status_color $simple_bash_prompt_exit_status)\]┬─\
-\[$simple_bash_prompt_bracket_color\][\
-\[$simple_bash_prompt_user_color\]\u\
-\[$simple_bash_prompt_separator_color\]@\
-\[$simple_bash_prompt_device_color\]\h\
-\[$simple_bash_prompt_separator_color\]:\
-\[$simple_bash_prompt_dir_color\]\w\
-\[$simple_bash_prompt_bracket_color\]]\
-\[\$(simple_bash_prompt_exit_status_color $simple_bash_prompt_exit_status)\]─\
-\[$simple_bash_prompt_bracket_color\][\
-\[\$(simple_bash_prompt_exit_status_color $simple_bash_prompt_exit_status)\]$simple_bash_prompt_date_color\t\
-\[$simple_bash_prompt_bracket_color\]]"
-if $(simple_bash_prompt_is_git_repo); then
-simple_bash_prompt+="\[\$(simple_bash_prompt_exit_status_color $simple_bash_prompt_exit_status)\]─"
-simple_bash_prompt+="\[$simple_bash_prompt_git_color\]["
-simple_bash_prompt+="\[$simple_bash_prompt_git_branch_color\]\$(simple_bash_prompt_get_git_branch)"
-simple_bash_prompt+="\[$simple_bash_prompt_git_color\]]"
+# check sudo
+CHECK_IF_SUDO_IS_ACTIVE () {
+  CAN_I_RUN_SUDO=$(sudo -n uptime 2>&1 | grep "load" | wc -l)
+  if [ ${CAN_I_RUN_SUDO} -gt 0 ]; then
+    return 0 # true
+  else
+    return 1 # false
+  fi
+}
+
+# check if ssh session
+# https://unix.stackexchange.com/questions/9605/how-can-i-detect-if-the-shell-is-controlled-from-ssh
+CHECK_IF_SSH_SESSION () {
+  if [[ $(who am i) =~ \([-a-zA-Z0-9\.]+\)$ ]]; then
+    return 0 # true
+  else
+    return 1 # false
+  fi
+}
+
+# 
+# BUILD THE PROMPT
+# \n = new line
+# \u = user
+# \h = time
+# \w = current dir
+#
+
+BUILD_PROMPT () {
+CHECK_EXIT_STATUS=$?
+BASH_PROMPT=$(COLOR_EXIT_STATUS $CHECK_EXIT_STATUS)"┬ "
+BASH_PROMPT+=$COLOR_BRACKET"["
+if $(CHECK_IF_SSH_SESSION); then
+BASH_PROMPT+=$COLOR_SSH_ACTIVE"ssh"$COLOR_SEPARATOR":"
 fi
-simple_bash_prompt+="\n\[\$(simple_bash_prompt_exit_status_color $simple_bash_prompt_exit_status)\]╰─>\
-\[$simple_bash_prompt_symbol_color\]$simple_bash_prompt_symbol \[$simple_bash_prompt_command_color\]"
-PS1=$simple_bash_prompt
+BASH_PROMPT+=$COLOR_USER"\u"$COLOR_SEPARATOR"@"$COLOR_DEVICE"\h"
+BASH_PROMPT+=$COLOR_SEPARATOR":"
+BASH_PROMPT+=$COLOR_DIR"\w"
+BASH_PROMPT+=$COLOR_BRACKET"]"
+#BASH_PROMPT+=$(COLOR_EXIT_STATUS $CHECK_EXIT_STATUS)"-"
+BASH_PROMPT+=" "
+BASH_PROMPT+=$COLOR_BRACKET"["
+BASH_PROMPT+=$(COLOR_EXIT_STATUS $CHECK_EXIT_STATUS)$COLOR_DATE"\t"
+BASH_PROMPT+=$COLOR_BRACKET"]"
+if $(CHECK_IF_GIT_REPO); then
+#BASH_PROMPT+=$(COLOR_EXIT_STATUS $CHECK_EXIT_STATUS)"-"
+BASH_PROMPT+=" "
+BASH_PROMPT+=$COLOR_BRACKET"["
+BASH_PROMPT+=$COLOR_GIT_BRANCH"git:$(GIT_BRANCH)"
+BASH_PROMPT+=$COLOR_BRACKET"]"
+fi
+if $(CHECK_IF_SUDO_IS_ACTIVE); then
+#BASH_PROMPT+=$(COLOR_EXIT_STATUS $CHECK_EXIT_STATUS)"-"
+BASH_PROMPT+=" "
+BASH_PROMPT+=$COLOR_BRACKET"["
+BASH_PROMPT+=$COLOR_SUDO_ACTIVE"sudo-active"
+BASH_PROMPT+=$COLOR_BRACKET"]"
+fi
+BASH_PROMPT+="\n"$(COLOR_EXIT_STATUS $CHECK_EXIT_STATUS)"╰─> "$COLOR_SYMBOL$SYMBOL$COLOR_COMMAND" "
+PS1=$BASH_PROMPT
 }
 
-export PROMPT_COMMAND=simple_bash_prompt_build_prompt
+export PROMPT_COMMAND=BUILD_PROMPT
