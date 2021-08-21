@@ -74,6 +74,10 @@ if [ -f ~/dotfiles/config/custom-keyboard-bindings ]; then
   source ~/dotfiles/config/custom-keyboard-bindings
 fi
 
+# new line after output
+# https://stackoverflow.com/questions/32854108/how-to-set-a-empty-line-before-output-in-bash-shell
+trap 'echo' DEBUG
+
 # clear screen & show motd
 clear
 source ~/dotfiles/motd/motd.sh
