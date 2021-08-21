@@ -18,7 +18,7 @@ COLOR_DATE=$green_color
 COLOR_GIT=$yellow_color
 COLOR_GIT_BRANCH=$yellow_color
 COLOR_SUDO_ACTIVE=$purple_color
-COLOR_SSH_ACTIVE=$white_color
+COLOR_SSH_ACTIVE=$light_blue_color
 if [ "${EUID}" -ne 0 ]; then
   COLOR_SYMBOL=$white_color
 else
