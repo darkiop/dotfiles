@@ -9,7 +9,7 @@
 #
 COLOR_BRACKET=$blue_color
 COLOR_COMMAND=$white_color
-COLOR_DEVICE=$blue_color
+COLOR_HOST=$blue_color
 COLOR_DIR=$orange_color
 COLOR_USER=$light_blue_color
 COLOR_SEPARATOR=$white_color
@@ -28,6 +28,9 @@ fi
 
 # define the prompt terminator character
 SYMBOL="\\$"
+
+# IP
+IP=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1)
 
 # set the color with the exit status of the last command
 COLOR_EXIT_STATUS () {
@@ -88,7 +91,7 @@ BASH_PROMPT+=$COLOR_BRACKET"["
 if $(CHECK_IF_SSH_SESSION); then
 BASH_PROMPT+=$COLOR_SSH_ACTIVE"ssh"$COLOR_SEPARATOR":"
 fi
-BASH_PROMPT+=$COLOR_USER"\u"$COLOR_SEPARATOR"@"$COLOR_DEVICE"\h"
+BASH_PROMPT+=$COLOR_USER"\u"$COLOR_SEPARATOR"@"$COLOR_HOST"\h"$COLOR_SEPARATOR"("$COLOR_HOST$IP$COLOR_SEPARATOR")"
 BASH_PROMPT+=$COLOR_SEPARATOR":"
 BASH_PROMPT+=$COLOR_DIR"\w"
 BASH_PROMPT+=$COLOR_BRACKET"]"
