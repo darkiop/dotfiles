@@ -7,3 +7,6 @@
 
 ## COLOR VARIABLES
 - change shells/defaults "red_color" > "COLOR_RED", ...
+
+## PROMPT
+- module: gitstatus
