@@ -8,3 +8,6 @@
 [submodule "modules/dategrep"]
 	path = modules/dategrep
 	url = https://github.com/mdom/dategrep
+[submodule "modules/gitstatus"]
+	path = modules/gitstatus
+	url = https://github.com/romkatv/gitstatus
