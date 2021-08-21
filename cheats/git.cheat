@@ -98,8 +98,8 @@ navi fn url::open 'https://github.com/pulls?&q=author:<user>+is:open+is:pr'
 git fetch origin pull/<pr_number>/head:pr/<pr_number> \
    && git checkout pr/<pr_number>
 
-# Add a new module
-git submodule add <repository> <path>
+# Add a new module (repo=url, path=local-path, e.g. modules/reponame)
+git submodule add -f <repository> <path>
 
 # Update module
 git submodule update --init
