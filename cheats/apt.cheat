@@ -53,3 +53,9 @@ apt rdepends <package-name>
 
 # Remove un-needed packages and dependencies
 apt autoremove
+
+# apt sources directory
+cd /etc/apt/sources.list.d
+
+# apt sources lists data directory
+cd /var/lib/apt/lists

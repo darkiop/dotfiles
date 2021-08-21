@@ -1,0 +1,10 @@
+% sudo
+
+# launch default shell with sudo
+sudo -i
+
+# terminate sudo session
+sudo -k
+
+# list available sudo commands
+sudo -l
