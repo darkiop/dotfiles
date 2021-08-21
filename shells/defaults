@@ -1,10 +1,13 @@
-# editors
+#
+# SET DEFAULT EDITORS
+#
 export EDITOR='vim'
 export ALTERNATE_EDITOR='vim'
 export VISUAL='vim'
 
-# colors
-# https://bashcolors.com
+#
+# SET COLORS (https://bashcolors.com)
+#
 export blue_color="\e[38;5;39m"
 export light_blue_color="\e[38;5;81m"
 export red_color="\e[38;5;196m"
@@ -12,49 +15,50 @@ export green_color="\e[38;5;83m"
 export green_color_bold="\e[1;38;5;83m"
 export yellow_color="\e[38;5;227m"
 export white_color="\e[37m"
+export orange_color="\e[38;5;214m"
+export purple_color="\e[38;5;99m"
 export close_color="$(tput sgr0)"
 
-# navi
+#
+# SET NAVI OPTIONS
+#
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 
-# history options
-
+#
+# SET HISTORY OPTIONS
+#
 export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
-# Don't put duplicate lines or lines starting with space in the history.
-
 export HISTCONTROL=ignoreboth
 export HISTIGNORE='&:clear:ls:cd:[bf]g:exit:[ t\]*'
+export HISTSIZE=100000
+export HISTFILESIZE=2000000
+shopt -s histappend                                                                # Append to the history file, don't overwrite it
+export PROMPT_COMMAND="history -a;history -c; history -r; $PROMPT_COMMAND"         # Save and reload history after each command finishes
 
-# Append to the history file, don't overwrite it
-shopt -s histappend
-
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=100000
-HISTFILESIZE=2000000
-
-# Save and reload history after each command finishes
-export PROMPT_COMMAND="history -a;history -c; history -r; $PROMPT_COMMAND"
-
-# color prompt
+#
+# ENABLE COLOR PROMPT
+#
 if [ -n "$force_color_prompt" ]; then
   if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-    # We have color support; assume it's compliant with Ecma-48
-    # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-    # a case would tend to support setf rather than setaf.)
     color_prompt=yes
   else
     color_prompt=
   fi
 fi
 
-# Key-bindings
-#set -o vi
+#
+# SET KEY-BINDINGS (-o vi || -o emacs)
+# 
 set -o emacs
 
+#
 # Check the window size after each command and, if necessary, update the values of LINES and COLUMNS.
+#
 shopt -s checkwinsize
 
+#
 # Make less more friendly for non-text input files, see lesspipe(1)
+#
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # Set variable identifying the chroot you work in
@@ -63,16 +67,20 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
   debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# enable tab completion features
+#
+# ENABLE TAB COMPLETION
+#
 if [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
+  source /etc/bash_completion
 fi
-# the same for byobu (https://wiki.ubuntuusers.de/byobu/#Autovervollstaendigung-aktivieren)
 if [ -f /etc/profile.d/bash_completion.sh ]; then
-     . /etc/profile.d/bash_completion.sh
+  # byobu (https://wiki.ubuntuusers.de/byobu/#Autovervollstaendigung-aktivieren)
+  source /etc/profile.d/bash_completion.sh
 fi
 
-# sudo Tab Completion
+#
+# ENABLE TAB COMPLETION FOR SUDO
+#
 complete -cf sudo
 
 # If this is an xterm set the title to user@host:dir
