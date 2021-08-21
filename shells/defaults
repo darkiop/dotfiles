@@ -8,7 +8,7 @@ export VISUAL='vim'
 #
 # SET COLORS (https://bashcolors.com)
 #
-source $HOME/dotfiles/shells/colors.sh
+source $HOME/dotfiles/shells/colors
 
 #
 # SET NAVI OPTIONS
