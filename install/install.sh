@@ -8,16 +8,6 @@
 # always exit on error
 set -e
 
-# colors
-# https://bashcolors.com
-COLOR_BLUE="\e[38;5;39m"
-COLOR_LIGHT_BLUE="\e[38;5;81m"
-COLOR_RED="\e[38;5;196m"
-COLOR_GREEN_BOLD="\e[1;38;5;119m"
-COLOR_YELLOW="\e[38;5;227m"
-COLOR_WHITE="\e[37m"
-COLOR_CLOSE="$(tput sgr0)"
-
 # first check if root, when not define a alias with sudo
 if [ "${EUID}" -ne 0 ]; then
   dpkg='sudo '$(which dpkg)
@@ -25,6 +15,23 @@ if [ "${EUID}" -ne 0 ]; then
 else
   dpkg=$(which dpkg)
   apt=$(which apt)
+fi
+
+# -------------------------------------------------------------
+# check if curl is installed and install it if not
+# -------------------------------------------------------------
+if [ "" = "$(dpkg-query -W --showformat='${Status}\n' curl|grep "install ok installed")" ]; then
+  $apt install curl -y
+fi
+
+# -------------------------------------------------------------
+# load color vars
+# https://bashcolors.com
+# -------------------------------------------------------------
+if [ ! -f $HOME/dotfiles/shells/colors ]; then
+  source <(curl -s https://raw.githubusercontent.com/darkiop/dotfiles/master/shells/colors)
+else 
+  source $HOME/dotfiles/shells/colors
 fi
 
 # -------------------------------------------------------------
