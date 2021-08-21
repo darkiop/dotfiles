@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # run ioBroker fix.sh Skript
 alias iofix='curl -sL https://iobroker.net/fix.sh | bash -'
 

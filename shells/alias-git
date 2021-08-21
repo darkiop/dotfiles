@@ -1,3 +1,5 @@
+#!/bin/bash
+
 alias ga='git add'
 alias gb='git br' 
 alias gd='git diff' 
