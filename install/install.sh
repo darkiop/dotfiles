@@ -295,7 +295,8 @@ function instAPPS() {
   hddtemp \
   parted \
   tree \
-  sshfs
+  sshfs \
+  python3-pip
   # tmp: rcconf, sensors
 }
 
