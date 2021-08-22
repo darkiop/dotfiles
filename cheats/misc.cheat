@@ -114,3 +114,6 @@ lsattr
 
 # chattr - change file attributes on a Linux file system 
 chattr
+
+# calc sha256sum
+echo -n "<string>" | sha256sum
