@@ -1,25 +1,34 @@
 % proxmox
 
-# container start lxc
+# kvm: list
+qm list
+
+# kvm: unlock
+qm unlock <id>
+
+# lxc: start
 pct start <id>
 
-# container stop lxc
+# lxc: stop
 pct stop <id>
 
-# container reboot lxc
+# lxc: reboot
 pct reboot <id>
 
-# container create lxc
+# lxc: create
 pct create <id> <images> -arch amd64 -ostype ubuntu -hostname <hostname> -cores <cores> -memory <memory> -swap 512 -storage <storage> -password -net0 name=eth0,bridge=vmbr0,gw=<gateway>,ip=<ip-cdir>,type=veth
 
-# container delete lxc
+# lxc: delete
 pct destroy <id>
 
-# container run a command
+# lxc: run a command
 pct exec <id> -- bash -c "<command>"
 
-# open a console
+# lxc: open a console
 pct console <id>
+
+# lxc: create a snapshot
+pct snapshot <id> <name>
 
 # vzdump file extract
 tar -I zstd -xvf archive.tar.zst
@@ -48,19 +57,13 @@ service pve-cluster restart && service pvedaemon restart && service pvestatd res
 # list VMs (sorted)
 cat /etc/pve/.vmlist | grep node | tr -d '":,'| awk '{print $1" "$4" "$6 }' | sort -n | column -t
 
-# list VMs
-qm list
-
-# unlock vm
-qm unlock <id>
-
-# cluster show status
+# cluster: show status
 pvecm status
 
-# cluster create
+# cluster: create
 pvecm create <clustername>
 
-# cluster add
+# cluster: add
 pvecm add <ip>
 
 # dir vz
