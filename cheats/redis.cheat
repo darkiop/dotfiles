@@ -16,7 +16,7 @@ redis-cli debug sleep 60
 tail -f /var/log/redis/redis-server.log
 
 # sentinel: check sentinel status
-redis-cli -h localhost -p 26379 info sentinel
+redis-cli -h <host> -p 26379 info sentinel
 
 # sentinel: get current master address
 redis-cli -p 26379 sentinel get-master-addr-by-name <master-name>
