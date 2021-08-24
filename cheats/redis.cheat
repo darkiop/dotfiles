@@ -15,6 +15,15 @@ redis-cli debug sleep 60
 # redis: log
 tail -f /var/log/redis/redis-server.log
 
+# redis: check rdb file, if corrupt
+redis-check-rdb <file>
+
+# redis: check aof file, if corrupt
+redis-check-aof <file>
+
+# redis: test redis connection
+redis-cli ping
+
 # sentinel: check sentinel status
 redis-cli -h <host> -p 26379 info sentinel
 
