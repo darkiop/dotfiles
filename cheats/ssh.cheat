@@ -12,6 +12,9 @@ ssh <user>@<server>
 # connect to ssh server, with a special keyfile
 ssh -i <file> <user>@<server>
 
+# tunnel localhost@remote-host to local-port
+ssh <user>p@<remote-host> -T -L <new-local-port>:localhost:<port>
+
 # copy ssh id to server
 ssh-copy-id -i <file> <user>@<server>
 
