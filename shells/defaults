@@ -49,10 +49,6 @@ set -o emacs
 #
 shopt -s checkwinsize
 
-# new line after output
-# https://stackoverflow.com/questions/32854108/how-to-set-a-empty-line-before-output-in-bash-shell
-trap 'echo' DEBUG
-
 #
 # Make less more friendly for non-text input files, see lesspipe(1)
 #
