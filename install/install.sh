@@ -296,7 +296,8 @@ function instAPPS() {
   parted \
   tree \
   sshfs \
-  python3-pip
+  python3-pip \
+  ncdu
   # tmp: rcconf, sensors
 }
 
