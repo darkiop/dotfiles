@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# checks if a vm is running and if not, starts the vm
+#
+# crontab example: */5 * * * * /home/darkiop/dotfiles/bin/proxmox/check-vm.sh 307 10.4.1.37 >/dev/null 2>&1
 
 DATE=$(date +%Y-%m-%d_%H:%M:%S)
 LOGFILE="/var/log/check_vm.log"
@@ -7,6 +11,11 @@ LOGFILE="/var/log/check_vm.log"
 if [ "${EUID}" -ne 0 ]; then
   echo "You need to run this as root. Exit."
   exit 1
+fi
+
+# checks if fping is installed
+if [ ! $(which fping) ]; then
+  echo "fping is required, but not installed. Exit."
 fi
 
 # usage
