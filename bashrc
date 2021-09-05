@@ -47,6 +47,11 @@ if [[ -x $(which pveversion) ]]; then
   source ~/dotfiles/shells/alias-proxmox
 fi
 
+# load glusterfs alias
+if [[ -x $(which gluster) ]]; then
+  source ~/dotfiles/shells/alias-glusterfs
+fi
+
 # load wireguard alias
 if [[ -x $(which wg) ]]; then
   source ~/dotfiles/shells/alias-wireguard
@@ -73,6 +78,10 @@ fi
 if [ -f ~/dotfiles/config/custom-keyboard-bindings ]; then
   source ~/dotfiles/config/custom-keyboard-bindings
 fi
+
+# new line after output
+# https://stackoverflow.com/questions/32854108/how-to-set-a-empty-line-before-output-in-bash-shell
+#trap 'echo' DEBUG
 
 # clear screen & show motd
 clear
