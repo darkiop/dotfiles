@@ -101,10 +101,10 @@ if [ -x /usr/bin/pveversion ]; then
 fi
 
 # special motd for redis
-if pgrep -x "redis-server" >/dev/null
-then
-  source ~/dotfiles/motd/motd-redis.sh
-fi
+#if pgrep -x "redis-server" >/dev/null
+#then
+#  source ~/dotfiles/motd/motd-redis.sh
+#fi
 
 # special motd by hostname
 if [ -f ~/dotfiles/motd/motd-$get_host_name.sh ]; then
