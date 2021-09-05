@@ -1,0 +1,18 @@
+% proxmox, glusterfs
+
+# gstatus
+gstatus
+
+# gstatus all volumes / bricks
+gstatus -a -b
+
+# show status of all volumes
+gluster volume status
+
+# show status and details from a volume
+gluster volume status <list-volumes> detail
+
+# show peer status
+gluster peer status
+
+$ list-volumes: gluster volume list
