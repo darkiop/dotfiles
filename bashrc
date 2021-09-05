@@ -48,7 +48,7 @@ if [[ -x $(which pveversion) ]]; then
 fi
 
 # load glusterfs alias
-if [[ -x $(which gluster) ]]; then
+if [[ -x /usr/sbin/gluster ]]; then
   source ~/dotfiles/shells/alias-glusterfs
 fi
 
