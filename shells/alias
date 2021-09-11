@@ -2,11 +2,11 @@
 
 # check if root, when not define alias with sudo
 if [[ $EUID -ne 0 ]]; then
-  alias apt='sudo '$(which apt)
-  alias reboot='sudo '$(which reboot)
-  alias shutdown='sudo '$(which shutdown)
-  alias systemctl='sudo '$(which systemctl)
-  alias journalctl='sudo '$(which journalctl)
+  alias apt='sudo apt'
+  alias reboot='sudo reboot'
+  alias shutdown='sudo shutdown'
+  alias systemctl='sudo systemctl'
+  alias journalctl='sudo journalctl'
 fi
 
 # ps tree / forest
@@ -94,6 +94,12 @@ alias dotf='cd ~/dotfiles && git status'
 
 # system update
 alias update='apt update && apt upgrade -y && apt autoremove -y && source ~/.bashrc'
+
+# syslog tail -f
+alias sysl='tail -f /var/log/syslog'
+
+# messages tail -f
+alias sysl='tail -f /var/log/messages'
 
 # reboot
 case $HOSTNAME in
