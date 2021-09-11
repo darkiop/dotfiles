@@ -117,3 +117,18 @@ chattr
 
 # calc sha256sum
 echo -n "<string>" | sha256sum
+
+# list usb devices
+lsusb
+
+# list hardware
+lshw
+
+# list pci devices
+lspci
+
+# show cpu details
+lscpu
+
+# list block devices
+lsblk

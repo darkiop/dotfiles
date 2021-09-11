@@ -8,5 +8,3 @@ cat /var/log/messages | less
 
 # show syslog
 cat /var/log/syslog | less
-
-# 

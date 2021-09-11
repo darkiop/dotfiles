@@ -12,4 +12,7 @@ dategrep --last-minutes <minutes> <logfile>
 # use of a dategrep with a pipe
 cat /var/log/syslog | dategrep --end "10:00"
 
+# grep a timerange from logile (example: begin: 08:00 end: 08:30) with excludes
+dategrep --start "<begin>" --end "<end>" <logfile> | grep -v '<exclude-1>\|<exclude-2>\'
+
 $ logfile: ls
