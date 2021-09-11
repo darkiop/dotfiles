@@ -85,9 +85,9 @@ echo "1" > /etc/pve/.debug
 echo "0" > /etc/pve/.debug
 
 # bulk migrate lxc
-for lxc in $(pct list | awk '{print $1}' | grep -Eo '[0-9]{1,3}'); do pct migrate $lxc pve01 --online; done
+for lxc in $(pct list | awk '{print $1}' | grep -Eo '[0-9]{1,3}'); do pct migrate $lxc <target-node> --online; done
 
 # bulk migrate vm
-for vm in $(qm list | awk '{print $1}' | grep -Eo '[0-9]{1,3}'); do qm migrate $vm pve02 --online; done
+for vm in $(qm list | awk '{print $1}' | grep -Eo '[0-9]{1,3}'); do qm migrate $vm <target-node> --online; done
 
 $ images: pveam list <storage>
