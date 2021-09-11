@@ -99,7 +99,7 @@ alias update='apt update && apt upgrade -y && apt autoremove -y && source ~/.bas
 alias sysl='tail -f /var/log/syslog'
 
 # messages tail -f
-alias sysl='tail -f /var/log/messages'
+alias mesl='tail -f /var/log/messages'
 
 # reboot
 case $HOSTNAME in
