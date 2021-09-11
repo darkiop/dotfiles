@@ -205,6 +205,8 @@ function cloneREPO() {
   if [ ! -d $HOME/dotfiles ]; then
     message blue "[ clone dotfiles repo from github ]"
     git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
+    cd $HOME/dotfiles
+    git config pull.rebase false
   else
     message yellow "dotfiles directory already exist. Do nothing and exit."
   fi
@@ -297,7 +299,9 @@ function instAPPS() {
   tree \
   sshfs \
   python3-pip \
-  ncdu
+  ncdu \
+  lshw \
+  lm-sensors
   # tmp: rcconf, sensors
 }
 
