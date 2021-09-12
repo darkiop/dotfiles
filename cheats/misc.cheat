@@ -132,3 +132,6 @@ lscpu
 
 # list block devices
 lsblk
+
+# list modules
+lsmod
