@@ -1,0 +1,28 @@
+% usbip
+
+# server: show local usb devices
+usbip list -l
+
+# server: start usbipd in background
+usbipd -D
+
+# server: export usb device
+usbip bind -b <bus-id>
+
+# server: stop export usb device
+usbip unbind -b 1-1
+
+# server: show local exports
+usbip list -r localhost
+
+# client: show remote exports
+usbip list -r <ip>
+
+# client: import device from usbip server
+usbip attach -r <ip> -b <bus-id>
+
+# client: show all imported usb devices
+usbip port
+
+# client: usb device detach
+usbip detach -p <id>
