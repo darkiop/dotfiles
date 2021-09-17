@@ -1,0 +1,7 @@
+% bind
+
+# reload config
+rndc reconfig
+
+# named statusrn
+rndc status

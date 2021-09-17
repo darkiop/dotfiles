@@ -135,3 +135,6 @@ lsblk
 
 # list modules
 lsmod
+
+# yet antoher bechmark script - https://github.com/masonr/yet-another-bench-script
+curl -sL yabs.sh | bash
