@@ -1,16 +1,22 @@
 % usbip
 
-# server: show local usb devices
-usbip list -l
-
 # server: start usbipd in background
 usbipd -D
+
+# server: export all USB devices except a specific device
+for p in $(/usr/sbin/usbip list -p -l | grep -v <except-bus-id> | cut '-d#' -f1); do /usr/sbin/usbip bind --$p; done
+
+# server: unbind all USB device except a specific device and kill usbipd
+for p in $(/usr/sbin/usbip list -p -l | grep -v <except-bus-id> | cut '-d#' -f1); do /usr/sbin/usbip unbind --$p; done; killall usbipd
+
+# server: show local usb devices
+usbip list -l
 
 # server: export usb device
 usbip bind -b <bus-id>
 
 # server: stop export usb device
-usbip unbind -b 1-1
+usbip unbind -b <bus-id>
 
 # server: show local exports
 usbip list -r localhost
