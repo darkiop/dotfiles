@@ -194,7 +194,14 @@ $chown -R vaultwarden:vaultwarden /var/lib/vaultwarden
 $chown vaultwarden:vaultwarden /etc/vaultwarden.env
 $chown vaultwarden:vaultwarden /etc/systemd/system/vaultwarden.service
 
+# enable vaultwarden.service
+systemctl enable vaultwarden.service
+
 # reload systemd daemon
 systemctl daemon-reload
+
+# TODO
+# cp Backup to /var/lib/vaultwarden/data
+# msg reboot container
 
 # EOF
