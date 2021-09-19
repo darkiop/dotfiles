@@ -1,0 +1,1 @@
+darkiop ALL=(ALL) NOPASSWD: /usr/bin/apt-get, /usr/bin/apt, /usr/sbin/reboot, /usr/sbin/pct, /usr/sbin/qm
