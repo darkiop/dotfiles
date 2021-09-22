@@ -1,0 +1,12 @@
+[Unit]
+Description=usbip-server
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/sbin/usbipd -D
+ExecStartPost=/bin/sh -c "for p in $(/usr/sbin/usbip list -p -l | grep -v 0424:ec00 | cut '-d#' -f1); do /usr/sbin/usbip bind --$p; done"
+ExecStop=/bin/sh -c "for p in $(/usr/sbin/usbip list -p -l | grep -v 0424:ec00 | cut '-d#' -f1); do /usr/sbin/usbip unbind -b --$p; done; killall usbipd"
+
+[Install]
+WantedBy=multi-user.target
