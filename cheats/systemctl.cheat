@@ -36,6 +36,9 @@ systemctl list-unit-files --type=service --state=disabled
 # list dependencies
 systemctl list-dependencies <service>
 
+# daemon reload
+systemctl daemon-reload
+
 # show live log of unit
 journalctl -f -u <service_active> 
 
