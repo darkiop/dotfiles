@@ -32,10 +32,10 @@ fi
 # load color vars
 # https://bashcolors.com
 # -------------------------------------------------------------
-if [ ! -f $HOME/dotfiles/shells/colors ]; then
-  source <(curl -s https://raw.githubusercontent.com/darkiop/dotfiles/master/shells/colors)
+if [ ! -f $HOME/dotfiles/config/dotfiles.config ]; then
+  source <(curl -s https://raw.githubusercontent.com/darkiop/dotfiles/master/config/dotfiles.config)
 else 
-  source $HOME/dotfiles/shells/colors
+  source $HOME/dotfiles/config/dotfiles.config
 fi
 
 # ask function
