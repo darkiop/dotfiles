@@ -1,0 +1,13 @@
+% timesyncd, timedatectl, time, ntp
+
+# config
+vi /etc/systemd/timesyncd.conf
+
+# show status
+timedatectl status
+
+# deactivate
+timedatectl set-ntp 0
+
+# activate
+timedatectl set-ntp 1
