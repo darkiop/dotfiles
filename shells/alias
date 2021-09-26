@@ -96,11 +96,14 @@ alias dotf='cd ~/dotfiles && git status'
 # system update
 alias update='apt update && apt upgrade -y && apt autoremove -y && source ~/.bashrc'
 
-# syslog tail -f
-alias sysl='tail -f /var/log/syslog'
-
-# messages tail -f
-alias mesl='tail -f /var/log/messages'
+# syslog tail -f / messages tail -f
+if [[ $EUID -ne 0 ]]; then
+  alias sysl='sudo tail -f /var/log/syslog'
+  alias mesl='sudo tail -f /var/log/messages'
+else
+  alias sysl='tail -f /var/log/syslog'
+  alias mesl='tail -f /var/log/messages'
+fi
 
 # reboot
 case $HOSTNAME in
