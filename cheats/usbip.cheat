@@ -4,19 +4,19 @@
 usbipd -D
 
 # server: export all USB devices except a specific device
-for p in $(/usr/sbin/usbip list -p -l | grep -v <except-bus-id> | cut '-d#' -f1); do /usr/sbin/usbip bind --$p; done
+for p in $(/usr/sbin/usbip list -p -l | grep -v <except-bus-id> | cut '-d#' -f1); do /usr/sbin/usbip --log bind --$p; done
 
 # server: unbind all USB device except a specific device and kill usbipd
-for p in $(/usr/sbin/usbip list -p -l | grep -v <except-bus-id> | cut '-d#' -f1); do /usr/sbin/usbip unbind --$p; done; killall usbipd
+for p in $(/usr/sbin/usbip list -p -l | grep -v <except-bus-id> | cut '-d#' -f1); do /usr/sbin/usbip --log unbind --$p; done; killall usbipd
 
 # server: show local usb devices
 usbip list -l
 
 # server: export usb device
-usbip bind -b <bus-id>
+usbip --log bind -b <bus-id>
 
 # server: stop export usb device
-usbip unbind -b <bus-id>
+usbip --log unbind -b <bus-id>
 
 # server: show local exports
 usbip list -r localhost
@@ -25,10 +25,10 @@ usbip list -r localhost
 usbip list -r <ip>
 
 # client: import device from usbip server
-usbip attach -r <ip> -b <bus-id>
+usbip --log attach -r <ip> -b <bus-id>
 
 # client: show all imported usb devices
 usbip port
 
 # client: usb device detach
-usbip detach -p <id>
+usbip --log detach -p <id>
