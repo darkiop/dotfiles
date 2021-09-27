@@ -1,3 +1,8 @@
+# https://github.com/darkiop/doku-iobroker-ha
+#
+# /lib/systemd/system/usbipd.service
+#
+
 [Unit]
 Description=usbipd
 After=network.target

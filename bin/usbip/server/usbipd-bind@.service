@@ -1,3 +1,8 @@
+# https://github.com/darkiop/doku-iobroker-ha
+#
+# /lib/systemd/system/usbipd-bind@.service
+#
+
 [Unit]
 Description=usbipd binding %I
 After=network-online.target usbipd.service

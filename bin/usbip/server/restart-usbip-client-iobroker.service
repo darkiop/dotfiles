@@ -1,0 +1,15 @@
+# https://github.com/darkiop/doku-iobroker-ha
+#
+# /etc/systemd/system/restart-usbip-client-iobroker.service
+#
+
+[Unit]
+Description=restart usbip-client iobroker 
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=ssh darkiop@pve-vm-iobroker bash -c "'sudo service usbip-client restart'"
+
+[Install]
+WantedBy=custom.target
