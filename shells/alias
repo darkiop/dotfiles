@@ -105,6 +105,9 @@ else
   alias mesl='tail -f /var/log/messages'
 fi
 
+# dmesg (human readable time)
+alias dmesg='dmesg -T'
+
 # reboot
 case $HOSTNAME in
   thor) alias reboot='powershell.exe -command restart-computer';;
