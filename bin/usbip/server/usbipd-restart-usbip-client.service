@@ -1,10 +1,12 @@
 # https://github.com/darkiop/doku-iobroker-ha
 #
-# /etc/systemd/system/restart-usbip-client-iobroker.service
+# /etc/systemd/system/usbipd-restart-usbip-client.service
 #
 # mkdir /etc/systemd/system/custom.target.wants
 # systemctl enable usbipd-restart-usbip-client.service
 # systemctl set-default custom.target
+#
+# test: systemctl isolate custom.target
 
 [Unit]
 Description=restart usbip-client iobroker 
