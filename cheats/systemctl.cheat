@@ -40,7 +40,10 @@ systemctl list-dependencies <service>
 systemctl daemon-reload
 
 # show live log of unit
-journalctl -f -u <service_active> 
+journalctl -f -u <service_active>
+
+# reboot to uefi
+systemctl reboot --firmware-setup
 
 $ service_inactive: systemctl list-units --type=service --state=inactive | awk '{print $1}' | grep .service | sed 's/.service$//'
 $ service_active: systemctl list-units --type=service --state=active | awk '{print $1}' | grep .service | sed 's/.service$//'
