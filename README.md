@@ -1,7 +1,7 @@
 # dotfiles
 dotfiles for bash
 
-<img src="https://github.com/darkiop/dotfiles/blob/master/screenshot.png" width="400" height="auto">
+<img src="https://github.com/darkiop/dotfiles/blob/master/screenshot.png" width="600" height="auto">
 
 ## INSTALL
 
