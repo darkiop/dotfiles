@@ -86,8 +86,7 @@ EOF
 esac
 
 # echo infos
-echo -e "$COLOR_BLUE"hostname"$COLOR_CLOSE          `echo -e "$COLOR_GREEN$get_host_name$COLOR_CLOSE"`
-$COLOR_BLUE"ip"$COLOR_CLOSE                `echo -e "$COLOR_GREEN$get_ip_host$COLOR_CLOSE"`
+echo -e "$COLOR_BLUE"ip"$COLOR_CLOSE                `echo -e "$COLOR_GREEN$get_ip_host$COLOR_CLOSE"`
 $COLOR_BLUE"tasks"$COLOR_CLOSE             `echo -e "$COLOR_GREEN$tasks$COLOR_CLOSE"`
 $COLOR_BLUE"load"$COLOR_CLOSE              `echo -e "$COLOR_GREEN$get_os_load_1$COLOR_CLOSE" / "$COLOR_GREEN$get_os_load_5$COLOR_CLOSE" / "$COLOR_GREEN$get_os_load_15$COLOR_CLOSE"`
 $COLOR_BLUE"uptime"$COLOR_CLOSE            `echo -e "$COLOR_GREEN$UP$COLOR_CLOSE"`
