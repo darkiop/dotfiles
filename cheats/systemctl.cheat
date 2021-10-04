@@ -39,6 +39,9 @@ systemctl list-dependencies <service>
 # daemon reload
 systemctl daemon-reload
 
+# list all available timers
+systemctl list-timers --all
+
 # show live log of unit
 journalctl -f -u <service_active>
 
