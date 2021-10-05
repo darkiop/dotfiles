@@ -113,7 +113,7 @@ else
 fi
 
 # show updates
-if [ $MOTD_SHOW_APT_UPDATES != 'y' ]; then
+if [ $MOTD_SHOW_APT_UPDATES=="y" ]; then
   if [ $(which apt) ]; then
     echo -e "$COLOR_LIGHT_BLUE"Checking for updates ..."$COLOR_CLOSE"
     updates="$(apt-get -s dist-upgrade | awk '/^Inst/ { print $2 }')"
