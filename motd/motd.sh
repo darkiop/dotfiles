@@ -113,14 +113,15 @@ else
 fi
 
 # show updates
-if [ $(which apt) ]; then
-  echo -e "$COLOR_LIGHT_BLUE"Checking for updates ..."$COLOR_CLOSE"
-  updates="$(apt-get -s dist-upgrade | awk '/^Inst/ { print $2 }')"
-  updatesText="$COLOR_GREEN$COLOR_CLOSE $COLOR_YELLOW$updates$COLOR_CLOSE"
-  if [ "$(which apt-get)" ]; then
-    echo
-    echo -e $COLOR_YELLOW"`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` "$COLOR_GREEN"updates to install"$COLOR_CLOSE$updatesText
+if [ $MOTD_SHOW_APT_UPDATES != 'y' ]; then
+  if [ $(which apt) ]; then
+    echo -e "$COLOR_LIGHT_BLUE"Checking for updates ..."$COLOR_CLOSE"
+    updates="$(apt-get -s dist-upgrade | awk '/^Inst/ { print $2 }')"
+    updatesText="$COLOR_GREEN$COLOR_CLOSE $COLOR_YELLOW$updates$COLOR_CLOSE"
+    if [ "$(which apt-get)" ]; then
+      echo
+      echo -e $COLOR_YELLOW"`apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l` "$COLOR_GREEN"updates to install"$COLOR_CLOSE$updatesText
+    fi
   fi
 fi
-
 # EOF

@@ -5,6 +5,9 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+# load dotfiles.config
+source $HOME/dotfiles/config/dotfiles.config
+
 # define and load directorys for personal $PATH
 pathadd() {
   if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
@@ -67,11 +70,11 @@ if [ -d /opt/iobroker ]; then
 fi
 
 # create a local settings file
-if [ ! -f ~/dotfiles/config/.local_dotfiles_settings ]; then
-  touch ~/dotfiles/config/.local_dotfiles_settings
-  echo "# local settings for dotfiles, e.g. variables" > ~/dotfiles/config/.local_dotfiles_settings
+if [ ! -f ~/dotfiles/config/local_dotfiles_settings ]; then
+  touch ~/dotfiles/config/local_dotfiles_settings
+  echo "# local settings for dotfiles, e.g. variables" > ~/dotfiles/config/local_dotfiles_settings
 else
-  source ~/dotfiles/config/.local_dotfiles_settings
+  source ~/dotfiles/config/local_dotfiles_settings
 fi
 
 # load custom keybindings
