@@ -7,3 +7,5 @@ bin/bat
 bin/dategrep
 modules
 motd/apt-updates-count
+motd/apt-updates-packages
+_gitignore
