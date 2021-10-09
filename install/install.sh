@@ -681,6 +681,7 @@ function instSystemdAptInfoFilesTimer() {
   systemctl daemon-reload
   systemctl enable dotfiles-update-motd-apt-infos.timer
   systemctl start dotfiles-update-motd-apt-infos.timer
+  bash $HOME/dotfiles/motd/systemd/apt-update-infos.sh
 }
 
 # -------------------------------------------------------------
