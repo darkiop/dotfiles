@@ -4,8 +4,8 @@
 Description=dotfiles update motd apt infos timer every 2h
 
 [Timer]
-OnBootSec=1min
-OnUnitInactiveSec=120min
+OnCalendar=daily
+AccuracySec=12h
 Persistent=true
 Unit=dotfiles-update-motd-apt-infos.service
 
