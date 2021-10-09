@@ -4,11 +4,16 @@
 # TODO: install all without apps
 # TODO: fail2ban
 # TODO: sshd config
+# TODO: timesyncd config
 
+# -------------------------------------------------------------
 # always exit on error
+# -------------------------------------------------------------
 set -e
 
+# -------------------------------------------------------------
 # first check if root, when not define a alias with sudo
+# -------------------------------------------------------------
 if [ "${EUID}" -ne 0 ]; then
   dpkg='sudo '$(which dpkg)
   apt='sudo '$(which apt)
@@ -193,6 +198,7 @@ function show_submenu_system_setup(){
   printf "${COLOR_YELLOW}3)${COLOR_CLOSE} Setup timezone & locales\n"
   printf "${COLOR_YELLOW}4)${COLOR_CLOSE} Add a new User\n"
   printf "${COLOR_YELLOW}5)${COLOR_CLOSE} Install Samba\n"
+  printf "${COLOR_YELLOW}6)${COLOR_CLOSE} Config timesyncd (NTP)\n"
   echo
   printf "Please choose an option or ${COLOR_RED}x${COLOR_CLOSE} to exit: "
   read opt_sub_menu_system_setup
@@ -301,8 +307,9 @@ function instAPPS() {
   python3-pip \
   ncdu \
   lshw \
-  lm-sensors
-  # tmp: rcconf, sensors
+  lm-sensors \
+  inxi \
+  unattended-upgrades
 }
 
 # -------------------------------------------------------------
@@ -510,7 +517,6 @@ function instUPDATEFROMGIT() {
       cd ~/dotfiles
       git pull
       cd ~
-      #bash ~/.bashrc
       su - $USER
     else
       # changes
@@ -586,7 +592,6 @@ function instBASHRC() {
 function instSYSUPDATES() {
   $apt update
   $apt upgrade -y
-  $apt install unattended-upgrades -y
 }
 
 # -------------------------------------------------------------
@@ -670,6 +675,23 @@ function instSAMBA() {
 }
 
 # -------------------------------------------------------------
+# config: NTP
+# -------------------------------------------------------------
+function configNTP() {
+  check_if_user_is_root
+  message blue "[ config timesyncd (NTP) ]"
+  # load dotfiles.config
+  source $HOME/dotfiles/config/dotfiles.config
+  # stop timesyncd
+  systemctl stop systemd-timesyncd.service
+  # change config
+  sed -i "s|#NTP=|NTP=$NTPD|g" /etc/systemd/timesyncd.conf
+  sed -i "s|#FallbackNTP=|FallbackNTP=|g" /etc/systemd/timesyncd.conf
+  # start timesyncd
+  systemctl start systemd-timesyncd.service
+}
+
+# -------------------------------------------------------------
 # RUN THE SCRIPT
 # -------------------------------------------------------------
 if [[ $1 == 'all' ]]; then
@@ -747,6 +769,7 @@ else
             instTIMEZONELOCALES
             createUSER
             instSAMBA
+            configNTP
             exit
           ;;
           2) # system udates
@@ -763,6 +786,9 @@ else
           ;;
           5) # install samba
             instSAMBA
+            show_main_menu
+          6) # config timesyncd (NTP)
+            configNTP
             show_main_menu
           ;;
           x|X) # exit
