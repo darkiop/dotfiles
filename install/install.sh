@@ -234,8 +234,9 @@ function instDOTF() {
   instCHEATSH
   instBAT
   instDATEGREP
-  instBASHRC
   instSystemdAptInfoFilesTimer
+  # install bashrc and reload
+  instBASHRC
 }
 
 # -------------------------------------------------------------
