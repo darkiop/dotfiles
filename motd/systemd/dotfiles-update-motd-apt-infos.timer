@@ -1,7 +1,7 @@
 # /etc/systemd/system/dotfiles-update-motd-apt-infos.timer
 
 [Unit]
-Description=dotfiles - update motd apt infos timer every 2h
+Description=dotfiles update motd apt infos timer every 2h
 
 [Timer]
 OnBootSec=1min
