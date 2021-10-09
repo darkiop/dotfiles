@@ -23,7 +23,7 @@ else
   glusterfs_arbiter_colored=$COLOR_RED$glusterfs_arbiter$COLOR_CLOSE$COLOR_YELLOW
 fi
 
-echo -e "$COLOR_BLUE"Proxmox Version"$COLOR_CLOSE   `echo -e "$COLOR_GREEN$(pveversion)$COLOR_CLOSE"`"
+echo -e "$COLOR_BLUE"Proxmox"$COLOR_CLOSE   `echo -e "$COLOR_GREEN$(pveversion)$COLOR_CLOSE"`"
 echo
 echo -e "$COLOR_LIGHT_BLUE"GlusterFS"$COLOR_CLOSE"
 echo
