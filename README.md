@@ -78,6 +78,7 @@ cat syslog | dategrep --end "12:15"
 - https://wiki.ubuntuusers.de/Bash/Prompt
 - https://www.linux.com/learn/enhancing-virtual-terminals-byobu
 - https://www.cheatsheet.wtf/bash/
+- https://shellmagic.xyz
 
 ## terminal
 - https://github.com/Eugeny/tabby
