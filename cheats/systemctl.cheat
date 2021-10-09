@@ -42,7 +42,10 @@ systemctl daemon-reload
 # list all available timers
 systemctl list-timers --all
 
-# show live log of unit
+# show all logs of service
+journalctl UNIT=<service>
+
+# show live log of service
 journalctl -f -u <service_active>
 
 # reboot to uefi
