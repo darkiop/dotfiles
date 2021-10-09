@@ -1,10 +1,9 @@
 #!/bin/bash
-#
+
 # TODO: install checkmk agent + plugins
 # TODO: install all without apps
 # TODO: fail2ban
 # TODO: sshd config
-# TODO: timesyncd config
 
 # -------------------------------------------------------------
 # always exit on error
@@ -156,9 +155,8 @@ function show_main_menu(){
   echo -e $COLOR_GREEN"[ darkiop/dotfiles ]"$COLOR_CLOSE
   echo
   printf "${COLOR_YELLOW}1)${COLOR_CLOSE} Install dotfiles\n"
-  printf "${COLOR_YELLOW}2)${COLOR_CLOSE} Re-Install dotfiles \n"
-  printf "${COLOR_YELLOW}3)${COLOR_CLOSE} Update from github\n"
-  printf "${COLOR_YELLOW}4)${COLOR_CLOSE} Setup a new System\n"
+  printf "${COLOR_YELLOW}2)${COLOR_CLOSE} Update from github\n"
+  printf "${COLOR_YELLOW}3)${COLOR_CLOSE} Setup a new System\n"
   echo
   printf "Please choose an option or ${COLOR_RED}x${COLOR_CLOSE} to exit: "
   read opt_main_menu
@@ -194,11 +192,10 @@ function show_submenu_system_setup(){
   echo -e $COLOR_GREEN"[ initial System Setup ]"$COLOR_CLOSE
   echo
   printf "${COLOR_YELLOW}1)${COLOR_CLOSE} all (updates, timezone & locales, add new user, install samba) \n"
-  printf "${COLOR_YELLOW}2)${COLOR_CLOSE} System Updates \n"
-  printf "${COLOR_YELLOW}3)${COLOR_CLOSE} Setup timezone & locales\n"
-  printf "${COLOR_YELLOW}4)${COLOR_CLOSE} Add a new User\n"
-  printf "${COLOR_YELLOW}5)${COLOR_CLOSE} Install Samba\n"
-  printf "${COLOR_YELLOW}6)${COLOR_CLOSE} Config timesyncd (NTP)\n"
+  printf "${COLOR_YELLOW}2)${COLOR_CLOSE} Setup timezone & locales\n"
+  printf "${COLOR_YELLOW}3)${COLOR_CLOSE} Add a new User\n"
+  printf "${COLOR_YELLOW}4)${COLOR_CLOSE} Install Samba\n"
+  printf "${COLOR_YELLOW}5)${COLOR_CLOSE} Config timesyncd (NTP)\n"
   echo
   printf "Please choose an option or ${COLOR_RED}x${COLOR_CLOSE} to exit: "
   read opt_sub_menu_system_setup
@@ -219,7 +216,7 @@ function cloneREPO() {
 }
 
 # -------------------------------------------------------------
-# Install dotfiles (all)
+# install: dotfiles (all)
 # -------------------------------------------------------------
 function instDOTF() {
   message yellow "+++ Install dotfiles (all) +++"
@@ -238,30 +235,11 @@ function instDOTF() {
   instBAT
   instDATEGREP
   instBASHRC
+  instSystemdAptInfoFilesTimer
 }
 
 # -------------------------------------------------------------
-# Re-Install: dotfiles
-# -------------------------------------------------------------
-function reinstall() {
-  ask red "Re-Install! Are you sure? ~/dotfiles will be deleted. (y/n):"
-  case $REPLY in
-    y|Y)
-      cd $HOME
-      message red "delete ~/dotfiles"
-      sudo rm -r $HOME/dotfiles
-      echo
-      message green "Re-Install ~/dotfiles (all)"
-      bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')" '' all
-    ;;
-    n|N|*)
-      show_main_menu
-    ;;
-  esac
-}
-
-# -------------------------------------------------------------
-# Install essential Apps
+# install: essential Apps
 # -------------------------------------------------------------
 function instAPPS() {
   message blue "[ Install essential Apps ]"
@@ -313,7 +291,7 @@ function instAPPS() {
 }
 
 # -------------------------------------------------------------
-# Install: lsd
+# install: lsd
 # config: ~/.config/lsd/config.yaml
 # github: https://github.com/Peltoche/lsd
 # -------------------------------------------------------------
@@ -357,7 +335,7 @@ function instLSD() {
 }
 
 # -------------------------------------------------------------
-# Install: git submodules
+# install: git submodules
 # see: .gitmodules
 # -------------------------------------------------------------
 function instGITSUBM() {
@@ -369,7 +347,7 @@ function instGITSUBM() {
 }
 
 # -------------------------------------------------------------
-# Install: vimrc-amix
+# install: vimrc-amix
 # -------------------------------------------------------------
 function instVIMRC() {
   message blue "[ Install vimrc ]"
@@ -378,7 +356,7 @@ function instVIMRC() {
 }
 
 # -------------------------------------------------------------
-# Install: navi
+# install: navi
 # https://github.com/denisidoro/navi
 # -------------------------------------------------------------
 function instNAVI() {
@@ -420,7 +398,7 @@ function instNAVI() {
 }
 
 # -------------------------------------------------------------
-# Install: dategrep
+# install: dategrep
 # https://github.com/mdom/dategrep
 # -------------------------------------------------------------
 function instDATEGREP() {
@@ -448,7 +426,7 @@ function instDATEGREP() {
 }
 
 # -------------------------------------------------------------
-# Install cheat.sh
+# install: cheat.sh
 # https://github.com/chubin/cheat.sh#installation
 # https://github.com/chubin/cheat.sh#command-line-client-chtsh
 # config: ~/.cht.sh/cht.sh.conf
@@ -469,7 +447,7 @@ function instCHEATSH() {
 }
 
 # -------------------------------------------------------------
-# Install: bat
+# install: bat
 # https://github.com/sharkdp/bat
 # https://ostechnix.com/bat-a-cat-clone-with-syntax-highlighting-and-git-integration/
 # -------------------------------------------------------------
@@ -587,7 +565,7 @@ function instBASHRC() {
 }
 
 # -------------------------------------------------------------
-# install system updates
+# install: system updates
 # -------------------------------------------------------------
 function instSYSUPDATES() {
   $apt update
@@ -627,7 +605,7 @@ function createUSER() {
 }
 
 # -------------------------------------------------------------
-# install samba and create home share
+# install: samba and create home share
 # -------------------------------------------------------------
 function instSAMBA() {
   check_if_user_is_root
@@ -692,6 +670,17 @@ function configNTP() {
 }
 
 # -------------------------------------------------------------
+# install: systemd motd apt info
+# -------------------------------------------------------------
+function instSystemdAptInfoFilesTimer() {
+  check_if_user_is_root
+  cp $HOME/dotfiles/motd/systemd/dotfiles-update-motd-apt-infos.service /etc/systemd/system/dotfiles-update-motd-apt-infos.service
+  cp $HOME/dotfiles/motd/systemd/dotfiles-update-motd-apt-infos.timer /etc/systemd/system/dotfiles-update-motd-apt-infos.timer
+  systemctl daemon-reload
+  systemctl enable dotfiles-update-motd-apt-infos.timer
+}
+
+# -------------------------------------------------------------
 # RUN THE SCRIPT
 # -------------------------------------------------------------
 if [[ $1 == 'all' ]]; then
@@ -753,15 +742,11 @@ else
           ;;
         esac
       ;;
-      2) # reinstall
-        reinstall
-        show_main_menu
-      ;;
-      3) # update from git
+      2) # update from git
         instUPDATEFROMGIT
         show_main_menu
       ;;
-      4) # show sub menu setup a new system
+      3) # show sub menu setup a new system
         show_submenu_system_setup
         case $opt_sub_menu_system_setup in
           1) # install all
@@ -772,23 +757,19 @@ else
             configNTP
             exit
           ;;
-          2) # system udates
-            instSYSUPDATES
-            show_main_menu
-          ;;
-          3) # setup timezone & locales
+          2) # setup timezone & locales
             instTIMEZONELOCALES
             show_main_menu
           ;;
-          4) # add a new user
+          3) # add a new user
             createUSER
             show_main_menu
           ;;
-          5) # install samba
+          4) # install samba
             instSAMBA
             show_main_menu
           ;;
-          6) # config timesyncd (NTP)
+          5) # config timesyncd (NTP)
             configNTP
             show_main_menu
           ;;
