@@ -674,14 +674,15 @@ function configNTP() {
 # install: systemd motd apt info
 # -------------------------------------------------------------
 function instSystemdAptInfoFilesTimer() {
-  check_if_user_is_root
-  message blue "[ install systemd timer for apt update (motd) ]"
-  cp $HOME/dotfiles/motd/systemd/dotfiles-update-motd-apt-infos.service /etc/systemd/system/dotfiles-update-motd-apt-infos.service
-  cp $HOME/dotfiles/motd/systemd/dotfiles-update-motd-apt-infos.timer /etc/systemd/system/dotfiles-update-motd-apt-infos.timer
-  systemctl daemon-reload
-  systemctl enable dotfiles-update-motd-apt-infos.timer
-  systemctl start dotfiles-update-motd-apt-infos.timer
-  bash $HOME/dotfiles/motd/systemd/apt-update-infos.sh
+  if [ "${EUID}" -eq 0 ]; then
+    message blue "[ install systemd timer for apt update (motd) ]"
+    cp $HOME/dotfiles/motd/systemd/dotfiles-update-motd-apt-infos.service /etc/systemd/system/dotfiles-update-motd-apt-infos.service
+    cp $HOME/dotfiles/motd/systemd/dotfiles-update-motd-apt-infos.timer /etc/systemd/system/dotfiles-update-motd-apt-infos.timer
+    systemctl daemon-reload
+    systemctl enable dotfiles-update-motd-apt-infos.timer
+    systemctl start dotfiles-update-motd-apt-infos.timer
+    bash $HOME/dotfiles/motd/systemd/apt-update-infos.sh
+  fi
 }
 
 # -------------------------------------------------------------
