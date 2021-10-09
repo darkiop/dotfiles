@@ -787,6 +787,7 @@ else
           5) # install samba
             instSAMBA
             show_main_menu
+          ;;
           6) # config timesyncd (NTP)
             configNTP
             show_main_menu
