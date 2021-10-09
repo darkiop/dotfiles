@@ -1,0 +1,9 @@
+# /etc/systemd/system/update-motd-apt-infos.service
+
+[Unit]
+Description=dotfiles - update motd apt infos
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/root/dotfiles/motd/apt-update-infos.sh
