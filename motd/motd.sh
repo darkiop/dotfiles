@@ -8,7 +8,7 @@ UPTIME_SECONDS=$((${UPTIME}%60))
 UPTIME_MIN=$((${UPTIME}/60%60))
 UPTIME_HOURS=$((${UPTIME}/3600%24))
 UPTIME_DAYS=$((${UPTIME}/86400))
-UPTIME_TEXT=`printf "%d UPTIME_DAYS, %02dh:%02dm:%02ds" "$UPTIME_DAYS" "$UPTIME_HOURS" "$UPTIME_MIN" "$UPTIME_SECONDS"`
+UPTIME_TEXT=`printf "%d $UPTIME_DAYS, %02dh:%02dm:%02ds" "$UPTIME_DAYS" "$UPTIME_HOURS" "$UPTIME_MIN" "$UPTIME_SECONDS"`
 
 # size of /
 USAGE_ROOT=$(df -h / | awk '/\// {print $(NF-1)}' | sed 's/%//g')
