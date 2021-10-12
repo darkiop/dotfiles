@@ -1,0 +1,7 @@
+% proxmox backup server
+
+# pbs: add datastore
+proxmox-backup-manager datastore create <datastore> <mnt-path>
+
+# pbs: remove datastore
+proxmox-backup-manager datastore remove <datastore>
