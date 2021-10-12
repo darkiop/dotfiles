@@ -18,20 +18,6 @@ find <dir> -type d -exec chmod 755 -R {} +
 # find dirs and set chmod 644
 find <dir> -type f -exec chmod 644 -R {} +
 
-# hardware overview
-lshw -short
-
-# hardware cpu
-lscpu
-
-# hardware usb
-lsusb
-
-# hardware list block devices
-lsblk
-
-# awk: the same than cut, but more flexible with delimiters, with more filters, and more computacionally complex
-
 # print only the 3rd column
 awk '{print $3}' <file>
 
@@ -121,6 +107,9 @@ echo -n "<string>" | sha256sum
 # list usb devices
 lsusb
 
+# list hardware, short version
+lshw -short
+
 # list hardware
 lshw
 
@@ -135,6 +124,9 @@ lsblk
 
 # list modules
 lsmod
+
+# analyse dir size and content size
+ncdu
 
 # yet antoher bechmark script - https://github.com/masonr/yet-another-bench-script
 curl -sL yabs.sh | bash
