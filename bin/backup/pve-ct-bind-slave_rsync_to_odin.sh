@@ -8,7 +8,7 @@
 DATE=$(date +%Y%m%d_%H%M%S)
 BACKUP_USER="darkiop"
 BACKUP_GROUP="darkiop"
-BACKUP_NAME="bind9"
+BACKUP_NAME="pve-ct-bind-slave"
 BACKUP_NAME_DATE="$BACKUP_NAME-$DATE"
 BACKUP_OBJECTS="/etc/bind/"
 BACKUP_PATH_LOCAL="/home/darkiop/backups/$BACKUP_NAME"
