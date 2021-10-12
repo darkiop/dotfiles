@@ -3,14 +3,14 @@
 # 1 Uhr     / 7 Uhr     / 13 Uhr     / 19 Uhr
 # 0 1 * * * / 0 7 * * * / 0 13 * * * / 0 19 * * *
 #
-# 0 19 * * * /root/dotfiles/bin/backup/pve-ct-bind-master_rsync_to_odin.sh
+# 0 19 * * * /root/dotfiles/bin/backup/pve-ct-bind-slave_rsync_to_odin.sh
 
 DATE=$(date +%Y%m%d_%H%M%S)
 BACKUP_USER="darkiop"
 BACKUP_GROUP="darkiop"
 BACKUP_NAME="pve-ct-bind-slave"
 BACKUP_NAME_DATE="$BACKUP_NAME-$DATE"
-BACKUP_OBJECTS="/etc/bind/"
+BACKUP_OBJECTS="/etc/bind/ /var/cache/bind/"
 BACKUP_PATH_LOCAL="/home/darkiop/backups/$BACKUP_NAME"
 BACKUP_PATH_REMOTE="/mnt/odin/backup"
 BACKUP_FILES=`find $BACKUP_PATH_LOCAL -name "$BACKUP_NAME-*.gz" | wc -l | sed 's/\ //g'`
