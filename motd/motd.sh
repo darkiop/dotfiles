@@ -73,7 +73,7 @@ EOF
   (*)
     if [ -x "$(command -v toilet)" ]; then
       echo -e "$COLOR_YELLOW"
-      toilet -f smblock -w 150 $HOSTNAME
+      toilet -f smblock -w 150 $HOSTNAME | sed 's/^/ /'
       echo -e "$COLOR_CLOSE"
     fi
   ;;
