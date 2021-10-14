@@ -93,6 +93,8 @@ alias update-dotfiles='cd ~/dotfiles && git pull && rl'
 # fast switch to dotfiles
 alias dotf='cd ~/dotfiles && git status'
 
+alias dotfu='dotf && gp && rl'
+
 # system update
 alias update='apt update && apt upgrade -y && apt autoremove -y && source ~/.bashrc'
 
