@@ -22,8 +22,10 @@ else
   glusterfs_arbiter_colored=$COLOR_RED$glusterfs_arbiter$COLOR_CLOSE$COLOR_YELLOW
 fi
 
+echo
 echo -e "$COLOR_LIGHT_BLUE"GlusterFS"$COLOR_CLOSE"
 echo
 echo -e $COLOR_YELLOW"Brick-1: "$glusterfs_brick1_colored" Brick-2: "$glusterfs_brick2_colored" Arbiter: "$glusterfs_arbiter_colored$COLOR_CLOSE
+echo
 
 #EOF
