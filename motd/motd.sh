@@ -103,11 +103,11 @@ fi
 # show updates
 if [ $MOTD_SHOW_APT_UPDATES=="y" ]; then
   if [ -f /usr/local/share/dotfiles/apt-updates-count ] && [ -f /usr/local/share/dotfiles/apt-updates-packages ]; then
-    echo -e "$COLOR_LIGHT_BLUE"APT"$COLOR_CLOSE"
+    echo -e "$COLOR_LIGHT_BLUE" APT"$COLOR_CLOSE"
     updates_count=$(</usr/local/share/dotfiles/apt-updates-count)
     updates_packages=$(</usr/local/share/dotfiles/apt-updates-packages)
     echo
-    echo -e $COLOR_YELLOW$updates_count$COLOR_GREEN" updates to install "$COLOR_YELLOW$updates_packages$COLOR_CLOSE
+    echo -e " "$COLOR_YELLOW$updates_count$COLOR_GREEN" updates to install "$COLOR_YELLOW$updates_packages$COLOR_CLOSE
   fi
 fi
 
