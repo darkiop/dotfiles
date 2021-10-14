@@ -2,22 +2,26 @@
 
 # iobroker infos
 if [ -f $(which iobroker) ]; then
-  # get version
+  
   iobversion=$(iobroker version)
   npmversion=$(npm -v)
   nodeversion=$(node -v)
-  # get host info
-  jscontroller_alive_state=$(iobroker state getvalue system.host.pve-vm-iobroker.alive | tail -n 1)
-  if [ $jscontroller_alive_state == 'true' ]; then
-    jscontroller_alive_state=$COLOR_GREEN'alive'
-  elif [ $jscontroller_alive_state == 'false' ]; then
-    jscontroller_alive_state=$COLOR_RED'alive'
+  
+  iobservice="$(systemctl is-active iobroker.service)"
+  if [ $iobservice = "active" ]; then
+    iobservice=$COLOR_GREEN'active'
+  elif [ $iobservice == 'inactive' ]; then
+    iobservice=$COLOR_RED'inactive'
+  elif [ $iobservice == 'failed' ]; then
+    iobservice=$COLOR_RED'failed'
   fi
-    echo
-    echo -e $COLOR_LIGHT_BLUE"js-controller: "$COLOR_GREEN$iobversion$COLOR_CLOSE / $jscontroller_alive_state$COLOR_CLOSE
-    echo -e $COLOR_LIGHT_BLUE"node: "$COLOR_GREEN$nodeversion$COLOR_CLOSE
-    echo -e $COLOR_LIGHT_BLUE"npm: "$COLOR_GREEN$npmversion$COLOR_CLOSE
-    echo
+
+  echo
+  echo -e "" $COLOR_LIGHT_BLUE"js-controller: "$COLOR_GREEN$iobversion$COLOR_CLOSE / $iobservice$COLOR_CLOSE
+  echo -e "" $COLOR_LIGHT_BLUE"node: "$COLOR_GREEN$nodeversion$COLOR_CLOSE
+  echo -e "" $COLOR_LIGHT_BLUE"npm: "$COLOR_GREEN$npmversion$COLOR_CLOSE
+  echo
+
 fi
 
 # iobroker process-check
