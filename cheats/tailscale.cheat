@@ -1,0 +1,19 @@
+% tailscale
+
+# status
+tailscale status
+
+# up
+tailscale up
+
+# down
+tailscale down
+
+# up with subnet routing
+tailscale up --advertise-routes=<subnet>
+
+# up with definition as exit-node
+tailscale up --advertise-exit-node
+
+# log
+journalctl -u tailscaled

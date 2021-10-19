@@ -1,4 +1,4 @@
-% proxmox, glusterfs
+% glusterfs
 
 # gstatus
 gstatus
@@ -14,5 +14,8 @@ gluster volume status <list-volumes> detail
 
 # show peer status
 gluster peer status
+
+# heal
+gluster volume heal <list-volumes> split-brain source-brick <host:brick> <file>
 
 $ list-volumes: gluster volume list

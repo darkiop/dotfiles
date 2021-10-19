@@ -24,5 +24,8 @@ mkp list
 # remove a package
 mkp remove <package>
 
-# check if check mk agent runs
+# show checkmk agent data
 telnet localhost 6556
+
+# run check_mk agent
+check_mk_agent 

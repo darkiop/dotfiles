@@ -75,3 +75,6 @@ ping <host> | while read pong; do echo "$(date): $pong"; done
 
 # show routing table
 route -n
+
+# add a route
+ip route add <target-net-cdir> via <gateway> dev <device>

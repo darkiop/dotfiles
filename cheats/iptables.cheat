@@ -1,0 +1,13 @@
+% iptables
+
+# list
+iptables -L
+
+# allow to port from ip
+iptables -A INPUT -p tcp --dport <port> -s <ip> -j ACCEPT
+
+# drop all on port xy
+iptables -A INPUT -p tcp --dport <port> -j DROP
+
+# save
+iptables-save > /etc/iptables/rules.v4 
