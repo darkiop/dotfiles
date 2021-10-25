@@ -60,6 +60,9 @@ if [[ -x $(which wg) ]]; then
   source ~/dotfiles/shells/alias-wireguard
 fi
 
+# load systemctl alias
+source ~/dotfiles/shells/alias-systemctl
+
 # load iobroker alias
 if [ -d /opt/iobroker ]; then
   source ~/dotfiles/shells/alias-iobroker

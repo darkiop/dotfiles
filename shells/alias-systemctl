@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# systemctl log ...
+systemctl() { 
+  if [[ "${1-}" == "log" ]]; then
+    /usr/bin/journalctl -u "${@:2}"; 
+  else
+    /usr/bin/systemctl "$@";
+  fi 
+}
