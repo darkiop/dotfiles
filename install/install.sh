@@ -376,8 +376,8 @@ function instNAVI() {
   arch=$(dpkg --print-architecture)
   case $arch in
     (amd64)
-      release="v2.13.1"
-      version="navi-v2.13.1-x86_64-unknown-linux-musl"
+      release="v2.17.0"
+      version="navi-"$release"-x86_64-unknown-linux-musl"
       downloadurl="https://github.com/denisidoro/navi/releases/download/$release/$version.tar.gz"
       cd $HOME/dotfiles/bin
       wget -O navi.tar.gz $downloadurl
@@ -385,8 +385,8 @@ function instNAVI() {
       rm navi.tar.gz
     ;;
     (armhf)
-      release="v2.13.1"
-      version="navi-v2.13.1-armv7-unknown-linux-musleabihf"
+      release="v2.17.0"
+      version="navi-"$release"-armv7-unknown-linux-musleabihf"
       downloadurl="https://github.com/denisidoro/navi/releases/download/$release/$version.tar.gz"
       cd $HOME/dotfiles/bin
       wget -O navi.tar.gz $downloadurl
@@ -458,8 +458,8 @@ function instBAT() {
   arch=$(dpkg --print-architecture)
   case $arch in
     (amd64)
-      release="v0.17.1"
-      version="bat-v0.17.1-x86_64-unknown-linux-gnu"
+      release="v0.18.3"
+      version="bat-"$release"-x86_64-unknown-linux-gnu"
       downloadurl="https://github.com/sharkdp/bat/releases/download/$release/$version.tar.gz"
       cd $HOME
       wget -O $HOME/bat.tar.gz $downloadurl
@@ -469,8 +469,8 @@ function instBAT() {
       rm -r $HOME/$version
     ;;
     (armhf)
-      release="v0.17.1"
-      version="bat-v0.17.1-arm-unknown-linux-gnueabihf"
+      release="v0.18.3"
+      version="bat-"$release"-arm-unknown-linux-gnueabihf"
       downloadurl="https://github.com/sharkdp/bat/releases/download/$release/$version.tar.gz"
       cd $HOME
       wget -O $HOME/bat.tar.gz $downloadurl
