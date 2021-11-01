@@ -1,7 +1,19 @@
-% proxmox backup server
+% pbs, proxmox backup server
 
 # pbs: add datastore
 proxmox-backup-manager datastore create <datastore> <mnt-path>
 
 # pbs: remove datastore
 proxmox-backup-manager datastore remove <datastore>
+
+# pbs: show contect of archive
+pxar list <file>.pxar
+
+# pbs: extract a pxar archive
+pxar extract <file>.pxar <target>
+
+# pbs: extract a pxar archive, but only *.conf files
+pxar extract <file>.pxar <target> --pattern '**/*.conf'
+
+# pbs: mount archive
+pxar mount <file>.pxar <mnt-path>
