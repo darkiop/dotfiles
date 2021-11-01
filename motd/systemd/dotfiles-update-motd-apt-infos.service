@@ -6,4 +6,4 @@ Description=dotfiles update motd apt infos
 [Service]
 Type=oneshot
 User=root
-ExecStart=bash -c "/root/dotfiles/motd/systemd/apt-update-infos.sh"
+ExecStart=/root/dotfiles/motd/systemd/apt-update-infos.sh
