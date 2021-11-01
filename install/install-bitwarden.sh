@@ -5,10 +5,10 @@
 vaultwardenUser=vaultwarden
 
 # https://github.com/dani-garcia/vaultwarden/releases/
-vaultwardenVersion="1.22.1"
+vaultwardenVersion="1.23.0"
 
 # https://github.com/dani-garcia/bw_web_builds/releases
-bwWebVersion="2.20.4b"
+bwWebVersion="2.24.1"
 
 # first check if root, when not define a alias with sudo
 # TODO: test with sudo
@@ -194,11 +194,11 @@ $chown -R vaultwarden:vaultwarden /var/lib/vaultwarden
 $chown vaultwarden:vaultwarden /etc/vaultwarden.env
 $chown vaultwarden:vaultwarden /etc/systemd/system/vaultwarden.service
 
-# enable vaultwarden.service
-systemctl enable vaultwarden.service
-
 # reload systemd daemon
 systemctl daemon-reload
+
+# enable vaultwarden.service
+systemctl enable vaultwarden.service
 
 # TODO
 # cp Backup to /var/lib/vaultwarden/data
