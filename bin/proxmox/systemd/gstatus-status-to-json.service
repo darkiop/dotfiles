@@ -1,0 +1,6 @@
+[Unit]
+Description=gstatus to json service
+[Service]
+Type=oneshot
+User=root
+ExecStart=/bin/sh -c "/usr/local/bin/gstatus -o json > /var/www/html/gstatus.json"
