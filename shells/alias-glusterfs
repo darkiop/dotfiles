@@ -5,3 +5,6 @@ if [[ $EUID -ne 0 ]]; then
   alias gstatus='sudo gstatus'
   alias gluster='sudo gluster'
 fi
+
+# volume info
+alias gvi='gstatus -ab && gluster volume heal glusterfs-1-volume info'
