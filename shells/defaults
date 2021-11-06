@@ -25,6 +25,7 @@ export HISTCONTROL=ignoreboth
 export HISTIGNORE='&:clear:ls:cd:[bf]g:exit:[ t\]*'
 export HISTSIZE=100000
 export HISTFILESIZE=2000000
+export HISTTIMEFORMAT=`echo -e ${COLOR_LIGHT_BLUE}%F %T $COLOR_RESET `
 shopt -s histappend                                                                # Append to the history file, don't overwrite it
 export PROMPT_COMMAND="history -a;history -c; history -r; $PROMPT_COMMAND"         # Save and reload history after each command finishes
 
