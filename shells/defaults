@@ -87,3 +87,9 @@ case "$TERM" in
 *)
 ;;
 esac
+
+#
+# CDPATH
+# https://www.oreilly.com/library/view/bash-cookbook/0596526784/ch16s05.html
+#
+export CDPATH='.:~/dotfiles'
