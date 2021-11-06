@@ -140,3 +140,8 @@ alias cd..='cd ..'
 # wol
 alias wol-thor='/usr/bin/wakeonlan -i 10.1.1.2 0c:9d:92:84:86:49'
 alias wol-pve02='/usr/bin/wakeonlan -i 192.168.1.51 0c:9d:92:84:86:49'
+
+# locate
+if [ -x /usr/bin/locate ]; then
+  alias loc='locate -A -i'
+fi
