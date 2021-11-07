@@ -10,9 +10,7 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+# byobu
+if [ -x "/usr/bin/byobu" ]; then
+  _byobu_sourced=1 . /usr/bin/byobu-launch 2>/dev/null || true
 fi
-
-_byobu_sourced=1 . /usr/bin/byobu-launch 2>/dev/null || true
