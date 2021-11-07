@@ -8,3 +8,9 @@ rndc status
 
 # show all entries of an nameserver
 dig @<dns-server> <domain> AXFR | grep -ie '^[a-z]' | awk '{print $1}' | sed 's/.$//' | sort -n | uniq
+
+# named / bind query log
+tail -f /var/log/named/queries.log
+
+# named / bind security log
+tail -f /var/log/named/security.log

@@ -77,9 +77,6 @@ tree -L 3 .
 # show all env variables
 env | sort
 
-# log named / bind9 query log
-tail -f /var/log/named/queries.log
-
 # set a new hostname (change /etc/hosts manually!)
 hostnamectl set-hostname <hostname>
 

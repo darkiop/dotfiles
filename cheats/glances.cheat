@@ -1,0 +1,13 @@
+% monitoring, glances
+
+# run glances in terminal
+glances
+
+# run glances webserver
+glances -w
+
+# run glances in server mode
+glances -s
+
+# connect to a glances server
+glances -c <glanes-server>
