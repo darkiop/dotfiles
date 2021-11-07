@@ -1,5 +1,5 @@
 # https://github.com/seebi/dircolors-solarized/blob/master/dircolors.ansi-dark
-# 
+#
 # Exact Solarized Dark color theme for the color GNU ls utility.
 # Designed for dircolors (GNU coreutils) 5.97
 #
@@ -119,6 +119,7 @@ TERM xterm-256color-italic
 TERM xterm-88color
 TERM xterm-color
 TERM xterm-debian
+TERM xterm-kitty
 TERM xterm-termite
 
 # EIGHTBIT, followed by '1' for on, '0' for off. (8-bit output)
