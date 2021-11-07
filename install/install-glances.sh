@@ -39,12 +39,12 @@ fi
 info "create a systemd unit file for glances-web"
 cat <<'EOF' > /etc/systemd/system/glances-web.service
 [Unit]
-Description = Glances in Web Server Mode
-After = network.target
+Description=Glances in Web Server Mode
+After=network.target
 [Service]
-ExecStart = /usr/bin/glances  -w  -t  5
+ExecStart=/usr/bin/glances -w -t 5
 [Install]
-WantedBy = multi-user.target
+WantedBy=multi-user.target
 EOF
 
 # reload systemd daemon
