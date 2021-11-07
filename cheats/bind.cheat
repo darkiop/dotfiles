@@ -1,7 +1,10 @@
-% bind
+% bind, named
 
 # reload config
 rndc reconfig
 
 # named statusrn
 rndc status
+
+# show all entries of an nameserver
+dig @<dns-server> <domain> AXFR | grep -ie '^[a-z]' | awk '{print $1}' | sed 's/.$//' | sort -n | uniq
