@@ -19,5 +19,13 @@ interactive = auto
 ui = true
 pager = true
 
+[color "status"]
+added = green
+changed = red bold
+untracked = magenta bold
+
+[color "branch"]
+remote = yellow
+
 [submodule]
 recurse = true
