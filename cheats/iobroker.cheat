@@ -45,6 +45,9 @@ iobroker restore <backup name or path>
 # validate a specified backup
 iobroker validate <backup name or path>
 
+# admin.0 ip
+iobroker set admin.0 --bind 0.0.0.0
+
 # execute the installation fixer script, this updates your ioBroker installation
 iobroker fix
 

@@ -106,6 +106,6 @@ pveperf
 tar -I zstd -xvf <file>
 
 # test the watchdog, first stop watchdog-mux (systemctl stop watchdog-mux.service)
-echo 1 > /dev/watchdog
+echo "1" > /dev/watchdog
 
 $ images: pveam list <storage>
