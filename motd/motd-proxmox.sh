@@ -1,5 +1,11 @@
 #!/bin/bash
 
+
+#1
+# gstatus -ab | grep -A3 'Group 1' | grep '192.168.1.50' | awk '{print $2}' | sed 's/(//g' | sed 's/)//g'
+# gstatus -ab | grep -A3 'Group 1' | grep '192.168.1.51' | awk '{print $2}' | sed 's/(//g' | sed 's/)//g'
+# gstatus -ab | grep -A3 'Group 1' | grep '192.168.1.40' | awk '{print $2}' | sed 's/(//g' | sed 's/)//g'
+
 # gfs status
 glusterfs_brick1=$(gluster volume heal glusterfs-1-volume info | grep -A 1 '192.168.1.50' | tail -n 1 | awk '{print $2}')
 glusterfs_brick2=$(gluster volume heal glusterfs-1-volume info | grep -A 1 '192.168.1.51' | tail -n 1 | awk '{print $2}')
