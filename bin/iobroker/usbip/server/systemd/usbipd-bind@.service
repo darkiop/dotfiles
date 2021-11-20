@@ -1,6 +1,6 @@
 # https://github.com/darkiop/doku-iobroker-ha
 #
-# /lib/systemd/system/usbipd-bind@.service
+# /etc/systemd/system/usbipd-bind@.service
 #
 # systemctl enable usbipd-bind@1-1.2
 

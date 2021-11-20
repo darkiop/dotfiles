@@ -1,0 +1,20 @@
+# https://github.com/darkiop/doku-iobroker-ha
+#
+# /etc/systemd/system/socat-loki-remote-restart-iobroker-adapter.service
+#
+# mkdir /etc/systemd/system/custom.target.wants
+# systemctl enable socat-loki-remote-restart-iobroker-adapter.service
+# systemctl set-default custom.target
+#
+# test: systemctl isolate custom.target
+
+[Unit]
+Description=restarts scoat services & smartmeter adapters
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=ssh darkiop@pve-vm-iobroker bash -c "'sudo service usbip-client restart'"
+
+[Install]
+WantedBy=custom.target
