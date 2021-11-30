@@ -78,3 +78,6 @@ route -n
 
 # add a route
 ip route add <target-net-cdir> via <gateway> dev <device>
+
+# network monitor
+bmon

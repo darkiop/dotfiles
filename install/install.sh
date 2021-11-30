@@ -288,7 +288,8 @@ function instAPPS() {
   lshw \
   lm-sensors \
   inxi \
-  unattended-upgrades
+  unattended-upgrades \
+  bmon
 }
 
 # -------------------------------------------------------------
