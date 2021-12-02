@@ -1,0 +1,4 @@
+% rsync
+
+# explicitly copy <src> to <dest> via ssh
+rsync -auv --info=progress2 <source> <user>@<host>:<path>
