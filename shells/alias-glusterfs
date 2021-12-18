@@ -7,4 +7,6 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # volume info
-alias gvi='gstatus -ab && gluster volume heal glusterfs-1-volume info'
+alias gvi='gstatus -ab && gluster volume heal gfs-pve info'
+
+alias gvi-watch="watch -n1 'sudo gstatus -ab && sudo gluster volume heal gfs-pve info'"
