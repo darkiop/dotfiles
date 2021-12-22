@@ -36,8 +36,14 @@ fi
 # load navi alias if navi is installed
 if [ -x $HOME/dotfiles/bin/navi ]; then
   source $HOME/dotfiles/shells/alias-navi
-  # bash widget (STRG + G runs navi)
-  eval "$(navi widget bash)"
+
+  # load widget (STRG + G)
+  if [ $SHELL = "/bin/bash" ]; then
+    eval "$(navi widget bash)"
+  elif [ $SHELL = "/bin/zsh" ]; then
+    eval "$(navi widget zsh)"
+  fi
+
 fi
 
 # load docker alias
@@ -61,7 +67,7 @@ if [[ -x $(which wg) ]]; then
 fi
 
 # load systemctl alias
-source ~/dotfiles/shells/alias-systemctl
+#source ~/dotfiles/shells/alias-systemctl
 
 # load iobroker alias
 if [ -d /opt/iobroker ]; then
@@ -84,10 +90,6 @@ fi
 if [ -f ~/dotfiles/config/custom-keyboard-bindings ]; then
   source ~/dotfiles/config/custom-keyboard-bindings
 fi
-
-# new line after output
-# https://stackoverflow.com/questions/32854108/how-to-set-a-empty-line-before-output-in-bash-shell
-#trap 'echo' DEBUG
 
 # clear screen & show motd
 clear
