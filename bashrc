@@ -39,9 +39,9 @@ if [ -x $HOME/dotfiles/bin/navi ]; then
 
   # load widget (STRG + G)
   if [ $SHELL = "/bin/bash" ]; then
-    eval "$(navi widget bash)"
+    eval "$(navi widget bash)" 2>&1> /dev/null
   elif [ $SHELL = "/bin/zsh" ]; then
-    eval "$(navi widget zsh)"
+    eval "$(navi widget zsh)" 2>&1> /dev/null
   fi
 
 fi

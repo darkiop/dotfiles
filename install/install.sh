@@ -363,6 +363,7 @@ function instVIMRC() {
 # -------------------------------------------------------------
 function instNAVI() {
   message blue "[ Install navi]"
+  
   # first check/install fzf
   if [ -f /home/darkiop/dotfiles/modules/fzf/README.md ]; then
     # inst fzf (git submodule)
@@ -377,7 +378,7 @@ function instNAVI() {
   arch=$(dpkg --print-architecture)
   case $arch in
     (amd64)
-      release="v2.17.0"
+      release="v2.18.0"
       version="navi-"$release"-x86_64-unknown-linux-musl"
       downloadurl="https://github.com/denisidoro/navi/releases/download/$release/$version.tar.gz"
       cd $HOME/dotfiles/bin
@@ -386,7 +387,7 @@ function instNAVI() {
       rm navi.tar.gz
     ;;
     (armhf)
-      release="v2.17.0"
+      release="v2.18.0"
       version="navi-"$release"-armv7-unknown-linux-musleabihf"
       downloadurl="https://github.com/denisidoro/navi/releases/download/$release/$version.tar.gz"
       cd $HOME/dotfiles/bin
@@ -395,8 +396,13 @@ function instNAVI() {
       rm navi.tar.gz
     ;;
   esac
-  # bash widget (STRG + G)
-  eval "$(navi widget bash)" 2>&1> /dev/null
+
+  # load widget (STRG + G)
+  if [ $SHELL = "/bin/bash" ]; then
+    eval "$(navi widget bash)" 2>&1> /dev/null
+  elif [ $SHELL = "/bin/zsh" ]; then
+    eval "$(navi widget zsh)" 2>&1> /dev/null
+  fi
 }
 
 # -------------------------------------------------------------
