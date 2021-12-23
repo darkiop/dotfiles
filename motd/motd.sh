@@ -89,8 +89,10 @@ echo -e " $COLOR_BLUE"ip"$COLOR_CLOSE        `echo -e "$COLOR_GREEN$get_ip_host$
  $COLOR_BLUE"/home"$COLOR_CLOSE     `echo -e "$COLOR_GREEN$HOME_USAGE$COLOR_CLOSE"`"
 
 # motd for proxmox
-if [ -x /usr/bin/pveversion ]; then
-  source ~/dotfiles/motd/motd-proxmox.sh
+if [ "${EUID}" -ne 0 ]; then
+  if [ -x /usr/bin/pveversion ]; then
+    source ~/dotfiles/motd/motd-proxmox.sh
+  fi
 fi
 
 # motd by hostname
