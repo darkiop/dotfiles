@@ -52,8 +52,10 @@ if [[ -x $(which docker) ]]; then
 fi
 
 # load proxmox alias
-if [[ -x $(which pveversion) ]]; then
-  source ~/dotfiles/shells/alias-proxmox
+if [ "${EUID}" -ne 0 ]; then
+  if [[ -x $(which pveversion) ]]; then
+    source ~/dotfiles/shells/alias-proxmox
+  fi
 fi
 
 # load glusterfs alias
