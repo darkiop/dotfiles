@@ -23,7 +23,6 @@ pathadd "$HOME/dotfiles/modules/fzf/bin"
 pathadd "$HOME/.local/bin"
 pathadd "$HOME/.cargo/bin"
 
-# Distribute bashrc into smaller, more specific files
 source $HOME/dotfiles/shells/defaults
 source $HOME/dotfiles/shells/alias
 source $HOME/dotfiles/shells/prompt
@@ -34,7 +33,7 @@ if [ -x /usr/bin/git ]; then
 fi
 
 # load navi alias if navi is installed
-if [ -x $HOME/dotfiles/bin/navi ]; then
+if [[ -x $(which navi) ]]; then
   source $HOME/dotfiles/shells/alias-navi
 
   # load widget (STRG + G)
@@ -43,7 +42,6 @@ if [ -x $HOME/dotfiles/bin/navi ]; then
   elif [ $SHELL = "/bin/zsh" ]; then
     eval "$(navi widget zsh)" 2>&1> /dev/null
   fi
-
 fi
 
 # load docker alias
@@ -66,9 +64,6 @@ if [[ -x $(which wg) ]]; then
   source ~/dotfiles/shells/alias-wireguard
 fi
 
-# load systemctl alias
-#source ~/dotfiles/shells/alias-systemctl
-
 # load iobroker alias
 if [ -d /opt/iobroker ]; then
   source ~/dotfiles/shells/alias-iobroker
@@ -76,19 +71,6 @@ if [ -d /opt/iobroker ]; then
   if [ -f /root/.iobroker/npm_command_fix ]; then
     source /root/.iobroker/npm_command_fix
   fi
-fi
-
-# create a local settings file
-if [ ! -f ~/dotfiles/config/local_dotfiles_settings ]; then
-  touch ~/dotfiles/config/local_dotfiles_settings
-  echo "# local settings for dotfiles, e.g. variables" > ~/dotfiles/config/local_dotfiles_settings
-else
-  source ~/dotfiles/config/local_dotfiles_settings
-fi
-
-# load custom keybindings
-if [ -f ~/dotfiles/config/custom-keyboard-bindings ]; then
-  source ~/dotfiles/config/custom-keyboard-bindings
 fi
 
 # clear screen & show motd

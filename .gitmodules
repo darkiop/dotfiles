@@ -1,10 +1,5 @@
 # https://git-scm.com/book/de/v2/Git-Tools-Submodule
+
 [submodule "modules/vimrc-amix"]
 	path = modules/vimrc-amix
 	url = https://github.com/amix/vimrc
-[submodule "modules/fzf"]
-	path = modules/fzf
-	url = https://github.com/junegunn/fzf
-[submodule "modules/dategrep"]
-	path = modules/dategrep
-	url = https://github.com/mdom/dategrep

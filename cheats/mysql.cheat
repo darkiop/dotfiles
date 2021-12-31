@@ -3,8 +3,11 @@
 # Create database
 mysql -u <user> -p -e "create database <database> character set UTF8mb4 collate utf8mb4_bin"
 
-# Export databse
-mysqldump -u <user> -p <database> > <path>
+# Backup all Databases
+mysqldump --all-databases --single-transaction --quick --lock-tables=false > full-backup-$(date +%F).sql -u root -p
+
+# Backup a specific Database
+mysqldump -u <user> -p <db1> <db2> > <target-sql-file>
 
 # Import database
-mysql -u <user> -p <database> <path>
+mysql -u <user> -p <database> <source-sql-file>

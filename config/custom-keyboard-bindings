@@ -1,2 +1,0 @@
-# STRG + s = git status
-bind -x '"\C-s":git status'

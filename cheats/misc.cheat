@@ -127,3 +127,9 @@ ncdu
 
 # yet antoher bechmark script - https://github.com/masonr/yet-another-bench-script
 curl -sL yabs.sh | bash
+
+# set language en_US
+localectl set-locale LANG=en_US.UTF-8
+
+# set language de_DE
+localectl set-locale LANG=de_DE.UTF-8

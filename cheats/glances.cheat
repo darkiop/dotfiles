@@ -1,13 +1,19 @@
 % monitoring, glances
 
-# run glances in terminal
+# btop
+
+# htop
+
+# ethstatus
+
+# glances
 glances
 
-# run glances webserver
+# glances: run glances webserver
 glances -w
 
-# run glances in server mode
+# glances: run glances in server mode
 glances -s
 
-# connect to a glances server
+# glances: connect to a glances server
 glances -c <glanes-server>
