@@ -33,9 +33,8 @@ if [ -x /usr/bin/git ]; then
 fi
 
 # load navi alias if navi is installed
-if [[ -x $(which navi) ]]; then
+if [ -x /usr/local/bin/navi ]; then
   source $HOME/dotfiles/shells/alias-navi
-
   # load widget (STRG + G)
   if [ $SHELL = "/bin/bash" ]; then
     eval "$(navi widget bash)" 2>&1> /dev/null
@@ -72,6 +71,15 @@ if [ -d /opt/iobroker ]; then
     source /root/.iobroker/npm_command_fix
   fi
 fi
+
+ # enable bash completion in interactive shells
+ if ! shopt -oq posix; then
+   if [ -f /usr/share/bash-completion/bash_completion ]; then
+     . /usr/share/bash-completion/bash_completion
+   elif [ -f /etc/bash_completion ]; then
+     . /etc/bash_completion
+   fi
+ fi
 
 # clear screen & show motd
 clear
