@@ -219,7 +219,7 @@ function instDOTF() {
   loadColors
   check_if_git_is_installed
   cloneREPO
-  instGITSUBM
+  #instGITSUBM
   instBASHCOMPLE
   instBASHRC
 }
