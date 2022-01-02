@@ -1,11 +1,3 @@
-dotfiles.code-workspace
 config/local_dotfiles_settings
 bin/cht.sh
-bin/navi
-bin/lsd
-bin/bat
-bin/dategrep
 modules
-motd/apt-updates-count
-motd/apt-updates-packages
-_gitignore
