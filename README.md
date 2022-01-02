@@ -15,6 +15,7 @@ bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/i
 
 ```
 bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')" '' all
+bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')" '' all load-bashrc
 ```
 
 ### clone the repo
