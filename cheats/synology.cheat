@@ -5,3 +5,12 @@ synoservicectl --restart <service>
 
 # unmount encrypted shared folder
 synoshare --enc_unmount <folder>
+
+# get user stats
+synouser --get <user>
+
+# enable a user
+synouser --modify <user> "<full name>" 0 "<email>"
+
+# disable a user
+synouser --modify <user> "<full name>" 1 "<email>"
