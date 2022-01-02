@@ -8,20 +8,20 @@ dotfiles for bash
 ### with menu
 
 ```
-bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')"
+bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install.sh')"
 ```
 
 ### install all without questions
 
 ```
-bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')" '' all
-bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install/install.sh')" '' all load-bashrc
+bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install.sh')" '' all
+bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install.sh')" '' all load-bashrc
 ```
 
 ### clone the repo
 ```
 git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
-bash $HOME/dotfiles/install/install.sh
+bash $HOME/dotfiles/install.sh
 ```
 
 ## FEATURES
