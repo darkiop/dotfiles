@@ -64,7 +64,7 @@ if [ -x ~/dotfiles/bin/bat ]; then
 fi
 
 # ls & lsd shortcuts
-if [ -x ~/dotfiles/bin/lsd ]; then
+if [ -x /usr/bin/lsd ]; then
   alias ls='lsd'
   alias l='lsd -lh'
   alias ll='lsd -lah'
