@@ -254,10 +254,10 @@ function instBASHRC() {
   echo
 
   # byobu config
-  if [ -L .byobu ] ; then
-    if [ ! -e .byobu ] ; then
+  if [ -L ~/.byobu ] ; then
+    if [ ! -e ~/.byobu ] ; then
         # remove > broken
-        rm .byobu
+        rm ~/.byobu
         echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" .byobu "$COLOR_GREEN"symlink ..."$COLOR_CLOSE
         echo "create: ~/.byobu"
         ln -s ~/dotfiles/config/byobu ~/.byobu
