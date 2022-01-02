@@ -206,7 +206,6 @@ function instBASHCOMPLE() {
   else
     $HOME/.local/bin/activate-global-python-argcomplete --dest=$HOME/dotfiles/bash_completion.d
   fi
-
 }
 
 # -------------------------------------------------------------
