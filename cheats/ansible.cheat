@@ -1,0 +1,22 @@
+% ansible
+
+# run with inventory file
+ansible-playbook main.yml -i hosts
+
+# run only tasks with the definied tag
+ansible-playbook main.yml -i hosts --tags <tag>
+
+# limit to a special host
+ansible-playbook main.yml -i hosts -l <host>
+
+# set a var manualy
+ansible-playbook main.yml -i hosts -e <variable>=<value>
+
+# install roles from ansible galaxy
+ansible-galaxy install -r roles/requirements.yml
+
+# vault: encrypt a file
+ansible-vault encrypt <file>
+
+# vault: decrypt a file
+ansible-vault decrypt <file>
