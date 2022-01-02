@@ -58,12 +58,12 @@ function psg() {
   fi
 }
 
-# bat alias
-if [ -x ~/dotfiles/bin/bat ]; then
+# bat
+if [ -x /usr/bin/bat ]; then
   alias cat='bat'
 fi
 
-# ls & lsd shortcuts
+# ls or lsd
 if [ -x /usr/bin/lsd ]; then
   alias ls='lsd'
   alias l='lsd -lh'
@@ -89,14 +89,13 @@ alias reload='source ~/.bashrc'
 
 # dotfiles update
 alias update-dotfiles='cd ~/dotfiles && git pull && rl'
+alias dotfu='dotf && gp && rl'
 
 # fast switch to dotfiles
 alias dotf='cd ~/dotfiles && git status'
 
-alias dotfu='dotf && gp && rl'
-
 # system update
-alias update='apt update && apt upgrade -y && apt autoremove -y && source ~/.bashrc'
+alias sysup='apt update && apt upgrade -y && apt autoremove -y && source ~/.bashrc'
 
 # syslog tail -f / messages tail -f
 if [[ $EUID -ne 0 ]]; then
