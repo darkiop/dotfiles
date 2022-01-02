@@ -81,6 +81,11 @@ fi
    fi
  fi
 
+# autoupdate dotfiles after 10 logins
+if [ -x $HOME/dotfiles/autoupdate.sh ]; then
+  bash $HOME/dotfiles/autoupdate.sh
+fi
+
 # clear screen & show motd
 clear
 source ~/dotfiles/motd/motd.sh
