@@ -108,4 +108,7 @@ tar -I zstd -xvf <file>
 # test the watchdog, first stop watchdog-mux (systemctl stop watchdog-mux.service)
 echo "1" > /dev/watchdog
 
+# update certs
+pvecm updatecerts -f
+
 $ images: pveam list <storage>
