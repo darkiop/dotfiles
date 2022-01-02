@@ -144,10 +144,8 @@ function show_main_menu(){
   echo
   echo -e $COLOR_GREEN"[ darkiop/dotfiles ]"$COLOR_CLOSE
   echo
-  printf "${COLOR_YELLOW}1)${COLOR_CLOSE} Install all\n"
+  printf "${COLOR_YELLOW}1)${COLOR_CLOSE} Install dotfiles (all)\n"
   printf "${COLOR_YELLOW}2)${COLOR_CLOSE} Install git submodules\n"
-  printf "${COLOR_YELLOW}3)${COLOR_CLOSE} Install vimrc\n"
-  printf "${COLOR_YELLOW}4)${COLOR_CLOSE} Install cheat.sh\n"
   printf "${COLOR_YELLOW}5)${COLOR_CLOSE} Install .bashrc\n"
   echo
   printf "Please choose an option or ${COLOR_RED}x${COLOR_CLOSE} to exit: "
@@ -164,24 +162,8 @@ function cloneREPO() {
     cd $HOME/dotfiles
     git config pull.rebase false
   else
-    message yellow "dotfiles directory already exist. Do nothing and exit."
+    message yellow "dotfiles directory already exist."
   fi
-}
-
-# -------------------------------------------------------------
-# install: dotfiles (all)
-# -------------------------------------------------------------
-function instDOTF() {
-  message yellow "+++ Install dotfiles (all) +++"
-  check_if_sudo_is_installed
-  check_if_curl_is_installed
-  loadColors
-  check_if_git_is_installed
-  cloneREPO
-  instGITSUBM
-  instVIMRC
-  instCHEATSH
-  instBASHRC
 }
 
 # -------------------------------------------------------------
@@ -197,33 +179,49 @@ function instGITSUBM() {
 }
 
 # -------------------------------------------------------------
-# install: vimrc-amix
+# Install bash_completition.d
 # -------------------------------------------------------------
-function instVIMRC() {
-  message blue "[ Install vimrc ]"
-  bash $HOME/dotfiles/modules/vimrc-amix/install_awesome_parameterized.sh $HOME/dotfiles/modules/vimrc-amix $USER
-  echo
+function instBASHCOMPLE() {
+
+  if [ -L $HOME/.bash_completion.d ] ; then
+    if [ ! -e $HOME/.bash_completion.d ] ; then
+        # remove > broken
+        rm $HOME/.bash_completion.d
+        echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" bash_completion.d "$COLOR_GREEN"symlink ..."$COLOR_CLOSE
+        echo "create: ~/.byobu"
+        ln -s ~/dotfiles/bash_completion.d ~/.bash_completion.d
+    fi
+  else
+    # link not exist
+    echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" bash_completion.d "$COLOR_GREEN"symlink ..."$COLOR_CLOSE
+    echo "create: ~/.byobu"
+    ln -s ~/dotfiles/bash_completion.d ~/.bash_completion.d
+  fi
+
+  # argcomplete
+  # https://github.com/kislyuk/argcomplete
+  if [[ ! -x /usr/local/bin/activate-global-python-argcomplete ]]; then
+    pip3 install argcomplete
+    $HOME/.local/bin/activate-global-python-argcomplete --dest=$HOME/dotfiles/bash_completion.d
+  else
+    $HOME/.local/bin/activate-global-python-argcomplete --dest=$HOME/dotfiles/bash_completion.d
+  fi
+
 }
 
 # -------------------------------------------------------------
-# install: cheat.sh
-# https://github.com/chubin/cheat.sh#installation
-# https://github.com/chubin/cheat.sh#command-line-client-chtsh
-# config: ~/.cht.sh/cht.sh.conf
+# install: dotfiles (all)
 # -------------------------------------------------------------
-function instCHEATSH() {
-  message blue "[ Install cheat.sh]"
-  curl https://cht.sh/:cht.sh > $HOME/dotfiles/bin/cht.sh
-  chmod +x $HOME/dotfiles/bin/cht.sh
-  echo
-  if [ ! -d $HOME/.cht.sh ]; then
-    message yellow "create directory ~/.cht.sh"
-    mkdir $HOME/.cht.sh
-  fi
-  if [ ! -L $HOME/.cht.sh/cht.sh.conf ] ; then
-    message yellow "create symlink ~/.cht.sh/cht.sh.conf"
-    ln -s $HOME/dotfiles/config/cht.sh.conf $HOME/.cht.sh/cht.sh.conf
-  fi
+function instDOTF() {
+  message yellow "+++ Install dotfiles (all) +++"
+  check_if_sudo_is_installed
+  check_if_curl_is_installed
+  loadColors
+  check_if_git_is_installed
+  cloneREPO
+  instGITSUBM
+  instBASHCOMPLE
+  instBASHRC
 }
 
 # -------------------------------------------------------------
@@ -238,7 +236,6 @@ function instBASHRC() {
 
   # delete old symlinks
   echo -e $COLOR_GREEN"delete"$COLOR_CLOSE$COLOR_YELLOW" old "$COLOR_GREEN"symlinks ..."$COLOR_CLOSE
-  echo
   for file in $files; do
     if [ -f ~/.$file ]; then
       echo "delete: ~/.$file"
@@ -250,16 +247,35 @@ function instBASHRC() {
 
   # new symlinks for files
   echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" new "$COLOR_GREEN"symlinks ..."$COLOR_CLOSE
-  echo
   for file in $files; do
       echo "create: ~/.$file"
       ln -s $dir/$file ~/.$file
   done
 
-  # byobu config
-  ln -s config/byobu ~/.byobu
+  echo
 
-  # load dotfiles
+  # byobu config
+  if [ -L .byobu ] ; then
+    if [ ! -e .byobu ] ; then
+        # remove > broken
+        rm .byobu
+        echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" .byobu "$COLOR_GREEN"symlink ..."$COLOR_CLOSE
+        echo "create: ~/.byobu"
+        ln -s ~/dotfiles/config/byobu ~/.byobu
+    fi
+  else
+    # link not exist
+    echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" .byobu "$COLOR_GREEN"symlink ..."$COLOR_CLOSE
+    echo "create: ~/.byobu"
+    ln -s ~/dotfiles/config/byobu ~/.byobu
+  fi
+  echo
+}
+
+# -------------------------------------------------------------
+# load .bashrc
+# -------------------------------------------------------------
+function loadBASHRC() {
   echo
   echo -e "$COLOR_YELLOW[ dotfiles installed ]$COLOR_CLOSE"
   echo -e "$COLOR_RED"
@@ -282,6 +298,9 @@ function instBASHRC() {
 if [[ $1 == 'all' ]]; then
   # skip menu and install all
   instDOTF
+  if [[ $2 == 'load-bashrc' ]]; then
+    loadBASHRC
+  fi
 else
   show_main_menu
   if [ $opt_main_menu = '' ]; then
@@ -296,15 +315,7 @@ else
         instGITSUBM
         show_main_menu
       ;;
-      3) # install vimrc
-        instVIMRC
-        show_main_menu
-      ;;
-      4) # install cheat.sh
-        instCHEATSH
-        show_main_menu
-      ;;
-      5) # install .bashrc
+      3) # install .bashrc
         instBASHRC
       ;;
       x|X) # exit

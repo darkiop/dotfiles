@@ -1,3 +1,3 @@
 config/local_dotfiles_settings
 bin/cht.sh
-modules
+bash_completion.d/python-argcomplete
