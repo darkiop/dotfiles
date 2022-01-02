@@ -182,7 +182,7 @@ function instGITSUBM() {
 # Install bash_completition.d
 # -------------------------------------------------------------
 function instBASHCOMPLE() {
-
+  message blue "[ Install bash_completitions ]"
   if [ -L $HOME/.bash_completion.d ] ; then
     if [ ! -e $HOME/.bash_completion.d ] ; then
         # remove > broken
