@@ -80,14 +80,16 @@ CHECK_IF_SUDO_IS_ACTIVE () {
   #else
   #  return 1 # false
   #fi
-  if sudo -vn 2> /dev/null; then
-    return 0 # true
-  else
+  if [[ $EUID -eq 0 ]]; then
     return 1 # false
+  else
+    if sudo -vn 2> /dev/null; then
+      return 0 # true
+    else
+      return 1 # false
+    fi
   fi
 }
-
-
 
 # check if ssh session
 # https://unix.stackexchange.com/questions/9605/how-can-i-detect-if-the-shell-is-controlled-from-ssh
