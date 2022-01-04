@@ -70,17 +70,24 @@ function GIT_PROMPT () {
 
 # check sudo
 CHECK_IF_SUDO_IS_ACTIVE () {
-  if [ "${EUID}" -ne 0 ]; then
-    CAN_I_RUN_SUDO=$(sudo -n uptime 2>&1 | grep "load" | wc -l)
-    if [ ${CAN_I_RUN_SUDO} -gt 0 ]; then
-      return 0 # true
-    else
-      return 1 # false
-    fi
+  #if [ "${EUID}" -ne 0 ]; then
+  #  CAN_I_RUN_SUDO=$(sudo -n uptime 2>&1 | grep "load" | wc -l)
+  #  if [ ${CAN_I_RUN_SUDO} -gt 0 ]; then
+  #    return 0 # true
+  #  else
+  #    return 1 # false
+  #  fi
+  #else
+  #  return 1 # false
+  #fi
+  if sudo -vn 2> /dev/null; then
+    return 0 # true
   else
     return 1 # false
   fi
 }
+
+
 
 # check if ssh session
 # https://unix.stackexchange.com/questions/9605/how-can-i-detect-if-the-shell-is-controlled-from-ssh
