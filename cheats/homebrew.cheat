@@ -1,0 +1,10 @@
+% macos homebrew
+
+# clean homebrew cache
+brew cleanup
+
+# update local brew database
+yes | brew update
+
+# upgrade installs
+yes | brew upgrade
