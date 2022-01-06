@@ -64,7 +64,7 @@ if [ -x /usr/bin/bat ]; then
 fi
 
 # ls or lsd
-if [ -x /usr/bin/lsd ]; then
+if [ -x /usr/bin/lsd ] || [ -x /usr/local/bin/lsd ]; then
   alias ls='lsd'
   alias l='lsd -lh'
   alias ll='lsd -lah'
