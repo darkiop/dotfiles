@@ -197,18 +197,14 @@ function instBASHCOMPLE() {
 }
 
 # -------------------------------------------------------------
-# install: dotfiles (all)
+# install: vimrc-amix
 # -------------------------------------------------------------
-function instDOTF() {
-  message yellow "+++ Install dotfiles (all) +++"
-  check_if_sudo_is_installed
-  check_if_curl_is_installed
-  loadColors
-  check_if_git_is_installed
-  cloneREPO
-  instBASHCOMPLE
-  instBASHRC
+function instVIMRC() {
+  message blue "[ Install vimrc ]"
+  bash $HOME/dotfiles/modules/vimrc/install_awesome_parameterized.sh $HOME/dotfiles/modules/vimrc $USER
+  echo
 }
+
 
 # -------------------------------------------------------------
 # Install .bashrc
@@ -276,6 +272,21 @@ function loadBASHRC() {
       exit
     ;;
   esac
+}
+
+# -------------------------------------------------------------
+# install: dotfiles (all)
+# -------------------------------------------------------------
+function instDOTF() {
+  message yellow "+++ Install dotfiles (all) +++"
+  check_if_sudo_is_installed
+  check_if_curl_is_installed
+  loadColors
+  check_if_git_is_installed
+  cloneREPO
+  instBASHCOMPLE
+  instVIMRC
+  instBASHRC
 }
 
 # -------------------------------------------------------------
