@@ -158,24 +158,12 @@ function show_main_menu(){
 function cloneREPO() {
   if [ ! -d $HOME/dotfiles ]; then
     message blue "[ clone dotfiles repo from github ]"
-    git clone https://github.com/darkiop/dotfiles $HOME/dotfiles
+    git clone --recurse-submodules https://github.com/darkiop/dotfiles $HOME/dotfiles
     cd $HOME/dotfiles
     git config pull.rebase false
   else
     message yellow "dotfiles directory already exist."
   fi
-}
-
-# -------------------------------------------------------------
-# install: git submodules
-# see: .gitmodules
-# -------------------------------------------------------------
-function instGITSUBM() {
-  message blue "[ Install git submodules ]"
-  cd $HOME/dotfiles
-  git submodule--helper list | awk '{print $4}'
-  git submodule update --init --recursive
-  echo
 }
 
 # -------------------------------------------------------------
@@ -218,7 +206,6 @@ function instDOTF() {
   loadColors
   check_if_git_is_installed
   cloneREPO
-  #instGITSUBM
   instBASHCOMPLE
   instBASHRC
 }
@@ -310,11 +297,7 @@ else
         instDOTF
         exit
       ;;
-      2) # install git submodules
-        instGITSUBM
-        show_main_menu
-      ;;
-      3) # install .bashrc
+      2) # install .bashrc
         instBASHRC
       ;;
       x|X) # exit
