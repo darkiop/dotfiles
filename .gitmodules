@@ -1,6 +1,6 @@
 # https://git-scm.com/book/de/v2/Git-Tools-Submodule
 # https://stackoverflow.com/questions/1260748/how-do-i-remove-a-submodule
 
-#[submodule "modules/vimrc-amix"]
-#	path = modules/vimrc-amix
-#	url = https://github.com/amix/vimrc
+[submodule "vimrc"]
+	path = config/vimrc
+	url = https://github.com/amix/vimrc

@@ -1,3 +1,4 @@
 config/local_dotfiles_settings
+config/vimrc
 bin/cht.sh
 bash_completion.d/python-argcomplete
