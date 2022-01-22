@@ -105,6 +105,9 @@ pveperf
 # extract a vzdump .zst file 
 tar -I zstd -xvf <file>
 
+# disable ha
+ha-manager set <vm-or-ct>:<id> --state disabled
+
 # test the watchdog, first stop watchdog-mux (systemctl stop watchdog-mux.service)
 echo "1" > /dev/watchdog
 
