@@ -31,7 +31,7 @@ SYMBOL="\\$"
 
 # IP
 #IP=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1)
-IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | grep -v '172' | grep-v '^100.')
+IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | grep -v '172' | grep -v '^100.')
 
 # set the color with the exit status of the last command
 COLOR_EXIT_STATUS () {
