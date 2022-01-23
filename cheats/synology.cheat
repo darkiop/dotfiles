@@ -14,3 +14,6 @@ synouser --modify <user> "<full name>" 0 "<email>"
 
 # disable a user
 synouser --modify <user> "<full name>" 1 "<email>"
+
+# umount encrypted shared folder
+synoshare --enc_unmount <shared-folder>
