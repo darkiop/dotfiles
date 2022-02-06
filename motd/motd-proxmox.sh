@@ -1,16 +1,12 @@
 #!/bin/bash
 
-
-#1   
-# gstatus -a | grep -A3 'Group 1' | grep '192.168.1.50' | awk '{print $2}' | sed 's/(//g' | sed 's/)//g'
-# gstatus -a | grep -A3 'Group 1' | grep '192.168.1.51' | awk '{print $2}' | sed 's/(//g' | sed 's/)//g'
-# gstatus -a | grep -A3 'Group 1' | grep '192.168.1.41' | awk '{print $2}' | sed 's/(//g' | sed 's/)//g'
-
 # gfs status
 glusterfs_brick1=$(gstatus -ab | grep -A3 'Group 1' | grep '192.168.1.50' | awk '{print $2}' | sed 's/(//g' | sed 's/)//g')
 glusterfs_brick2=$(gstatus -ab | grep -A3 'Group 1' | grep '192.168.1.51' | awk '{print $2}' | sed 's/(//g' | sed 's/)//g')
 glusterfs_arbiter=$(gstatus -ab | grep -A3 'Group 1' | grep '192.168.1.41' | awk '{print $2}' | sed 's/(//g' | sed 's/)//g')
-#
+gluster_version=$(gluster --version | head -n1 | awk '{print $2}')
+
+# set colors for status
 if [[ $glusterfs_brick1 = "Online" ]]; then
   glusterfs_brick1_colored=$COLOR_GREEN$glusterfs_brick1$COLOR_CLOSE$COLOR_YELLOW
 else
@@ -29,9 +25,10 @@ else
   glusterfs_arbiter_colored=$COLOR_RED$glusterfs_arbiter$COLOR_CLOSE$COLOR_YELLOW
 fi
 
+# MOTD
 echo -e " "$COLOR_BLUE"Proxmox   "$COLOR_CLOSE`echo -e "$COLOR_GREEN$(pveversion)$COLOR_CLOSE"`
 echo
-echo -e " "$COLOR_LIGHT_BLUE"GlusterFS"$COLOR_CLOSE
+echo -e " "$COLOR_LIGHT_BLUE"GlusterFS ("$gluster_version")"$COLOR_CLOSE
 echo
 echo -e " "$COLOR_YELLOW"Brick-1: "$glusterfs_brick1_colored" Brick-2: "$glusterfs_brick2_colored" Arbiter: "$glusterfs_arbiter_colored$COLOR_CLOSE
 echo
