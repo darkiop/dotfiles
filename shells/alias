@@ -95,7 +95,7 @@ alias dotfu='dotf && gp && rl'
 alias dotf='cd ~/dotfiles && git status'
 
 # system update
-alias sysup='apt update && apt upgrade -y && apt autoremove -y && source ~/.bashrc'
+alias sysup='apt update && apt upgrade -y && apt autoremove -y && systemctl restart dotfiles-update-motd-apt-infos.service &&source ~/.bashrc'
 
 # syslog tail -f / messages tail -f
 if [[ $EUID -ne 0 ]]; then
