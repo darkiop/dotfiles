@@ -16,6 +16,20 @@ else
   gluster_version="GlusterFS not found."
 fi
 
+# systemd
+GLUSTERD="$(/usr/bin/systemctl is-active glusterd.service)"
+if [ "${GLUSTERD}" = "active" ]; then 
+    systemctl_glusterd=$COLOR_GREEN"glusterd"$COLOR_CLOSE$COLOR_YELLOW
+else 
+    systemctl_glusterd=$COLOR_RED"glusterd"$COLOR_CLOSE$COLOR_YELLOW
+fi
+WATCHDOG="$(/usr/bin/systemctl is-active watchdog-mux.service)"
+if [ "${WATCHDOG}" = "active" ]; then 
+    systemctl_watchdog_mux=$COLOR_GREEN"watchdog-mux"$COLOR_CLOSE$COLOR_YELLOW
+else 
+    systemctl_watchdog_mux=$COLOR_RED"watchdog-mux"$COLOR_CLOSE$COLOR_YELLOW
+fi
+
 # set colors for status
 if [[ $glusterfs_brick1 = "Online" ]]; then
   glusterfs_brick1_colored=$COLOR_GREEN$glusterfs_brick1$COLOR_CLOSE$COLOR_YELLOW
@@ -41,6 +55,10 @@ echo
 echo -e " "$COLOR_LIGHT_BLUE"GlusterFS ("$gluster_version")"$COLOR_CLOSE
 echo
 echo -e " "$COLOR_YELLOW"Brick-1: "$glusterfs_brick1_colored" Brick-2: "$glusterfs_brick2_colored" Brick-3: "$glusterfs_brick3_colored$COLOR_CLOSE
+echo
+echo -e " "$COLOR_LIGHT_BLUE"Systemctl"$COLOR_CLOSE
+echo
+echo -e " "$systemctl_glusterd" "$systemctl_watchdog_mux
 echo
 echo -e " "$COLOR_LIGHT_BLUE"LXC"$COLOR_CLOSE
 echo
