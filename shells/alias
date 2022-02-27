@@ -100,6 +100,7 @@ alias sysup='apt update && apt upgrade -y && apt autoremove -y && systemctl rest
 # syslog tail -f / messages tail -f
 if [[ $EUID -ne 0 ]]; then
   alias sysl='sudo tail -f /var/log/syslog'
+  alias syslnav='sudo lnav /var/log/syslog'
   alias mesl='sudo tail -f /var/log/messages'
 else
   alias sysl='tail -f /var/log/syslog'
