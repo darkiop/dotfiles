@@ -1,0 +1,22 @@
+% wp-cli, wordpress
+
+# check wordpres version
+wp core check-update --path="<wordpress-root-dir>"
+
+# export db
+wp db export --path="<wordpress-root-dir>"
+
+# search and replace in db
+wp search-replace <search> <replace> --path="<wordpress-root-dir>"
+
+# update all plugins
+wp plugin update --all --path="<wordpress-root-dir>"
+
+# core update
+wp core update --path="<wordpress-root-dir>"
+
+# plugin update
+wp plugin update --all --path="<wordpress-root-dir>"
+
+# theme update
+wp theme update --all --path="<wordpress-root-dir>"
