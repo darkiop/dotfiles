@@ -35,6 +35,12 @@ if [ "${COROSYNC}" = "active" ]; then
 else 
     systemctl_corosync=$COLOR_RED"corosync"$COLOR_CLOSE$COLOR_YELLOW
 fi
+PVEHACRM="$(/usr/bin/systemctl is-active pve-ha-crm.service)"
+if [ "${PVEHACRM}" = "active" ]; then 
+    systemctl_pvehacrm=$COLOR_GREEN"pve-ha-crm"$COLOR_CLOSE$COLOR_YELLOW
+else 
+    systemctl_pvehacrm=$COLOR_RED"pve-ha-crm"$COLOR_CLOSE$COLOR_YELLOW
+fi
 
 # set colors for status
 if [[ $glusterfs_brick1 = "Online" ]]; then
@@ -64,7 +70,7 @@ echo -e " "$COLOR_YELLOW"Brick-1: "$glusterfs_brick1_colored" Brick-2: "$gluster
 echo
 echo -e " "$COLOR_LIGHT_BLUE"Systemctl"$COLOR_CLOSE
 echo
-echo -e " "$systemctl_glusterd" "$systemctl_watchdog_mux" "$systemctl_corosync
+echo -e " "$systemctl_glusterd" "$systemctl_watchdog_mux" "$systemctl_corosync" "$systemctl_pvehacrm
 echo
 echo -e " "$COLOR_LIGHT_BLUE"LXC"$COLOR_CLOSE
 echo
