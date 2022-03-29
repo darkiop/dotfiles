@@ -68,15 +68,20 @@ echo -e " "$COLOR_LIGHT_BLUE"GlusterFS ("$gluster_version")"$COLOR_CLOSE
 echo
 echo -e " "$COLOR_YELLOW"Brick-1: "$glusterfs_brick1_colored" Brick-2: "$glusterfs_brick2_colored" Brick-3: "$glusterfs_brick3_colored$COLOR_CLOSE
 echo
-echo -e " "$COLOR_LIGHT_BLUE"Systemctl"$COLOR_CLOSE
+echo -e " "$COLOR_LIGHT_BLUE"Services"$COLOR_CLOSE
 echo
 echo -e " "$systemctl_glusterd" "$systemctl_watchdog_mux" "$systemctl_corosync" "$systemctl_pvehacrm
 echo
 echo -e " "$COLOR_LIGHT_BLUE"LXC"$COLOR_CLOSE
+if [ $(pct list | sed '1d' | wc -l) -gt 0 ]; then
 echo
 echo -e " "$COLOR_YELLOW"`pct list | sed -e 's/^[ \t]*//' | sed '1d' | sed "s,.*,$(echo -e $COLOR_YELLOW)&$COLOR_CLOSE," | sed "s,running,$(echo -e $COLOR_GREEN)&$COLOR_CLOSE," | sed "s,stopped,$(echo -e $COLOR_RED)&$COLOR_CLOSE,"`"$COLOR_CLOSE | awk '{print $1,$3,$2}' | sed -e's/  */ /g' | sed 's/^/ /'
+else
 echo
-echo -e " "$COLOR_LIGHT_BLUE"VM"$COLOR_CLOSE
+echo -e " "$COLOR_YELLOW"No LXC is running."$COLOR_CLOSE
+fi
+echo
+echo -e " "$COLOR_LIGHT_BLUE"QEMU"$COLOR_CLOSE
 if [ $(qm list | sed '1d' | wc -l) -gt 0 ]; then
 echo
 echo -e " "$COLOR_YELLOW"`qm list | sed -e 's/^[ \t]*//' | sed '1d' | sed "s,.*,$(echo -e $COLOR_YELLOW)&$COLOR_CLOSE," | sed "s,running,$(echo -e $COLOR_GREEN)&$COLOR_CLOSE," | sed "s,stopped,$(echo -e $COLOR_RED)&$COLOR_CLOSE,"`"$COLOR_CLOSE | awk '{print $1,$2,$3}' | sed -e's/  */ /g' | sed 's/^/ /'
