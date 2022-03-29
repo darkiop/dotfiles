@@ -6,7 +6,7 @@
 
 MNT="/mnt/odin/backup"
 BACKUPS="/opt/iobroker/backups/"
-RSYNC="sudo rsync -avz --exclude=homematic_*  --exclude=mysql_* --exclude=javascripts_* --exclude=iobroker_* --exclude=redis* --delete $BACKUPS $MNT/grafana"
+RSYNC="sudo rsync -avz --exclude=homematic_*  --exclude=mysql_* --exclude=javascripts_* --exclude=iobroker_* --exclude=redis*  --exclude=*-migration --delete $BACKUPS $MNT/grafana"
 IOB_SIMPLEAPI_DOMAIN="pve-vm-iobroker"
 IOB_SIMPLEAPI_PORT="8087"
 OID_EMAIL_TITLE="javascript.0.System.SendeTextperEmailBetreff"
