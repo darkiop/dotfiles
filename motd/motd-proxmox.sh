@@ -29,6 +29,12 @@ if [ "${WATCHDOG}" = "active" ]; then
 else 
     systemctl_watchdog_mux=$COLOR_RED"watchdog-mux"$COLOR_CLOSE$COLOR_YELLOW
 fi
+COROSYNC="$(/usr/bin/systemctl is-active corosync.service)"
+if [ "${COROSYNC}" = "active" ]; then 
+    systemctl_corosync=$COLOR_GREEN"corosync"$COLOR_CLOSE$COLOR_YELLOW
+else 
+    systemctl_corosync=$COLOR_RED"corosync"$COLOR_CLOSE$COLOR_YELLOW
+fi
 
 # set colors for status
 if [[ $glusterfs_brick1 = "Online" ]]; then
@@ -58,7 +64,7 @@ echo -e " "$COLOR_YELLOW"Brick-1: "$glusterfs_brick1_colored" Brick-2: "$gluster
 echo
 echo -e " "$COLOR_LIGHT_BLUE"Systemctl"$COLOR_CLOSE
 echo
-echo -e " "$systemctl_glusterd" "$systemctl_watchdog_mux
+echo -e " "$systemctl_glusterd" "$systemctl_watchdog_mux" "$systemctl_corosync
 echo
 echo -e " "$COLOR_LIGHT_BLUE"LXC"$COLOR_CLOSE
 echo
