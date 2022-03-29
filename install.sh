@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # -------------------------------------------------------------
 # always exit on error
@@ -9,11 +9,9 @@ set -e
 # first check if root, when not define a alias with sudo
 # -------------------------------------------------------------
 if [ "${EUID}" -ne 0 ]; then
-  dpkg='sudo '$(which dpkg)
-  apt='sudo '$(which apt)
+  apt='sudo '$(whereis apt)
 else
-  dpkg=$(which dpkg)
-  apt=$(which apt)
+  apt=$(whereis apt)
 fi
 
 # -------------------------------------------------------------
@@ -21,10 +19,10 @@ fi
 # https://bashcolors.com
 # -------------------------------------------------------------
 function loadColors () {
-  if [ ! -f $HOME/dotfiles/config/dotfiles.config ]; then
+  if [ ! -f "$HOME/dotfiles/config/dotfiles.config" ]; then
     source <(curl -s https://raw.githubusercontent.com/darkiop/dotfiles/master/config/dotfiles.config)
   else 
-    source $HOME/dotfiles/config/dotfiles.config
+    source "$HOME/dotfiles/config/dotfiles.config"
   fi
 }
 
@@ -42,7 +40,7 @@ function check_if_user_is_root() {
 # check if sudo is installed
 # -------------------------------------------------------------
 function check_if_sudo_is_installed() {
-  if [ ! $(which sudo) ]; then
+  if [ ! "$(whereis sudo)" ]; then
     message red "sudo not found. install it ..."
     $apt install sudo -y
   fi
@@ -52,7 +50,7 @@ function check_if_sudo_is_installed() {
 # check if curl is installed
 # -------------------------------------------------------------
 function check_if_curl_is_installed() {
-  if [ ! $(which curl) ]; then
+  if [ ! "$(whereis curl)" ]; then
     message red "curl not found. install it ..."
     $apt install curl -y
   fi
@@ -62,7 +60,7 @@ function check_if_curl_is_installed() {
 # check if git is installed
 # -------------------------------------------------------------
 function check_if_git_is_installed() {
-  if [ ! $(which git) ]; then
+  if [ ! "$(whereis git)" ]; then
     message red "git not found. install it ..."
     $apt install git -y
   fi
@@ -142,24 +140,24 @@ function message() {
 function show_main_menu(){
   unset opt_main_menu
   echo
-  echo -e $COLOR_GREEN"[ darkiop/dotfiles ]"$COLOR_CLOSE
+  echo -e "$COLOR_GREEN""[ darkiop/dotfiles ]""$COLOR_CLOSE"
   echo
   printf "${COLOR_YELLOW}1)${COLOR_CLOSE} Install dotfiles (all)\n"
   printf "${COLOR_YELLOW}2)${COLOR_CLOSE} Install git submodules\n"
   printf "${COLOR_YELLOW}5)${COLOR_CLOSE} Install .bashrc\n"
   echo
   printf "Please choose an option or ${COLOR_RED}x${COLOR_CLOSE} to exit: "
-  read opt_main_menu
+  read -r opt_main_menu
 }
 
 # -------------------------------------------------------------
 # clone repo from github
 # -------------------------------------------------------------
 function cloneREPO() {
-  if [ ! -d $HOME/dotfiles ]; then
+  if [ ! -d "$HOME/dotfiles" ]; then
     message blue "[ clone dotfiles repo from github ]"
-    git clone --recurse-submodules https://github.com/darkiop/dotfiles $HOME/dotfiles
-    cd $HOME/dotfiles
+    git clone --recurse-submodules https://github.com/darkiop/dotfiles "$HOME/dotfiles"
+    cd "$HOME/dotfiles"
     git config pull.rebase false
   else
     message yellow "dotfiles directory already exist."
@@ -171,28 +169,28 @@ function cloneREPO() {
 # -------------------------------------------------------------
 function instBASHCOMPLE() {
   message blue "[ Install bash_completitions ]"
-  if [ -L $HOME/.bash_completion.d ] ; then
-    if [ ! -e $HOME/.bash_completion.d ] ; then
+  if [ -L "$HOME/.bash_completion.d" ] ; then
+    if [ ! -e "$HOME/.bash_completion.d" ] ; then
         # remove > broken
-        rm $HOME/.bash_completion.d
-        echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" bash_completion.d "$COLOR_GREEN"symlink ..."$COLOR_CLOSE
+        rm "$HOME/.bash_completion.d"
+        echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" bash_completion.d ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
         echo "create: ~/.byobu"
-        ln -s ~/dotfiles/bash_completion.d ~/.bash_completion.d
+        ln -s "$HOME"/dotfiles/bash_completion.d ~/.bash_completion.d
     fi
   else
     # link not exist
-    echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" bash_completion.d "$COLOR_GREEN"symlink ..."$COLOR_CLOSE
+    echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" bash_completion.d ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
     echo "create: ~/.byobu"
-    ln -s ~/dotfiles/bash_completion.d ~/.bash_completion.d
+    ln -s "$HOME"/dotfiles/bash_completion.d ~/.bash_completion.d
   fi
 
   # argcomplete
   # https://github.com/kislyuk/argcomplete
   if [[ ! -x /usr/local/bin/activate-global-python-argcomplete ]]; then
     pip3 install argcomplete
-    $HOME/.local/bin/activate-global-python-argcomplete --dest=$HOME/dotfiles/bash_completion.d
+    "$HOME"/.local/bin/activate-global-python-argcomplete --dest="$HOME"/dotfiles/bash_completion.d
   else
-    $HOME/.local/bin/activate-global-python-argcomplete --dest=$HOME/dotfiles/bash_completion.d
+    "$HOME"/.local/bin/activate-global-python-argcomplete --dest="$HOME"/dotfiles/bash_completion.d
   fi
 }
 
@@ -201,11 +199,13 @@ function instBASHCOMPLE() {
 # -------------------------------------------------------------
 function instVIMRC() {
   message blue "[ Install vimrc ]"
-  bash $HOME/dotfiles/modules/vimrc/install_awesome_parameterized.sh $HOME/dotfiles/modules/vimrc $USER
-  ln -s $HOME/dotfiles/config/my_configs.vim $HOME/dotfiles/modules/vimrc/my_configs.vim
+  if [ -L "$HOME"/dotfiles/modules/vimrc/my_configs.vim ] ; then
+    rm "$HOME"/dotfiles/modules/vimrc/my_configs.vim
+  fi
+  bash "$HOME"/dotfiles/modules/vimrc/install_awesome_parameterized.sh "$HOME"/dotfiles/modules/vimrc "$USER"
+  ln -s "$HOME"/dotfiles/config/my_configs.vim "$HOME"/dotfiles/modules/vimrc/my_configs.vim
   echo
 }
-
 
 # -------------------------------------------------------------
 # Install .bashrc
@@ -214,25 +214,25 @@ function instBASHRC() {
   message blue "[ Install .bashrc ]"
 
   # install
-  dir=~/dotfiles
+  dir="$HOME"/dotfiles
   files="bashrc gitconfig inputrc bash_profile dircolors"
 
   # delete old symlinks
-  echo -e $COLOR_GREEN"delete"$COLOR_CLOSE$COLOR_YELLOW" old "$COLOR_GREEN"symlinks ..."$COLOR_CLOSE
+  echo -e "$COLOR_GREEN""delete""$COLOR_CLOSE""$COLOR_YELLOW"" old ""$COLOR_GREEN""symlinks ...""$COLOR_CLOSE"
   for file in $files; do
-    if [ -f ~/.$file ]; then
+    if [ -f "$HOME"/."$file" ]; then
       echo "delete: ~/.$file"
-      rm ~/.$file
+      rm "$HOME"/."$file"
     fi
   done
 
   echo
 
   # new symlinks for files
-  echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" new "$COLOR_GREEN"symlinks ..."$COLOR_CLOSE
+  echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" new ""$COLOR_GREEN""symlinks ...""$COLOR_CLOSE"
   for file in $files; do
       echo "create: ~/.$file"
-      ln -s $dir/$file ~/.$file
+      ln -s "$dir/$file" ~/."$file"
   done
 
   echo
@@ -242,13 +242,13 @@ function instBASHRC() {
     if [ ! -e ~/.byobu ] ; then
         # remove > broken
         rm ~/.byobu
-        echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" .byobu "$COLOR_GREEN"symlink ..."$COLOR_CLOSE
+        echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" .byobu ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
         echo "create: ~/.byobu"
         ln -s ~/dotfiles/config/byobu ~/.byobu
     fi
   else
     # link not exist
-    echo -e $COLOR_GREEN"create"$COLOR_CLOSE$COLOR_YELLOW" .byobu "$COLOR_GREEN"symlink ..."$COLOR_CLOSE
+    echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" .byobu ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
     echo "create: ~/.byobu"
     ln -s ~/dotfiles/config/byobu ~/.byobu
   fi
@@ -260,13 +260,13 @@ function instBASHRC() {
 # -------------------------------------------------------------
 function loadBASHRC() {
   echo
-  echo -e "$COLOR_YELLOW[ dotfiles installed ]$COLOR_CLOSE"
+  echo -e "$COLOR_YELLOW""[ dotfiles installed ]""$COLOR_CLOSE"
   echo -e "$COLOR_RED"
-  read -p "Relogin to load dotfiles? (y/n):" relogin
+  read -rp "Relogin to load dotfiles? (y/n):" relogin
   echo -e "$COLOR_CLOSE"
   case $relogin in
     y|Y)
-      su - $USER
+      su - "$USER"
     ;;
     n|N|*)
       message yellow "Do nothing and exit."
@@ -301,7 +301,7 @@ if [[ $1 == 'all' ]]; then
   fi
 else
   show_main_menu
-  if [ $opt_main_menu = '' ]; then
+  if [ "$opt_main_menu" = '' ]; then
     exit;
   else
     case $opt_main_menu in
