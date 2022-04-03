@@ -49,14 +49,9 @@ function cleanup() {
 }
 
 function send_email_with_iobroker() {
-  echo "test"
-  # TODO email nur wenn false
-
-  sleep 2
   curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TITLE?value=$EMAIL_TITLE > /dev/null 2>&1
   sleep 2
   curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TEXT?value=$EMAIL_TEXT_TRUE > /dev/null 2>&1
-
 }
 
 # check if local path exists, and if not create it
@@ -71,10 +66,6 @@ then
   cleanup
   targz_to_local_path
   rsync_to_remote_path
-  sleep 2
-  curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TITLE?value=$EMAIL_TITLE > /dev/null 2>&1
-  sleep 2
-  curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TEXT?value=$EMAIL_TEXT_TRUE > /dev/null 2>&1
   exit 0
 else
   # try to mount
@@ -87,11 +78,8 @@ else
     cleanup
     targz_to_local_path
     rsync_to_remote_path
+    exit 0
   else
-    # exit
-    curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TITLE?value=$EMAIL_TITLE > /dev/null 2>&1
-    sleep 2
-    curl http://$IOB_DOMAIN:$IOB_SIMPLEAPI_PORT/set/$OID_EMAIL_TEXT?value=$EMAIL_TEXT_FALSE > /dev/null 2>&1
     exit 1
   fi
 fi
