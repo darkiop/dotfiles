@@ -1,8 +1,8 @@
 #!/bin/bash
 
 DATE=$(date +%Y-%m-%d_%H:%M:%S)
-LOGFILE="/var/log/wg-check-birkenweg.log"
-DYNDNS=""
+LOGFILE="/var/log/wg-check-ip.log"
+DYNDNS="xxxxxxxxxxxxxxxxxxxx"
 IP1=$(wg | grep endpoint | awk '{print $2}' | sed 's/:.*//')
 IP2=$(nslookup $DYNDNS | grep -A2 Name | grep Address | awk '{print $2}' | tail -n1)
 
