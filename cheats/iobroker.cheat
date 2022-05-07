@@ -51,6 +51,9 @@ iobroker set admin.0 --bind 0.0.0.0
 # execute the installation fixer script, this updates your ioBroker installation
 iobroker fix
 
+# clean npm cache (cd to /opt/iobroker before)
+sudo -H -u iobroker npm cache clean --force
+
 # multihost config
 iobroker multihost <enableORdisable>
 
@@ -65,6 +68,9 @@ iobroker update
 
 # install adapter@version (example: iobroker upgrade admin@5.0.24)
 iobroker upgrade <adapter>@<version>
+
+# install iobroker manuell (cd to /opt/iobroker before)
+npm i iobroker.js-controller@<version>
 
 # iobroker log tail
 tail -f /opt/iobroker/log/iobroker.current.log
