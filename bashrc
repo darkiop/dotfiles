@@ -77,7 +77,6 @@ if ! shopt -oq posix; then
     source /usr/share/bash-completion/bash_completion
   elif [ -f /etc/bash_completion ]; then
     source /etc/bash_completion
-  fi
   # fzf completion
   elif [ -f /usr/share/doc/fzf/examples/completion.bash ]; then
     source /usr/share/doc/fzf/examples/completion.bash
