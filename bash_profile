@@ -9,8 +9,3 @@ if [ -n "$BASH_VERSION" ]; then
         . "$HOME/.bashrc"
     fi
 fi
-
-# byobu
-if [ -x "/usr/bin/byobu" ]; then
-  _byobu_sourced=1 . /usr/bin/byobu-launch 2>/dev/null || true
-fi

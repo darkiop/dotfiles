@@ -241,33 +241,13 @@ function instBASHRC() {
       rm "$HOME"/."$file"
     fi
   done
-
   echo
-
   # new symlinks for files
   echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" new ""$COLOR_GREEN""symlinks ...""$COLOR_CLOSE"
   for file in $files; do
       echo "create: ~/.$file"
       ln -s "$dir/$file" ~/."$file"
   done
-
-  echo
-
-  # byobu config
-  if [ -L ~/.byobu ] ; then
-    if [ ! -e ~/.byobu ] ; then
-        # remove > broken
-        rm ~/.byobu
-        echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" .byobu ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
-        echo "create: ~/.byobu"
-        ln -s ~/dotfiles/config/byobu ~/.byobu
-    fi
-  else
-    # link not exist
-    echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" .byobu ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
-    echo "create: ~/.byobu"
-    ln -s ~/dotfiles/config/byobu ~/.byobu
-  fi
   echo
 }
 
