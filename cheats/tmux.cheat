@@ -9,4 +9,4 @@ tmux ls
 # re-attach a session
 tmux a -t <tmuxsessions>
 
-$ tmuxsessions: tmux ls
+$ tmuxsessions: tmux ls -F "#{session_name}"
