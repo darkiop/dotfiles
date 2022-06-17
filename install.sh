@@ -208,6 +208,22 @@ function instVIMRC() {
 }
 
 # -------------------------------------------------------------
+# install: oh-my-tmux
+# -------------------------------------------------------------
+function instTMUX() {
+  message blue "[ Install oh-my-tmux ]"
+  if [ -L "$HOME"/dotfiles/.tmux.conf ] ; then
+    rm "$HOME"/dotfiles/.tmux.conf
+  fi
+  if [ -L "$HOME"/dotfiles/.tmux.conf.local ] ; then
+    rm "$HOME"/dotfiles/.tmux.conf.local
+  fi
+  ln -s "$HOME"/dotfiles/modules/oh-my-tmux/.tmux.conf.local "$HOME"/dotfiles/.tmux.conf
+  ln -s "$HOME"/dotfiles/config/tmux.conf.local "$HOME"/dotfiles/.tmux.conf.local
+  echo
+}
+
+# -------------------------------------------------------------
 # Install .bashrc
 # -------------------------------------------------------------
 function instBASHRC() {
