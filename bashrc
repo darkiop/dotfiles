@@ -93,13 +93,13 @@ if [ -x $HOME/dotfiles/autoupdate.sh ]; then
   bash $HOME/dotfiles/autoupdate.sh
 fi
 
-# clear screen & show motd
-clear
-source ~/dotfiles/motd/motd.sh
-
 # run tmux
 if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-  exec tmux new-window -d -t auto-session
+  exec tmux new -s auto-session
+else
+  # clear screen & show motd
+  clear
+  source ~/dotfiles/motd/motd.sh
 fi
 
 # EOF
