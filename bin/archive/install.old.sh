@@ -522,7 +522,7 @@ function instBASHRC() {
   # install
   dir=~/dotfiles
   files="bashrc gitconfig inputrc bash_profile dircolors"
-  folders="byobu"
+  #folders=""
 
   # delete old symlinks
   echo -e $COLOR_GREEN"delete"$COLOR_CLOSE$COLOR_YELLOW" old "$COLOR_GREEN"symlinks ..."$COLOR_CLOSE
@@ -533,12 +533,12 @@ function instBASHRC() {
       rm ~/.$file
     fi
   done
-  for folder in $folders; do
-    if [ -d ~/.$folder ]; then
-      echo "delete: ~/.$folder";
-      rm -r ~/.$folder
-    fi
-  done
+  #for folder in $folders; do
+  #  if [ -d ~/.$folder ]; then
+  #    echo "delete: ~/.$folder";
+  #    rm -r ~/.$folder
+  #  fi
+  #done
 
   echo
 

@@ -174,13 +174,11 @@ function instBASHCOMPLE() {
         # remove > broken
         rm "$HOME/.bash_completion.d"
         echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" bash_completion.d ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
-        echo "create: ~/.byobu"
         ln -s "$HOME"/dotfiles/bash_completion.d ~/.bash_completion.d
     fi
   else
     # link not exist
     echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" bash_completion.d ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
-    echo "create: ~/.byobu"
     ln -s "$HOME"/dotfiles/bash_completion.d ~/.bash_completion.d
   fi
 

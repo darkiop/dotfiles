@@ -32,8 +32,8 @@ cht.sh man
 ```
 - vimrc
 - motd for each hostname (~/dotfiles/motd)
-- byobu
 - dategrep
+- tmux
 ```
 dategrep --start "12:00" --end "12:15" syslog
 dategrep --end "12:15" --format "%b %d %H:%M:%S" syslog
