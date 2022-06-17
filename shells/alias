@@ -78,6 +78,9 @@ else
   alias lt='ls --tree'
 fi
 
+# motd
+alias motd='source ~/dotfiles/motd/motd.sh'
+
 # cd - show content after cd
 cd() { builtin cd "$@"; ls -lah; }
 alias ..='cd ..'
