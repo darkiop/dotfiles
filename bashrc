@@ -95,11 +95,7 @@ fi
 
 # run tmux
 if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-  exec tmux new -s auto-session
-else
-  # clear screen & show motd
-  clear
-  source ~/dotfiles/motd/motd.sh
+    tmux attach -t default || tmux new -s default
 fi
 
 # EOF
