@@ -79,26 +79,26 @@ else
 fi
 
 # motd
-alias motd='source ~/dotfiles/motd/motd.sh'
+alias motd='source $HOME/dotfiles/motd/motd.sh'
 
 # cd - show content after cd
 cd() { builtin cd "$@"; ls -lah; }
 alias ..='cd ..'
 
 # clear + motd
-alias cls='source ~/.bashrc'
-alias rl='source ~/.bashrc'
-alias reload='source ~/.bashrc'
+alias cls='source $HOME/.bashrc'
+alias rl='source $HOME/.bashrc'
+alias reload='source $HOME/.bashrc'
 
 # dotfiles update
-alias update-dotfiles='cd ~/dotfiles && git pull && rl'
+alias update-dotfiles='cd $HOME/dotfiles && git pull && rl'
 alias dotfu='dotf && gp && rl'
 
 # fast switch to dotfiles
-alias dotf='cd ~/dotfiles && git status'
+alias dotf='cd $HOME/dotfiles && git status'
 
 # system update
-alias sysup='apt update && apt upgrade -y && apt autoremove -y && systemctl restart dotfiles-update-motd-apt-infos.service && systemctl restart dotfiles-update-motd-apt-infos.service && source ~/.bashrc'
+alias sysup='apt update && apt upgrade -y && apt autoremove -y && systemctl restart dotfiles-update-motd-apt-infos.service && systemctl restart dotfiles-update-motd-apt-infos.service && source $HOME/.bashrc'
 
 # syslog tail -f / messages tail -f
 if [[ $EUID -ne 0 ]]; then
@@ -125,11 +125,11 @@ case $HOSTNAME in
 esac
 
 # color for manpages
-alias man="TERMINFO=~/.terminfo TERM=mostlike LESS=C PAGER=less man"
+alias man="TERMINFO=$HOME/.terminfo TERM=mostlike LESS=C PAGER=less man"
 
 # color
 if [ -x /usr/bin/dircolors ]; then
-  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  test -r $HOME/.dircolors && eval "$(dircolors -b $HOME/.dircolors)" || eval "$(dircolors -b)"
   alias grep='grep --color=auto'
   alias fgrep='fgrep --color=auto'
   alias egrep='egrep --color=auto'
@@ -144,11 +144,56 @@ alias cd..='cd ..'
 alias watch='watch -n1'
 
 # wol
-alias wol-thor='/usr/bin/wakeonlan -i 10.1.1.2 0c:9d:92:84:86:49'
+alias wol-thor='/usr/bin/wakeonlan -i 10.1.0.2 0c:9d:92:84:86:49'
 alias wol-pve01='/usr/bin/wakeonlan -i 192.168.1.50 1c:69:7a:02:5e:3f'
 alias wol-pve02='/usr/bin/wakeonlan -i 192.168.1.51 1c:69:7a:62:9b:95'
 
 # locate
 if [ -x /usr/bin/locate ]; then
   alias loc='locate -A -i'
+fi
+
+# load git alias
+if [ -x /usr/bin/git ]; then
+  source $HOME/dotfiles/alias/alias-git
+fi
+
+# load navi alias if navi is installed
+if [ -x /usr/local/bin/navi ]; then
+  source $HOME/dotfiles/alias/alias-navi
+  # load widget (STRG + G)
+  if [ $SHELL = "/bin/bash" ]; then
+    eval "$(navi widget bash)" 2>&1> /dev/null
+  elif [ $SHELL = "/bin/zsh" ]; then
+    eval "$(navi widget zsh)" 2>&1> /dev/null
+  fi
+fi
+
+# load docker alias
+if [[ -x $(which docker) ]]; then
+  source $HOME/dotfiles/alias/alias-docker
+fi
+
+# load proxmox alias
+if [[ -x $(which pveversion) ]]; then
+  source $HOME/dotfiles/alias/alias-proxmox
+fi
+
+# load glusterfs alias
+if [[ -x /usr/sbin/gluster ]]; then
+  source $HOME/dotfiles/alias/alias-glusterfs
+fi
+
+# load wireguard alias
+if [[ -x $(which wg) ]]; then
+  source $HOME/dotfiles/alias/alias-wireguard
+fi
+
+# load iobroker alias
+if [ -d /opt/iobroker ]; then
+  source $HOME/dotfiles/alias/alias-iobroker
+  # Forces npm to run as iobroker when inside the iobroker installation dir
+  if [ -f /root/.iobroker/npm_command_fix ]; then
+    source /root/.iobroker/npm_command_fix
+  fi
 fi

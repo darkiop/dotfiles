@@ -1,4 +1,6 @@
-#Update dot files
+#!/bin/bash
+# auto update dot files
+
 COUNT=~/.dotfiles-update-count
 if [ -f "$COUNT" ]; then
   typeset -i startup_count=$(cat $COUNT)
@@ -13,3 +15,5 @@ if [ -f "$COUNT" ]; then
 else 
   echo "0" > $COUNT
 fi
+
+# EOF

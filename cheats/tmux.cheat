@@ -12,4 +12,10 @@ tmux a -t <tmuxsessions>
 # kill a session
 tmux kill-session -t <tmuxsessions>
 
+# split windows horizontal and run a cmd
+tmux split-window -h 'exec <cmd>'
+
+# split windows vertical and run a cmd
+tmux split-window -v 'exec <cmd>'
+
 $ tmuxsessions: tmux ls -F "#{session_name}"
