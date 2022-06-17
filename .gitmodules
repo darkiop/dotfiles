@@ -3,3 +3,6 @@
 [submodule "modules/vimrc"]
 	path = modules/vimrc
 	url = https://github.com/amix/vimrc
+[submodule "modules/oh-my-tmux"]
+	path = modules/oh-my-tmux
+	url = https://github.com/gpakosz/.tmux
