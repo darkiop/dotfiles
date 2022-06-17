@@ -7,4 +7,6 @@ tmux
 tmux ls
 
 # re-attach a session
-tmux a -t <session id>
+tmux a -t <tmuxsessions>
+
+$ tmuxsessions: tmux ls
