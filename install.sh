@@ -303,6 +303,7 @@ function instDOTF() {
   cloneREPO
   instBASHCOMPLE
   instVIMRC
+  instTMUX
   instBASHRC
 }
 
