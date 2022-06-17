@@ -212,14 +212,14 @@ function instVIMRC() {
 # -------------------------------------------------------------
 function instTMUX() {
   message blue "[ Install oh-my-tmux ]"
-  if [ -L "$HOME"/dotfiles/.tmux.conf ] ; then
-    rm "$HOME"/dotfiles/.tmux.conf
+  if [ -L "$HOME"/.tmux.conf ] ; then
+    rm "$HOME"/.tmux.conf
   fi
-  if [ -L "$HOME"/dotfiles/.tmux.conf.local ] ; then
-    rm "$HOME"/dotfiles/.tmux.conf.local
+  if [ -L "$HOME"/.tmux.conf.local ] ; then
+    rm "$HOME"/.tmux.conf.local
   fi
-  ln -s "$HOME"/dotfiles/modules/oh-my-tmux/.tmux.conf.local "$HOME"/dotfiles/.tmux.conf
-  ln -s "$HOME"/dotfiles/config/tmux.conf.local "$HOME"/dotfiles/.tmux.conf.local
+  ln -s "$HOME"/dotfiles/modules/oh-my-tmux/.tmux.conf "$HOME"/.tmux.conf
+  ln -s "$HOME"/dotfiles/config/tmux.conf.local "$HOME"/.tmux.conf.local
   echo
 }
 
