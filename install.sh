@@ -6,12 +6,30 @@
 set -e
 
 # -------------------------------------------------------------
+# check root function
+# https://stackoverflow.com/questions/18215973/how-to-check-if-running-as-root-in-a-bash-script
+# -------------------------------------------------------------
+function is_user_root () {
+  [ "$(id -u)" -eq 0 ];
+}
+
+# -------------------------------------------------------------
+# check if user is root and if not exit
+# -------------------------------------------------------------
+function if_user_root_msg() {
+  if [ is_user_root ]; then
+    message red "You need to run this as root. Exit."
+    exit 1
+  fi
+}
+
+# -------------------------------------------------------------
 # first check if root, when not define a alias with sudo
 # -------------------------------------------------------------
-if [ "${EUID}" -ne 0 ]; then
-  apt='sudo '$(whereis apt)
-else
+if [ is_user_root ]; then
   apt=$(whereis apt)
+else
+  apt='sudo '$(whereis apt)
 fi
 
 # -------------------------------------------------------------
@@ -23,16 +41,6 @@ function loadColors () {
     source <(curl -s https://raw.githubusercontent.com/darkiop/dotfiles/master/config/dotfiles.config)
   else 
     source "$HOME/dotfiles/config/dotfiles.config"
-  fi
-}
-
-# -------------------------------------------------------------
-# check if user is root and if not exit
-# -------------------------------------------------------------
-function check_if_user_is_root() {
-  if [ "${EUID}" -ne 0 ]; then
-    message red "You need to run this as root. Exit."
-    exit 1
   fi
 }
 
@@ -184,7 +192,7 @@ function instBASHCOMPLE() {
 
   # argcomplete
   # https://github.com/kislyuk/argcomplete
-  if [ "${EUID}" -ne 0 ]; then
+  if [ ! is_user_root ]; then
     if [[ ! -x /usr/local/bin/activate-global-python-argcomplete ]]; then
       pip3 install argcomplete
       if [ -f "$HOME"/.local/bin/activate-global-python-argcomplete ]; then
