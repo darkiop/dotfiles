@@ -187,9 +187,13 @@ function instBASHCOMPLE() {
   if [ ! "${EUID}" -ne 0 ]; then
     if [[ ! -x /usr/local/bin/activate-global-python-argcomplete ]]; then
       pip3 install argcomplete
-      "$HOME"/.local/bin/activate-global-python-argcomplete --dest="$HOME"/dotfiles/bash_completion.d
+      if [ -f "$HOME"/.local/bin/activate-global-python-argcomplete ]; then
+        "$HOME"/.local/bin/activate-global-python-argcomplete --dest="$HOME"/dotfiles/bash_completion.d
+      fi
     else
-      "$HOME"/.local/bin/activate-global-python-argcomplete --dest="$HOME"/dotfiles/bash_completion.d
+      if [ -f "$HOME"/.local/bin/activate-global-python-argcomplete ]; then
+        "$HOME"/.local/bin/activate-global-python-argcomplete --dest="$HOME"/dotfiles/bash_completion.d
+      fi
     fi
   fi
 }
