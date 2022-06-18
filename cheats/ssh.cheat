@@ -1,10 +1,13 @@
 % ssh
 
+# generate a key pair (ed25519) - custom path and comment
+ssh-keygen -t ed25519 -a 420 -f ~/.ssh/<name>_ed25519 -C "<comment>"
+
+# generate a key pair (rsa) - custom path and comment
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/<name>_rsa -C <comment>
+
 # generate a key pair in default path: ~/.ssh
 ssh-keygen -t rsa -b 4096
-
-# generate a key pair - custom path and comment
-ssh-keygen -t rsa -b 4096 -f <path>_rsa -C <comment>
 
 # connect to ssh server
 ssh <user>@<server>
