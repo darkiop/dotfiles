@@ -126,3 +126,18 @@ Key | Function
 <kbd>SHIFT</kbd> + <kbd>F5</kbd> | Collapse all splits
 <kbd>CTRL</kbd> + <kbd>F5</kbd> | Reconnect any SSH/GPG sockets or agents
 <kbd>SHIFT</kbd> + <kbd>F12</kbd> | Toggle all of Byobu's keybindings on or off
+
+### tmux
+general Prefix is <kbd>CTRL</kbd> + <kbd>a</kbd>
+
+Key | Function
+:--- | :---
+<kbd>PREFIX</kbd> + <kbd><</kbd> | Split the screen vertically
+<kbd>PREFIX</kbd> + <kbd>-</kbd> | Split the screen horizontally
+<kbd>PREFIX</kbd> + <kbd>c</kbd> | create window
+<kbd>PREFIX</kbd> + <kbd>s</kbd> | show windows
+<kbd>PREFIX</kbd> + <kbd>,</kbd> | rename window
+<kbd>PREFIX</kbd> + <kbd>TAB</kbd> | switch between last and current window
+
+<kbd>PREFIX</kbd> + <kbd>z</kbd> | pane > fullscreen
+<kbd>PREFIX</kbd> + <kbd>?</kbd> | list shortcuts
