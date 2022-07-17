@@ -80,6 +80,7 @@ cat syslog | dategrep --end "12:15"
 - https://www.linux.com/learn/enhancing-virtual-terminals-byobu
 - https://www.cheatsheet.wtf/bash/
 - https://shellmagic.xyz
+- https://github.com/jlevy/the-art-of-command-line/blob/master/README-de.md
 
 ## terminal
 - https://github.com/Eugeny/tabby
