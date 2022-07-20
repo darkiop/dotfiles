@@ -125,3 +125,5 @@ Key | Function
 <kbd>ALT</kbd> + <kbd>RIGHT</kbd> | switch to the right pane
 <kbd>ALT</kbd> + <kbd>UP</kbd> | switch to the upper pane
 <kbd>ALT</kbd> + <kbd>DOWN</kbd> | switch to the lower pane
+<kbd>PREFIX</kbd> + <kbd>CTRL</kbd> + <kbd>s</kbd> | save tmux environment to ~/.tmux/resurrect
+<kbd>PREFIX</kbd> + <kbd>CTRL</kbd> + <kbd>r</kbd> | restore tmux environment
