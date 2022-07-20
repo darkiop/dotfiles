@@ -223,7 +223,7 @@ function instVIMRC() {
 # install: oh-my-tmux
 # -------------------------------------------------------------
 function instTMUX() {
-  message blue "[ Install oh-my-tmux ]"
+  message blue "[ Install oh-my-tmux and tmux plugin manager ]"
   if [ -L "$HOME"/.tmux.conf ] ; then
     rm "$HOME"/.tmux.conf
   fi
@@ -232,6 +232,12 @@ function instTMUX() {
   fi
   ln -s "$HOME"/dotfiles/modules/oh-my-tmux/.tmux.conf "$HOME"/.tmux.conf
   ln -s "$HOME"/dotfiles/config/tmux.conf.local "$HOME"/.tmux.conf.local
+  if [ ! -d "$HOME"/.tmux/plugins ] ; then
+    mkdir -p "$HOME"/.tmux/plugins
+  fi
+  if [ ! -L "$HOME"/.tmux/plugins/tpm ] ; then
+    ln -s "$HOME"/dotfiles/modules/tpm "$HOME"/.tmux/plugins/tpm
+  fi
   echo
 }
 
