@@ -9,3 +9,6 @@
 [submodule "modules/tpm"]
 	path = modules/tpm
 	url = https://github.com/tmux-plugins/tpm
+[submodule "modules/fzf-tab-completion"]
+	path = modules/fzf-tab-completion
+	url = https://github.com/lincheney/fzf-tab-completion
