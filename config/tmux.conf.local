@@ -397,6 +397,10 @@ bind -n MouseDown2Pane run "tmux set-buffer -b primary_selection \"$(xsel -o)\";
 set -g @plugin 'tmux-plugins/tmux-yank'
 set -g @yank_action 'copy-pipe-no-clear'
 
+# https://leimao.github.io/blog/Tmux-Tutorial/#Tmux-Resurrect-Usages
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+
 
 # -- tpm -----------------------------------------------------------------------
 
