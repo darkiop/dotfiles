@@ -1,8 +1,6 @@
 # dotfiles
 dotfiles for bash
 
-<img src="https://github.com/darkiop/dotfiles/blob/master/screenshot.png" width="600" height="auto">
-
 ## INSTALL
 
 ### with menu
@@ -104,41 +102,26 @@ Key | Function
 :--- | :---
 <kbd>CTRL</kbd> + <kbd>G</kbd> | show navi menu
 
-### byobu
-
-Key | Function
-:--- | :---
-<kbd>F2</kbd> | Create a new window
-<kbd>F3</kbd> | Move to the previous window
-<kbd>F4</kbd> | Move to the next window
-<kbd>F5</kbd> | Refresh all status notifications
-<kbd>F6</kbd> | Detach from the session and logout
-<kbd>SHIFT</kbd> + <kbd>F6</kbd>| Detach from the session, but do not logout
-<kbd>F7</kbd> | Enter scrollback/search mode
-<kbd>F8</kbd> | Rename the current window
-<kbd>F9</kbd> | Launch the Byobu Configuration Menu
-<kbd>F12</kbd> | GNU Screen's Escape Key
-<kbd>ALT</kbd> + <kbd>Pageup</kbd> | Scroll back through this window's history
-<kbd>Alt</kbd> + <kbd>Pagedown</kbd> | Scroll forward through this window's history
-<kbd>SHIFT</kbd> + <kbd>F2</kbd> | Split the screen horizontally
-<kbd>CTRL</kbd> + <kbd>F2</kbd> | Split the screen vertically
-<kbd>SHIFT</kbd> + <kbd>F3</kbd> | Move focus to the next split
-<kbd>SHIFT</kbd> + <kbd>F4</kbd> | Move focus to the previous split
-<kbd>SHIFT</kbd> + <kbd>F5</kbd> | Collapse all splits
-<kbd>CTRL</kbd> + <kbd>F5</kbd> | Reconnect any SSH/GPG sockets or agents
-<kbd>SHIFT</kbd> + <kbd>F12</kbd> | Toggle all of Byobu's keybindings on or off
-
 ### tmux
-general Prefix is <kbd>CTRL</kbd> + <kbd>a</kbd>
+Prefix is <kbd>CTRL</kbd> + <kbd>a</kbd>
 
 Key | Function
 :--- | :---
 <kbd>PREFIX</kbd> + <kbd><</kbd> | Split the screen vertically
 <kbd>PREFIX</kbd> + <kbd>-</kbd> | Split the screen horizontally
-<kbd>PREFIX</kbd> + <kbd>c</kbd> | create window
+<kbd>PREFIX</kbd> + <kbd>c</kbd> | create a new window
+<kbd>PREFIX</kbd> + <kbd>t</kbd> | create a new window
+<kbd>PREFIX</kbd> + <kbd>w</kbd> | close the window
 <kbd>PREFIX</kbd> + <kbd>s</kbd> | show windows
 <kbd>PREFIX</kbd> + <kbd>,</kbd> | rename window
 <kbd>PREFIX</kbd> + <kbd>TAB</kbd> | switch between last and current window
-
+<kbd>SHIFT</kbd> + <kbd>LEFT</kbd> | switch to left window
+<kbd>SHIFT</kbd> + <kbd>RIGHT</kbd> | switch to right window
 <kbd>PREFIX</kbd> + <kbd>z</kbd> | pane > fullscreen
+<kbd>PREFIX</kbd> + <kbd>r</kbd> | reload tmux.conf
+<kbd>F11</kbd> | pane > fullscreen
 <kbd>PREFIX</kbd> + <kbd>?</kbd> | list shortcuts
+<kbd>ALT</kbd> + <kbd>LEFT</kbd> | switch to the left pane
+<kbd>ALT</kbd> + <kbd>RIGHT</kbd> | switch to the right pane
+<kbd>ALT</kbd> + <kbd>UP</kbd> | switch to the upper pane
+<kbd>ALT</kbd> + <kbd>DOWN</kbd> | switch to the lower pane
