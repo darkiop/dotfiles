@@ -40,6 +40,16 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# load scripts in bash_completion.d
+if [[ -d ~/dotfiles/bash_completion.d/ ]] && \
+  ! find ~/dotfiles/bash_completion.d/. ! -name . -prune -exec false {} +
+then
+  for f in ~/dotfiles/bash_completion.d/*
+    do
+      source "$f"
+    done
+fi
+
 # fzf completion
 if [ -f "$HOME"/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh ]; then
   source "$HOME"/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh
