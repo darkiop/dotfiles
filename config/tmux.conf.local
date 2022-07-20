@@ -361,6 +361,11 @@ bind -n M-Down select-pane -D
 bind -n S-Left previous-window
 bind -n S-Right next-window
 
+# expanded to show all splits
+bind s choose-tree
+# simpler window to show only sessions
+bind S choose-session
+
 # Browser like shortcuts, without prefix
 # https://www.seanh.cc/2020/12/30/how-to-make-tmux's-windows-behave-like-browser-tabs/
 bind -n C-t new-window
