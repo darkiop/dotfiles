@@ -18,4 +18,7 @@ gluster peer status
 # heal
 gluster volume heal <list-volumes> split-brain source-brick <host:brick> <file>
 
+# remove a brick, e.g. replica-count = 2 / Path = 192.168.1.40:/data/glusterfs/pve = remove brick 3
+gluster volume remove-brick <list-volumes> replica <replica-count> <path> force
+
 $ list-volumes: gluster volume list
