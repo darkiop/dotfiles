@@ -393,7 +393,7 @@ bind -T copy-mode    TripleClick1Pane select-pane \; send -X select-line \; send
 bind -T copy-mode-vi TripleClick1Pane select-pane \; send -X select-line \; send -X copy-pipe-no-clear "xsel -i"
 bind -n TripleClick1Pane select-pane \; copy-mode -M \; send -X select-line \; send -X copy-pipe-no-clear "xsel -i"
 bind -n MouseDown2Pane run "tmux set-buffer -b primary_selection \"$(xsel -o)\"; tmux paste-buffer -b primary_selection; tmux delete-buffer -b primary_selection"
-#set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-yank'
 set -g @yank_action 'copy-pipe-no-clear'
 
