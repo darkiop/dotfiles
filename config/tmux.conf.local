@@ -332,6 +332,7 @@ tmux_conf_copy_to_os_clipboard=false
 # this is the place to override or undo settings
 
 # https://www.seanh.cc/2020/12/28/binding-keys-in-tmux/
+# https://www.hamvocke.com/blog/a-guide-to-customizing-your-tmux-conf/
 #
 # M = Alt
 # S = Shift
