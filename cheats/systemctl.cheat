@@ -48,8 +48,17 @@ journalctl UNIT=<service>
 # show live log of service
 journalctl -f -u <service_active>
 
+# delete journal logs older than 2 days
+journalctl --vacuum-time=2days
+
 # reboot to uefi
 systemctl reboot --firmware-setup
+
+# boot only a shell
+systemctl set-default multi-user.target
+
+# boot with gui
+systemctl set-default graphical.target
 
 $ service_inactive: systemctl list-units --type=service --state=inactive | awk '{print $1}' | grep .service | sed 's/.service$//'
 $ service_active: systemctl list-units --type=service --state=active | awk '{print $1}' | grep .service | sed 's/.service$//'

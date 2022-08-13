@@ -175,36 +175,36 @@ function cloneREPO() {
 # -------------------------------------------------------------
 # Install bash_completition.d
 # -------------------------------------------------------------
-function instBASHCOMPLE() {
-  message blue "[ Install bash_completitions ]"
-  if [ -L "$HOME/.bash_completion.d" ] ; then
-    if [ ! -e "$HOME/.bash_completion.d" ] ; then
-        # remove > broken
-        rm "$HOME/.bash_completion.d"
-        echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" bash_completion.d ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
-        ln -s "$HOME"/dotfiles/bash_completion.d ~/.bash_completion.d
-    fi
-  else
-    # link not exist
-    echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" bash_completion.d ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
-    ln -s "$HOME"/dotfiles/bash_completion.d ~/.bash_completion.d
-  fi
-
-  # argcomplete
-  # https://github.com/kislyuk/argcomplete
-  if [ ! is_user_root ]; then
-    if [[ ! -x /usr/local/bin/activate-global-python-argcomplete ]]; then
-      pip3 install argcomplete
-      if [ -f "$HOME"/.local/bin/activate-global-python-argcomplete ]; then
-        "$HOME"/.local/bin/activate-global-python-argcomplete --dest="$HOME"/dotfiles/bash_completion.d
-      fi
-    else
-      if [ -f "$HOME"/.local/bin/activate-global-python-argcomplete ]; then
-        "$HOME"/.local/bin/activate-global-python-argcomplete --dest="$HOME"/dotfiles/bash_completion.d
-      fi
-    fi
-  fi
-}
+#function instBASHCOMPLE() {
+#  message blue "[ Install bash_completitions ]"
+#  if [ -L "$HOME/.bash_completion.d" ] ; then
+#    if [ ! -e "$HOME/.bash_completion.d" ] ; then
+#        # remove > broken
+#        rm "$HOME/.bash_completion.d"
+#        echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" bash_completion.d ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
+#        ln -s "$HOME"/dotfiles/bash_completion.d ~/.bash_completion.d
+#    fi
+#  else
+#    # link not exist
+#    echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" bash_completion.d ""$COLOR_GREEN""symlink ...""$COLOR_CLOSE"
+#    ln -s "$HOME"/dotfiles/bash_completion.d ~/.bash_completion.d
+#  fi
+#
+#  # argcomplete
+#  # https://github.com/kislyuk/argcomplete
+#  if [ ! is_user_root ]; then
+#    if [[ ! -x /usr/local/bin/activate-global-python-argcomplete ]]; then
+#      pip3 install argcomplete
+#      if [ -f "$HOME"/.local/bin/activate-global-python-argcomplete ]; then
+#        "$HOME"/.local/bin/activate-global-python-argcomplete --dest="$HOME"/dotfiles/bash_completion.d
+#      fi
+#    else
+#      if [ -f "$HOME"/.local/bin/activate-global-python-argcomplete ]; then
+#        "$HOME"/.local/bin/activate-global-python-argcomplete --dest="$HOME"/dotfiles/bash_completion.d
+#      fi
+#    fi
+#  fi
+#}
 
 # -------------------------------------------------------------
 # install: vimrc-amix
@@ -223,7 +223,7 @@ function instVIMRC() {
 # install: oh-my-tmux
 # -------------------------------------------------------------
 function instTMUX() {
-  message blue "[ Install oh-my-tmux ]"
+  message blue "[ Install oh-my-tmux and tmux plugin manager ]"
   if [ -L "$HOME"/.tmux.conf ] ; then
     rm "$HOME"/.tmux.conf
   fi
@@ -232,6 +232,12 @@ function instTMUX() {
   fi
   ln -s "$HOME"/dotfiles/modules/oh-my-tmux/.tmux.conf "$HOME"/.tmux.conf
   ln -s "$HOME"/dotfiles/config/tmux.conf.local "$HOME"/.tmux.conf.local
+  if [ ! -d "$HOME"/.tmux/plugins ] ; then
+    mkdir -p "$HOME"/.tmux/plugins
+  fi
+  if [ ! -L "$HOME"/.tmux/plugins/tpm ] ; then
+    ln -s "$HOME"/dotfiles/modules/tpm "$HOME"/.tmux/plugins/tpm
+  fi
   echo
 }
 
