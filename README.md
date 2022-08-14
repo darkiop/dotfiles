@@ -54,6 +54,7 @@ cat syslog | dategrep --end "12:15"
 - https://github.com/amix/vimrc
 - https://github.com/mdom/dategrep
 - http://lnav.org
+- https://github.com/gpakosz/.tmux
 
 ### misc
 - https://github.com/vim-airline/vim-airline
