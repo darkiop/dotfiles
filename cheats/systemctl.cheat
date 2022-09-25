@@ -60,6 +60,9 @@ systemctl set-default multi-user.target
 # boot with gui
 systemctl set-default graphical.target
 
+# list all services
+service --status-all
+
 $ service_inactive: systemctl list-units --type=service --state=inactive | awk '{print $1}' | grep .service | sed 's/.service$//'
 $ service_active: systemctl list-units --type=service --state=active | awk '{print $1}' | grep .service | sed 's/.service$//'
 $ service_enabled: systemctl list-unit-files --type=service --state=enabled | awk '{print $1}' | grep .service | sed 's/.service$//'
