@@ -99,6 +99,12 @@ pct list | awk '{print $1}' | sed '1d' | while read VMID; do pct migrate $VMID <
 # bulk migrate vm (while)
 qm list | awk '{print $1}' | sed '1d' | while read VMID; do qm migrate $VMID <target-node> -online --with-local-disks; done
 
+# list qm ids
+qm list | awk '{print $1}' | grep -Eo '[0-9]{1,3}'
+
+# list pct ids
+pct list | awk '{print $1}' | grep -Eo '[0-9]{1,3}'
+
 # run a proxmox benchmark
 pveperf
 
