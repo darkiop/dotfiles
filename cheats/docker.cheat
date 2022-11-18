@@ -18,6 +18,12 @@ docker stop $(docker ps -aq)
 # List all images that are locally stored with the Docker engine
 docker images
 
+# delete old / unused images
+docker image prune
+
+# delte old / unused volumes
+docker volume prune
+
 # Build an image from the Dockerfile in the current directory and tag the image
 docker build -t <image>:<version> .
 
@@ -41,6 +47,15 @@ docker rm -f "$(docker ps -aq)"
 
 # Create a new bash process inside the container and connect it to the terminal
 docker exec -it <container_id> bash
+
+# run a cmd in a container
+docker exec -it <container_id> sh -c "<cmd>"
+
+# copy data to container
+docker <file> <container_id>:<path>
+
+# copy data from container
+docker cp <container_id>:<container_path> <target>
 
 # Print the last lines of a container's logs
 docker logs --tail 100 <container_id> | less
@@ -81,3 +96,12 @@ docker-compose down
 
 # Prevent all containers from autostarting on boot
 docker update --restart=no $(docker ps -a -q)
+
+# create a docker run cmd of an running container
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock red5d/docker-autocompose CONTAINER-NAME
+
+# create a docker-compose.yml of an running container
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock red5d/docker-autocompose CONTAINER-NAME
+
+# delete container with status = dead
+docker rm $(docker ps --all -q -f status=dead)
