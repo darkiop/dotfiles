@@ -25,10 +25,6 @@ function show () {
   apt-cache search $1
 }
 
-function giveme () {
-  apt install "$@"
-}
-
 function extract () {
   if [ -f $1 ] ; then
     case $1 in
@@ -76,6 +72,11 @@ else
   alias ll='ls -lah'
   alias la='ls -A'
   alias lt='ls --tree'
+fi
+
+# mtr (-b = show ips)
+if [ -x /usr/bin/mtr ]; then
+  alias mtr='mtr -b'
 fi
 
 # motd
@@ -180,7 +181,7 @@ if [[ -x $(which pveversion) ]]; then
 fi
 
 # load glusterfs alias
-if [[ -x /usr/sbin/gluster ]]; then
+if [[ -x $(which gluster) ]]; then
   source $HOME/dotfiles/alias/alias-glusterfs
 fi
 
