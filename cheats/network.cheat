@@ -84,3 +84,12 @@ ip route add <target-net-cdir> via <gateway> dev <device>
 
 # network monitor
 bmon
+
+# delete dns cache (systemd)
+systemd-resolve --flush-caches
+
+# delete dns cache (dnsmasq)
+systemctl restart dnsmasq.service
+
+# delete dns cache (macos)
+killall -HUP mDNSResponder

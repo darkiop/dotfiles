@@ -20,3 +20,6 @@ ansible-vault encrypt <file>
 
 # vault: decrypt a file
 ansible-vault decrypt <file>
+
+# ping all hosts
+ansible all -m ping -v
