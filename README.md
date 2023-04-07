@@ -57,6 +57,7 @@ cat syslog | dategrep --end "12:15"
 - https://github.com/gpakosz/.tmux
 
 ### misc
+- https://dotfiles.github.io/tutorials/
 - https://github.com/vim-airline/vim-airline
 - https://github.com/vim-airline/vim-airline-themes
 - https://github.com/starship/starship
