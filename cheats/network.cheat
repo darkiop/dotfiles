@@ -79,8 +79,14 @@ ping <host> | while read pong; do echo "$(date): $pong"; done
 # show routing table
 route -n
 
-# add a route
+# add a route for subnet
 ip route add <target-net-cdir> via <gateway> dev <device>
+
+# add route for specific ip
+route add -host <target-ip> dev <interface>
+
+# delete route for specific ip
+route del -host <target-ip> dev <interface>
 
 # network monitor
 bmon
