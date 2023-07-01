@@ -118,6 +118,7 @@ fi
 if [[ $EUID -ne 0 ]]; then
   alias route='sudo route'
   alias ethtool='sudo ethtool'
+  alias ifmetric='sudo ifmetric'
 fi
 
 # dmesg (human readable time)
