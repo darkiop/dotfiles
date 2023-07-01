@@ -1,0 +1,31 @@
+% hcloud hetzner
+
+# create a project (needs API Token)
+hcloud context create <project-name>
+
+# list servers
+hcloud server list
+
+# starts a server
+hcloud server poweron <hcloud_list_servers>
+
+# stops a server
+hcloud server poweroff <hcloud_list_servers>
+
+# create a server
+hcloud server create --type <hcloud_list_server_types> --image <hcloud_list_system_images> --datacenter <hcloud_list_datacenters> --name <name>
+
+# create a server with cloud-init file
+hcloud server create --type <hcloud_list_server_types> --image <hcloud_list_system_images> --datacenter <hcloud_list_datacenters> --name <name> --user-data-from-file <ls>
+
+# delete server (remove X, because there is no security question :))
+hcloud server deleteX <hcloud_list_servers>
+
+# list datacenter
+hcloud datacenter list
+
+$ hcloud_list_servers: hcloud server list | awk '{print $2}' | tail -n +2
+$ hcloud_list_datacenters: hcloud datacenter list | awk '{print $2}' | tail -n +2
+$ hcloud_list_server_types: hcloud server-type list | awk '{print $2}' | tail -n +2
+$ hcloud_list_system_images: hcloud image list | awk '$2 == "system"' | awk '{print $3}' | sort -u
+$ ls: ls
