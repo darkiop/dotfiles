@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# run ioBroker fix.sh Skript
-alias iofix='curl -sL https://iobroker.net/fix.sh | bash -'
-
+alias iobfix='curl -sL https://iobroker.net/fix.sh | bash -'
 alias ioblnav='lnav /opt/iobroker/log/iobroker.current.log'
 alias iobl='tail -f /opt/iobroker/log/iobroker.current.log'

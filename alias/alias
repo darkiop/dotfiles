@@ -106,9 +106,18 @@ if [[ $EUID -ne 0 ]]; then
   alias sysl='sudo tail -f /var/log/syslog'
   alias syslnav='sudo lnav /var/log/syslog'
   alias mesl='sudo tail -f /var/log/messages'
+  alias meslnav='sudo lnav /var/log/messages'
 else
   alias sysl='tail -f /var/log/syslog'
+  alias syslnav='lnav /var/log/syslog'
   alias mesl='tail -f /var/log/messages'
+  alias meslnav='lnav /var/log/messages'
+fi
+
+# some sbins
+if [[ $EUID -ne 0 ]]; then
+  alias route='sudo route'
+  alias ethtool='sudo ethtool'
 fi
 
 # dmesg (human readable time)
@@ -144,10 +153,11 @@ alias cd..='cd ..'
 # watch, 1s default
 alias watch='watch -n1'
 
-# wol
+# WakeOnLAN
 alias wol-thor='/usr/bin/wakeonlan -i 10.1.0.2 0c:9d:92:84:86:49'
-alias wol-pve01='/usr/bin/wakeonlan -i 192.168.1.50 1c:69:7a:02:5e:3f'
-alias wol-pve02='/usr/bin/wakeonlan -i 192.168.1.51 1c:69:7a:62:9b:95'
+alias wol-odin='/usr/bin/wakeonlan -i 192.168.1.70 90:09:d0:0f:8e:0f'
+alias wol-pve01='/usr/bin/wakeonlan -i 192.168.1.71 00:e0:4c:68:a1:6e'
+alias wol-pve02='/usr/bin/wakeonlan -i 192.168.1.72 1c:69:7a:62:9b:95'
 
 # locate
 if [ -x /usr/bin/locate ]; then
