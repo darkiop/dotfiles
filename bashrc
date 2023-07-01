@@ -40,6 +40,11 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# create bash_completion for hcloud
+if [ -x /usr/bin/hcloud ]; then
+  hcloud completion bash > ~/dotfiles/bash_completion.d/hcloud
+fi
+
 # load scripts in bash_completion.d
 if [[ -d ~/dotfiles/bash_completion.d/ ]] && \
   ! find ~/dotfiles/bash_completion.d/. ! -name . -prune -exec false {} +
