@@ -58,6 +58,9 @@ function psg() {
 if [ -x /usr/bin/bat ]; then
   alias cat='bat'
 fi
+if [ -x /usr/bin/batcat ]; then
+  alias cat='batcat'
+fi
 
 # ls or lsd
 if [ -x /usr/bin/lsd ] || [ -x /usr/local/bin/lsd ]; then
