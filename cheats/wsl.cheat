@@ -3,6 +3,9 @@
 # wsl shuutdown
 wsl --shutdown
 
+# wsl set default distribution
+wsl --set-default <Distribution Name>
+
 # wsl set version 2
 wsl --set-version <subsystem> 2
 
@@ -10,7 +13,16 @@ wsl --set-version <subsystem> 2
 wsl --set-default-version 2
 
 # wsl list installed
-wsl -l -v
+wsl --list --verbose
+
+# wsl list available versions
+wsl --list --online
 
 # wsl terminate, e.g. 'Debian'
 wsl --terminate <name>
+
+# update wsl
+wsl --update
+
+# show wsl status
+wsl --status
