@@ -3,6 +3,12 @@
 # list
 iptables -L
 
+# list with line-numbers
+iptables -L --line-numbers
+
+# delete INPUT rule via line-number
+iptables -D INPUT <line-number>
+
 # allow to port from ip
 iptables -A INPUT -p tcp --dport <port> -s <ip> -j ACCEPT
 
