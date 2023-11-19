@@ -16,4 +16,4 @@ iptables -A INPUT -p tcp --dport <port> -s <ip> -j ACCEPT
 iptables -A INPUT -p tcp --dport <port> -j DROP
 
 # save
-iptables-save > /etc/iptables/rules.v4 
+iptables-save > /etc/iptables/rules.v4
