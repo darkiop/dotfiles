@@ -17,14 +17,6 @@ source $HOME/dotfiles/config/dotfiles.config
 #
 export FZF_DEFAULT_OPTS='--height 50% --layout=reverse-list --margin=1 --padding=0 --border=rounded --info=inline --ansi --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 --color=fg:#ffffff,header:#00afff,info:#00afff,pointer:#ff0000 --color=marker:#ff0000,fg+:#00afff,prompt:#00afff,hl+:#ffffff'
 
-# fzf with bat/batcat
-if [ -x /bin/batcat ]; then
-  fzf --preview 'batcat --color "always" {}'
-fi
-if [ -x /usr/bin/bat ]; then
-  fzf --preview 'bat --color "always" {}'
-fi
-
 #
 # SET HISTORY OPTIONS
 #

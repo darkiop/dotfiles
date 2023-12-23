@@ -133,6 +133,14 @@ if [ -x /usr/bin/fdfind ]; then
   alias fd='fdfind'
 fi
 
+# fzf with bat/batcat
+if [ -x /bin/batcat ]; then
+  alias fzf='fzf --preview 'batcat --color "always" {}''
+fi
+if [ -x /usr/bin/bat ]; then
+  alias fzf='fzf --preview 'bat --color "always" {}''
+fi
+
 # reboot
 case $HOSTNAME in
   thor) alias reboot='powershell.exe -command restart-computer';;
