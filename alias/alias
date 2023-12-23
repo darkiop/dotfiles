@@ -128,12 +128,9 @@ fi
 # dmesg (human readable time)
 alias dmesg='dmesg -T'
 
-# fzf with bat/batcat
-if [ -x /bin/batcat ]; then
-  fzf --preview 'batcat --color "always" {}'
-fi
-if [ -x /usr/bin/bat ]; then
-  fzf --preview 'bat --color "always" {}'
+# fd-find
+if [ -x /usr/bin/fdfind ]; then
+  alias fd='fdfind'
 fi
 
 # reboot
