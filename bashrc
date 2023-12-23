@@ -62,7 +62,7 @@ if [ -f "$HOME"/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh 
 fi
 
 # load fzf key bindungs
-if [ -f /usr/share/doc/fzf/examples/completion.bash ]; then
+if [ -f /usr/share/doc/fzf/examples/key-bindings.bash ]; then
   source /usr/share/doc/fzf/examples/key-bindings.bash
 fi
 
