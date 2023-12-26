@@ -134,12 +134,12 @@ if [ -x /usr/bin/fdfind ]; then
 fi
 
 # fzf with bat/batcat
-if [ -x /bin/batcat ]; then
-  alias fzf='fzf --preview 'batcat --color "always" {}''
-fi
-if [ -x /usr/bin/bat ]; then
-  alias fzf='fzf --preview 'bat --color "always" {}''
-fi
+#if [ -x /bin/batcat ]; then
+#  alias fzf='fzf --preview "batcat --color "always" {}"'
+#fi
+#if [ -x /usr/bin/bat ]; then
+#  alias fzf='fzf --preview 'bat --color "always" {}''
+#fi
 
 # reboot
 case $HOSTNAME in
