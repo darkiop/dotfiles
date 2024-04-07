@@ -5,7 +5,7 @@ zfs list
 zfs list -t snapshot
 
 # create a snapshot
-zfs snapshot <pool>t@<snapshot-name>
+zfs snapshot <pool>@<snapshot-name>
 
 # rollback a snapshot
 zfs rollback rpool/somedataset@test
