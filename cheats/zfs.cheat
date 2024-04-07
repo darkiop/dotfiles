@@ -1,3 +1,5 @@
+% zfs
+
 # list filesystems/volumes
 zfs list
 
