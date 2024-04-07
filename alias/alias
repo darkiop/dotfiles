@@ -8,7 +8,12 @@ if [[ $EUID -ne 0 ]]; then
   alias systemctl='sudo systemctl'
   alias journalctl='sudo journalctl'
   alias service='sudo service'
+  alias zfs='sudo zfs'
+  alias route='sudo route'
+  alias ethtool='sudo ethtool'
+  alias ifmetric='sudo ifmetric'
 fi
+# some sbins
 
 # ps tree / forest
 alias ps='ps --forest'
@@ -116,13 +121,6 @@ else
   alias syslnav='lnav /var/log/syslog'
   alias mesl='tail -f /var/log/messages'
   alias meslnav='lnav /var/log/messages'
-fi
-
-# some sbins
-if [[ $EUID -ne 0 ]]; then
-  alias route='sudo route'
-  alias ethtool='sudo ethtool'
-  alias ifmetric='sudo ifmetric'
 fi
 
 # dmesg (human readable time)
