@@ -1,0 +1,16 @@
+# list filesystems/volumes
+zfs list
+
+# list snapshots
+zfs list -t snapshot
+
+# create a snapshot
+zfs snapshot <pool>t@<snapshot-name>
+
+# rollback a snapshot
+zfs rollback rpool/somedataset@test
+
+# destroy a snapshot
+zfs destroy rpool/somedataset@test
+
+$ pools: zfs list | awk '{print $1}' | tail -n +2
