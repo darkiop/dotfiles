@@ -99,6 +99,9 @@ alias cls='source $HOME/.bashrc'
 alias rl='source $HOME/.bashrc'
 alias reload='source $HOME/.bashrc'
 
+# colorful ip
+alias ip='ip -c'
+
 # dotfiles update
 alias update-dotfiles='cd $HOME/dotfiles && git pull && rl'
 alias dotfu='dotf && gp && rl'
