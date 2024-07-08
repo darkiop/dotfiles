@@ -23,3 +23,6 @@ ansible-vault decrypt <file>
 
 # ping all hosts
 ansible all -m ping -v
+
+# ping single host
+ansible <host> -m ping -v
