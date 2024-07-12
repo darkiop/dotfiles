@@ -13,6 +13,13 @@ zfs snapshot <pools>@<snapshot-name>
 zfs rollback rpool/somedataset@test
 
 # destroy a snapshot
-zfs destroy rpool/somedataset@test
+zfs destroy rpool/<snapshots>
+
+# delete all snapshots
+zfs destroy rpool@%
+
+# list all snapshot
+zfs list -H -o name -t snapshot
 
 $ pools: zfs list | awk '{print $1}' | tail -n +2
+$ snapshots: zfs list -H -o name -t snapshot
