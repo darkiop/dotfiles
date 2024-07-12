@@ -10,7 +10,7 @@ zfs list -t snapshot
 zfs snapshot <pools>@<snapshot-name>
 
 # rollback a snapshot
-zfs rollback rpool/somedataset@test
+zfs rollback rpool/<snapshots>
 
 # destroy a snapshot
 zfs destroy rpool/<snapshots>
