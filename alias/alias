@@ -219,6 +219,11 @@ if [[ -x $(which wg) ]]; then
   source $HOME/dotfiles/alias/alias-wireguard
 fi
 
+# load ansible alias
+if [[ -x $(which ansible) ]]; then
+  source $HOME/dotfiles/alias/alias-ansible
+fi
+
 # load iobroker alias
 if [ -d /opt/iobroker ]; then
   source $HOME/dotfiles/alias/alias-iobroker
