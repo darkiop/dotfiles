@@ -18,7 +18,7 @@ zfs destroy rpool/<snapshots>
 # delete all snapshots
 zfs destroy rpool@%
 
-# list all snapshot
+# list all snapshots
 zfs list -H -o name -t snapshot
 
 $ pools: zfs list | awk '{print $1}' | tail -n +2
