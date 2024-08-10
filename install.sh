@@ -216,6 +216,7 @@ function instVIMRC() {
   fi
   bash "$HOME"/dotfiles/modules/vimrc/install_awesome_parameterized.sh "$HOME"/dotfiles/modules/vimrc "$USER"
   ln -s "$HOME"/dotfiles/config/my_configs.vim "$HOME"/dotfiles/modules/vimrc/my_configs.vim
+  ln -s "$HOME"/dotfiles/modules/vimrc/my_configs.vim "$HOME"/.vimrc_my_configs
   echo
 }
 
