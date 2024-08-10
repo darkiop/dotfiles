@@ -1,5 +1,4 @@
 config/local_dotfiles_settings
-bin/cht.sh
 bash_completion.d/hcloud
 modules
 ._.DS_Store
