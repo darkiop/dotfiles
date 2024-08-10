@@ -5,7 +5,7 @@ COUNT=~/.dotfiles-update-count
 if [ -f "$COUNT" ]; then
   typeset -i startup_count=$(cat $COUNT)
   echo $(($startup_count + 1)) > $COUNT
-  if [ $startup_count -gt 10 ]
+  if [ $startup_count -gt 20 ]
   then
       echo "Update dotfiles ..."
       cd $HOME/dotfiles

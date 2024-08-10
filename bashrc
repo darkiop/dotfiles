@@ -66,7 +66,7 @@ if [ -f /usr/share/doc/fzf/examples/key-bindings.bash ]; then
   source /usr/share/doc/fzf/examples/key-bindings.bash
 fi
 
-# autoupdate dotfiles after 10 logins
+# autoupdate dotfiles after 20 logins
 if [ -x $HOME/dotfiles/autoupdate.sh ]; then
   bash $HOME/dotfiles/autoupdate.sh
 fi
