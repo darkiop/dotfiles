@@ -23,16 +23,13 @@ bash $HOME/dotfiles/install.sh
 ```
 
 ## FEATURES
+```
 - navi <kbd>STRG</kbd> + <kbd>G</kbd> (~/dotfiles/cheats)
-- cheat.sh
-```
-cht.sh man
-```
 - vimrc
 - motd for each hostname (~/dotfiles/motd)
 - dategrep
 - tmux
-```
+
 dategrep --start "12:00" --end "12:15" syslog
 dategrep --end "12:15" --format "%b %d %H:%M:%S" syslog
 dategrep --last-minutes 5 syslog
