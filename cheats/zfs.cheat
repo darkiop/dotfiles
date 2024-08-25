@@ -18,6 +18,9 @@ zfs set com.sun:auto-snapshot=true rpool
 # enable auto-snapshot for a single rpool
 zfs set com.sun:auto-snapshot=true <pools>
 
+# show rpools with actove auto-snapshot
+zfs get com.sun:auto-snapshot | grep true
+
 # rollback a snapshot
 zfs rollback <snapshots>
 
