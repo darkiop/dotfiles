@@ -13,7 +13,7 @@ zfs snapshot <pools>@<snapshot-name>
 zfs rollback <snapshots>
 
 # destroy a snapshot
-zfs destroy rpool/<snapshots>
+zfs destroy <snapshots>
 
 # delete all snapshots
 zfs destroy rpool@%
