@@ -9,6 +9,15 @@ zfs list -t snapshot
 # create a snapshot
 zfs snapshot <pools>@<snapshot-name>
 
+# disable auto-snapshot in general
+zfs set com.sun:auto-snapshot=false rpool
+
+# enable auto-snapshot in general
+zfs set com.sun:auto-snapshot=true rpool
+
+# enable auto-snapshot for a single rpool
+zfs set com.sun:auto-snapshot=true <pools>
+
 # rollback a snapshot
 zfs rollback <snapshots>
 
