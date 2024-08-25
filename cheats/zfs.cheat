@@ -1,9 +1,9 @@
 % zfs
 
-# list filesystems/volumes
+# show/list filesystems/volumes
 zfs list
 
-# list snapshots
+# show/list snapshots
 zfs list -t snapshot
 
 # create a snapshot
@@ -18,7 +18,7 @@ zfs set com.sun:auto-snapshot=true rpool
 # enable auto-snapshot for a single rpool
 zfs set com.sun:auto-snapshot=true <pools>
 
-# show rpools with actove auto-snapshot
+# show/list rpools with actove auto-snapshot
 zfs get com.sun:auto-snapshot | grep true
 
 # rollback a snapshot
@@ -30,7 +30,7 @@ zfs destroy <snapshots>
 # delete all snapshots
 zfs destroy rpool@%
 
-# list all snapshots
+# show/list all snapshots
 zfs list -H -o name -t snapshot
 
 $ pools: zfs list | awk '{print $1}' | tail -n +2
