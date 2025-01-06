@@ -30,6 +30,9 @@ cat <file> | ssh <user>@<server> "mkdir ~/.ssh; cat >> ~/.ssh/authorized_keys"
 # copy ssh id to server - my local key
 cat .ssh/authorized_keys | grep thor-local | ssh <user>@<server> "mkdir ~/.ssh; cat >> ~/.ssh/authorized_keys"
 
+# use tar to copy a directory via ssh
+tar czf - <dir-source> | ssh <user>@<remotehost> 'tar xzf - -C <dir-target>'
+
 # run command on remote host
 ssh <user>@<host> bash -c "'<cmd>'"
 
