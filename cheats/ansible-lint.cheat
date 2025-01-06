@@ -1,0 +1,4 @@
+% ansible
+
+# run ansible-lint
+ansible-lint <file>
