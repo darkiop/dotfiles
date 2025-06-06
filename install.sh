@@ -9,109 +9,113 @@ set -e
 # check root function
 # https://stackoverflow.com/questions/18215973/how-to-check-if-running-as-root-in-a-bash-script
 # -------------------------------------------------------------
-function is_user_root () {
-  [ "$(id -u)" -eq 0 ];
+function is_user_root() {
+	[[ "$(id -u)" -eq 0 ]]
 }
 
 # -------------------------------------------------------------
 # check if user is root and if not exit
 # -------------------------------------------------------------
 function if_user_root_msg() {
-  if [ is_user_root ]; then
-    message red "You need to run this as root. Exit."
-    exit 1
-  fi
+	if [[ is_user_root ]]; then
+		message red "You need to run this as root. Exit."
+		exit 1
+	fi
 }
 
 # -------------------------------------------------------------
 # first check if root, when not define a alias with sudo
 # -------------------------------------------------------------
-if [ is_user_root ]; then
-  apt=$(whereis apt)
+if [[ is_user_root ]]; then
+	apt=$(whereis apt)
 else
-  apt='sudo '$(whereis apt)
+	apt='sudo '$(whereis apt)
 fi
 
 # -------------------------------------------------------------
 # load color vars
 # https://bashcolors.com
 # -------------------------------------------------------------
-function loadColors () {
-  if [ ! -f "$HOME/dotfiles/config/dotfiles.config" ]; then
-    source <(curl -s https://raw.githubusercontent.com/darkiop/dotfiles/master/config/dotfiles.config)
-  else 
-    source "$HOME/dotfiles/config/dotfiles.config"
-  fi
+function loadColors() {
+	if [[ ! -f "${HOME}/dotfiles/config/dotfiles.config" ]]; then
+		source <(curl -s https://raw.githubusercontent.com/darkiop/dotfiles/master/config/dotfiles.config)
+	else
+		source "${HOME}/dotfiles/config/dotfiles.config"
+	fi
 }
 
 # -------------------------------------------------------------
 # check if sudo is installed
 # -------------------------------------------------------------
 function check_if_sudo_is_installed() {
-  if [ ! "$(whereis sudo)" ]; then
-    message red "sudo not found. install it ..."
-    $apt install sudo -y
-  fi
+	#if [[ ! -n "$(whereis sudo)" ]]; then
+  if [[ -z "$(whereis sudo || true )" ]]; then
+		message red "sudo not found. install it ..."
+		${apt} install sudo -y
+	fi
 }
 
 # -------------------------------------------------------------
 # check if curl is installed
 # -------------------------------------------------------------
 function check_if_curl_is_installed() {
-  if [ ! "$(whereis curl)" ]; then
-    message red "curl not found. install it ..."
-    $apt install curl -y
-  fi
+	if [[ ! "$(whereis curl)" ]]; then
+		message red "curl not found. install it ..."
+		${apt} install curl -y
+	fi
 }
 
 # -------------------------------------------------------------
 # check if git is installed
 # -------------------------------------------------------------
 function check_if_git_is_installed() {
-  if [ ! "$(whereis git)" ]; then
-    message red "git not found. install it ..."
-    $apt install git -y
-  fi
+	if [[ ! "$(whereis git)" ]]; then
+		message red "git not found. install it ..."
+		${apt} install git -y
+	fi
 }
 
 # -------------------------------------------------------------
 # Ask
-# example: 
+# example:
 #   ask blue "Question?"
 #   if [ $REPLY == "y" ]; then
 #     do something ...
 #   fi
 # -------------------------------------------------------------
 function ask() {
-  local color="$1"
-  case $color in
-    green)
-    color=$COLOR_GREEN
-    ;;
-    blue)
-    color=$COLOR_BLUE
-    ;;
-    lightblue)
-    color=$COLOR_LIGHT_BLUE
-    ;;
-    yellow)
-    color=$COLOR_YELLOW
-    ;;
-    red)
-    color=$COLOR_RED
-    ;;
-  esac
-  while true; do
-    echo -e "$color"
-    read -p "$2 ([y]/n) " -r
-    echo -e "$COLOR_CLOSE"
-    REPLY=${REPLY:-"y"}
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      return 1
-    elif [[ $REPLY =~ ^[Nn]$ ]]; then
-      return 0
-    fi
-  done
+	local color="$1"
+	case ${color} in
+	green)
+		color=${COLOR_GREEN}
+		;;
+	blue)
+		color=${COLOR_BLUE}
+		;;
+	lightblue)
+		color=${COLOR_LIGHT_BLUE}
+		;;
+	yellow)
+		color=${COLOR_YELLOW}
+		;;
+	red)
+		color=${COLOR_RED}
+		;;
+	*)
+		color=${COLOR_DEFAULT}
+		;;
+	esac
+	while true; do
+		echo -e "${color}"
+		read -p "$2 ([y]/n) " -r
+		echo -e "${COLOR_CLOSE}"
+		REPLY=${REPLY:-"y"}
+		if [[ ${REPLY} =~ ^[Yy]$ ]]; then
+			return 1
+		elif [[ ${REPLY} =~ ^[Nn]$ ]]; then
+			return 0
+		fi
+	done
 }
 
 # -------------------------------------------------------------
@@ -119,57 +123,73 @@ function ask() {
 # example: message color "text"
 # -------------------------------------------------------------
 function message() {
-  local color="$1"
-  case $color in
-    green)
-    color=$COLOR_GREEN
-    ;;
-    blue)
-    color=$COLOR_BLUE
-    ;;
-    lightblue)
-    color=$COLOR_LIGHT_BLUE
-    ;;
-    yellow)
-    color=$COLOR_YELLOW
-    ;;
-    red)
-    color=$COLOR_RED
-    ;;
-  esac
-  echo -e "$color"
-  echo "$2"
-  echo -e "$COLOR_CLOSE"
+	local color="$1"
+	case ${color} in
+	green)
+		color=${COLOR_GREEN}
+		;;
+	blue)
+		color=${COLOR_BLUE}
+		;;
+	lightblue)
+		color=${COLOR_LIGHT_BLUE}
+		;;
+	yellow)
+		color=${COLOR_YELLOW}
+		;;
+	red)
+		color=${COLOR_RED}
+		;;
+	*)
+		color=${COLOR_DEFAULT}
+		;;
+	esac
+	echo -e "${color}"
+	echo "$2"
+	echo -e "${COLOR_CLOSE}"
 }
 
 # -------------------------------------------------------------
 # main menu
 # -------------------------------------------------------------
-function show_main_menu(){
-  unset opt_main_menu
-  echo
-  echo -e "$COLOR_GREEN""[ darkiop/dotfiles ]""$COLOR_CLOSE"
-  echo
-  printf "${COLOR_YELLOW}1)${COLOR_CLOSE} Install dotfiles (all)\n"
-  printf "${COLOR_YELLOW}2)${COLOR_CLOSE} Install git submodules\n"
-  printf "${COLOR_YELLOW}5)${COLOR_CLOSE} Install .bashrc\n"
-  echo
-  printf "Please choose an option or ${COLOR_RED}x${COLOR_CLOSE} to exit: "
-  read -r opt_main_menu
+function show_main_menu() {
+	unset opt_main_menu
+	echo
+	# Use printf '%b' to expand backslash escapes in the variable:
+	printf '%b[ darkiop/dotfiles ]%b\n\n' \
+		"${COLOR_GREEN}" "${COLOR_CLOSE}"
+
+	# Now use %b for colors, then literal “1)”, then %b to close color:
+	printf '%b1)%b Install dotfiles (all)\n' \
+		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
+
+	printf '%b2)%b Install git submodules\n' \
+		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
+
+	printf '%b5)%b Install .bashrc\n' \
+		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
+
+	echo
+
+	# Prompt line, again using %b for red “x” and reset:
+	printf 'Please choose an option or %bx%b to exit: ' \
+		"${COLOR_RED}" "${COLOR_CLOSE}"
+
+	read -r opt_main_menu
 }
 
 # -------------------------------------------------------------
 # clone repo from github
 # -------------------------------------------------------------
 function cloneREPO() {
-  if [ ! -d "$HOME/dotfiles" ]; then
-    message blue "[ clone dotfiles repo from github ]"
-    git clone --recurse-submodules https://github.com/darkiop/dotfiles "$HOME/dotfiles"
-    cd "$HOME/dotfiles"
-    git config pull.rebase false
-  else
-    message yellow "dotfiles directory already exist."
-  fi
+	if [[ ! -d "${HOME}/dotfiles" ]]; then
+		message blue "[ clone dotfiles repo from github ]"
+		git clone --recurse-submodules https://github.com/darkiop/dotfiles "${HOME}/dotfiles"
+		cd "${HOME}/dotfiles"
+		git config pull.rebase false
+	else
+		message yellow "dotfiles directory already exist."
+	fi
 }
 
 # -------------------------------------------------------------
@@ -210,137 +230,136 @@ function cloneREPO() {
 # install: vimrc-amix
 # -------------------------------------------------------------
 function instVIMRC() {
-  message blue "[ Install vimrc ]"
-  if [ -L "$HOME"/dotfiles/modules/vimrc/my_configs.vim ] ; then
-    rm "$HOME"/dotfiles/modules/vimrc/my_configs.vim
-  fi
-  bash "$HOME"/dotfiles/modules/vimrc/install_awesome_parameterized.sh "$HOME"/dotfiles/modules/vimrc "$USER"
-  ln -s "$HOME"/dotfiles/config/vimrc/my_configs.vim "$HOME"/.vim_runtime/my_configs.vim
+	VIMRC_INSTALL="${HOME}/dotfiles/modules/vimrc/install_awesome_parameterized.sh"
+	message blue "[ Install vimrc ]"
+  message lightblue "Creating symlink for vimrc runtime directory from ${HOME}/dotfiles/modules/vimrc to ${HOME}/.vim_runtime"
+  ln -sf -- "${HOME}"/dotfiles/modules/vimrc "${HOME}/.vim_runtime"
+  message lightblue "Creating symlink for vimrc configuration file from ${HOME}/dotfiles/config/vimrc/my_configs.vim to ${HOME}/.vim_runtime/my_configs.vim"
+  ln -sf -- "${HOME}"/dotfiles/config/vimrc/my_configs.vim "${HOME}/.vim_runtime/my_configs.vim"
   echo
+	bash "${VIMRC_INSTALL}" "${HOME}"/dotfiles/modules/vimrc "${USER}"
+	echo
 }
 
 # -------------------------------------------------------------
 # install: oh-my-tmux
 # -------------------------------------------------------------
 function instTMUX() {
-  message blue "[ Install oh-my-tmux and tmux plugin manager ]"
-  if [ -L "$HOME"/.tmux.conf ] ; then
-    rm "$HOME"/.tmux.conf
-  fi
-  if [ -L "$HOME"/.tmux.conf.local ] ; then
-    rm "$HOME"/.tmux.conf.local
-  fi
-  ln -s "$HOME"/dotfiles/modules/oh-my-tmux/.tmux.conf "$HOME"/.tmux.conf
-  ln -s "$HOME"/dotfiles/config/tmux.conf.local "$HOME"/.tmux.conf.local
-  if [ ! -d "$HOME"/.tmux/plugins ] ; then
-    mkdir -p "$HOME"/.tmux/plugins
-  fi
-  if [ ! -L "$HOME"/.tmux/plugins/tpm ] ; then
-    ln -s "$HOME"/dotfiles/modules/tpm "$HOME"/.tmux/plugins/tpm
-  fi
-  echo
+	message blue "[ Install oh-my-tmux and tmux plugin manager ]"
+	if [[ ! -d "${HOME}"/.tmux/plugins ]]; then
+		mkdir -p "${HOME}"/.tmux/plugins
+	fi
+  message lightblue "Creating symlink for .tmux.conf from dotfiles/modules/oh-my-tmux/.tmux.conf to ~/.tmux.conf"
+  ln -sf -- "${HOME}"/dotfiles/modules/oh-my-tmux/.tmux.conf "${HOME}"/.tmux.conf
+
+  message lightblue "Creating symlink for tmux plugin manager (tpm) from dotfiles/modules/tpm to ~/.tmux/plugins/tpm"
+  ln -sf -- "${HOME}"/dotfiles/modules/tpm "${HOME}"/.tmux/plugins/tpm
+
+  message lightblue "Creating symlink for .tmux.conf.local from dotfiles/config/tmux.conf.local to ~/.tmux.conf.local"
+  ln -sf -- "${HOME}"/dotfiles/config/tmux.conf.local "${HOME}"/.tmux.conf.local
+	echo
 }
 
 # -------------------------------------------------------------
 # Install .bashrc
 # -------------------------------------------------------------
 function instBASHRC() {
-  message blue "[ Install .bashrc ]"
+	message blue "[ Install .bashrc ]"
 
-  # install
-  dir="$HOME"/dotfiles
-  files="bashrc gitconfig inputrc bash_profile dircolors"
+	# install
+	dir="${HOME}"/dotfiles
+	files="bashrc gitconfig inputrc bash_profile dircolors"
 
-  # delete old symlinks
-  echo -e "$COLOR_GREEN""delete""$COLOR_CLOSE""$COLOR_YELLOW"" old ""$COLOR_GREEN""symlinks ...""$COLOR_CLOSE"
-  for file in $files; do
-    if [ -f "$HOME"/."$file" ]; then
-      echo "delete: ~/.$file"
-      rm "$HOME"/."$file"
-    fi
+	# delete old symlinks
+	echo -e "${COLOR_GREEN}""Delete""${COLOR_CLOSE}""${COLOR_YELLOW}"" old ""${COLOR_GREEN}""symlinks ...""${COLOR_CLOSE}"
+	for file in ${files}; do
+		if [[ -f "${HOME}"/."${file}" ]]; then
+      echo "Deleting existing symlink for configuration file ~/.${file} to prepare for a fresh installation."
+			rm "${HOME}"/."${file}"
+		fi
+	done
+	echo
+	# new symlinks for files
+	echo -e "${COLOR_GREEN}""Create""${COLOR_CLOSE}""${COLOR_YELLOW}"" new ""${COLOR_GREEN}""symlinks ...""${COLOR_CLOSE}"
+  for file in ${files}; do
+    echo "Creating symlink for ${dir}/${file} to ~/.${file}"
+    ln -s "${dir}/${file}" ~/."${file}"
   done
-  echo
-  # new symlinks for files
-  echo -e "$COLOR_GREEN""create""$COLOR_CLOSE""$COLOR_YELLOW"" new ""$COLOR_GREEN""symlinks ...""$COLOR_CLOSE"
-  for file in $files; do
-      echo "create: ~/.$file"
-      ln -s "$dir/$file" ~/."$file"
-  done
-  echo
+	echo
 }
 
 # -------------------------------------------------------------
 # load .bashrc
 # -------------------------------------------------------------
 function loadBASHRC() {
-  echo
-  echo -e "$COLOR_YELLOW""[ dotfiles installed ]""$COLOR_CLOSE"
-  echo -e "$COLOR_RED"
-  read -rp "Relogin to load dotfiles? (y/n):" relogin
-  echo -e "$COLOR_CLOSE"
-  case $relogin in
-    y|Y)
-      su - "$USER"
-    ;;
-    n|N|*)
-      message yellow "Do nothing and exit."
-      exit
-    ;;
-  esac
+	echo
+	echo -e "${COLOR_YELLOW}""[ dotfiles installed ]""${COLOR_CLOSE}"
+	echo -e "${COLOR_RED}"
+	read -rp "Relogin to load dotfiles? (y/n):" relogin
+	echo -e "${COLOR_CLOSE}"
+	case ${relogin} in
+	y | Y)
+		su - "${USER}"
+		;;
+	n | N | *)
+		message yellow "Do nothing and exit."
+		exit
+		;;
+	esac
 }
 
 # -------------------------------------------------------------
 # install: dotfiles (all)
 # -------------------------------------------------------------
 function instDOTF() {
-  message yellow "+++ Install dotfiles (all) +++"
-  check_if_sudo_is_installed
-  check_if_curl_is_installed
-  loadColors
-  check_if_git_is_installed
-  cloneREPO
-  #instBASHCOMPLE
-  instVIMRC
-  instTMUX
-  instBASHRC
+	message yellow "+++ Install dotfiles (all) +++"
+	check_if_sudo_is_installed
+	check_if_curl_is_installed
+	loadColors
+	check_if_git_is_installed
+	cloneREPO
+	#instBASHCOMPLE
+	instVIMRC
+	instTMUX
+	instBASHRC
 }
 
 # -------------------------------------------------------------
 # RUN THE SCRIPT
 # -------------------------------------------------------------
 if [[ $1 == 'all' ]]; then
-  # skip menu and install all
-  instDOTF
-  if [[ $2 == 'load-bashrc' ]]; then
-    loadBASHRC
-  fi
+	# skip menu and install all
+	instDOTF
+	if [[ $2 == 'load-bashrc' ]]; then
+		loadBASHRC
+	fi
 else
-  show_main_menu
-  if [ "$opt_main_menu" = '' ]; then
-    exit;
-  else
-    case $opt_main_menu in
-      1) # install dotfiles
-        instDOTF
-        exit
-      ;;
-      2) # install .bashrc
-        instBASHRC
-      ;;
-      x|X) # exit
-        exit
-      ;;
-      *|\n) # typo - show main menu again
-        show_main_menu
-      ;;
-      x|X) # exit
-        exit
-      ;;
-      *|\n) # typo - show main menu again
-        show_main_menu
-      ;;
-    esac
-  fi
+	show_main_menu
+	if [[ ${opt_main_menu} == '' ]]; then
+		exit
+	else
+		case ${opt_main_menu} in
+		1) # install dotfiles
+			instDOTF
+			exit
+			;;
+		2) # install .bashrc
+			instBASHRC
+			;;
+		x | X) # exit
+			exit
+			;;
+		* | \n) # typo - show main menu again
+			show_main_menu
+			;;
+		x | X) # exit
+			exit
+			;;
+		* | \n) # typo - show main menu again
+			show_main_menu
+			;;
+		esac
+	fi
 fi
 
 # EOF
