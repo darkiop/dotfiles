@@ -5,6 +5,7 @@
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 if [[ -f ~/.bash_aliases ]]; then
+	# shellcheck source=/dev/null
 	source ~/.bash_aliases
 fi
 
@@ -102,7 +103,7 @@ if [[ -x /usr/bin/mtr ]]; then
 fi
 
 # motd
-alias motd='source $HOME/dotfiles/motd/motd.sh'
+alias motd='source ~/dotfiles/motd/motd.sh'
 
 # cd - show content after cd
 cd() {
@@ -112,23 +113,22 @@ cd() {
 alias ..='cd ..'
 
 # clear + motd
-alias cls='source $HOME/.bashrc'
-alias rl='source $HOME/.bashrc'
-alias reload='source $HOME/.bashrc'
+alias cls='source ~/.bashrc'
+alias rl='source ~/.bashrc'
+alias reload='source ~/.bashrc'
 
 # colorful ip
 alias ip='ip -c'
 
 # dotfiles update
-alias update-dotfiles='cd $HOME/dotfiles && git pull && rl'
+alias update-dotfiles='cd ~/dotfiles && git pull && rl'
 alias dotfu='dotf && gp && rl'
 
 # fast switch to dotfiles
-alias dotf='cd $HOME/dotfiles && git status'
+alias dotf='cd ~/dotfiles && git status'
 
 # system update
-# alias sysup='apt update && apt upgrade -y && apt autoremove -y && apt autoclean && systemctl restart dotfiles-update-motd-apt-infos.service && source $HOME/.bashrc'
-alias sysup='apt update && apt upgrade -y && apt autoremove -y && apt autoclean && source $HOME/.bashrc'
+alias sysup='apt update && apt upgrade -y && apt autoremove -y && apt autoclean && source ~/.bashrc'
 
 # syslog tail -f / messages tail -f
 if [[ ${EUID} -ne 0 ]]; then
@@ -203,44 +203,53 @@ fi
 
 # load git alias
 if [[ -x /usr/bin/git ]]; then
+	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-git
 fi
 
 # load navi alias
 if [[ -x /usr/local/bin/navi ]]; then
+	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-navi
 fi
 
 # load docker alias
 if [[ -x $(command -v docker || true) ]]; then
+	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-docker
 fi
 
 # load proxmox alias
 if [[ -x $(command -v pveversion || true) ]]; then
+	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-proxmox
 fi
 
 # load glusterfs alias
 if [[ -x $(command -v gluster || true) ]]; then
+	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-glusterfs
 fi
 
 # load wireguard alias
 if [[ -x $(command -v wg || true) ]]; then
+	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-wireguard
 fi
 
 # load ansible alias
 if [[ -x $(command -v ansible || true) ]]; then
+	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-ansible
 fi
 
 # load iobroker alias
 if [[ -d /opt/iobroker ]]; then
+	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-iobroker
 	# Forces npm to run as iobroker when inside the iobroker installation dir
 	if [[ -f /root/.iobroker/npm_command_fix ]]; then
+		# shellcheck source=/dev/null
 		source /root/.iobroker/npm_command_fix
 	fi
 fi
