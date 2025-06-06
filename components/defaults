@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# Set Editor
+export EDITOR='vim'
+export ALTERNATE_EDITOR='vim'
+export VISUAL='vim'
+
+# SET COLORS (https://bashcolors.com)
+# trunk-ignore(shellcheck/SC1090)
+source ~/dotfiles/config/dotfiles.config
+
+# History Options
+export HISTCONTROL=${HISTCONTROL}${HISTCONTROL+,}ignoredups
+export HISTCONTROL=ignoreboth
+export HISTIGNORE='&:clear:ls:cd:[bf]g:exit:[ t\]*'
+export HISTSIZE=100000
+export HISTFILESIZE=2000000
+# trunk-ignore(shellcheck/SC2155)
+export HISTTIMEFORMAT=$(echo -e "${COLOR_LIGHT_BLUE}"%F %T "${COLOR_RESET}")
+shopt -s histappend
+export PROMPT_COMMAND="history -a;history -c; history -r; ${PROMPT_COMMAND}" # Save and reload history after each command finishes
+
+# SET KEY-BINDINGS (-o vi || -o emacs)
+set -o emacs
+
+# Check the window size after each command and, if necessary, update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+shopt -s globstar
+
+# Make less more friendly for non-text input files, see lesspipe(1)
+# trunk-ignore(shellcheck/SC2312)
+[[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# Set variable identifying the chroot you work in
+# (used in the prompt below)
+if [[ -z ${debian_chroot} ]] && [[ -r /etc/debian_chroot ]]; then
+	debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# If this is an xterm set the title to user@host:dir
+case "${TERM}" in
+xterm* | rxvt*)
+	PROMPT_COMMAND='printf "\033]0;%s@%s:%s\033\\" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/~}"'
+	;;
+screen*)
+	PROMPT_COMMAND='CURDIR=`basename ${PWD}`;echo -ne "\033]0;${USER}@${HOSTNAME}:\007\033k${CURDIR}\033\\"'
+	;;
+*) ;;
+esac
+
+# https://www.oreilly.com/library/view/bash-cookbook/0596526784/ch16s05.html
+export CDPATH='.:~/dotfiles'

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# enable fzf
+[[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
+
+# fzf (Fuzzy Finder) Options
+export FZF_DEFAULT_OPTS='
+--height 50% 
+--layout=reverse-list 
+--margin=0 
+--padding=0 
+--border=rounded 
+--info=inline 
+--ansi 
+--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 
+--color=fg:#ffffff,header:#00afff,info:#00afff,pointer:#ff0000 
+--color=marker:#ff0000,fg+:#00afff,prompt:#00afff,hl+:#ffffff
+'
+
+# fzf completion
+# if [[ -f ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh ]]; then
+#   # trunk-ignore(shellcheck/SC1091)
+#   source ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh
+#   bind -x '"\t": fzf_bash_completion'
+# fi
+
+# load fzf key bindungs
+# if [[ -f /usr/share/doc/fzf/examples/key-bindings.bash ]]; then
+#   source /usr/share/doc/fzf/examples/key-bindings.bash
+# fi

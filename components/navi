@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# load shell widget for navi (STRG + G)
+if [[ -x /usr/local/bin/navi ]]; then
+	if [[ ${SHELL} == "/bin/bash" ]]; then
+		eval "$(navi widget bash)" >/dev/null 2>&1
+	elif [[ ${SHELL} == "/bin/zsh" ]]; then
+		eval "$(navi widget zsh)" >/dev/null 2>&1
+	fi
+fi
