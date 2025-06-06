@@ -1,79 +1,65 @@
-#!/usr/bin/env bash
-# https://github.com/darkiop/dotfiles
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
 
-# ${HOME}/.bashrc: executed by bash(1) for non-login shells.
 # If not running interactively, don't do anything
-[ -z "$PS1" ] && return
+case $- in
+  *i*) ;;
+    *) return;;
+esac
 
 # load dotfiles.config
-source $HOME/dotfiles/config/dotfiles.config
+source ~/dotfiles/config/dotfiles.config
 
 # define and load directorys for personal $PATH
 pathadd() {
-  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-    PATH="$1${PATH:+":$PATH"}"
+  if [[ -d "$1" ]] && [[ ":${PATH}:" != *":$1:"* ]]; then
+    PATH="$1${PATH:+":${PATH}"}"
   fi
 }
 pathadd "/usr/local/bin"
 pathadd "/usr/bin"
 pathadd "/bin"
-pathadd "$HOME/bin"
-pathadd "$HOME/dotfiles/bin"
-pathadd "$HOME/.local/bin"
-pathadd "$HOME/.cargo/bin"
+pathadd "~/bin"
+pathadd "~/dotfiles/bin"
+pathadd "~/.local/bin"
+pathadd "~/.cargo/bin"
 
-# load bash defaults
-source $HOME/dotfiles/shells/defaults
+# load dotfiles components
+source ~/dotfiles/components/defaults
+source ~/dotfiles/components/prompt
+source ~/dotfiles/components/bash_completion
+source ~/dotfiles/components/fzf
+source ~/dotfiles/components/navi
 
-# load bash prompt
-source $HOME/dotfiles/shells/prompt
+# load aliases
+source ~/dotfiles/alias/alias
 
-# load alias
-source $HOME/dotfiles/alias/alias
-
-# enable bash completion in interactive shells
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    source /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    source /etc/bash_completion
-  fi
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+  debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# create bash_completion for hcloud
-if [ -x /usr/bin/hcloud ]; then
-  hcloud completion bash > ~/dotfiles/bash_completion.d/hcloud
-fi
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+  PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+  ;;
+*)
+  ;;
+esac
 
-# load scripts in bash_completion.d
-if [[ -d ~/dotfiles/bash_completion.d/ ]] && \
-  ! find ~/dotfiles/bash_completion.d/. ! -name . -prune -exec false {} +
-then
-  for f in ~/dotfiles/bash_completion.d/*
-    do
-      source "$f"
-    done
-fi
-
-# fzf completion
-if [ -f "$HOME"/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh ]; then
-  source "$HOME"/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh
-  bind -x '"\t": fzf_bash_completion'
-fi
-
-# load fzf key bindungs
-if [ -f /usr/share/doc/fzf/examples/key-bindings.bash ]; then
-  source /usr/share/doc/fzf/examples/key-bindings.bash
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 fi
 
 # autoupdate dotfiles after 20 logins
-if [ -x $HOME/dotfiles/autoupdate.sh ]; then
-  bash $HOME/dotfiles/autoupdate.sh
+if [[ -x ${HOME}/dotfiles/autoupdate.sh ]]; then
+  source ~/dotfiles/autoupdate.sh
 fi
 
 # run tmux
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-    tmux -u attach -t default || tmux -u new -s default
+if command -v tmux &> /dev/null && [[ -n "${PS1}" ]] && [[ ! "${TERM}" =~ screen ]] && [[ ! "${TERM}" =~ tmux ]] && [[ -z "${TMUX}" ]]; then
+  tmux -u attach -t default || tmux -u new -s default
 fi
-
-# EOF
