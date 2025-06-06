@@ -3,3 +3,4 @@ bash_completion.d/hcloud
 modules
 ._.DS_Store
 .DS_Store
+bin/archive/*
