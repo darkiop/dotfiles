@@ -25,11 +25,11 @@ function gc() {
 }
 
 function revert() {
-  git reset --hard $1
+  git reset --hard "$1"
 }
 
 # load git-prompt
-if [ -f /etc/bash_completion.d/git-prompt ]; then
+if [[ -f /etc/bash_completion.d/git-prompt ]]; then
   source /etc/bash_completion.d/git-prompt
 fi
 

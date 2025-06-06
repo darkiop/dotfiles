@@ -1,97 +1,114 @@
 #!/bin/bash
 
-# check if root, when not define alias with sudo
-if [[ $EUID -ne 0 ]]; then
-  alias apt='sudo apt'
-  alias reboot='sudo reboot'
-  alias shutdown='sudo shutdown'
-  alias systemctl='sudo systemctl'
-  alias journalctl='sudo journalctl'
-  alias service='sudo service'
-  alias zfs='sudo zfs'
-  alias route='sudo route'
-  alias ethtool='sudo ethtool'
-  alias ifmetric='sudo ifmetric'
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+if [[ -f ~/.bash_aliases ]]; then
+	source ~/.bash_aliases
 fi
-# some sbins
+
+# check if root, when not define alias with sudo
+if [[ ${EUID} -ne 0 ]]; then
+	alias apt='sudo apt'
+	alias reboot='sudo reboot'
+	alias shutdown='sudo shutdown'
+	alias systemctl='sudo systemctl'
+	alias journalctl='sudo journalctl'
+	alias service='sudo service'
+	alias zfs='sudo zfs'
+	alias route='sudo route'
+	alias ethtool='sudo ethtool'
+	alias ifmetric='sudo ifmetric'
+fi
 
 # ps tree / forest
 alias ps='ps --forest'
 
 # password generator
-genpasswd() {
+function genpasswd() {
 	local l=$1
-    [ "$l" == "" ] && l=24
-    tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
+	[[ ${l} == "" ]] && l=24 # default length
+	local result
+	result=$(tr -dc A-Za-z0-9 </dev/urandom | head -c "${l}" || true)
+	echo "${result}" | xargs
 }
 
 # Simplify apt search and install
-function show () {
-  apt-cache search $1
+function show() {
+	apt-cache search "$1"
 }
 
-function extract () {
-  if [ -f $1 ] ; then
-    case $1 in
-      *.tar.bz2) tar xjf $1 ;;
-      *.tar.gz) tar xzf $1 ;;
-      *.bz2) bunzip2 $1 ;;
-      *.rar) rar x $1 ;;
-      *.gz) gunzip $1 ;;
-      *.tar) tar xf $1 ;;
-      *.tbz2) tar xjf $1 ;;
-      *.tgz) tar xzf $1 ;;
-      *.zip) unzip $1 ;;
-      *.Z) uncompress $1 ;;
-      *) echo "'$1' cannot be extracted via extract()" ;;
-    esac
-  else
-    echo "'$1' is not a valid file"
-  fi
+function extract() {
+	if [[ -f $1 ]]; then
+		case $1 in
+		*.tar.bz2) tar xjf "$1" ;;
+		*.tar.gz) tar xzf "$1" ;;
+		*.bz2) bunzip2 "$1" ;;
+		*.rar) rar x "$1" ;;
+		*.gz) gunzip "$1" ;;
+		*.tar) tar xf "$1" ;;
+		*.tbz2) tar xjf "$1" ;;
+		*.tgz) tar xzf "$1" ;;
+		*.zip) unzip "$1" ;;
+		*.Z) uncompress "$1" ;;
+		*) echo "'$1' cannot be extracted via extract()" ;;
+		esac
+	else
+		echo "'$1' is not a valid file"
+	fi
 }
 
 function psg() {
-  if [ ! -z $1 ] ; then
-    echo "Grepping for processes matching $1..."
-    ps aux | grep $1 
-  else
-    echo "!! Need name to grep for"
-  fi
+	if [[ -n $1 ]]; then
+		ps aux >/tmp/ps_output && grep "$1" /tmp/ps_output
+	else
+		echo "!! Need name to grep for"
+	fi
 }
 
 # bat
-if [ -x /usr/bin/bat ]; then
-  alias cat='bat'
+if [[ -x /usr/bin/bat ]]; then
+	alias cat='bat'
 fi
-if [ -x /usr/bin/batcat ]; then
-  alias cat='batcat'
+if [[ -x /usr/bin/batcat ]]; then
+	alias cat='batcat'
 fi
 
 # ls or lsd
-if [ -x /usr/bin/lsd ] || [ -x /usr/local/bin/lsd ]; then
-  alias ls='lsd'
-  alias l='lsd -lh'
-  alias ll='lsd -lah'
-  alias la='lsd -Ah'
-  alias lt='lsd --tree'
+if [[ -x /usr/bin/eza ]]; then
+	alias ls='eza --sort type --icons --git'
+	alias l='eza -l@ --sort type --icons --git'
+	alias ll='eza -la@ --sort type --icons --git'
+	alias la='eza -a@ --sort type --icons --git'
+	alias lt='eza --tree'
+elif [[ -x /usr/bin/lsd ]] || [[ -x /usr/local/bin/lsd ]]; then
+	alias ls='lsd'
+	alias l='lsd -lh'
+	alias ll='lsd -lahg'
+	alias la='lsd -Ah'
+	alias lt='lsd --tree'
 else
-  alias ls='ls --sort=extension --color=auto'
-  alias l='ls -lh'
-  alias ll='ls -lah'
-  alias la='ls -A'
-  alias lt='ls --tree'
+	alias ls='ls --sort=extension --color=auto'
+	alias l='ls -lh'
+	alias ll='ls -lah'
+	alias la='ls -A'
+	alias lt='ls --tree'
 fi
 
 # mtr (-b = show ips)
-if [ -x /usr/bin/mtr ]; then
-  alias mtr='mtr -b'
+if [[ -x /usr/bin/mtr ]]; then
+	alias mtr='mtr -b'
 fi
 
 # motd
 alias motd='source $HOME/dotfiles/motd/motd.sh'
 
 # cd - show content after cd
-cd() { builtin cd "$@"; ls -lah; }
+cd() {
+	builtin cd "$@" || return
+	ls -lah
+}
 alias ..='cd ..'
 
 # clear + motd
@@ -114,24 +131,24 @@ alias dotf='cd $HOME/dotfiles && git status'
 alias sysup='apt update && apt upgrade -y && apt autoremove -y && apt autoclean && source $HOME/.bashrc'
 
 # syslog tail -f / messages tail -f
-if [[ $EUID -ne 0 ]]; then
-  alias sysl='sudo tail -f /var/log/syslog'
-  alias syslnav='sudo lnav /var/log/syslog'
-  alias mesl='sudo tail -f /var/log/messages'
-  alias meslnav='sudo lnav /var/log/messages'
+if [[ ${EUID} -ne 0 ]]; then
+	alias sysl='sudo tail -f /var/log/syslog'
+	alias syslnav='sudo lnav /var/log/syslog'
+	alias mesl='sudo tail -f /var/log/messages'
+	alias meslnav='sudo lnav /var/log/messages'
 else
-  alias sysl='tail -f /var/log/syslog'
-  alias syslnav='lnav /var/log/syslog'
-  alias mesl='tail -f /var/log/messages'
-  alias meslnav='lnav /var/log/messages'
+	alias sysl='tail -f /var/log/syslog'
+	alias syslnav='lnav /var/log/syslog'
+	alias mesl='tail -f /var/log/messages'
+	alias meslnav='lnav /var/log/messages'
 fi
 
 # dmesg (human readable time)
 alias dmesg='dmesg -T'
 
 # fd-find
-if [ -x /usr/bin/fdfind ]; then
-  alias fd='fdfind'
+if [[ -x /usr/bin/fdfind ]]; then
+	alias fd='fdfind'
 fi
 
 # fzf with bat/batcat
@@ -143,26 +160,27 @@ fi
 #fi
 
 # reboot
-case $HOSTNAME in
-  thor) alias reboot='powershell.exe -command restart-computer';;
+case ${HOSTNAME} in
+thor) alias reboot='powershell.exe -command restart-computer' ;;
+*) alias reboot='reboot' ;;
 esac
 
 # shutdown
-case $HOSTNAME in
-  thor) alias shutdown='powershell.exe -command stop-computer';;
-  *) alias shutdown='shutdown -h now';;
+case ${HOSTNAME} in
+thor) alias shutdown='powershell.exe -command stop-computer' ;;
+*) alias shutdown='shutdown -h now' ;;
 esac
 
 # color for manpages
-alias man="TERMINFO=$HOME/.terminfo TERM=mostlike LESS=C PAGER=less man"
+alias man="TERMINFO=~/.terminfo TERM=mostlike LESS=C PAGER=less man"
 
 # color
-if [ -x /usr/bin/dircolors ]; then
-  test -r $HOME/.dircolors && eval "$(dircolors -b $HOME/.dircolors)" || eval "$(dircolors -b)"
-  alias grep='grep --color=auto'
-  alias fgrep='fgrep --color=auto'
-  alias egrep='egrep --color=auto'
-  alias diff='colordiff'
+if [[ -x /usr/bin/dircolors ]]; then
+	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+	alias grep='grep --color=auto'
+	alias fgrep='fgrep --color=auto'
+	alias egrep='egrep --color=auto'
+	alias diff='colordiff'
 fi
 
 # fix typo mistakes
@@ -179,56 +197,50 @@ alias wol-pve01='/usr/bin/wakeonlan -i 192.168.1.71 00:e0:4c:68:a1:6e'
 alias wol-pve02='/usr/bin/wakeonlan -i 192.168.1.72 1c:69:7a:62:9b:95'
 
 # locate
-if [ -x /usr/bin/locate ]; then
-  alias locate='locate -A -i'
+if [[ -x /usr/bin/locate ]]; then
+	alias locate='locate -A -i'
 fi
 
 # load git alias
-if [ -x /usr/bin/git ]; then
-  source $HOME/dotfiles/alias/alias-git
+if [[ -x /usr/bin/git ]]; then
+	source ~/dotfiles/alias/alias-git
 fi
 
-# load navi alias if navi is installed
-if [ -x /usr/local/bin/navi ]; then
-  source $HOME/dotfiles/alias/alias-navi
-  # load widget (STRG + G)
-  if [ $SHELL = "/bin/bash" ]; then
-    eval "$(navi widget bash)" 2>&1> /dev/null
-  elif [ $SHELL = "/bin/zsh" ]; then
-    eval "$(navi widget zsh)" 2>&1> /dev/null
-  fi
+# load navi alias
+if [[ -x /usr/local/bin/navi ]]; then
+	source ~/dotfiles/alias/alias-navi
 fi
 
 # load docker alias
-if [[ -x $(which docker) ]]; then
-  source $HOME/dotfiles/alias/alias-docker
+if [[ -x $(command -v docker || true) ]]; then
+	source ~/dotfiles/alias/alias-docker
 fi
 
 # load proxmox alias
-if [[ -x $(which pveversion) ]]; then
-  source $HOME/dotfiles/alias/alias-proxmox
+if [[ -x $(command -v pveversion || true) ]]; then
+	source ~/dotfiles/alias/alias-proxmox
 fi
 
 # load glusterfs alias
-if [[ -x $(which gluster) ]]; then
-  source $HOME/dotfiles/alias/alias-glusterfs
+if [[ -x $(command -v gluster || true) ]]; then
+	source ~/dotfiles/alias/alias-glusterfs
 fi
 
 # load wireguard alias
-if [[ -x $(which wg) ]]; then
-  source $HOME/dotfiles/alias/alias-wireguard
+if [[ -x $(command -v wg || true) ]]; then
+	source ~/dotfiles/alias/alias-wireguard
 fi
 
 # load ansible alias
-if [[ -x $(which ansible) ]]; then
-  source $HOME/dotfiles/alias/alias-ansible
+if [[ -x $(command -v ansible || true) ]]; then
+	source ~/dotfiles/alias/alias-ansible
 fi
 
 # load iobroker alias
-if [ -d /opt/iobroker ]; then
-  source $HOME/dotfiles/alias/alias-iobroker
-  # Forces npm to run as iobroker when inside the iobroker installation dir
-  if [ -f /root/.iobroker/npm_command_fix ]; then
-    source /root/.iobroker/npm_command_fix
-  fi
+if [[ -d /opt/iobroker ]]; then
+	source ~/dotfiles/alias/alias-iobroker
+	# Forces npm to run as iobroker when inside the iobroker installation dir
+	if [[ -f /root/.iobroker/npm_command_fix ]]; then
+		source /root/.iobroker/npm_command_fix
+	fi
 fi
