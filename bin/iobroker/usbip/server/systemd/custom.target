@@ -1,9 +1,0 @@
-# https://github.com/darkiop/doku-iobroker-ha
-#
-# /etc/systemd/system/custom.target
-
-[Unit]
-Description=do things after boot 
-Requires=multi-user.target
-After=multi-user.target
-AllowIsolate=yes

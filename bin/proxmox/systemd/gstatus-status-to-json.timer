@@ -1,9 +1,0 @@
-[Unit]
-Description=gstatus to json timer
-[Timer]
-OnBootSec=1min
-OnUnitInactiveSec=1min
-Persistent=true
-Unit=gstatus-status-to-json.service
-[Install]
-WantedBy=timers.target
