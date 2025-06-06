@@ -7,7 +7,7 @@ Description=dotfiles update motd apt infos timer every 2h
 OnCalendar=daily
 AccuracySec=12h
 Persistent=true
-Unit=dotfiles-update-motd-apt-infos.service
+Unit=update-motd-apt-infos.service
 
 [Install]
 WantedBy=timers.target

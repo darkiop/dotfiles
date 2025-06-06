@@ -1,0 +1,11 @@
+# /etc/systemd/system/update-motd-apt-infos.service
+
+[Unit]
+Description=dotfiles update motd apt infos
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/home/darkiop/dotfiles/motd/systemd/update-motd-apt-infos.sh
+Nice=10
+IOSchedulingClass=best-effort

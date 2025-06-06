@@ -1,0 +1,17 @@
+[Unit]
+Description=Daily execution of calc-dir-size-homes.service
+
+[Timer]
+OnCalendar=daily          # 00:00 local time by default
+Persistent=true           # run missed occurrences after downtime
+RandomizedDelaySec=15m    # jitter to avoid exact midnight spike
+Unit=calc-dir-size-homes.service
+
+[Install]
+WantedBy=timers.target
+
+# sudo systemctl daemon-reload
+# sudo systemctl enable --now calc-dir-size-homes.timer
+# systemctl status calc-dir-size-homes.timer
+# systemctl list-timers | grep calc-dir-size-homes
+# sudo systemctl start calc-dir-size-homes.service   # manual run

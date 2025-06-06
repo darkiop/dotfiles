@@ -1,0 +1,11 @@
+# /etc/systemd/system/calc-dir-size-homes.service
+
+[Unit]
+Description=Recalculate home-directory sizes for MOTD
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/home/darkiop/dotfiles/motd/systemd/calc-dir-size-homes.sh
+Nice=10
+IOSchedulingClass=best-effort
