@@ -1,37 +1,37 @@
 #!/bin/bash
-# Source: https://github.com/koljah-de/simple-bash-prompt/
-#
+# https://github.com/koljah-de/simple-bash-prompt/
 # https://scriptim.github.io/bash-prompt-generator/
 # https://www.gnu.org/software/bash/manual/html_node/Controlling-the-Prompt.html
 
-# SET PROMPT COLORS
+# Set prompt colors
 COLOR_BRACKET=${COLOR_BLUE}
-COLOR_COMMAND=${COLOR_WHITE}
+#COLOR_COMMAND=${COLOR_WHITE}
 COLOR_HOST=${COLOR_BLUE}
 COLOR_DIR=${COLOR_ORANGE}
 COLOR_SEPARATOR=${COLOR_WHITE}
 COLOR_DATE=${COLOR_GREEN}
-COLOR_GIT=${COLOR_YELLOW}
+#COLOR_GIT=${COLOR_YELLOW}
 COLOR_GIT_BRANCH=${COLOR_YELLOW}
 COLOR_SUDO_ACTIVE=${COLOR_PURPLE}
 COLOR_SSH_ACTIVE=${COLOR_LIGHT_BLUE}
 if [[ ${EUID} -ne 0 ]]; then
+	# User != root
 	COLOR_USER=${COLOR_LIGHT_BLUE}
 	COLOR_SYMBOL=${COLOR_WHITE}
 else
-	# root
+	# User = root
 	COLOR_USER=${COLOR_RED}
 	COLOR_SYMBOL=${COLOR_RED}
 fi
 
-# define the prompt terminator character
+# Define the prompt terminator character
 SYMBOL="\\$"
 
-# IP
+# Get the IP
 IP=$(ip a | grep 'inet' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | grep -v '172' | grep -v '^100.' | head -n 1 || true)
 
-# set the color with the exit status of the last command
-COLOR_EXIT_STATUS() {
+# Set the color with the exit status of the last command
+function COLOR_EXIT_STATUS() {
 	if [[ $1 -eq 0 ]]; then
 		echo -e "${COLOR_BLUE}"
 	else
@@ -39,35 +39,33 @@ COLOR_EXIT_STATUS() {
 	fi
 }
 
-# git: check if current directory is a git repo
-CHECK_IF_GIT_REPO() {
+# Git: check if current directory is a git repo
+function CHECK_IF_GIT_REPO() {
 	git rev-parse 2>/dev/null
 }
 
-# git-prompt
+# Git-prompt
 # https://jon.sprig.gs/blog/post/1940
 function GIT_PROMPT() {
-	if [[ $(which git) ]]; then
+	if command -v git >/dev/null 2>&1; then
 		# options
 		# https://blog.backslasher.net/git-prompt-variables.html
-		GIT_PS1_DESCRIBE_STYLE='contains'
-		GIT_PS1_SHOWCOLORHINTS='y'
-		GIT_PS1_SHOWDIRTYSTATE='y'
-		GIT_PS1_SHOWSTASHSTATE='y'
-		GIT_PS1_SHOWUNTRACKEDFILES='y'
-		GIT_PS1_SHOWUPSTREAM='auto'
+		export GIT_PS1_DESCRIBE_STYLE='contains'
+		export GIT_PS1_SHOWCOLORHINTS='y'
+		export GIT_PS1_SHOWDIRTYSTATE='y'
+		export GIT_PS1_SHOWSTASHSTATE='y'
+		export GIT_PS1_SHOWUNTRACKEDFILES='y'
+		export GIT_PS1_SHOWUPSTREAM='auto'
 		# prompt
 		# https://stackoverflow.com/questions/25911546/configure-git-branch-in-prompt
-		#
-		# staged = +
-		# stashed = $
-		# untracked = %
-		echo $(__git_ps1 'git:%s')
+		# staged = + stashed = $ untracked = %
+		__git_branch="$(__git_ps1 'git:%s')" # %s = branch name
+		printf '%s' "${__git_branch}"
 	fi
 }
 
 # check sudo
-CHECK_IF_SUDO_IS_ACTIVE() {
+function CHECK_IF_SUDO_IS_ACTIVE() {
 	if [[ ${EUID} -eq 0 ]]; then
 		return 1 # false
 	else
@@ -79,9 +77,8 @@ CHECK_IF_SUDO_IS_ACTIVE() {
 	fi
 }
 
-# check if ssh session
-# https://unix.stackexchange.com/questions/9605/how-can-i-detect-if-the-shell-is-controlled-from-ssh
-CHECK_IF_SSH_SESSION() {
+# Check if ssh session
+function CHECK_IF_SSH_SESSION() {
 	if [[ -n ${SSH_CONNECTION} || -n ${SSH_CLIENT} ]]; then
 		return 0 # true
 	else
@@ -89,21 +86,21 @@ CHECK_IF_SSH_SESSION() {
 	fi
 }
 
-# show permissions of current directoy
+# Show permissions of current directoy
 # %A drwxr-xr-x
 # %a 755
-SHOW_PERMISSIONS_OF_CUR_DIR() {
+function SHOW_PERMISSIONS_OF_CUR_DIR() {
 	stat -c %a .
 }
 
+# Build the prompt
 #
-# BUILD THE PROMPT
 # \n = new line
 # \u = user
 # \h = time
 # \w = current dir
 #
-BUILD_PROMPT() {
+function BUILD_PROMPT() {
 	CHECK_EXIT_STATUS=$?
 	BASH_PROMPT="\n"
 	BASH_PROMPT+="\[$(COLOR_EXIT_STATUS "${CHECK_EXIT_STATUS}")┬\]"
