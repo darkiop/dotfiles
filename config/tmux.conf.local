@@ -374,11 +374,11 @@ bind -n M-9 select-window -t:$
 set -g automatic-rename on
 
 #set -g automatic-rename-format '#{host_short}' # (use #{host} if you prefer the full FQDN)
-#set -g automatic-rename-format '#{host_short}:#{pane_current_command}'
+set -g automatic-rename-format '#{host_short}:#{pane_current_command}'
 
 # if a “remote host” window option is present, show it;
 # otherwise fall back to the local short hostname
-set -g automatic-rename-format '#{?#{@remote_host},#{@remote_host},#{host_short}}:#{pane_current_command}'
+#set -g automatic-rename-format '#{?#{@remote_host},#{@remote_host},#{host_short}}:#{pane_current_command}'
 
 # expanded to show all splits
 #bind s choose-tree
