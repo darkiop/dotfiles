@@ -64,7 +64,7 @@ if command -v tmux &> /dev/null && [[ -n "${PS1}" ]] && [[ ! "${TERM}" =~ screen
   tmux -u attach -t default || tmux -u new -s default
 fi
 
-Enable automatic renaming of tmux windows based on ssh connections
+# Enable automatic renaming of tmux windows based on ssh connections
 if [[ -n $TMUX ]]; then          # only inside tmux
     ssh() {
         # extract the host part and strip user@ / port / domain
