@@ -2,8 +2,8 @@
 
 # check if root, when not define alias with sudo
 if [[ ${EUID} -ne 0 ]]; then
-  alias gstatus='sudo gstatus'
-  alias gluster='sudo gluster'
+	alias gstatus='sudo gstatus'
+	alias gluster='sudo gluster'
 fi
 
 # volume info

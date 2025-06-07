@@ -1,3 +1,3 @@
 #!/bin/bash
 
-alias navi='navi --path $HOME'/dotfiles/cheats/''
+alias navi='navi --path ~'/dotfiles/cheats/''
