@@ -18,4 +18,7 @@ tmux split-window -h 'exec <cmd>'
 # split windows vertical and run a cmd
 tmux split-window -v 'exec <cmd>'
 
+# reload tmux config
+tmux source-file ~/.tmux.conf
+
 $ tmuxsessions: tmux ls -F "#{session_name}"
