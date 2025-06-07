@@ -3,8 +3,8 @@
 # load shell widget for navi (STRG + G)
 if [[ -x /usr/local/bin/navi ]]; then
 	if [[ ${SHELL} == "/bin/bash" ]]; then
-		eval "$(navi widget bash)" >/dev/null 2>&1
+		eval "$(navi widget bash || true)" >/dev/null 2>&1
 	elif [[ ${SHELL} == "/bin/zsh" ]]; then
-		eval "$(navi widget zsh)" >/dev/null 2>&1
+		eval "$(navi widget zsh || true)" >/dev/null 2>&1
 	fi
 fi
