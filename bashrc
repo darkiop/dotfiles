@@ -64,32 +64,15 @@ if command -v tmux &> /dev/null && [[ -n "${PS1}" ]] && [[ ! "${TERM}" =~ screen
   tmux -u attach -t default || tmux -u new -s default
 fi
 
-# Enable automatic renaming of tmux windows based on ssh connections
-# if [[ -n $TMUX ]]; then          # only inside tmux
-#     ssh() {
-#         # extract the host part and strip user@ / port / domain
-#         local target=$1
-#         target=${target##*@}; target=${target%%:*}; target=${target%%.*}
-
-#         tmux rename-window "$target"      # rename before we connect
-#         command ssh "$@"                  # run the real ssh
-#         tmux set -w automatic-rename on   # restore when we exit
-#     }
-# fi
-# Only wrap if we're already inside tmux
-if [[ -n $TMUX ]]; then
+Enable automatic renaming of tmux windows based on ssh connections
+if [[ -n $TMUX ]]; then          # only inside tmux
     ssh() {
-        # --- extract the bare host name from $1 --------------------------
-        local host=$1
-        host=${host##*@}     # strip user@
-        host=${host%%:*}     # strip :port
-        host=${host%%.*}     # strip domain
-        # -----------------------------------------------------------------
+        # extract the host part and strip user@ / port / domain
+        local target=$1
+        target=${target##*@}; target=${target%%:*}; target=${target%%.*}
 
-        tmux set-window-option -wq @remote_host "$host"   # tell tmux
-        command ssh "$@"                                 # real ssh
-
-        # on logout, clear the option so we fall back to local hostname
-        tmux set -uw @remote_host
+        tmux rename-window "$target"      # rename before we connect
+        command ssh "$@"                  # run the real ssh
+        tmux set -w automatic-rename on   # restore when we exit
     }
 fi
