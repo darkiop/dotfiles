@@ -2,26 +2,24 @@
 
 # enable programmable completion features (you don't need to enable this, if it's already enabled in /etc/bash.bashrc and /etc/profile sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
-  if [[ -f /usr/share/bash-completion/bash_completion ]]; then
-    source /usr/share/bash-completion/bash_completion
-  elif [[ -f /etc/bash_completion ]]; then
-    source /etc/bash_completion
-  fi
+	if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+		source /usr/share/bash-completion/bash_completion
+	elif [[ -f /etc/bash_completion ]]; then
+		source /etc/bash_completion
+	fi
 fi
 
 # load scripts in bash_completion.d
-if [[ -d ~/dotfiles/bash_completion.d/ ]] && ! find ~/dotfiles/bash_completion.d/. ! -name . -prune -exec false {} +
-then
-  for f in ~/dotfiles/bash_completion.d/*
-    do
-      # trunk-ignore(shellcheck/SC1090)
-      source "${f}"
-    done
+if [[ -d ~/dotfiles/bash_completion.d/ ]] && ! find ~/dotfiles/bash_completion.d/. ! -name . -prune -exec false {} +; then
+	for f in ~/dotfiles/bash_completion.d/*; do
+		# trunk-ignore(shellcheck/SC1090)
+		source "${f}"
+	done
 fi
 
 # create bash_completion for hcloud
 if [[ -x /usr/bin/hcloud ]]; then
-  hcloud completion bash > ~/dotfiles/bash_completion.d/hcloud
+	hcloud completion bash >~/dotfiles/bash_completion.d/hcloud
 fi
 
 # Enable Tab-Completion for sudo
