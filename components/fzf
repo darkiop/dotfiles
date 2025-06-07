@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # enable fzf
+# shellcheck source=/dev/null
 [[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
 
 # fzf (Fuzzy Finder) Options
@@ -19,7 +20,6 @@ export FZF_DEFAULT_OPTS='
 
 # fzf completion
 # if [[ -f ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh ]]; then
-#   # trunk-ignore(shellcheck/SC1091)
 #   source ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh
 #   bind -x '"\t": fzf_bash_completion'
 # fi
