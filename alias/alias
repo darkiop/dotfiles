@@ -23,6 +23,9 @@ if [[ ${EUID} -ne 0 ]]; then
 	alias ifmetric='sudo ifmetric'
 fi
 
+# Exit
+alias x='exit'
+
 # ps tree / forest
 alias ps='ps --forest'
 
