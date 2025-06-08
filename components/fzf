@@ -18,11 +18,13 @@ export FZF_DEFAULT_OPTS='
 --color=marker:#ff0000,fg+:#00afff,prompt:#00afff,hl+:#ffffff
 '
 
-# fzf completion
-# if [[ -f ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh ]]; then
+# fzf-bash-completion
+# https://github.com/lincheney/fzf-tab-completion
+#  if [[ -f ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh ]]; then
 #   source ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh
-#   bind -x '"\t": fzf_bash_completion'
-# fi
+#     bind -x '"\t": fzf_bash_completion'
+#     #bind -x '"\C-f": fzf_bash_completion'
+#  fi
 
 # load fzf key bindungs
 # if [[ -f /usr/share/doc/fzf/examples/key-bindings.bash ]]; then
