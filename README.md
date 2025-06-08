@@ -1,4 +1,4 @@
-# my.dotfiles
+$# my.dotfiles
 
 dotfiles for bash
 
@@ -118,6 +118,7 @@ Prefix is <kbd>CTRL</kbd> + <kbd>a</kbd>
 | <kbd>PREFIX</kbd> + <kbd>s</kbd>                   | show windows                               |
 | <kbd>PREFIX</kbd> + <kbd>,</kbd>                   | rename window                              |
 | <kbd>PREFIX</kbd> + <kbd>d</kbd>                   | detach session                             |
+| <kbd>PREFIX</kbd> + <kbd>e</kbd>                   | open tmux.conf.local                       |
 | <kbd>PREFIX</kbd> + <kbd>TAB</kbd>                 | switch between last and current window     |
 | <kbd>SHIFT</kbd> + <kbd>LEFT</kbd>                 | switch to left window                      |
 | <kbd>SHIFT</kbd> + <kbd>RIGHT</kbd>                | switch to right window                     |
@@ -132,3 +133,4 @@ Prefix is <kbd>CTRL</kbd> + <kbd>a</kbd>
 | <kbd>PREFIX</kbd> + <kbd>CTRL</kbd> + <kbd>s</kbd> | save tmux environment to ~/.tmux/resurrect |
 | <kbd>PREFIX</kbd> + <kbd>CTRL</kbd> + <kbd>r</kbd> | restore tmux environment                   |
 | <kbd>PREFIX</kbd> + <kbd>$</kbd>                   | rename session                             |
+$
