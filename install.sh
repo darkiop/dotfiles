@@ -11,7 +11,8 @@ function IS_USER_ROOT() {
 }
 
 # check if user is root and if not exit
-function if_user_root_msg() {
+function IF_USER_ROOT_MSG() {
+	# trunk-ignore(shellcheck/SC2310)
 	if IS_USER_ROOT; then
 		MESSAGE red "You need to run this as root. Exit."
 		exit 1
@@ -21,6 +22,7 @@ function if_user_root_msg() {
 # -------------------------------------------------------------
 # first check if root, when not define a alias with sudo
 # -------------------------------------------------------------
+# trunk-ignore(shellcheck/SC2310)
 if IS_USER_ROOT; then
 	APT=$(whereis apt)
 else
@@ -146,13 +148,11 @@ function MESSAGE() {
 		COLOR=${COLOR_DEFAULT}
 		;;
 	esac
-	echo -e "${COLOR}"
-	echo "$2"
-	echo -e "${COLOR_CLOSE}"
+	echo -e "${COLOR}$2${COLOR_CLOSE}"
 }
 
 # -------------------------------------------------------------
-# main menu
+# Main-Menu
 # -------------------------------------------------------------
 function SHOW_MAIN_MENU() {
 	unset opt_main_menu
@@ -185,12 +185,12 @@ function SHOW_MAIN_MENU() {
 # -------------------------------------------------------------
 function CLONE_REPO() {
 	if [[ ! -d "${HOME}/dotfiles" ]]; then
-		MESSAGE blue "[ clone dotfiles repo from github ]"
+		MESSAGE blue "[ Clone dotfiles repository from github ]"
 		git clone --recurse-submodules https://github.com/darkiop/dotfiles "${HOME}/dotfiles"
 		cd "${HOME}/dotfiles"
 		git config pull.rebase false
 	else
-		MESSAGE yellow "dotfiles directory already exist."
+		MESSAGE lightblue "Dotfiles directory already exist. Do not clone again."
 	fi
 }
 
@@ -232,15 +232,16 @@ function CLONE_REPO() {
 # install: vimrc-amix
 # -------------------------------------------------------------
 function INSTALL_VIMRC() {
-	VIMRC_INSTALL="${HOME}/dotfiles/modules/vimrc/install_awesome_parameterized.sh"
+	echo
+	VIMRC_INSTALL="${HOME}/dotfiles/modules/vimrc/install_awesome_vimrc.sh"
 	MESSAGE blue "[ Install vimrc ]"
 	MESSAGE lightblue "Creating symlink for vimrc runtime directory from ${HOME}/dotfiles/modules/vimrc to ${HOME}/.vim_runtime"
 	ln -sf -- "${HOME}"/dotfiles/modules/vimrc "${HOME}/.vim_runtime"
 	MESSAGE lightblue "Creating symlink for vimrc configuration file from ${HOME}/dotfiles/config/vimrc/my_configs.vim to ${HOME}/.vim_runtime/my_configs.vim"
 	ln -sf -- "${HOME}"/dotfiles/config/vimrc/my_configs.vim "${HOME}/.vim_runtime/my_configs.vim"
-	echo
+	echo -e "${COLOR_LIGHT_BLUE}"
 	bash "${VIMRC_INSTALL}" "${HOME}"/dotfiles/modules/vimrc "${USER}"
-	echo
+	echo -e "${COLOR_CLOSE}"
 }
 
 # -------------------------------------------------------------
@@ -263,6 +264,7 @@ function INSTALL_TMUX() {
 # Install .bashrc
 # -------------------------------------------------------------
 function LINK_DOTFILES() {
+	echo
 	MESSAGE blue "[ Install .bashrc ]"
 
 	# install
@@ -273,18 +275,16 @@ function LINK_DOTFILES() {
 	echo -e "${COLOR_GREEN}""Delete""${COLOR_CLOSE}""${COLOR_YELLOW}"" old ""${COLOR_GREEN}""symlinks ...""${COLOR_CLOSE}"
 	for file in ${files}; do
 		if [[ -f "${HOME}"/."${file}" ]]; then
-			echo "Deleting existing symlink for configuration file ~/.${file} to prepare for a fresh installation."
+			MESSAGE lightblue "Deleting existing symlink for configuration file ~/.${file} to prepare for a fresh installation."
 			rm "${HOME}"/."${file}"
 		fi
 	done
-	echo
 	# new symlinks for files
 	echo -e "${COLOR_GREEN}""Create""${COLOR_CLOSE}""${COLOR_YELLOW}"" new ""${COLOR_GREEN}""symlinks ...""${COLOR_CLOSE}"
 	for file in ${files}; do
-		echo "Creating symlink for ${dir}/${file} to ~/.${file}"
+		MESSAGE lightblue "Creating symlink for ${dir}/${file} to ~/.${file}"
 		ln -s "${dir}/${file}" ~/."${file}"
 	done
-	echo
 }
 
 # -------------------------------------------------------------
