@@ -12,18 +12,18 @@ esac
 source ~/dotfiles/config/dotfiles.config
 
 # define and load directorys for personal $PATH
-pathadd() {
+ADD_TO_PATH() {
   if [[ -d "$1" ]] && [[ ":${PATH}:" != *":$1:"* ]]; then
     PATH="$1${PATH:+":${PATH}"}"
   fi
 }
-pathadd "/usr/local/bin"
-pathadd "/usr/bin"
-pathadd "/bin"
-pathadd "~/bin"
-pathadd "~/dotfiles/bin"
-pathadd "~/.local/bin"
-pathadd "~/.cargo/bin"
+ADD_TO_PATH "/usr/local/bin"
+ADD_TO_PATH "/usr/bin"
+ADD_TO_PATH "/bin"
+ADD_TO_PATH "~/bin"
+ADD_TO_PATH "~/dotfiles/bin"
+ADD_TO_PATH "~/.local/bin"
+ADD_TO_PATH "~/.cargo/bin"
 
 # load dotfiles components
 source ~/dotfiles/components/defaults
@@ -65,7 +65,7 @@ if command -v tmux &> /dev/null && [[ -n "${PS1}" ]] && [[ ! "${TERM}" =~ screen
 fi
 
 # Enable automatic renaming of tmux windows based on ssh connections
-if [[ -n $TMUX ]]; then          # only inside tmux
+if [[ -n $TMUX ]]; then # only inside tmux
     ssh() {
         # extract the host part and strip user@ / port / domain
         local target=$1
@@ -75,4 +75,10 @@ if [[ -n $TMUX ]]; then          # only inside tmux
         command ssh "$@"                  # run the real ssh
         tmux set -w automatic-rename on   # restore when we exit
     }
+fi
+
+# ioBroker
+if [[ -x /opt/iobroker/iobroker && $USER == "darkiop" ]]; then
+  source ~/.iobroker/iobroker_completions   # Enable ioBroker command auto-completion
+  source ~/.iobroker/npm_command_fix        # Forces npm to run as iobroker when inside the iobroker installation dir
 fi
