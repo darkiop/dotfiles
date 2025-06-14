@@ -149,7 +149,7 @@ fi
 # dmesg (human readable time)
 alias dmesg='dmesg -T'
 
-# fd-find22222222222222222222
+# fd-find
 if [[ -x /usr/bin/fdfind ]]; then
 	alias fd='fdfind'
 fi
