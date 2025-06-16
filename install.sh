@@ -152,7 +152,7 @@ function MESSAGE() {
 }
 
 # -------------------------------------------------------------
-# Main-Menu
+# Print Main-Menu
 # -------------------------------------------------------------
 function SHOW_MAIN_MENU() {
 	unset opt_main_menu
@@ -168,7 +168,7 @@ function SHOW_MAIN_MENU() {
 	printf '%b2)%b Install git submodules\n' \
 		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
 
-	printf '%b5)%b Install .bashrc\n' \
+	printf '%b3)%b Install .bashrc\n' \
 		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
 
 	echo
@@ -181,7 +181,7 @@ function SHOW_MAIN_MENU() {
 }
 
 # -------------------------------------------------------------
-# clone repo from github
+# Clone repo from github
 # -------------------------------------------------------------
 function CLONE_REPO() {
 	if [[ ! -d "${HOME}/dotfiles" ]]; then
@@ -229,7 +229,7 @@ function CLONE_REPO() {
 #}
 
 # -------------------------------------------------------------
-# install: vimrc-amix
+# Install: vimrc-amix
 # -------------------------------------------------------------
 function INSTALL_VIMRC() {
 	echo
@@ -245,7 +245,7 @@ function INSTALL_VIMRC() {
 }
 
 # -------------------------------------------------------------
-# install: oh-my-tmux
+# Install: oh-my-tmux
 # -------------------------------------------------------------
 function INSTALL_TMUX() {
 	MESSAGE blue "[ Install oh-my-tmux and tmux plugin manager ]"
@@ -258,6 +258,21 @@ function INSTALL_TMUX() {
 	ln -sf -- "${HOME}"/dotfiles/modules/tpm "${HOME}"/.tmux/plugins/tpm
 	MESSAGE lightblue "Creating symlink for .tmux.conf.local from dotfiles/config/tmux.conf.local to ~/.tmux.conf.local"
 	ln -sf -- "${HOME}"/dotfiles/config/tmux.conf.local "${HOME}"/.tmux.conf.local
+}
+
+# -------------------------------------------------------------
+# Install gut submodules
+# -------------------------------------------------------------
+function INSTALL_GIT_SUBMODULES() {
+	MESSAGE blue "[ Install git submodules ]"
+	if [[ -d "${HOME}"/dotfiles ]]; then
+		cd "${HOME}"/dotfiles || exit
+		git submodule update --init --recursive
+		#git submodule foreach git pull origin master
+	else
+		MESSAGE red "Dotfiles directory not found. Please clone the repository first."
+		exit 1
+	fi
 }
 
 # -------------------------------------------------------------
@@ -342,19 +357,18 @@ else
 			INSTALL_DOTFILES
 			exit
 			;;
-		2) # install .bashrc
+		2) # install git submodules
+			INSTALL_GIT_SUBMODULES
+			exit
+			;;
+		3) # link dotfiles
 			LINK_DOTFILES
+			exit
 			;;
 		x | X) # exit
 			exit
 			;;
-		* | \n) # typo - show main menu again
-			SHOW_MAIN_MENU
-			;;
-		x | X) # exit
-			exit
-			;;
-		* | \n) # typo - show main menu again
+		*) # typo - show main menu again
 			SHOW_MAIN_MENU
 			;;
 		esac
