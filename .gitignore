@@ -1,6 +1,6 @@
 config/local_dotfiles_settings
 bash_completion.d/hcloud
-modules
+modules/*
 ._.DS_Store
 .DS_Store
 bin/archive/*
