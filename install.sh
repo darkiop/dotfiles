@@ -24,9 +24,9 @@ function IF_USER_ROOT_MSG() {
 # -------------------------------------------------------------
 # trunk-ignore(shellcheck/SC2310)
 if IS_USER_ROOT; then
-	APT=$(whereis apt)
+	APT='apt'
 else
-	APT='sudo '$(whereis apt)
+	APT='sudo apt'
 fi
 
 # -------------------------------------------------------------
@@ -268,9 +268,34 @@ function INSTALL_GIT_SUBMODULES() {
 	if [[ -d "${HOME}"/dotfiles ]]; then
 		cd "${HOME}"/dotfiles || exit
 		git submodule update --init --recursive
-		#git submodule foreach git pull origin master
 	else
 		MESSAGE red "Dotfiles directory not found. Please clone the repository first."
+		exit 1
+	fi
+}
+
+# -------------------------------------------------------------
+# install fzf from submodule
+# -------------------------------------------------------------
+function INSTALL_FZF() {
+	if ls ~/.fzf.* &>/dev/null; then
+		rm ~/.fzf.*
+	fi
+	if [[ -e ~/.fzf ]]; then
+		rm -rf ~/.fzf
+	fi
+	# trunk-ignore(shellcheck/SC2312)
+	if dpkg -l | grep -qw fzf; then
+		MESSAGE yellow "Purging existing apt fzf installation"
+		${APT} purge -y fzf
+	fi
+	MESSAGE blue "[ Install fzf ]"
+	if [[ -d ~/dotfiles/modules/fzf ]]; then
+		cd ~/dotfiles/modules/fzf || exit
+		#./install --no-update-rc
+		./install
+	else
+		MESSAGE red "fzf directory not found. Please clone the repository first."
 		exit 1
 	fi
 }
@@ -332,9 +357,11 @@ function INSTALL_DOTFILES() {
 	LOAD_COLORS
 	CHECK_IF_GIT_IS_INSTALLED
 	CLONE_REPO
+	INSTALL_GIT_SUBMODULES
 	#instBASHCOMPLE
 	INSTALL_VIMRC
 	INSTALL_TMUX
+	INSTALL_FZF
 	LINK_DOTFILES
 }
 
