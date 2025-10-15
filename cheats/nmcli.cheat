@@ -1,0 +1,10 @@
+% NetworkManager
+
+#
+nmcli device status
+
+#
+nmtui edit "Wired connection 1"
+
+#
+nmcli device show eth0
