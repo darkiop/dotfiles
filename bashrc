@@ -66,15 +66,15 @@ fi
 
 # Enable automatic renaming of tmux windows based on ssh connections
 if [[ -n $TMUX ]]; then # only inside tmux
-    ssh() {
-        # extract the host part and strip user@ / port / domain
-        local target=$1
-        target=${target##*@}; target=${target%%:*}; target=${target%%.*}
+  ssh() {
+    # extract the host part and strip user@ / port / domain
+    local target=$1
+    target=${target##*@}; target=${target%%:*}; target=${target%%.*}
 
-        tmux rename-window "$target"      # rename before we connect
-        command ssh "$@"                  # run the real ssh
-        tmux set -w automatic-rename on   # restore when we exit
-    }
+    tmux rename-window "$target"      # rename before we connect
+    command ssh "$@"                  # run the real ssh
+    tmux set -w automatic-rename on   # restore when we exit
+  }
 fi
 
 # ioBroker
