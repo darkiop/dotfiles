@@ -20,7 +20,7 @@ bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/i
 ### Clone
 
 ```bash
-git clone https://github.com/darkiop/dotfiles ~/dotfiles
+git clone --recurse-submodules  https://github.com/darkiop/dotfiles ~/dotfiles
 bash ~/dotfiles/install.sh
 ```
 
