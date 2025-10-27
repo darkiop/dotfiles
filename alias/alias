@@ -82,9 +82,9 @@ fi
 # ls or lsd
 if [[ -x /usr/bin/eza ]]; then
 	alias ls='eza --sort type --icons --git'
-	alias l='eza -l@ --sort type --icons --git'
-	alias ll='eza -la@ --sort type --icons --git'
-	alias la='eza -a@ --sort type --icons --git'
+	alias l='eza -l --sort type --icons --git'
+	alias ll='eza -la --sort type --icons --git --colour=always'
+	alias la='eza -a --sort type --icons --git'
 	alias lt='eza --tree'
 elif [[ -x /usr/bin/lsd ]] || [[ -x /usr/local/bin/lsd ]]; then
 	alias ls='lsd'
@@ -100,6 +100,13 @@ else
 	alias lt='ls --tree'
 fi
 
+# cd - show content after cd
+cd() {
+	builtin cd "$@" || return
+	ll # use alias ll to show content after cd
+}
+alias ..='cd ..'
+
 # mtr (-b = show ips)
 if [[ -x /usr/bin/mtr ]]; then
 	alias mtr='mtr -b'
@@ -107,13 +114,6 @@ fi
 
 # motd
 alias motd='source ~/dotfiles/motd/motd.sh'
-
-# cd - show content after cd
-cd() {
-	builtin cd "$@" || return
-	ls -lah
-}
-alias ..='cd ..'
 
 # clear + motd
 alias cls='source ~/.bashrc'
@@ -123,12 +123,12 @@ alias reload='source ~/.bashrc'
 # colorful ip
 alias ip='ip -c'
 
-# dotfiles update
-alias update-dotfiles='cd ~/dotfiles && git pull && rl'
-alias dotfu='dotf && gp && rl'
-
 # fast switch to dotfiles
 alias dotf='cd ~/dotfiles && git status'
+
+# dotfiles update
+alias update-dotfiles='cd ~/dotfiles && git pull && rl'
+alias dotfu='cd ~/dotfiles && git pull && reload'
 
 # system update
 alias sysup='apt update && apt upgrade -y && apt autoremove -y && apt autoclean && source ~/.bashrc'
