@@ -261,6 +261,18 @@ function INSTALL_TMUX() {
 }
 
 # -------------------------------------------------------------
+# Install: helix
+# -------------------------------------------------------------
+function INSTALL_HELIX() {
+	MESSAGE blue "[ Install helix configuration ]"
+	if [[ ! -d "${HOME}"/.config/helix ]]; then
+		mkdir -p "${HOME}"/.config/helix
+	fi
+	MESSAGE lightblue "Creating symlink for .config.toml from dotfiles/config/helix/config.toml to ~/.config/helix/config.toml"
+	ln -sf -- "${HOME}"/dotfiles/config/helix/config.toml "${HOME}"/.config/helix/config.toml
+}
+
+# -------------------------------------------------------------
 # Install gut submodules
 # -------------------------------------------------------------
 function INSTALL_GIT_SUBMODULES() {
@@ -360,6 +372,7 @@ function INSTALL_DOTFILES() {
 	INSTALL_GIT_SUBMODULES
 	#instBASHCOMPLE
 	INSTALL_VIMRC
+	INSTALL_HELIX
 	INSTALL_TMUX
 	INSTALL_FZF
 	LINK_DOTFILES
