@@ -1,0 +1,18 @@
+# https://docs.helix-editor.com/editor.html
+
+theme = "flexoki_dark"
+
+[editor]
+line-number = "absolute"
+mouse = true
+auto-completion = true
+auto-format = true
+true-color = true
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.file-picker]
+hidden = true
