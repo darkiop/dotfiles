@@ -10,15 +10,6 @@ function IS_USER_ROOT() {
 	[[ ${uid} -eq 0 ]]
 }
 
-# check if user is root and if not exit
-function IF_USER_ROOT_MSG() {
-	# trunk-ignore(shellcheck/SC2310)
-	if IS_USER_ROOT; then
-		MESSAGE red "You need to run this as root. Exit."
-		exit 1
-	fi
-}
-
 # -------------------------------------------------------------
 # first check if root, when not define a alias with sudo
 # -------------------------------------------------------------
@@ -50,19 +41,25 @@ function LOAD_COLORS() {
 # check if sudo is installedq
 # -------------------------------------------------------------
 function CHECK_IF_SUDO_IS_INSTALLED() {
-	# trunk-ignore(shellcheck/SC2312)
-	if [[ -z "$(whereis sudo)" ]]; then
+	if command -v sudo >/dev/null 2>&1; then
+		return 0
+	fi
+
+	if IS_USER_ROOT; then
 		MESSAGE red "sudo not found. install it ..."
 		${APT} install sudo -y
+		return 0
 	fi
+
+	MESSAGE red "sudo not found. Please run as root (or install sudo first). Exit."
+	exit 1
 }
 
 # -------------------------------------------------------------
 # check if curl is installed
 # -------------------------------------------------------------
 function CHECK_IF_CURL_IS_INSTALLED() {
-	# trunk-ignore(shellcheck/SC2312)
-	if [[ -z "$(whereis curl)" ]]; then
+	if ! command -v curl >/dev/null 2>&1; then
 		MESSAGE red "curl not found. install it ..."
 		${APT} install curl -y
 	fi
@@ -72,8 +69,7 @@ function CHECK_IF_CURL_IS_INSTALLED() {
 # check if git is installed
 # -------------------------------------------------------------
 function CHECK_IF_GIT_IS_INSTALLED() {
-	# trunk-ignore(shellcheck/SC2312)
-	if [[ -z "$(whereis git)" ]]; then
+	if ! command -v git >/dev/null 2>&1; then
 		MESSAGE red "git not found. install it ..."
 		${APT} install git -y
 	fi
@@ -321,20 +317,27 @@ function LINK_DOTFILES() {
 	# install
 	dir="${HOME}"/dotfiles
 	files="bashrc gitconfig inputrc bash_profile dircolors"
+	timestamp="$(date +%Y%m%d-%H%M%S)"
 
-	# delete old symlinks
-	echo -e "${COLOR_GREEN}""Delete""${COLOR_CLOSE}""${COLOR_YELLOW}"" old ""${COLOR_GREEN}""symlinks ...""${COLOR_CLOSE}"
+	echo -e "${COLOR_GREEN}""Delete""${COLOR_CLOSE}""${COLOR_YELLOW}"" old ""${COLOR_GREEN}""symlinks / backup files ...""${COLOR_CLOSE}"
 	for file in ${files}; do
-		if [[ -f "${HOME}"/."${file}" ]]; then
-			MESSAGE lightblue "Deleting existing symlink for configuration file ~/.${file} to prepare for a fresh installation."
-			rm "${HOME}"/."${file}"
+		target="${HOME}/.${file}"
+
+		if [[ -L "${target}" ]]; then
+			MESSAGE lightblue "Removing existing symlink ${target}"
+			rm -f -- "${target}"
+		elif [[ -f "${target}" ]]; then
+			MESSAGE lightblue "Backing up existing file ${target} -> ${target}.bak.${timestamp}"
+			mv -- "${target}" "${target}.bak.${timestamp}"
+		elif [[ -e "${target}" ]]; then
+			MESSAGE yellow "Skipping ${target} (not a file/symlink)"
 		fi
 	done
 	# new symlinks for files
 	echo -e "${COLOR_GREEN}""Create""${COLOR_CLOSE}""${COLOR_YELLOW}"" new ""${COLOR_GREEN}""symlinks ...""${COLOR_CLOSE}"
 	for file in ${files}; do
 		MESSAGE lightblue "Creating symlink for ${dir}/${file} to ~/.${file}"
-		ln -s "${dir}/${file}" ~/."${file}"
+		ln -sf -- "${dir}/${file}" "${HOME}/.${file}"
 	done
 }
 
