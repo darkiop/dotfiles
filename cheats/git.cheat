@@ -13,7 +13,7 @@ git init
 git clone -b <branch_name> <repository> <clone_directory>
 
 # Shallow clone with depth 1 with all branches and submodules
-git clone --depth=1 --no-single-branch --recurse-submodules <repository> <clone_directory>
+git clone --depth=1 --no-single-branch --recurse-submodules --shallow-submodules <repository> <clone_directory>
 
 # Rebase upstream master into local/origin master (use if people don't clone your repository)
 git fetch <remote_name>

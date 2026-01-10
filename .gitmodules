@@ -3,15 +3,20 @@
 [submodule "modules/vimrc"]
 	path = modules/vimrc
 	url = https://github.com/amix/vimrc
+	shallow = true
 [submodule "modules/oh-my-tmux"]
 	path = modules/oh-my-tmux
 	url = https://github.com/gpakosz/.tmux
+	shallow = true
 [submodule "modules/tpm"]
 	path = modules/tpm
 	url = https://github.com/tmux-plugins/tpm
+	shallow = true
 [submodule "modules/fzf-tab-completion"]
 	path = modules/fzf-tab-completion
 	url = https://github.com/lincheney/fzf-tab-completion
+	shallow = true
 [submodule "modules/fzf"]
 	path = modules/fzf
 	url = https://github.com/junegunn/fzf
+	shallow = true

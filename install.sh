@@ -186,7 +186,7 @@ function SHOW_MAIN_MENU() {
 function CLONE_REPO() {
 	if [[ ! -d "${HOME}/dotfiles" ]]; then
 		MESSAGE blue "[ Clone dotfiles repository from github ]"
-		git clone --recurse-submodules https://github.com/darkiop/dotfiles "${HOME}/dotfiles"
+		git clone --recurse-submodules --shallow-submodules https://github.com/darkiop/dotfiles "${HOME}/dotfiles"
 		cd "${HOME}/dotfiles"
 		git config pull.rebase false
 	else
@@ -279,7 +279,7 @@ function INSTALL_GIT_SUBMODULES() {
 	MESSAGE blue "[ Install git submodules ]"
 	if [[ -d "${HOME}"/dotfiles ]]; then
 		cd "${HOME}"/dotfiles || exit
-		git submodule update --init --recursive
+		git submodule update --init --recursive --depth 1
 	else
 		MESSAGE red "Dotfiles directory not found. Please clone the repository first."
 		exit 1
