@@ -27,13 +27,26 @@ ADD_TO_PATH "/bin"
 
 # load dotfiles components
 source ~/dotfiles/components/defaults
-source ~/dotfiles/components/prompt
-source ~/dotfiles/components/bash_completion
-source ~/dotfiles/components/fzf
-source ~/dotfiles/components/navi
+source ~/dotfiles/components/platform
+source ~/dotfiles/components/feature_flags
+
+if dotfiles_flag_enabled DOTFILES_ENABLE_PROMPT; then
+  source ~/dotfiles/components/prompt
+fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_BASH_COMPLETION; then
+  source ~/dotfiles/components/bash_completion
+fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_FZF; then
+  source ~/dotfiles/components/fzf
+fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_NAVI; then
+  source ~/dotfiles/components/navi
+fi
 
 # load aliases
-source ~/dotfiles/alias/alias
+if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then
+  source ~/dotfiles/alias/alias
+fi
 
 # Set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
@@ -55,17 +68,17 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # Autoupdate dotfiles after 20 logins
-if [[ -x ~/dotfiles/autoupdate.sh ]]; then
+if dotfiles_flag_enabled DOTFILES_ENABLE_AUTOUPDATE && [[ -x ~/dotfiles/autoupdate.sh ]]; then
   source ~/dotfiles/autoupdate.sh
 fi
 
 # Run tmux session
-if command -v tmux &> /dev/null && [[ -n "${PS1}" ]] && [[ ! "${TERM}" =~ screen ]] && [[ ! "${TERM}" =~ tmux ]] && [[ -z "${TMUX}" ]]; then
+if dotfiles_flag_enabled DOTFILES_ENABLE_TMUX_AUTOSTART && command -v tmux &> /dev/null && [[ -n "${PS1}" ]] && [[ ! "${TERM}" =~ screen ]] && [[ ! "${TERM}" =~ tmux ]] && [[ -z "${TMUX}" ]]; then
   tmux -u attach -t default || tmux -u new -s default
 fi
 
 # Enable automatic renaming of tmux windows based on ssh connections
-if [[ -n $TMUX ]]; then # only inside tmux
+if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_TMUX_RENAME && [[ -n $TMUX ]]; then # only inside tmux
   _dotfiles_ssh_extract_target() {
     local arg
     while [[ $# -gt 0 ]]; do
@@ -121,7 +134,7 @@ if [[ -n $TMUX ]]; then # only inside tmux
 fi
 
 # ioBroker
-if [[ -x /opt/iobroker/iobroker && $USER == "darkiop" ]]; then
+if dotfiles_flag_enabled DOTFILES_ENABLE_IOBROKER && [[ -x /opt/iobroker/iobroker && $USER == "darkiop" ]]; then
   source ~/.iobroker/iobroker_completions   # Enable ioBroker command auto-completion
   source ~/.iobroker/npm_command_fix        # Forces npm to run as iobroker when inside the iobroker installation dir
 fi
