@@ -14,16 +14,16 @@ source ~/dotfiles/config/dotfiles.config
 # define and load directorys for personal $PATH
 ADD_TO_PATH() {
   if [[ -d "$1" ]] && [[ ":${PATH}:" != *":$1:"* ]]; then
-    PATH="$1${PATH:+":${PATH}"}"
+    PATH="${PATH:+${PATH}:}$1"
   fi
 }
-ADD_TO_PATH "/usr/local/bin"
-ADD_TO_PATH "/usr/bin"
-ADD_TO_PATH "/bin"
 ADD_TO_PATH "$HOME/bin"
 ADD_TO_PATH "$HOME/dotfiles/bin"
 ADD_TO_PATH "$HOME/.local/bin"
 ADD_TO_PATH "$HOME/.cargo/bin"
+ADD_TO_PATH "/usr/local/bin"
+ADD_TO_PATH "/usr/bin"
+ADD_TO_PATH "/bin"
 
 # load dotfiles components
 source ~/dotfiles/components/defaults
