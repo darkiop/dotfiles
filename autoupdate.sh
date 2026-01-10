@@ -46,7 +46,9 @@ dotfiles_autoupdate() {
 			git diff --cached --quiet || exit 0
 
 			echo "Updating dotfiles ..."
-			git pull --ff-only
+			# Do not recurse into submodules even if user has `submodule.recurse=true`
+			# (common in global gitconfig) to avoid SSH-only submodule fetch failures.
+			git -c submodule.recurse=false pull --ff-only
 		) && echo "0" >"${count_file}"
 	fi
 }
