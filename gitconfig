@@ -29,3 +29,6 @@ remote = yellow
 
 [submodule]
 recurse = true
+
+[credential]
+helper = store
