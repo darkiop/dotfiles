@@ -67,9 +67,17 @@ fi
 # Enable automatic renaming of tmux windows based on ssh connections
 if [[ -n $TMUX ]]; then # only inside tmux
   ssh() {
-    # extract the host part and strip user@ / port / domain
+    # extract the host part and strip user@ / port
+    # keep full IPv4 addresses, otherwise strip domain to first label
     local target=$1
-    target=${target##*@}; target=${target%%:*}; target=${target%%.*}
+    target=${target##*@}
+    target=${target%%:*}
+
+    if [[ $target =~ ^[0-9]+(\.[0-9]+){3}$ ]]; then
+      : # IPv4 address, keep full
+    else
+      target=${target%%.*}
+    fi
 
     tmux rename-window "$target"      # rename before we connect
     command ssh "$@"                  # run the real ssh
