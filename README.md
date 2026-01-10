@@ -1,20 +1,26 @@
-$# my.dotfiles
+# my.dotfiles
 
-dotfiles for bash
+Bash dotfiles with modular components, submodules (vim/tmux/fzf), and optional per-host feature flags.
 
-## INSTALL
+## Install
 
 ### With menu
+
+```bash
+bash -c "$(curl -fsSL 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install.sh')"
+```
+
+If you don't have `curl` yet:
 
 ```bash
 bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install.sh')"
 ```
 
-### Without questions
+### Non-interactive
 
 ```bash
-bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install.sh')" '' all
-bash -c "$(wget -qO - 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install.sh')" '' all load-bashrc
+bash -c "$(curl -fsSL 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install.sh')" '' all
+bash -c "$(curl -fsSL 'https://raw.githubusercontent.com/darkiop/dotfiles/HEAD/install.sh')" '' all load-bashrc
 ```
 
 ### Clone
@@ -24,20 +30,66 @@ git clone --recurse-submodules --shallow-submodules https://github.com/darkiop/d
 bash ~/dotfiles/install.sh
 ```
 
-## FEATURES
+## Requirements / supported systems
+
+- Shell: bash
+- Distro: the installer is built around `apt` (Debian/Ubuntu). Other distros need manual package installation.
+- Tools: `git`, `curl` (the installer can install missing dependencies via apt/sudo).
+
+## What it configures
+
+- Bash: `bashrc`, `bash_profile`, `inputrc`, `dircolors`
+- Git: `gitconfig` (includes optional `~/.gitconfig.local`)
+- Prompt: `components/prompt` (Git, SSH, sudo, exit code)
+- Completions: system bash-completion + `bash_completion.d/*`
+- FZF: installed via `modules/fzf/install --key-bindings --completion` (never via apt)
+- Navi: `Ctrl+G` widget + cheats in `cheats/`
+- Tmux: oh-my-tmux + TPM + `config/tmux.conf.local`
+- MOTD: hostname-based scripts in `motd/`
+
+## Feature flags (per host)
+
+`bashrc` sources `components/feature_flags` and reads optional overrides from `~/dotfiles/config/local_dotfiles_settings` (gitignored).
+
+Example `~/dotfiles/config/local_dotfiles_settings`:
 
 ```bash
-- navi <kbd>STRG</kbd> + <kbd>G</kbd> (~/dotfiles/cheats)
-- vimrc
-- motd for each hostname (~/dotfiles/motd)
-- dategrep
-- tmux
-
-dategrep --start "12:00" --end "12:15" syslog
-dategrep --end "12:15" --format "%b %d %H:%M:%S" syslog
-dategrep --last-minutes 5 syslog
-cat syslog | dategrep --end "12:15"
+DOTFILES_ENABLE_AUTOUPDATE=false
+DOTFILES_ENABLE_TMUX_AUTOSTART=false
+DOTFILES_ENABLE_SSH_TMUX_RENAME=false
 ```
+
+Available flags:
+
+- `DOTFILES_ENABLE_PROMPT`
+- `DOTFILES_ENABLE_BASH_COMPLETION`
+- `DOTFILES_ENABLE_FZF`
+- `DOTFILES_ENABLE_NAVI`
+- `DOTFILES_ENABLE_ALIASES`
+- `DOTFILES_ENABLE_AUTOUPDATE`
+- `DOTFILES_ENABLE_TMUX_AUTOSTART`
+- `DOTFILES_ENABLE_SSH_TMUX_RENAME`
+- `DOTFILES_ENABLE_IOBROKER`
+
+## Platform detection
+
+`bashrc` sources `components/platform`, which exports:
+
+- `DOTFILES_OS` (`linux`, `darwin`, `unknown`)
+- `DOTFILES_DISTRO_ID`, `DOTFILES_DISTRO_LIKE` (from `/etc/os-release`)
+- `DOTFILES_WSL` (0/1)
+- `DOTFILES_CONTAINER` (0/1)
+
+## Updating
+
+- Manual: `cd ~/dotfiles && git pull --ff-only && git submodule update --init --recursive --depth 1`
+- Automatic: `autoupdate.sh` runs from `.bashrc` after ~20 logins (disable via `DOTFILES_ENABLE_AUTOUPDATE=false`).
+
+## Notes / troubleshooting
+
+- Line endings: `.gitattributes` enforces LF for shell files to avoid Bash errors like `syntax error near unexpected token $'in\\r'`.
+- Submodules: `gitconfig` enables `submodule.recurse=true`; if you have SSH-only access or no key, submodule fetch can fail. `autoupdate.sh` disables submodule recursion for its pull.
+- Credentials: add sensitive Git settings (e.g. credential helper, signing keys) to `~/.gitconfig.local`.
 
 ## LINKS
 
@@ -94,9 +146,9 @@ cat syslog | dategrep --end "12:15"
 | <kbd>CTRL</kbd> + <kbd>A</kbd>           | jump to the beginning of a line |
 | <kbd>CTRL</kbd> + <kbd>E</kbd>           | jump to the end of the line     |
 | <kbd>CTRL</kbd> + <kbd>R</kbd>           | reverse-search                  |
-| <kbd>CTRL</kbd> + <kbd>C</kbd>           | interupt command                |
+| <kbd>CTRL</kbd> + <kbd>C</kbd>           | interrupt command               |
 | <kbd>CTRL</kbd> + <kbd>L</kbd>           | clear screen                    |
-| <kbd>ALTGR</kbd> + <kbd>Mousewhell</kbd> | bash history                    |
+| <kbd>ALTGR</kbd> + <kbd>Mousewheel</kbd> | bash history                    |
 
 ### Navi
 
@@ -133,4 +185,3 @@ Prefix is <kbd>CTRL</kbd> + <kbd>a</kbd>
 | <kbd>PREFIX</kbd> + <kbd>CTRL</kbd> + <kbd>s</kbd> | save tmux environment to ~/.tmux/resurrect |
 | <kbd>PREFIX</kbd> + <kbd>CTRL</kbd> + <kbd>r</kbd> | restore tmux environment                   |
 | <kbd>PREFIX</kbd> + <kbd>$</kbd>                   | rename session                             |
-$
