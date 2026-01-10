@@ -27,11 +27,7 @@ ADD_TO_PATH "/bin"
 
 # load dotfiles components
 source ~/dotfiles/components/defaults
-if [[ "${DOTFILES_PROMPT:-}" == "starship" || "${USE_STARSHIP:-}" == "1" ]]; then
-  source ~/dotfiles/components/starship
-else
-  source ~/dotfiles/components/prompt
-fi
+source ~/dotfiles/components/prompt
 source ~/dotfiles/components/bash_completion
 source ~/dotfiles/components/fzf
 source ~/dotfiles/components/navi
