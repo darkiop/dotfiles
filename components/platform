@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# OS / platform detection for dotfiles.
+# Exports:
+#   DOTFILES_OS: linux|darwin|unknown
+#   DOTFILES_DISTRO_ID: e.g. debian|ubuntu|arch|unknown
+#   DOTFILES_DISTRO_LIKE: value of ID_LIKE (may be empty)
+#   DOTFILES_WSL: 1 if running under WSL, else 0
+#   DOTFILES_CONTAINER: 1 if running in a container, else 0
+
+DOTFILES_OS="unknown"
+case "$(uname -s 2>/dev/null)" in
+Linux) DOTFILES_OS="linux" ;;
+Darwin) DOTFILES_OS="darwin" ;;
+esac
+export DOTFILES_OS
+
+DOTFILES_DISTRO_ID="unknown"
+DOTFILES_DISTRO_LIKE=""
+if [[ -r /etc/os-release ]]; then
+	# shellcheck source=/dev/null
+	source /etc/os-release
+	[[ -n "${ID:-}" ]] && DOTFILES_DISTRO_ID="${ID}"
+	[[ -n "${ID_LIKE:-}" ]] && DOTFILES_DISTRO_LIKE="${ID_LIKE}"
+fi
+export DOTFILES_DISTRO_ID
+export DOTFILES_DISTRO_LIKE
+
+DOTFILES_WSL=0
+if [[ -n "${WSL_INTEROP:-}" || -n "${WSL_DISTRO_NAME:-}" ]]; then
+	DOTFILES_WSL=1
+elif [[ -r /proc/version ]] && grep -qiE 'microsoft|wsl' /proc/version; then
+	DOTFILES_WSL=1
+fi
+export DOTFILES_WSL
+
+DOTFILES_CONTAINER=0
+if [[ -f /.dockerenv || -f /run/.containerenv ]]; then
+	DOTFILES_CONTAINER=1
+elif [[ -r /proc/1/cgroup ]] && grep -qE '(docker|lxc|kubepods|containerd)' /proc/1/cgroup; then
+	DOTFILES_CONTAINER=1
+fi
+export DOTFILES_CONTAINER
+
+dotfiles_is_wsl() { [[ "${DOTFILES_WSL}" == "1" ]]; }
+dotfiles_is_container() { [[ "${DOTFILES_CONTAINER}" == "1" ]]; }
+dotfiles_is_linux() { [[ "${DOTFILES_OS}" == "linux" ]]; }
+dotfiles_is_darwin() { [[ "${DOTFILES_OS}" == "darwin" ]]; }
+dotfiles_is_debian_like() { [[ "${DOTFILES_DISTRO_ID}" == "debian" || "${DOTFILES_DISTRO_ID}" == "ubuntu" || "${DOTFILES_DISTRO_LIKE}" == *debian* ]]; }
+

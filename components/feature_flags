@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Feature flags for dotfiles (opt-in overrides via local settings).
+#
+# Local overrides (gitignored):
+#   ~/dotfiles/config/local_dotfiles_settings
+#
+# Example:
+#   DOTFILES_ENABLE_FZF=false
+#   DOTFILES_ENABLE_TMUX_AUTOSTART=false
+#   DOTFILES_ENABLE_AUTOUPDATE=false
+
+dotfiles_flag_enabled() {
+	local var_name="$1"
+	local value="${!var_name}"
+	case "${value}" in
+	1 | true | TRUE | yes | YES | y | Y | on | ON) return 0 ;;
+	0 | false | FALSE | no | NO | n | N | off | OFF | "") return 1 ;;
+	*) return 1 ;;
+	esac
+}
+
+if [[ -f "${HOME}/dotfiles/config/local_dotfiles_settings" ]]; then
+	# shellcheck source=/dev/null
+	source "${HOME}/dotfiles/config/local_dotfiles_settings"
+fi
+
+: "${DOTFILES_ENABLE_PROMPT:=true}"
+: "${DOTFILES_ENABLE_BASH_COMPLETION:=true}"
+: "${DOTFILES_ENABLE_FZF:=true}"
+: "${DOTFILES_ENABLE_NAVI:=true}"
+: "${DOTFILES_ENABLE_ALIASES:=true}"
+: "${DOTFILES_ENABLE_AUTOUPDATE:=true}"
+: "${DOTFILES_ENABLE_TMUX_AUTOSTART:=true}"
+: "${DOTFILES_ENABLE_SSH_TMUX_RENAME:=true}"
+: "${DOTFILES_ENABLE_IOBROKER:=true}"
+
+export DOTFILES_ENABLE_PROMPT
+export DOTFILES_ENABLE_BASH_COMPLETION
+export DOTFILES_ENABLE_FZF
+export DOTFILES_ENABLE_NAVI
+export DOTFILES_ENABLE_ALIASES
+export DOTFILES_ENABLE_AUTOUPDATE
+export DOTFILES_ENABLE_TMUX_AUTOSTART
+export DOTFILES_ENABLE_SSH_TMUX_RENAME
+export DOTFILES_ENABLE_IOBROKER

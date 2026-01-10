@@ -1,0 +1,13 @@
+* text=auto
+
+# Keep this file itself LF.
+/.gitattributes text eol=lf
+
+# Shell and sourced scripts must use LF to avoid `bash` errors (e.g. `$'in\r'`).
+*.sh text eol=lf
+bashrc text eol=lf
+bash_profile text eol=lf
+components/* text eol=lf
+alias/* text eol=lf
+bash_completion.d/* text eol=lf
+config/*.config text eol=lf
