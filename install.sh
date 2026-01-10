@@ -299,7 +299,7 @@ function INSTALL_FZF() {
 	fi
 	MESSAGE blue "[ Install fzf ]"
 	if [[ -x "${HOME}/dotfiles/modules/fzf/install" ]]; then
-		"${HOME}/dotfiles/modules/fzf/install" --key-bindings --completion
+		"${HOME}/dotfiles/modules/fzf/install" --key-bindings --completion --no-update-rc
 	else
 		MESSAGE red "fzf directory not found. Please clone the repository first."
 		exit 1
