@@ -18,7 +18,34 @@ export HISTFILESIZE=2000000
 # trunk-ignore(shellcheck/SC2155)
 export HISTTIMEFORMAT=$(echo -e "${COLOR_LIGHT_BLUE}"%F %T "${COLOR_RESET}")
 shopt -s histappend
-export PROMPT_COMMAND="history -a;history -c; history -r; ${PROMPT_COMMAND}" # Save and reload history after each command finishes
+
+# Save and reload history after each command finishes (chain without duplicating).
+DOTFILES_HISTORY_SYNC() {
+	history -a
+	history -c
+	history -r
+}
+
+# Keep the terminal title updated (chain without duplicating).
+DOTFILES_SET_TITLE() {
+	case "${TERM}" in
+	xterm* | rxvt*)
+		printf "\033]0;%s@%s:%s\033\\" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/~}"
+		;;
+	screen*)
+		local curdir="${PWD##*/}"
+		echo -ne "\033]0;${USER}@${HOSTNAME}:\007\033k${curdir}\033\\"
+		;;
+	*) ;;
+	esac
+}
+
+case ";${PROMPT_COMMAND};" in
+*";DOTFILES_HISTORY_SYNC;"* | *"; DOTFILES_HISTORY_SYNC;"*) ;;
+*)
+	PROMPT_COMMAND="DOTFILES_HISTORY_SYNC${PROMPT_COMMAND:+; ${PROMPT_COMMAND}}"
+	;;
+esac
 
 # SET KEY-BINDINGS (-o vi || -o emacs)
 set -o emacs
@@ -43,16 +70,14 @@ fi
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# If this is an xterm set the title to user@host:dir
-case "${TERM}" in
-xterm* | rxvt*)
-	PROMPT_COMMAND='printf "\033]0;%s@%s:%s\033\\" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/~}"'
+case ";${PROMPT_COMMAND};" in
+*";DOTFILES_SET_TITLE;"* | *"; DOTFILES_SET_TITLE;"*) ;;
+*)
+	PROMPT_COMMAND="${PROMPT_COMMAND:+${PROMPT_COMMAND}; }DOTFILES_SET_TITLE"
 	;;
-screen*)
-	PROMPT_COMMAND='CURDIR=`basename ${PWD}`;echo -ne "\033]0;${USER}@${HOSTNAME}:\007\033k${CURDIR}\033\\"'
-	;;
-*) ;;
 esac
+
+export PROMPT_COMMAND
 
 # https://www.oreilly.com/library/view/bash-cookbook/0596526784/ch16s05.html
 export CDPATH='.:~/dotfiles'
