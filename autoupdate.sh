@@ -1,42 +1,59 @@
-#!/bin/bash
-# auto update dot files
+#!/usr/bin/env bash
+# auto update dotfiles
 
-COUNT_FILE="$HOME/.dotfiles-update-count"
-FORCE=false
+dotfiles_autoupdate() {
+	local count_file="${HOME}/.dotfiles-update-count"
+	local force=false
 
-# Parse arguments
-while [[ $# -gt 0 ]]; do
-	case "$1" in
-		-f|--force)
-			FORCE=true
+	# Parse arguments
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+		-f | --force)
+			force=true
 			shift
 			;;
 		*)
 			echo "Unknown option: $1"
 			echo "Usage: $0 [--force|-f]"
-			exit 1
+			return 1
 			;;
-	esac
-done
+		esac
+	done
 
-# Initialize or read count
-if [[ -f "$COUNT_FILE" ]]; then
-	STARTUP_COUNT=$(<"$COUNT_FILE")
+	# Initialize or read count (defensive: numeric only)
+	local startup_count=0
+	if [[ -f "${count_file}" ]]; then
+		startup_count="$(<"${count_file}")"
+		[[ "${startup_count}" =~ ^[0-9]+$ ]] || startup_count=0
+	fi
+
+	# Increment and save
+	if ! ${force}; then
+		echo $((startup_count + 1)) >"${count_file}"
+	fi
+
+	# Check whether to update
+	if ${force} || [[ ${startup_count} -gt 20 ]]; then
+		(
+			if [[ ! -d "${HOME}/dotfiles/.git" ]]; then
+				exit 0
+			fi
+
+			cd "${HOME}/dotfiles" || exit 0
+
+			# Skip if working tree isn't clean.
+			git diff --quiet || exit 0
+			git diff --cached --quiet || exit 0
+
+			echo "Updating dotfiles ..."
+			git pull --ff-only
+		) && echo "0" >"${count_file}"
+	fi
+}
+
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+	dotfiles_autoupdate "$@"
 else
-	STARTUP_COUNT=0
+	dotfiles_autoupdate "$@"
+	exit $?
 fi
-
-# Increment and save
-if ! $FORCE; then
-	echo $((STARTUP_COUNT + 1)) >"$COUNT_FILE"
-fi
-
-# Check whether to update
-if $FORCE || [[ $STARTUP_COUNT -gt 20 ]]; then
-	echo "Updating dotfiles ..."
-	cd "$HOME/dotfiles" || exit 1
-	git pull
-	echo "0" >"$COUNT_FILE"
-fi
-
-# EOF
