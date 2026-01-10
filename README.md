@@ -1,6 +1,6 @@
 # my.dotfiles
 
-Bash dotfiles with modular components, submodules (vim/tmux/fzf), and optional per-host feature flags.
+Bash + Zsh dotfiles with modular components, submodules (vim/tmux/fzf), and optional per-host feature flags.
 
 ## Install
 
@@ -32,16 +32,17 @@ bash ~/dotfiles/install.sh
 
 ## Requirements / supported systems
 
-- Shell: bash
+- Shell: bash or zsh
 - Distro: the installer is built around `apt` (Debian/Ubuntu). Other distros need manual package installation.
 - Tools: `git`, `curl` (the installer can install missing dependencies via apt/sudo).
 
 ## What it configures
 
 - Bash: `bashrc`, `bash_profile`, `inputrc`, `dircolors`
+- Zsh: `zshrc`, `zprofile`
 - Git: `gitconfig` (includes optional `~/.gitconfig.local`)
-- Prompt: `components/prompt` (Git, SSH, sudo, exit code)
-- Completions: system bash-completion + `bash_completion.d/*`
+- Prompt: bash `components/prompt`, zsh `components/prompt_zsh` (Git, SSH, sudo, exit code)
+- Completions: bash (bash-completion + `bash_completion.d/*`), zsh (`compinit`)
 - FZF: installed via `modules/fzf/install --key-bindings --completion` (never via apt)
 - Navi: `Ctrl+G` widget + cheats in `cheats/`
 - Tmux: oh-my-tmux + TPM + `config/tmux.conf.local`
@@ -50,6 +51,7 @@ bash ~/dotfiles/install.sh
 ## Feature flags (per host)
 
 `bashrc` sources `components/feature_flags` and reads optional overrides from `~/dotfiles/config/local_dotfiles_settings` (gitignored).
+`zshrc` also uses `components/feature_flags`.
 
 Example `~/dotfiles/config/local_dotfiles_settings`:
 

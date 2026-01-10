@@ -2,9 +2,9 @@
 
 # load shell widget for navi (STRG + G)
 if [[ -x /usr/local/bin/navi ]]; then
-	if [[ ${SHELL} == "/bin/bash" ]]; then
+	if [[ -n ${BASH_VERSION:-} ]]; then
 		eval "$(navi widget bash || true)" >/dev/null 2>&1
-	elif [[ ${SHELL} == "/bin/zsh" ]]; then
+	elif [[ -n ${ZSH_VERSION:-} ]]; then
 		eval "$(navi widget zsh || true)" >/dev/null 2>&1
 	fi
 fi

@@ -12,7 +12,8 @@
 
 dotfiles_flag_enabled() {
 	local var_name="$1"
-	local value="${!var_name}"
+	local value=""
+	eval "value=\"\${${var_name}:-}\""
 	case "${value}" in
 	1 | true | TRUE | yes | YES | y | Y | on | ON) return 0 ;;
 	0 | false | FALSE | no | NO | n | N | off | OFF | "") return 1 ;;
