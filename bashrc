@@ -66,10 +66,45 @@ fi
 
 # Enable automatic renaming of tmux windows based on ssh connections
 if [[ -n $TMUX ]]; then # only inside tmux
+  _dotfiles_ssh_extract_target() {
+    local arg
+    while [[ $# -gt 0 ]]; do
+      arg="$1"
+      shift
+
+      case "$arg" in
+        --)
+          # end of options; next arg (if any) is the destination
+          [[ $# -gt 0 ]] && printf '%s' "$1"
+          return 0
+          ;;
+        -*)
+          # options with separate argument
+          case "$arg" in
+            -b|-c|-D|-E|-F|-I|-i|-J|-L|-l|-m|-O|-o|-p|-Q|-R|-S|-W|-w)
+              [[ $# -gt 0 ]] && shift
+              ;;
+          esac
+          ;;
+        *)
+          # first non-option is destination (remaining args are remote command)
+          printf '%s' "$arg"
+          return 0
+          ;;
+      esac
+    done
+    return 1
+  }
+
   ssh() {
     # extract the host part and strip user@ / port
     # keep full IPv4 addresses, otherwise strip domain to first label
-    local target=$1
+    local target
+    target="$(_dotfiles_ssh_extract_target "$@")" || target=""
+    if [[ -z "$target" ]]; then
+      command ssh "$@"
+      return $?
+    fi
     target=${target##*@}
     target=${target%%:*}
 
