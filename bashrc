@@ -20,10 +20,10 @@ ADD_TO_PATH() {
 ADD_TO_PATH "/usr/local/bin"
 ADD_TO_PATH "/usr/bin"
 ADD_TO_PATH "/bin"
-ADD_TO_PATH "~/bin"
-ADD_TO_PATH "~/dotfiles/bin"
-ADD_TO_PATH "~/.local/bin"
-ADD_TO_PATH "~/.cargo/bin"
+ADD_TO_PATH "$HOME/bin"
+ADD_TO_PATH "$HOME/dotfiles/bin"
+ADD_TO_PATH "$HOME/.local/bin"
+ADD_TO_PATH "$HOME/.cargo/bin"
 
 # load dotfiles components
 source ~/dotfiles/components/defaults
