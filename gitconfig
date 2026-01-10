@@ -6,10 +6,10 @@ email = darkiop@gmail.com
 editor=vim
 
 [push]
-default = matching
+default = simple
 
-[credential]
-helper = store
+[include]
+path = ~/.gitconfig.local
 
 [color]
 diff = auto
