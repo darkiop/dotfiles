@@ -1,0 +1,51 @@
+# Starship prompt config (optional)
+# Enable via: DOTFILES_PROMPT=starship or USE_STARSHIP=1
+
+add_newline = true
+
+format = """
+[$time]($style)\
+$line_break\
+$username$hostname$directory$git_branch$git_status\
+$line_break\
+$status$character"""
+
+[time]
+disabled = false
+format = "[$time]($style) "
+time_format = "%H:%M:%S"
+style = "green"
+
+[username]
+show_always = false
+style_user = "bright-blue"
+style_root = "red"
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = true
+style = "blue"
+format = "[@$hostname]($style) "
+
+[directory]
+style = "yellow"
+truncate_to_repo = false
+truncation_length = 4
+format = "[$path]($style) "
+
+[git_branch]
+style = "bright-yellow"
+format = "[git:$branch]($style) "
+
+[git_status]
+style = "bright-yellow"
+format = "[$all_status$ahead_behind]($style) "
+
+[status]
+disabled = false
+format = "[$status]($style) "
+
+[character]
+success_symbol = "[\\$](white)"
+error_symbol = "[\\$](red)"
+

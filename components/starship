@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Optional Starship prompt integration.
+# Enabled via: DOTFILES_PROMPT=starship or USE_STARSHIP=1
+
+case $- in
+*i*) ;;
+*) return ;;
+esac
+
+if ! command -v starship >/dev/null 2>&1; then
+	return 0
+fi
+
+export STARSHIP_CONFIG="${HOME}/dotfiles/config/starship.toml"
+
+eval "$(starship init bash)"
+
