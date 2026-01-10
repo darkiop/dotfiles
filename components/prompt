@@ -28,40 +28,49 @@ fi
 SYMBOL="\\$"
 
 # Get the IP
-IP=$(ip a | grep 'inet' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | grep -v '172' | grep -v '^100.' | head -n 1 || true)
+IP=$(
+	ip a | grep 'inet' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | grep -v '172' | grep -v '^100.' | head -n 1 || true
+)
 
 # Set the color with the exit status of the last command
 function COLOR_EXIT_STATUS() {
 	if [[ $1 -eq 0 ]]; then
-		echo -e "${COLOR_BLUE}"
+		printf '%s' "${COLOR_BLUE}"
 	else
-		echo -e "${COLOR_RED}"
+		printf '%s' "${COLOR_RED}"
 	fi
 }
 
 # Git: check if current directory is a git repo
 function CHECK_IF_GIT_REPO() {
-	git rev-parse 2>/dev/null
+	git rev-parse --is-inside-work-tree >/dev/null 2>&1
 }
 
 # Git-prompt
 # https://jon.sprig.gs/blog/post/1940
 function GIT_PROMPT() {
-	if command -v git >/dev/null 2>&1; then
-		# options
-		# https://blog.backslasher.net/git-prompt-variables.html
-		export GIT_PS1_DESCRIBE_STYLE='contains'
-		export GIT_PS1_SHOWCOLORHINTS='y'
-		export GIT_PS1_SHOWDIRTYSTATE='y'
-		export GIT_PS1_SHOWSTASHSTATE='y'
-		export GIT_PS1_SHOWUNTRACKEDFILES='y'
-		export GIT_PS1_SHOWUPSTREAM='auto'
-		# prompt
-		# https://stackoverflow.com/questions/25911546/configure-git-branch-in-prompt
-		# staged = + stashed = $ untracked = %
-		__git_branch="$(__git_ps1 'git:%s')" # %s = branch name
-		printf '%s' "${__git_branch}"
+	if ! command -v git >/dev/null 2>&1; then
+		return 0
 	fi
+	if ! type __git_ps1 >/dev/null 2>&1; then
+		return 0
+	fi
+
+	# options
+	# https://blog.backslasher.net/git-prompt-variables.html
+	export GIT_PS1_DESCRIBE_STYLE='contains'
+	# __git_ps1 can emit unwrapped escape sequences when color hints are enabled,
+	# which breaks readline redraws (e.g. when resizing the terminal).
+	export GIT_PS1_SHOWCOLORHINTS='n'
+	export GIT_PS1_SHOWDIRTYSTATE='y'
+	export GIT_PS1_SHOWSTASHSTATE='y'
+	export GIT_PS1_SHOWUNTRACKEDFILES='y'
+	export GIT_PS1_SHOWUPSTREAM='auto'
+
+	# prompt
+	# https://stackoverflow.com/questions/25911546/configure-git-branch-in-prompt
+	# staged = + stashed = $ untracked = %
+	__git_ps1 'git:%s'
 }
 
 # check sudo
@@ -87,7 +96,7 @@ function CHECK_IF_SSH_SESSION() {
 }
 
 # Show permissions of current directoy
-# %A drwxr-xr-x
+# %A drwxr-xr-xr-x
 # %a 755
 function SHOW_PERMISSIONS_OF_CUR_DIR() {
 	stat -c %a .
@@ -101,42 +110,65 @@ function SHOW_PERMISSIONS_OF_CUR_DIR() {
 # \w = current dir
 #
 function BUILD_PROMPT() {
-	CHECK_EXIT_STATUS=$?
+	local exit_status=$?
+	local git_part
+
 	BASH_PROMPT="\n"
-	BASH_PROMPT+="\[$(COLOR_EXIT_STATUS "${CHECK_EXIT_STATUS}")┬\]"
-	BASH_PROMPT+="\[${COLOR_BRACKET}[\]"
-	BASH_PROMPT+="\[${COLOR_DATE}\t\]"
-	BASH_PROMPT+="\[${COLOR_BRACKET}]\]"
-	BASH_PROMPT+="\[ \]"
-	BASH_PROMPT+="\[${COLOR_BRACKET}[\]"
+	BASH_PROMPT+="\[$(COLOR_EXIT_STATUS "${exit_status}")\]┌"
+	BASH_PROMPT+="\[$COLOR_BRACKET\]["
+	BASH_PROMPT+="\[$COLOR_DATE\]\\t"
+	BASH_PROMPT+="\[$COLOR_BRACKET\]]"
+	BASH_PROMPT+=" "
+	BASH_PROMPT+="\[$COLOR_BRACKET\]["
+
 	if CHECK_IF_SSH_SESSION; then
-		BASH_PROMPT+="\[${COLOR_SSH_ACTIVE}\]ssh\[${COLOR_SEPARATOR}:\]"
+		BASH_PROMPT+="\[$COLOR_SSH_ACTIVE\]ssh\[$COLOR_SEPARATOR\]:"
 	fi
-	BASH_PROMPT+="\[${COLOR_USER}\]\u\[${COLOR_SEPARATOR}\]@\[${COLOR_HOST}\]\h\[${COLOR_SEPARATOR}\]\[(${COLOR_RESET}${IP}${COLOR_SEPARATOR})\]"
-	BASH_PROMPT+="\[${COLOR_SEPARATOR}: \]"
-	BASH_PROMPT+="\[${COLOR_DIR}\w\]"
-	BASH_PROMPT+="\[${COLOR_RESET} ($(SHOW_PERMISSIONS_OF_CUR_DIR))\]"
-	BASH_PROMPT+="\[${COLOR_BRACKET}]\]"
+
+	BASH_PROMPT+="\[$COLOR_USER\]\\u\[$COLOR_SEPARATOR\]@\[$COLOR_HOST\]\\h"
+	if [[ -n ${IP} ]]; then
+		BASH_PROMPT+="\[$COLOR_SEPARATOR\] (\[$COLOR_RESET\]${IP}\[$COLOR_SEPARATOR\])"
+	fi
+	BASH_PROMPT+="\[$COLOR_SEPARATOR\]: "
+	BASH_PROMPT+="\[$COLOR_DIR\]\\w"
+	BASH_PROMPT+="\[$COLOR_RESET\] ($(SHOW_PERMISSIONS_OF_CUR_DIR))"
+	BASH_PROMPT+="\[$COLOR_BRACKET\]]"
+
 	if CHECK_IF_GIT_REPO; then
-		BASH_PROMPT+="\[ \]"
-		BASH_PROMPT+="\[${COLOR_BRACKET}[\]"
-		BASH_PROMPT+="\[${COLOR_GIT_BRANCH}\]\[$(GIT_PROMPT)\]"
-		BASH_PROMPT+="\[${COLOR_BRACKET}]\]"
+		git_part="$(GIT_PROMPT)"
+		if [[ -n ${git_part} ]]; then
+			BASH_PROMPT+=" "
+			BASH_PROMPT+="\[$COLOR_BRACKET\]["
+			BASH_PROMPT+="\[$COLOR_GIT_BRANCH\]${git_part}"
+			BASH_PROMPT+="\[$COLOR_BRACKET\]]"
+		fi
 	fi
+
 	if CHECK_IF_SUDO_IS_ACTIVE; then
-		BASH_PROMPT+="\[ \]"
-		BASH_PROMPT+="\[${COLOR_BRACKET}[\]"
-		BASH_PROMPT+="\[${COLOR_SUDO_ACTIVE}\]\[sudo\]"
-		BASH_PROMPT+="\[${COLOR_BRACKET}]\]"
+		BASH_PROMPT+=" "
+		BASH_PROMPT+="\[$COLOR_BRACKET\]["
+		BASH_PROMPT+="\[$COLOR_SUDO_ACTIVE\]sudo"
+		BASH_PROMPT+="\[$COLOR_BRACKET\]]"
 	fi
-	if [[ ${TERM} == "linux" ]]; then
-		BASH_PROMPT+="\n\[\$(COLOR_EXIT_STATUS ${CHECK_EXIT_STATUS})\]└─>"
-		BASH_PROMPT+="\[${COLOR_SYMBOL}\]${SYMBOL} \[${COLOR_RESET}\]"
-	else
-		BASH_PROMPT+="\n\[\$(COLOR_EXIT_STATUS ${CHECK_EXIT_STATUS})\]╰─>"
-		BASH_PROMPT+="\[${COLOR_SYMBOL}\]${SYMBOL} \[${COLOR_RESET}\]"
-	fi
+
+	BASH_PROMPT+="\n"
+	BASH_PROMPT+="\[$(COLOR_EXIT_STATUS "${exit_status}")\]└─"
+	BASH_PROMPT+="\[$COLOR_SYMBOL\]${SYMBOL} "
+	BASH_PROMPT+="\[$COLOR_RESET\]"
+
 	PS1=${BASH_PROMPT}
 }
 
-export PROMPT_COMMAND=BUILD_PROMPT
+# Chain with any existing PROMPT_COMMAND (history sync, etc.) without duplicating.
+case ";${PROMPT_COMMAND};" in
+*";BUILD_PROMPT;"* | *"; BUILD_PROMPT;"*) ;;
+*)
+	if [[ -n ${PROMPT_COMMAND} ]]; then
+		PROMPT_COMMAND="${PROMPT_COMMAND}; BUILD_PROMPT"
+	else
+		PROMPT_COMMAND="BUILD_PROMPT"
+	fi
+	;;
+esac
+
+export PROMPT_COMMAND
