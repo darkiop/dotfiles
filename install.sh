@@ -283,7 +283,7 @@ function INSTALL_GIT_SUBMODULES() {
 }
 
 # -------------------------------------------------------------
-# install fzf from submodule
+# install fzf from submodule (never via apt)
 # -------------------------------------------------------------
 function INSTALL_FZF() {
 	if ls ~/.fzf.* &>/dev/null; then
@@ -294,13 +294,12 @@ function INSTALL_FZF() {
 	fi
 	# trunk-ignore(shellcheck/SC2312)
 	if dpkg -l | grep -qw fzf; then
-		MESSAGE yellow "Purging existing apt fzf installation"
+		MESSAGE yellow "Removing existing apt fzf installation (fzf is managed via dotfiles submodule)"
 		${APT} purge -y fzf
 	fi
 	MESSAGE blue "[ Install fzf ]"
-	if [[ -d ~/dotfiles/modules/fzf ]]; then
-		cd ~/dotfiles/modules/fzf || exit
-		./install --key-bindings --completion --no-update-rc
+	if [[ -x "${HOME}/dotfiles/modules/fzf/install" ]]; then
+		"${HOME}/dotfiles/modules/fzf/install" --key-bindings --completion
 	else
 		MESSAGE red "fzf directory not found. Please clone the repository first."
 		exit 1
