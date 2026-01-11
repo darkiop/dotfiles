@@ -45,6 +45,7 @@ bash ~/dotfiles/install.sh
 - Completions: bash (bash-completion + `bash_completion.d/*`), zsh (`compinit`)
 - FZF: installed via `modules/fzf/install --key-bindings --completion` (never via apt)
 - FZF extras: `fh` history picker and `cdf` directory picker (optionally binds keys)
+- Helpers: `dcheat`, `cheat`, `helpme` (local cheats + help wrappers)
 - SSH picker: `sshp` (pick host from `~/.ssh/config` via `fzf`)
 - Git + fzf helpers: `gco`, `gshow`, `gaddp`, `gstashp`, `gfixup`, `gcp`
 - Navi: `Ctrl+G` widget + cheats in `cheats/`
@@ -76,6 +77,7 @@ Available flags:
 - `DOTFILES_ENABLE_FZF_EXTRAS`
 - `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS`
 - `DOTFILES_ENABLE_FZF_CDF_BINDING`
+- `DOTFILES_ENABLE_HELPERS`
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
@@ -145,6 +147,17 @@ Enabled by default via `DOTFILES_ENABLE_FZF_EXTRAS`.
 - `cdf`: pick a directory via `fzf` and `cd` into it
 - `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS`: when enabled, binds `Ctrl+R` to the `fh` picker (bash + zsh)
 - `DOTFILES_ENABLE_FZF_CDF_BINDING`: when enabled, binds `Alt+C` to the `cdf` picker (bash + zsh)
+
+## Helpers
+
+Enabled by default via `DOTFILES_ENABLE_HELPERS`.
+
+- `dcheat [query]`: pick a local cheat file from `~/dotfiles/cheats/*.cheat` via `fzf` and view it (preview uses `bat` if available, otherwise `sed`)
+- `cheat <topic>`: prefer local cheats; if none match, fallback to `cheat.sh/<topic>` (needs `curl`), then `tldr <topic>` (if installed)
+- `helpme <command>`: show the best available help (local cheat if present, otherwise `<command> --help`, fallback to `man <command>`)
+
+Optional:
+- Set `DOTFILES_CHEATS_DIR` to use a different cheats directory than `~/dotfiles/cheats`.
 
 ## Platform detection
 

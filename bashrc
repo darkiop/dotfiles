@@ -55,6 +55,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
   source ~/dotfiles/components/fzf_extras
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_HELPERS; then
+  source ~/dotfiles/components/helpers
+fi
 
 # load aliases
 if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then

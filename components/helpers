@@ -1,0 +1,207 @@
+#!/bin/bash
+
+# Helper commands for dotfiles (cheats/help).
+# Enabled via DOTFILES_ENABLE_HELPERS.
+
+case $- in
+*i*) ;;
+*) return ;;
+esac
+
+dotfiles_helpers__pager() {
+	# Use $PAGER if it looks like a simple command, otherwise fall back.
+	if [[ -n "${PAGER:-}" && "${PAGER}" != *" "* ]]; then
+		command "${PAGER}"
+	else
+		command less -R
+	fi
+}
+
+dotfiles_helpers__preview_cmd() {
+	# Legacy helper (kept for compatibility).
+	if command -v bat >/dev/null 2>&1; then
+		printf '%s' "bat --style=numbers --color=always --line-range :200"
+	else
+		printf '%s' "sed -n '1,200p'"
+	fi
+}
+
+dotfiles_helpers__preview_file() {
+	local file="$1"
+	if command -v bat >/dev/null 2>&1; then
+		bat --style=numbers --color=always --line-range :200 -- "${file}"
+	else
+		sed -n '1,200p' -- "${file}"
+	fi
+}
+
+dotfiles_helpers__show_file() {
+	local file="$1"
+	[[ -r "${file}" ]] || { echo "helpers: file not readable: ${file}" >&2; return 1; }
+	dotfiles_helpers__preview_file "${file}" | dotfiles_helpers__pager
+}
+
+dotfiles_helpers__fzf_preview_cmd() {
+	# Preview command for fzf; uses {} placeholder as full path.
+	if command -v bat >/dev/null 2>&1; then
+		printf '%s' 'bat --style=numbers --color=always --line-range :200 -- {}'
+	else
+		printf '%s' 'sed -n "1,200p" -- {}'
+	fi
+}
+
+dotfiles_helpers__cheats_dir() {
+	printf '%s' "${DOTFILES_CHEATS_DIR:-${HOME}/dotfiles/cheats}"
+}
+
+dotfiles_helpers__list_cheats() {
+	local cheats_dir
+	cheats_dir="$(dotfiles_helpers__cheats_dir)"
+	[[ -d "${cheats_dir}" ]] || return 1
+	find "${cheats_dir}" -maxdepth 1 -type f -name '*.cheat' -print 2>/dev/null | sort
+}
+
+dcheat() {
+	# Pick a local cheat file and show it.
+	local query="${*:-}"
+	local cheats_dir
+	cheats_dir="$(dotfiles_helpers__cheats_dir)"
+	[[ -d "${cheats_dir}" ]] || { echo "dcheat: cheats dir not found: ${cheats_dir}" >&2; return 1; }
+
+	if ! command -v fzf >/dev/null 2>&1; then
+		echo "dcheat: fzf not found" >&2
+		return 1
+	fi
+
+	local preview_cmd
+	preview_cmd="$(dotfiles_helpers__fzf_preview_cmd)"
+
+	local picked
+	if [[ -n "${query}" ]]; then
+		picked="$(
+			dotfiles_helpers__list_cheats |
+				fzf --ansi --layout=reverse --border --prompt='cheat> ' \
+					--with-nth=-1 --delimiter='/' \
+					--query "${query}" \
+					--preview="${preview_cmd}"
+		)" || return 1
+	else
+		picked="$(
+			dotfiles_helpers__list_cheats |
+				fzf --ansi --layout=reverse --border --prompt='cheat> ' \
+					--with-nth=-1 --delimiter='/' \
+					--preview="${preview_cmd}"
+		)" || return 1
+	fi
+
+	[[ -n "${picked}" ]] || return 1
+	dotfiles_helpers__show_file "${picked}"
+}
+
+dotfiles_helpers__local_cheat_matches() {
+	# Print matching cheat files (full paths), based on filename or content.
+	local query="$1"
+	local cheats_dir
+	cheats_dir="$(dotfiles_helpers__cheats_dir)"
+	[[ -d "${cheats_dir}" ]] || return 1
+
+	# Filename matches first.
+	find "${cheats_dir}" -maxdepth 1 -type f -name "*.cheat" -print 2>/dev/null |
+		awk -v q="${query}" 'BEGIN{IGNORECASE=1} index($0, q) {print}' || true
+
+	# Content matches (best-effort).
+	if command -v rg >/dev/null 2>&1; then
+		rg -l --hidden --no-messages -S -- "${query}" "${cheats_dir}"/*.cheat 2>/dev/null || true
+	fi
+}
+
+cheat() {
+	# cheat <topic>
+	# - Prefer local cheats in ~/dotfiles/cheats
+	# - Fallback to cheat.sh if curl exists
+	# - Fallback to tldr if installed
+	local topic="${1:-}"
+	if [[ -z "${topic}" ]]; then
+		dcheat
+		return $?
+	fi
+
+	local cheats_dir
+	cheats_dir="$(dotfiles_helpers__cheats_dir)"
+
+	local matches=""
+	matches="$(
+		dotfiles_helpers__local_cheat_matches "${topic}" 2>/dev/null |
+			awk 'NF && !seen[$0]++' |
+			sort
+	)" || matches=""
+
+	if [[ -n "${matches}" ]]; then
+		if command -v fzf >/dev/null 2>&1; then
+			local preview_cmd
+			preview_cmd="$(dotfiles_helpers__fzf_preview_cmd)"
+			local picked
+			picked="$(
+				printf '%s\n' "${matches}" |
+					fzf --ansi --layout=reverse --border --prompt='cheat> ' \
+						--with-nth=-1 --delimiter='/' \
+						--preview="${preview_cmd}"
+			)" || return 1
+			[[ -n "${picked}" ]] || return 1
+			dotfiles_helpers__show_file "${picked}"
+			return 0
+		fi
+
+		# No fzf: show the first match.
+		local first
+		first="$(printf '%s\n' "${matches}" | head -n 1)"
+		[[ -n "${first}" ]] || return 1
+		dotfiles_helpers__show_file "${first}"
+		return 0
+	fi
+
+	# cheat.sh fallback (network)
+	if command -v curl >/dev/null 2>&1; then
+		curl -fsSL "https://cheat.sh/${topic}?T" 2>/dev/null | dotfiles_helpers__pager
+		return $?
+	fi
+
+	# tldr fallback (local)
+	if command -v tldr >/dev/null 2>&1; then
+		tldr "${topic}" | dotfiles_helpers__pager
+		return $?
+	fi
+
+	echo "cheat: no local cheat found for '${topic}', and no curl/tldr available" >&2
+	return 1
+}
+
+helpme() {
+	# helpme <cmd>
+	# Shows best available help: --help, man page, local cheat.
+	local cmd="${1:-}"
+	if [[ -z "${cmd}" ]]; then
+		echo "helpme: usage: helpme <command>" >&2
+		return 2
+	fi
+
+	# Local cheat shortcut if it exists.
+	if command -v rg >/dev/null 2>&1; then
+		if rg -q --no-messages -S -- "^[[:space:]]*${cmd}[[:space:]]" "$(dotfiles_helpers__cheats_dir)"/*.cheat 2>/dev/null; then
+			cheat "${cmd}" && return 0
+		fi
+	fi
+
+	if command -v "${cmd}" >/dev/null 2>&1; then
+		("${cmd}" --help 2>&1 || true) | dotfiles_helpers__pager
+		return 0
+	fi
+
+	if command -v man >/dev/null 2>&1; then
+		man "${cmd}"
+		return $?
+	fi
+
+	echo "helpme: command not found: ${cmd}" >&2
+	return 1
+}
