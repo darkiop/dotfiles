@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Local dotfiles overrides (not tracked by git).
+# Use `true` / `false` to enable/disable features.
+# defaults are defined in components/feature_flags (always true unless overridden here).
+
+#DOTFILES_ENABLE_PROMPT=false
+#DOTFILES_ENABLE_BASH_COMPLETION=false
+#DOTFILES_ENABLE_FZF=false
+#DOTFILES_ENABLE_NAVI=false
+#DOTFILES_ENABLE_ALIASES=false
+#DOTFILES_ENABLE_AUTOUPDATE=false
+#DOTFILES_ENABLE_TMUX_AUTOSTART=false
+#DOTFILES_ENABLE_SSH_TMUX_RENAME=false
+#DOTFILES_ENABLE_IOBROKER=false
