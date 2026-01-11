@@ -81,6 +81,51 @@ Available flags:
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
 - `DOTFILES_ENABLE_IOBROKER`
 
+## Prompt erklärt (bash + zsh)
+
+Aktiviert via `DOTFILES_ENABLE_PROMPT` (default `true`).
+
+Der Prompt ist **zweizeilig** und sieht schematisch so aus:
+
+- Zeile 1: `┌[TIME] [ssh:USER@HOST (IP): CWD (PERMS)] [git:…] [sudo]`
+- Zeile 2: `└─$` (bei root rot)
+
+Zusätzlich gilt: Wenn der letzte Befehl mit Exit-Code `!= 0` endet, werden die Linienzeichen (`┌`/`└─`) **rot** (sonst blau).
+
+### Bash Prompt (`components/bash_prompt`)
+
+Der Prompt wird in `BUILD_PROMPT()` gebaut und per `PROMPT_COMMAND` nach jedem Kommando aktualisiert.
+
+- `┌` / `└─`: Farbe hängt vom Exit-Code des letzten Befehls ab (0 → blau, sonst rot).
+- `[TIME]`: `\t` (HH:MM:SS), grün, in eckigen Klammern.
+- `[ssh:…]`: erscheint nur, wenn eine SSH-Session erkannt wird (`SSH_CONNECTION` oder `SSH_CLIENT`).
+- `USER@HOST`: `\u@\h` (User/Host). User ist hellblau (root rot), Host blau.
+- `(IP)`: eine IPv4-Adresse (nur wenn gefunden). Ermittelt einmal beim Laden von `components/bash_prompt` via `ip a` und gefiltert (kein `127.*`, kein `172.*`, kein `100.*`).
+- `CWD`: `\w` (aktuelles Verzeichnis), orange.
+- `(PERMS)`: Rechte des aktuellen Verzeichnisses via `stat -c %a .` (z.B. `755`).
+- `[git:…]`: erscheint nur innerhalb eines Git-Repos und nur wenn `__git_ps1` verfügbar ist.
+  - Basis kommt aus `__git_ps1` (mit `GIT_PS1_SHOWDIRTYSTATE`, `…STASHSTATE`, `…UNTRACKEDFILES`, `…UPSTREAM=auto`).
+  - Typische Marker am Branch: `+` (staged), `*` (dirty), `$` (stash), `%` (untracked).
+  - Upstream-Marker am Ende: `=` (gleich), `>` (ahead), `<` (behind), `<>` (diverged) — dieser Marker wird extra **rot** gefärbt.
+- `[sudo]`: erscheint nur, wenn `sudo -vn` ohne Passwort klappt (sudo-Ticket aktiv) und du nicht root bist.
+- Terminal-“Garbage” beim Login: Es gibt einen einmaligen “stdin flush”, der unerwartete Terminal-Antworten (z.B. OSC 11) schluckt; in tmux wird dafür kurz gewartet, um verzögerte Antworten abzufangen.
+
+### Zsh Prompt (`components/zsh_prompt`)
+
+Der Prompt wird in `dotfiles_prompt_precmd()` gebaut (Hook via `precmd`) und verwendet zsh-native Prompt-Escapes.
+
+- Zeilenaufbau: gleiches Layout wie in bash, nur mit `%n` (User), `%m` (Host), `%~` (Pfad mit `~`) und `%D{%H:%M:%S}` (Zeit).
+- Linienzeichen: können via `DOTFILES_PROMPT_LEAD` und `DOTFILES_PROMPT_TAIL` überschrieben werden (standard: `┌` und `└─`).
+- `(IP)`: bevorzugt bei SSH die Server-IP aus `SSH_CONNECTION`, sonst wird per `ip -4 a` (oder fallback `hostname -I`) eine IPv4 gesucht (ähnliche Filter wie bash).
+- `[git:…]`: wird ohne `__git_ps1` berechnet:
+  - Branch/Ref: Branchname (oder Tag, oder short SHA).
+  - Flags: `+` (staged), `*` (dirty), `$` (stash), `%` (untracked).
+  - Upstream: `=` / `>` / `<` / `<>` wie oben (über `git rev-list --left-right --count HEAD...@{u}`).
+  - Farben: `git:` Label gelb, Branch grün, Flags/Upstream rot.
+  - Wichtig: `%` hat in zsh-Prompts Spezialbedeutung, deshalb werden `%` in Branch/Flags intern escaped.
+- `[sudo]`: analog zu bash (sudo-Ticket aktiv).
+- Terminal-“Garbage” beim Login: analoger einmaliger “stdin flush” (inkl. kurzer Wartezeit in tmux).
+
 ## Git + fzf helpers
 
 Enabled by default via `DOTFILES_ENABLE_GIT_FZF` (disable per host via `~/dotfiles/config/local_dotfiles_settings`).
