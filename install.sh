@@ -164,7 +164,7 @@ function SHOW_MAIN_MENU() {
 	printf '%b2)%b Install git submodules\n' \
 		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
 
-	printf '%b3)%b Install .bashrc\n' \
+	printf '%b3)%b Install shell config\n' \
 		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
 
 	echo
@@ -311,11 +311,11 @@ function INSTALL_FZF() {
 # -------------------------------------------------------------
 function LINK_DOTFILES() {
 	echo
-	MESSAGE blue "[ Install .bashrc ]"
+	MESSAGE blue "[ Install shell config ]"
 
 	# install
 	dir="${HOME}"/dotfiles
-	files="bashrc gitconfig inputrc bash_profile dircolors"
+	files="bashrc gitconfig inputrc bash_profile dircolors zshrc zprofile"
 	timestamp="$(date +%Y%m%d-%H%M%S)"
 
 	echo -e "${COLOR_GREEN}""Delete""${COLOR_CLOSE}""${COLOR_YELLOW}"" old ""${COLOR_GREEN}""symlinks / backup files ...""${COLOR_CLOSE}"

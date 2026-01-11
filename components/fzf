@@ -7,13 +7,50 @@ case $- in
 *) return ;;
 esac
 
+_dotfiles_add_to_path() {
+	local dir="$1"
+	[[ -d "$dir" ]] || return 0
+	case ":${PATH:-}:" in
+	*":${dir}:"*) return 0 ;;
+	*) export PATH="${PATH:+${PATH}:}${dir}" ;;
+	esac
+}
+
+# Ensure fzf is reachable even when installed via dotfiles submodule.
+if command -v ADD_TO_PATH >/dev/null 2>&1; then
+	ADD_TO_PATH "$HOME/.fzf/bin"
+	ADD_TO_PATH "$HOME/dotfiles/modules/fzf/bin"
+else
+	_dotfiles_add_to_path "$HOME/.fzf/bin"
+	_dotfiles_add_to_path "$HOME/dotfiles/modules/fzf/bin"
+fi
+
 if ! command -v fzf >/dev/null 2>&1; then
 	return 0
 fi
 
-[[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
+if [[ -n ${ZSH_VERSION:-} ]]; then
+	# Prefer the installer-generated init script if present.
+	# `~/.fzf.bash` contains `eval "$(fzf --bash)"` and must not be sourced by zsh.
+	if [[ -f ~/.fzf.zsh ]]; then
+		source ~/.fzf.zsh
+		return 0
+	fi
 
-eval "$(fzf --bash 2>/dev/null)" || true
+	# `eval "$(fzf --zsh)"` breaks because backslash-newline continuations in the
+	# generated script are consumed by double-quote parsing before `eval` sees them.
+	# Source the generated script instead to preserve its exact contents.
+	source <(fzf --zsh 2>/dev/null) || true
+else
+	# bash
+	if [[ -f ~/.fzf.bash ]]; then
+		source ~/.fzf.bash
+		return 0
+	fi
+
+	# Same rationale as above: source the generated script to preserve continuations.
+	source <(fzf --bash 2>/dev/null) || true
+fi
 
 # fzf (Fuzzy Finder) Options
 export FZF_DEFAULT_OPTS='

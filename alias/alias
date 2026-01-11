@@ -116,9 +116,15 @@ fi
 alias motd='source ~/dotfiles/motd/motd.sh'
 
 # clear + motd
-alias cls='source ~/.bashrc'
-alias rl='source ~/.bashrc'
-alias reload='source ~/.bashrc'
+if [[ -n ${ZSH_VERSION:-} ]]; then
+	alias cls='source ~/.zshrc'
+	alias rl='source ~/.zshrc'
+	alias reload='source ~/.zshrc'
+else
+	alias cls='source ~/.bashrc'
+	alias rl='source ~/.bashrc'
+	alias reload='source ~/.bashrc'
+fi
 
 # colorful ip
 alias ip='ip -c'

@@ -1,0 +1,18 @@
+#!/usr/bin/env zsh
+
+# Guard: only for zsh.
+if [[ -z "${ZSH_VERSION:-}" ]]; then
+  return 0
+fi
+
+# Zsh completion init (enabled via DOTFILES_ENABLE_BASH_COMPLETION).
+case $- in
+  *i*) ;;
+  *) return ;;
+esac
+
+autoload -Uz compinit
+if [[ -z "${DOTFILES_ZSH_COMPINIT_DONE:-}" ]]; then
+  compinit -d "${HOME}/.zcompdump"
+  export DOTFILES_ZSH_COMPINIT_DONE=1
+fi

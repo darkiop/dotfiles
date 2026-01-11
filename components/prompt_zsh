@@ -1,0 +1,170 @@
+#!/usr/bin/env zsh
+
+# Prompt for zsh, styled similar to components/prompt (bash).
+# Uses zsh-native %F/%f color escapes and avoids non-ASCII source text.
+
+if [[ -z "${ZSH_VERSION:-}" ]]; then
+  return 0
+fi
+
+case $- in
+  *i*) ;;
+  *) return ;;
+esac
+
+setopt PROMPT_SUBST
+
+DOTFILES_PROMPT_IP="${DOTFILES_PROMPT_IP:-}"
+
+DOTFILES_PROMPT_GIT=""
+DOTFILES_PROMPT_PERMS=""
+DOTFILES_PROMPT_SSH=0
+DOTFILES_PROMPT_SUDO=0
+
+dotfiles_prompt_git() {
+  command -v git >/dev/null 2>&1 || return 0
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 0
+
+  local branch staged dirty untracked stashed
+  branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)"
+
+  staged=""; dirty=""; untracked=""; stashed=""
+  git diff --cached --quiet 2>/dev/null || staged="+"
+  git diff --quiet 2>/dev/null || dirty="!"
+  [[ -n "$(git ls-files --others --exclude-standard 2>/dev/null | head -n 1)" ]] && untracked="%"
+  git rev-parse --verify refs/stash >/dev/null 2>&1 && stashed="$"
+
+  print -r -- "git:${branch}${staged}${dirty}${stashed}${untracked}"
+}
+
+dotfiles_prompt_perms() {
+  command -v stat >/dev/null 2>&1 || return 0
+  stat -c %a . 2>/dev/null || true
+}
+
+dotfiles_prompt_ip() {
+  # If we're in an SSH session, prefer the server-side IP from SSH_CONNECTION:
+  # <client_ip> <client_port> <server_ip> <server_port>
+  if [[ -n ${SSH_CONNECTION:-} ]]; then
+    local ssh_server_ip="${${(s: :)SSH_CONNECTION}[3]}"
+    if [[ -n "${ssh_server_ip}" ]]; then
+      print -r -- "${ssh_server_ip}"
+      return 0
+    fi
+  fi
+
+  # Resolve `ip` even if PATH doesn't include /usr/sbin, and ignore aliases.
+  local ip_cmd=""
+  ip_cmd="${commands[ip]:-}"
+  if [[ -z "${ip_cmd}" ]]; then
+    if [[ -x /usr/sbin/ip ]]; then
+      ip_cmd="/usr/sbin/ip"
+    elif [[ -x /sbin/ip ]]; then
+      ip_cmd="/sbin/ip"
+    fi
+  fi
+  local ips=()
+
+  if [[ -n "${ip_cmd}" ]]; then
+    ips=("${(@f)$(
+      "${ip_cmd}" -4 a 2>/dev/null |
+        grep 'inet' |
+        grep -Eo '([0-9]*\\.){3}[0-9]*' |
+        grep -v '^127\\.' |
+        grep -v '^169\\.254\\.' ||
+        true
+    )}")
+  fi
+
+  if [[ ${#ips[@]} -eq 0 ]] && command -v hostname >/dev/null 2>&1; then
+    ips=("${(@f)$(
+      hostname -I 2>/dev/null |
+        tr ' ' '\n' |
+        grep -Eo '([0-9]*\\.){3}[0-9]*' |
+        grep -v '^127\\.' |
+        grep -v '^169\\.254\\.' ||
+        true
+    )}")
+  fi
+
+  # Prefer non-172.* and non-100.* (same idea as bash prompt), but if that's all we have,
+  # still show the first non-loopback address.
+  local ip=""
+  for ip in "${ips[@]}"; do
+    [[ "${ip}" == 172.* ]] && continue
+    [[ "${ip}" == 100.* ]] && continue
+    print -r -- "${ip}"
+    return 0
+  done
+
+  [[ ${#ips[@]} -gt 0 ]] && print -r -- "${ips[1]}"
+}
+
+dotfiles_prompt_precmd() {
+  local exit_status=$?
+
+  DOTFILES_PROMPT_PERMS="$(dotfiles_prompt_perms)"
+  DOTFILES_PROMPT_GIT="$(dotfiles_prompt_git)"
+  [[ -n "${DOTFILES_PROMPT_IP}" ]] || DOTFILES_PROMPT_IP="$(dotfiles_prompt_ip)"
+
+  DOTFILES_PROMPT_SSH=0
+  [[ -n ${SSH_CONNECTION:-} || -n ${SSH_CLIENT:-} ]] && DOTFILES_PROMPT_SSH=1
+
+  DOTFILES_PROMPT_SUDO=0
+  [[ ${EUID} -ne 0 ]] && sudo -vn 2>/dev/null && DOTFILES_PROMPT_SUDO=1
+
+  # Colors matching config/dotfiles.config (256-color palette)
+  local bracket_color="${DOTFILES_PROMPT_BRACKET_COLOR:-39}"
+  local color_bracket="%F{${bracket_color}}"
+  local color_host='%F{39}'
+  local color_dir='%F{214}'
+  local color_sep='%F{37}'
+  local color_date='%F{83}'
+  local color_git='%F{227}'
+  local color_ssh='%F{81}'
+  local color_sudo='%F{99}'
+  local color_user='%F{81}'
+  local color_symbol='%F{37}'
+  (( EUID == 0 )) && color_user='%F{196}' && color_symbol='%F{196}'
+
+  local status_color='%F{39}'
+  (( exit_status == 0 )) || status_color='%F{196}'
+
+  # Line characters (Unicode). You can override these via environment variables.
+  # NOTE: don't use `$'..'` in the env vars; put the actual characters in there.
+  local lead="${DOTFILES_PROMPT_LEAD-}"
+  local tail="${DOTFILES_PROMPT_TAIL-}"
+  [[ -n "${lead}" ]] || lead=$'\u250c'         # ┌
+  [[ -n "${tail}" ]] || tail=$'\u2514\u2500'   # └─
+
+  local ssh_part=""
+  (( DOTFILES_PROMPT_SSH == 1 )) && ssh_part="${color_ssh}ssh${color_sep}:"
+
+  local ip_part=""
+  if [[ -n "${DOTFILES_PROMPT_IP}" ]]; then
+    ip_part="${color_sep} (%f${DOTFILES_PROMPT_IP}${color_sep})"
+  fi
+
+  local perms_part=""
+  # Reset color before the opening "(" so it doesn't inherit the directory color.
+  [[ -n "${DOTFILES_PROMPT_PERMS}" ]] && perms_part=" %f(${DOTFILES_PROMPT_PERMS})"
+
+  local git_part=""
+  if [[ -n "${DOTFILES_PROMPT_GIT}" ]]; then
+    git_part=" ${color_bracket}[${color_git}${DOTFILES_PROMPT_GIT}${color_bracket}]"
+  fi
+
+  local sudo_part=""
+  (( DOTFILES_PROMPT_SUDO == 1 )) && sudo_part=" ${color_bracket}[${color_sudo}sudo${color_bracket}]"
+
+  PROMPT=$'\n'
+  PROMPT+="${status_color}${lead}${color_bracket}[${color_date}%*${color_bracket}] "
+  PROMPT+="${color_bracket}[${ssh_part}${color_user}%n${color_sep}@${color_host}%m"
+  PROMPT+="${ip_part}${color_sep}: ${color_dir}%~${perms_part}${color_bracket}]"
+  PROMPT+="${git_part}${sudo_part}"
+  PROMPT+=$'\n'
+  PROMPT+="${status_color}${tail}${color_symbol}$ %f"
+}
+
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd dotfiles_prompt_precmd

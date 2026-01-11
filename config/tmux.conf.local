@@ -331,6 +331,10 @@ tmux_conf_copy_to_os_clipboard=false
 # -- user customizations -------------------------------------------------------
 # this is the place to override or undo settings
 
+# Use zsh as the default shell (so new windows/panes start in zsh, not bash).
+if-shell 'test -x /usr/bin/zsh' 'set -g default-shell /usr/bin/zsh; set -g default-command /usr/bin/zsh'
+if-shell 'test -x /bin/zsh' 'set -g default-shell /bin/zsh; set -g default-command /bin/zsh'
+
 # increase history size
 set -g history-limit 10000
 
