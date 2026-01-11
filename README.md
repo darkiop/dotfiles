@@ -45,6 +45,7 @@ bash ~/dotfiles/install.sh
 - Completions: bash (bash-completion + `bash_completion.d/*`), zsh (`compinit`)
 - FZF: installed via `modules/fzf/install --key-bindings --completion` (never via apt)
 - SSH picker: `sshp` (pick host from `~/.ssh/config` via `fzf`)
+- Git + fzf helpers: `gco`, `gshow`, `gaddp`, `gstashp`, `gfixup`, `gcp`
 - Navi: `Ctrl+G` widget + cheats in `cheats/`
 - Tmux: oh-my-tmux + TPM + `config/tmux.conf.local`
 - MOTD: hostname-based scripts in `motd/`
@@ -70,10 +71,22 @@ Available flags:
 - `DOTFILES_ENABLE_NAVI`
 - `DOTFILES_ENABLE_ALIASES`
 - `DOTFILES_ENABLE_SSH_PICKER`
+- `DOTFILES_ENABLE_GIT_FZF`
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
 - `DOTFILES_ENABLE_IOBROKER`
+
+## Git + fzf helpers
+
+Enabled by default via `DOTFILES_ENABLE_GIT_FZF` (disable per host via `~/dotfiles/config/local_dotfiles_settings`).
+
+- `gco`: pick a branch/tag and `git checkout`
+- `gshow`: pick a commit and `git show`
+- `gaddp`: pick modified files and `git add`
+- `gstashp show|apply|pop|drop`: pick a stash and run the action
+- `gfixup`: pick a commit and create a `git commit --fixup`
+- `gcp`: pick a commit hash and copy it (uses `wl-copy`/`xclip`/`pbcopy` if available)
 
 ## Platform detection
 
