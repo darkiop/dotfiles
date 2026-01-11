@@ -49,6 +49,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_PICKER; then
   source ~/dotfiles/components/ssh_picker
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_GIT_FZF; then
+  source ~/dotfiles/components/git_fzf
+fi
 
 # load aliases
 if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then

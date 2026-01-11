@@ -1,0 +1,183 @@
+#!/bin/bash
+
+# Git helpers powered by fzf.
+# Enabled via DOTFILES_ENABLE_GIT_FZF.
+
+case $- in
+*i*) ;;
+*) return ;;
+esac
+
+command -v git >/dev/null 2>&1 || return 0
+command -v fzf >/dev/null 2>&1 || return 0
+
+dotfiles_git_fzf__in_repo() {
+	git rev-parse --is-inside-work-tree >/dev/null 2>&1
+}
+
+dotfiles_git_fzf__fzf() {
+	# Small wrapper so we can tweak defaults in one place.
+	fzf --ansi --layout=reverse --border "$@"
+}
+
+dotfiles_git_fzf__pager() {
+	# Use $PAGER if it looks like a simple command, otherwise fall back.
+	if [[ -n "${PAGER:-}" && "${PAGER}" != *" "* ]]; then
+		command "${PAGER}"
+	else
+		command less -R
+	fi
+}
+
+dotfiles_git_fzf__copy_to_clipboard() {
+	local text="$1"
+
+	if command -v wl-copy >/dev/null 2>&1; then
+		printf '%s' "${text}" | wl-copy
+		return $?
+	fi
+	if command -v xclip >/dev/null 2>&1; then
+		printf '%s' "${text}" | xclip -selection clipboard
+		return $?
+	fi
+	if command -v pbcopy >/dev/null 2>&1; then
+		printf '%s' "${text}" | pbcopy
+		return $?
+	fi
+
+	printf '%s\n' "${text}"
+}
+
+type gco >/dev/null 2>&1 || gco() {
+	dotfiles_git_fzf__in_repo || return 1
+
+	local ref
+	ref="$(
+		git for-each-ref \
+			--sort=-committerdate \
+			--format='%(refname:short)' \
+			refs/heads refs/tags 2>/dev/null |
+			dotfiles_git_fzf__fzf \
+				--prompt='checkout> ' \
+				--preview='git log --color=always --decorate --oneline -n 30 -- {}'
+	)" || return 1
+
+	[[ -n "${ref}" ]] || return 1
+	git checkout -- "${ref}"
+}
+
+type gshow >/dev/null 2>&1 || gshow() {
+	dotfiles_git_fzf__in_repo || return 1
+
+	local sha
+	sha="$(
+		git log --date=short --pretty=format:'%h %ad %s' 2>/dev/null |
+			dotfiles_git_fzf__fzf \
+				--prompt='show> ' \
+				--preview='git show --color=always --stat {1}' \
+				--delimiter=' ' \
+				--with-nth='1..'
+	)" || return 1
+
+	sha="${sha%% *}"
+	[[ -n "${sha}" ]] || return 1
+	git show --color=always "${sha}" | dotfiles_git_fzf__pager
+}
+
+type gfixup >/dev/null 2>&1 || gfixup() {
+	dotfiles_git_fzf__in_repo || return 1
+
+	local sha
+	sha="$(
+		git log --date=short --pretty=format:'%h %ad %s' 2>/dev/null |
+			dotfiles_git_fzf__fzf \
+				--prompt='fixup> ' \
+				--preview='git show --color=always --stat {1}' \
+				--delimiter=' ' \
+				--with-nth='1..'
+	)" || return 1
+
+	sha="${sha%% *}"
+	[[ -n "${sha}" ]] || return 1
+	git commit --fixup "${sha}"
+}
+
+type gstashp >/dev/null 2>&1 || gstashp() {
+	dotfiles_git_fzf__in_repo || return 1
+
+	local action="${1:-show}"
+	shift 2>/dev/null || true
+
+	case "${action}" in
+	show | apply | pop | drop) ;;
+	*)
+		echo "gstashp: action must be one of: show|apply|pop|drop" >&2
+		return 2
+		;;
+	esac
+
+	local stash
+	stash="$(
+		git stash list --pretty=format:'%gd %cr %s' 2>/dev/null |
+			dotfiles_git_fzf__fzf \
+				--prompt="stash:${action}> " \
+				--preview='git stash show -p --color=always {1}' \
+				--delimiter=' ' \
+				--with-nth='1..'
+	)" || return 1
+
+	stash="${stash%% *}"
+	[[ -n "${stash}" ]] || return 1
+
+	case "${action}" in
+	show) git stash show -p --color=always "${stash}" | dotfiles_git_fzf__pager ;;
+	apply) git stash apply "${stash}" ;;
+	pop) git stash pop "${stash}" ;;
+	drop) git stash drop "${stash}" ;;
+	esac
+}
+
+type gaddp >/dev/null 2>&1 || gaddp() {
+	dotfiles_git_fzf__in_repo || return 1
+
+	local selected
+	selected="$(
+		git -c core.quotepath=off status --porcelain=v1 2>/dev/null |
+			awk '{
+				p=substr($0,4)
+				# Renames: "old -> new" => keep new.
+				if (match(p, / -> /)) p=substr(p, RSTART+4)
+				print p
+			}' |
+			dotfiles_git_fzf__fzf \
+				--multi \
+				--prompt='add> ' \
+				--preview='git diff --color=always -- {}'
+	)" || return 1
+
+	[[ -n "${selected}" ]] || return 1
+	while IFS= read -r path; do
+		[[ -n "${path}" ]] || continue
+		git add -- "${path}"
+	done <<<"${selected}"
+}
+
+type gcp >/dev/null 2>&1 || gcp() {
+	dotfiles_git_fzf__in_repo || return 1
+
+	local sha="${1:-}"
+	if [[ -z "${sha}" ]]; then
+		sha="$(
+			git log --date=short --pretty=format:'%h %ad %s' 2>/dev/null |
+				dotfiles_git_fzf__fzf \
+					--prompt='copy sha> ' \
+					--preview='git show --color=always --stat {1}' \
+					--delimiter=' ' \
+					--with-nth='1..'
+		)" || return 1
+		sha="${sha%% *}"
+	fi
+
+	[[ -n "${sha}" ]] || return 1
+	dotfiles_git_fzf__copy_to_clipboard "${sha}"
+}
