@@ -52,6 +52,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_GIT_FZF; then
   source ~/dotfiles/components/git_fzf
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
+  source ~/dotfiles/components/fzf_extras
+fi
 
 # load aliases
 if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then

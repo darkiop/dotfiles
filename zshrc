@@ -59,6 +59,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_GIT_FZF; then
   source ~/dotfiles/components/git_fzf
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
+  source ~/dotfiles/components/fzf_extras
+fi
 
 # Enable color support of ls and also add handy aliases
 if [[ -x /usr/bin/dircolors ]]; then

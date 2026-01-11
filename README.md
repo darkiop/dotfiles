@@ -44,6 +44,7 @@ bash ~/dotfiles/install.sh
 - Prompt: bash `components/prompt`, zsh `components/prompt_zsh` (Git, SSH, sudo, exit code)
 - Completions: bash (bash-completion + `bash_completion.d/*`), zsh (`compinit`)
 - FZF: installed via `modules/fzf/install --key-bindings --completion` (never via apt)
+- FZF extras: `fh` history picker (optionally binds `Ctrl+R`)
 - SSH picker: `sshp` (pick host from `~/.ssh/config` via `fzf`)
 - Git + fzf helpers: `gco`, `gshow`, `gaddp`, `gstashp`, `gfixup`, `gcp`
 - Navi: `Ctrl+G` widget + cheats in `cheats/`
@@ -72,6 +73,8 @@ Available flags:
 - `DOTFILES_ENABLE_ALIASES`
 - `DOTFILES_ENABLE_SSH_PICKER`
 - `DOTFILES_ENABLE_GIT_FZF`
+- `DOTFILES_ENABLE_FZF_EXTRAS`
+- `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS`
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
@@ -87,6 +90,13 @@ Enabled by default via `DOTFILES_ENABLE_GIT_FZF` (disable per host via `~/dotfil
 - `gstashp show|apply|pop|drop`: pick a stash and run the action
 - `gfixup`: pick a commit and create a `git commit --fixup`
 - `gcp`: pick a commit hash and copy it (uses `wl-copy`/`xclip`/`pbcopy` if available)
+
+## FZF extras
+
+Enabled by default via `DOTFILES_ENABLE_FZF_EXTRAS`.
+
+- `fh`: pick a command from history via `fzf`
+- `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS`: when enabled, binds `Ctrl+R` to the `fh` picker (bash + zsh)
 
 ## Platform detection
 
