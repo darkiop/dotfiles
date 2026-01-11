@@ -53,6 +53,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then
   source ~/dotfiles/alias/alias
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_PICKER; then
+  source ~/dotfiles/components/ssh_picker
+fi
 
 # Enable color support of ls and also add handy aliases
 if [[ -x /usr/bin/dircolors ]]; then

@@ -1,0 +1,126 @@
+#!/bin/bash
+
+# SSH host picker (sshp) via fzf.
+# Enabled via DOTFILES_ENABLE_SSH_PICKER.
+
+case $- in
+*i*) ;;
+*) return ;;
+esac
+
+dotfiles_ssh_picker__config_path() {
+	printf '%s' "${DOTFILES_SSH_CONFIG:-${HOME}/.ssh/config}"
+}
+
+dotfiles_ssh_picker__list_hosts() {
+	local cfg
+	cfg="$(dotfiles_ssh_picker__config_path)"
+	[[ -r "${cfg}" ]] || return 1
+
+	# Extract concrete host aliases from `Host ...` lines.
+	# - Skip patterns/wildcards and negations.
+	# - Keep only simple aliases (common: letters, digits, dot, underscore, dash).
+	awk '
+		/^[[:space:]]*#/ { next }
+		/^[[:space:]]*[Hh]ost[[:space:]]+/ {
+			for (i=2; i<=NF; i++) {
+				h=$i
+				# Skip wildcards/patterns/negations.
+				if (h == "*" || h ~ /[*?]/ || h ~ /^!/) continue
+				# Only accept simple aliases.
+				if (h ~ /^[A-Za-z0-9._-]+$/) print h
+			}
+		}
+	' "${cfg}" | sort -u
+}
+
+dotfiles_ssh_picker__pick_host() {
+	local hosts
+	hosts="$(dotfiles_ssh_picker__list_hosts 2>/dev/null)" || hosts=""
+	if [[ -z "${hosts}" ]]; then
+		return 1
+	fi
+
+	if command -v fzf >/dev/null 2>&1; then
+		printf '%s\n' "${hosts}" | fzf --prompt='ssh> ' --height=40% --layout=reverse --border
+		return $?
+	fi
+
+	# No fzf: fallback to first host to keep behavior deterministic.
+	printf '%s\n' "${hosts}" | head -n 1
+}
+
+dotfiles_ssh_picker__extract_destination() {
+	# Prints the first non-option word (ssh destination) if present; empty otherwise.
+	# Mirrors the option-parsing list used by the tmux rename ssh wrapper.
+	local arg
+	while [[ $# -gt 0 ]]; do
+		arg="$1"
+		shift
+
+		case "$arg" in
+		--)
+			# End of options; next arg (if any) is destination.
+			[[ $# -gt 0 ]] && printf '%s' "$1"
+			return 0
+			;;
+		-*)
+			case "$arg" in
+			-b | -c | -D | -E | -F | -I | -i | -J | -L | -l | -m | -O | -o | -p | -Q | -R | -S | -W | -w)
+				[[ $# -gt 0 ]] && shift
+				;;
+			esac
+			;;
+		*)
+			printf '%s' "$arg"
+			return 0
+			;;
+		esac
+	done
+	return 1
+}
+
+sshp() {
+	# If a destination is already present, behave like plain ssh.
+	local dest
+	dest="$(dotfiles_ssh_picker__extract_destination "$@")" || dest=""
+	if [[ -n "${dest}" ]]; then
+		ssh "$@"
+		return $?
+	fi
+
+	local picked
+	picked="$(dotfiles_ssh_picker__pick_host)" || picked=""
+	if [[ -z "${picked}" ]]; then
+		echo "sshp: no hosts found in $(dotfiles_ssh_picker__config_path) (or selection cancelled)" >&2
+		return 1
+	fi
+
+	# Support `--` as a custom delimiter: args before `--` are ssh options,
+	# args after `--` are the remote command.
+	local has_delim=0
+	local arg
+	local -a ssh_opts remote_cmd
+	ssh_opts=()
+	remote_cmd=()
+
+	while [[ $# -gt 0 ]]; do
+		arg="$1"
+		shift
+		if [[ "${has_delim}" -eq 0 && "${arg}" == "--" ]]; then
+			has_delim=1
+			continue
+		fi
+		if [[ "${has_delim}" -eq 0 ]]; then
+			ssh_opts+=("${arg}")
+		else
+			remote_cmd+=("${arg}")
+		fi
+	done
+
+	if [[ ${#remote_cmd[@]} -gt 0 ]]; then
+		ssh "${ssh_opts[@]}" "${picked}" "${remote_cmd[@]}"
+	else
+		ssh "${ssh_opts[@]}" "${picked}"
+	fi
+}
