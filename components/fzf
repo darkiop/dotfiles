@@ -64,13 +64,62 @@ export FZF_DEFAULT_OPTS='
 --color=marker:#ff0000,fg+:#00afff,prompt:#00afff,hl+:#ffffff
 '
 
-# fzf-bash-completion
+dotfiles_fzf__flag_enabled() {
+	local var_name="$1"
+	if type dotfiles_flag_enabled >/dev/null 2>&1; then
+		dotfiles_flag_enabled "${var_name}"
+		return $?
+	fi
+	local value=""
+	eval "value=\"\${${var_name}:-}\""
+	case "${value}" in
+	1 | true | TRUE | yes | YES | y | Y | on | ON) return 0 ;;
+	0 | false | FALSE | no | NO | n | N | off | OFF | "") return 1 ;;
+	*) return 1 ;;
+	esac
+}
+
+dotfiles_fzf__set_cmd_var() {
+	# Usage: dotfiles_fzf__set_cmd_var VAR_NAME preferred fallback
+	local var_name="$1"
+	local preferred="$2"
+	local fallback="$3"
+
+	local resolved=""
+	if [[ -n "${preferred}" ]] && command -v "${preferred}" >/dev/null 2>&1; then
+		resolved="${preferred}"
+	elif [[ -n "${fallback}" ]] && command -v "${fallback}" >/dev/null 2>&1; then
+		resolved="${fallback}"
+	fi
+
+	[[ -n "${resolved}" ]] || return 0
+	# Avoid eval'ing user input: var_name is a constant in this file.
+	printf -v "${var_name}" '%s' "${resolved}"
+}
+
+# fzf tab-completion (bash + zsh)
 # https://github.com/lincheney/fzf-tab-completion
-#  if [[ -f ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh ]]; then
-#   source ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh
-#     bind -x '"\t": fzf_bash_completion'
-#     #bind -x '"\C-f": fzf_bash_completion'
-#  fi
+if dotfiles_fzf__flag_enabled DOTFILES_ENABLE_FZF_TAB_COMPLETION; then
+	if [[ -n ${BASH_VERSION:-} && -f ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh ]]; then
+		# shellcheck source=/dev/null
+		source ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh
+		# `which` on some systems prints "... not found" to stdout; sanitize command vars.
+		dotfiles_fzf__set_cmd_var _fzf_bash_completion_awk gawk awk
+		dotfiles_fzf__set_cmd_var _fzf_bash_completion_sed gsed sed
+		dotfiles_fzf__set_cmd_var _fzf_bash_completion_egrep rg egrep
+		# Replace TAB completion with fzf-powered completion.
+		bind -x '"\t": fzf_bash_completion' 2>/dev/null || true
+	elif [[ -n ${ZSH_VERSION:-} && -f ~/dotfiles/modules/fzf-tab-completion/zsh/fzf-zsh-completion.sh ]]; then
+		# shellcheck source=/dev/null
+		source ~/dotfiles/modules/fzf-tab-completion/zsh/fzf-zsh-completion.sh
+		# `which` on some systems prints "... not found" to stdout; sanitize command vars.
+		dotfiles_fzf__set_cmd_var _fzf_bash_completion_awk gawk awk
+		dotfiles_fzf__set_cmd_var _fzf_bash_completion_sed gsed sed
+		dotfiles_fzf__set_cmd_var _fzf_bash_completion_egrep rg egrep
+		# Bind TAB to fzf completion widget.
+		bindkey '^I' fzf_completion 2>/dev/null || true
+	fi
+fi
 
 # load fzf key bindungs
 # if [[ -f /usr/share/doc/fzf/examples/key-bindings.bash ]]; then

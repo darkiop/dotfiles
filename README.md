@@ -78,6 +78,7 @@ Available flags:
 - `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS`
 - `DOTFILES_ENABLE_FZF_CDF_BINDING`
 - `DOTFILES_ENABLE_HELPERS`
+- `DOTFILES_ENABLE_FZF_TAB_COMPLETION`
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
@@ -147,6 +148,14 @@ Enabled by default via `DOTFILES_ENABLE_FZF_EXTRAS`.
 - `cdf`: pick a directory via `fzf` and `cd` into it
 - `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS`: when enabled, binds `Ctrl+R` to the `fh` picker (bash + zsh)
 - `DOTFILES_ENABLE_FZF_CDF_BINDING`: when enabled, binds `Alt+C` to the `cdf` picker (bash + zsh)
+
+## FZF tab completion
+
+Enabled by default via `DOTFILES_ENABLE_FZF_TAB_COMPLETION`.
+
+- Bash: binds `TAB` to `fzf-tab-completion` (`modules/fzf-tab-completion/bash/fzf-bash-completion.sh`)
+- Zsh: binds `TAB` to `fzf-tab-completion` (`modules/fzf-tab-completion/zsh/fzf-zsh-completion.sh`)
+- Robustness: command paths for the completion scripts are sanitized (prefers `gawk/gsed/rg`, falls back to `awk/sed/egrep`).
 
 ## Helpers
 
@@ -238,6 +247,7 @@ Some bindings below are enabled via feature flags (see `DOTFILES_ENABLE_FZF_HIST
 | <kbd>CTRL</kbd> + <kbd>R</kbd>           | `fh` history picker (or reverse-search) |
 | <kbd>CTRL</kbd> + <kbd>C</kbd>           | interrupt command               |
 | <kbd>CTRL</kbd> + <kbd>L</kbd>           | clear screen                    |
+| <kbd>TAB</kbd>                           | fzf tab-completion (optional)   |
 | <kbd>ALT</kbd> + <kbd>C</kbd>            | `cdf` directory picker          |
 | <kbd>ALTGR</kbd> + <kbd>Mousewheel</kbd> | bash history                    |
 
@@ -246,6 +256,7 @@ Some bindings below are enabled via feature flags (see `DOTFILES_ENABLE_FZF_HIST
 | Key                           | Function               |
 | :---------------------------- | :--------------------- |
 | <kbd>CTRL</kbd> + <kbd>R</kbd> | `fh` history picker (or reverse-search) |
+| <kbd>TAB</kbd>                  | fzf tab-completion (optional)          |
 | <kbd>ALT</kbd> + <kbd>C</kbd>  | `cdf` directory picker |
 
 ### Navi
