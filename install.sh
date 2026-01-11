@@ -229,14 +229,30 @@ function CLONE_REPO() {
 # -------------------------------------------------------------
 function INSTALL_VIMRC() {
 	echo
-	VIMRC_INSTALL="${HOME}/dotfiles/modules/vimrc/install_awesome_vimrc.sh"
+	VIMRC_DIR="${HOME}/dotfiles/modules/vimrc"
+	VIMRC_INSTALL="${VIMRC_DIR}/install_awesome_vimrc.sh"
 	MESSAGE blue "[ Install vimrc ]"
+
+	# Ensure the vimrc submodule is available (install_awesome_vimrc.sh lives inside it).
+	if [[ ! -x "${VIMRC_INSTALL}" && -d "${HOME}/dotfiles/.git" ]]; then
+		MESSAGE lightblue "Initializing vimrc submodule..."
+		(
+			cd "${HOME}/dotfiles" || exit 1
+			git submodule update --init --recursive --depth 1 modules/vimrc
+		)
+	fi
+
+	if [[ ! -x "${VIMRC_INSTALL}" ]]; then
+		MESSAGE red "vimrc installer not found at ${VIMRC_INSTALL}. Did submodules download correctly?"
+		return 1
+	fi
+
 	MESSAGE lightblue "Creating symlink for vimrc runtime directory from ${HOME}/dotfiles/modules/vimrc to ${HOME}/.vim_runtime"
-	ln -sf -- "${HOME}"/dotfiles/modules/vimrc "${HOME}/.vim_runtime"
+	ln -sf -- "${VIMRC_DIR}" "${HOME}/.vim_runtime"
 	MESSAGE lightblue "Creating symlink for vimrc configuration file from ${HOME}/dotfiles/config/vimrc/my_configs.vim to ${HOME}/.vim_runtime/my_configs.vim"
 	ln -sf -- "${HOME}"/dotfiles/config/vimrc/my_configs.vim "${HOME}/.vim_runtime/my_configs.vim"
 	echo -e "${COLOR_LIGHT_BLUE}"
-	bash "${VIMRC_INSTALL}" "${HOME}"/dotfiles/modules/vimrc "${USER}"
+	bash "${VIMRC_INSTALL}" "${VIMRC_DIR}" "${USER}"
 	echo -e "${COLOR_CLOSE}"
 }
 
