@@ -12,6 +12,9 @@ adduser --system --no-create-home --group <user>
 # add user to group
 usermod -a -G <group> <user>
 
+# change users shell
+chsh -s <list-shells>
+
 # find files and set chmod 755
 find <dir> -type d -exec chmod 755 -R {} +
 
@@ -142,3 +145,6 @@ stat -c "%a %n" *
 
 # search and replace in a file with sed
 sed -i 's/<search>/<replace>/g' <path-to-file>
+
+
+$ list-shells: cat /etc/shells
