@@ -44,7 +44,7 @@ bash ~/dotfiles/install.sh
 - Prompt: bash `components/prompt`, zsh `components/prompt_zsh` (Git, SSH, sudo, exit code)
 - Completions: bash (bash-completion + `bash_completion.d/*`), zsh (`compinit`)
 - FZF: installed via `modules/fzf/install --key-bindings --completion` (never via apt)
-- FZF extras: `fh` history picker (optionally binds `Ctrl+R`)
+- FZF extras: `fh` history picker and `cdf` directory picker (optionally binds keys)
 - SSH picker: `sshp` (pick host from `~/.ssh/config` via `fzf`)
 - Git + fzf helpers: `gco`, `gshow`, `gaddp`, `gstashp`, `gfixup`, `gcp`
 - Navi: `Ctrl+G` widget + cheats in `cheats/`
@@ -75,6 +75,7 @@ Available flags:
 - `DOTFILES_ENABLE_GIT_FZF`
 - `DOTFILES_ENABLE_FZF_EXTRAS`
 - `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS`
+- `DOTFILES_ENABLE_FZF_CDF_BINDING`
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
@@ -96,7 +97,9 @@ Enabled by default via `DOTFILES_ENABLE_GIT_FZF` (disable per host via `~/dotfil
 Enabled by default via `DOTFILES_ENABLE_FZF_EXTRAS`.
 
 - `fh`: pick a command from history via `fzf`
+- `cdf`: pick a directory via `fzf` and `cd` into it
 - `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS`: when enabled, binds `Ctrl+R` to the `fh` picker (bash + zsh)
+- `DOTFILES_ENABLE_FZF_CDF_BINDING`: when enabled, binds `Alt+C` to the `cdf` picker (bash + zsh)
 
 ## Platform detection
 

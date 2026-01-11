@@ -14,6 +14,22 @@ dotfiles_fzf_extras__fzf() {
 	fzf --ansi --layout=reverse --border "$@"
 }
 
+dotfiles_fzf_extras__flag_enabled() {
+	local var_name="$1"
+
+	if type dotfiles_flag_enabled >/dev/null 2>&1; then
+		dotfiles_flag_enabled "${var_name}"
+		return $?
+	fi
+
+	local value=""
+	eval "value=\"\${${var_name}:-}\""
+	case "${value}" in
+	1 | true | TRUE | yes | YES | y | Y | on | ON) return 0 ;;
+	*) return 1 ;;
+	esac
+}
+
 dotfiles_fzf_history__reverse_unique() {
 	# Read lines on stdin, output in reverse order, removing duplicates (keep newest).
 	awk '
@@ -46,14 +62,7 @@ dotfiles_fzf_history__select_zsh() {
 }
 
 dotfiles_fzf_history__bindings_enabled() {
-	if type dotfiles_flag_enabled >/dev/null 2>&1; then
-		dotfiles_flag_enabled DOTFILES_ENABLE_FZF_HISTORY_BINDINGS
-		return $?
-	fi
-	case "${DOTFILES_ENABLE_FZF_HISTORY_BINDINGS:-}" in
-	1 | true | TRUE | yes | YES | y | Y | on | ON) return 0 ;;
-	*) return 1 ;;
-	esac
+	dotfiles_fzf_extras__flag_enabled DOTFILES_ENABLE_FZF_HISTORY_BINDINGS
 }
 
 dotfiles_fzf_history__install_bindings_bash() {
@@ -111,8 +120,109 @@ fh() {
 	printf '%s\n' "${picked}"
 }
 
+dotfiles_fzf_cdf__candidates() {
+	# Emit candidate directories, one per line, order matters (dedup later).
+	local d="${PWD}"
+	local i=0
+
+	# Common locations
+	for d in \
+		"${PWD}" \
+		"${HOME}" \
+		"${HOME}/dotfiles" \
+		"${HOME}/.config" \
+		"${HOME}/Downloads" \
+		"${HOME}/src" \
+		"${HOME}/projects" \
+	; do
+		[[ -d "${d}" ]] && printf '%s\n' "${d}"
+	done
+
+	# Git root (if any)
+	if command -v git >/dev/null 2>&1; then
+		d="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+		[[ -n "${d}" && -d "${d}" ]] && printf '%s\n' "${d}"
+	fi
+
+	# Ancestors of current directory
+	d="${PWD}"
+	while [[ -n "${d}" && "${d}" != "/" && $i -lt 8 ]]; do
+		printf '%s\n' "${d}"
+		d="${d%/*}"
+		[[ -n "${d}" ]] || d="/"
+		i=$((i + 1))
+	done
+	printf '%s\n' "/"
+
+	# Optional shallow scan of common roots (kept small for speed).
+	if command -v fd >/dev/null 2>&1; then
+		[[ -d "${HOME}/src" ]] && fd -t d -d 4 . "${HOME}/src" 2>/dev/null || true
+		[[ -d "${HOME}/projects" ]] && fd -t d -d 4 . "${HOME}/projects" 2>/dev/null || true
+	elif command -v find >/dev/null 2>&1; then
+		[[ -d "${HOME}/src" ]] && find "${HOME}/src" -maxdepth 4 -type d 2>/dev/null || true
+		[[ -d "${HOME}/projects" ]] && find "${HOME}/projects" -maxdepth 4 -type d 2>/dev/null || true
+	fi
+}
+
+cdf() {
+	local query="${*:-}"
+	local picked
+	if [[ -n "${query}" ]]; then
+		picked="$(
+			dotfiles_fzf_cdf__candidates |
+				awk 'NF && !seen[$0]++' |
+				dotfiles_fzf_extras__fzf \
+					--prompt='cd> ' \
+					--query "${query}" \
+					--preview='sh -c '"'"'ls -la --color=always -- "$1" 2>/dev/null | head -200'"'"' sh {}'
+		)" || return 1
+	else
+		picked="$(
+			dotfiles_fzf_cdf__candidates |
+				awk 'NF && !seen[$0]++' |
+				dotfiles_fzf_extras__fzf \
+					--prompt='cd> ' \
+					--preview='sh -c '"'"'ls -la --color=always -- "$1" 2>/dev/null | head -200'"'"' sh {}'
+		)" || return 1
+	fi
+
+	[[ -n "${picked}" ]] || return 1
+	cd -- "${picked}"
+}
+
+dotfiles_fzf_cdf__bindings_enabled() {
+	dotfiles_fzf_extras__flag_enabled DOTFILES_ENABLE_FZF_CDF_BINDING
+}
+
+dotfiles_fzf_cdf__install_bindings_bash() {
+	dotfiles_fzf_cdf__bindings_enabled || return 0
+
+	dotfiles_fzf_cdf_widget() {
+		cdf || return 0
+		READLINE_LINE=""
+		READLINE_POINT=0
+	}
+
+	# Alt+C (escape + c): jump to directory via fzf.
+	bind -x '"\ec":dotfiles_fzf_cdf_widget' 2>/dev/null || true
+}
+
+dotfiles_fzf_cdf__install_bindings_zsh() {
+	dotfiles_fzf_cdf__bindings_enabled || return 0
+
+	dotfiles_fzf_cdf_widget() {
+		cdf || return 0
+		zle reset-prompt
+	}
+
+	zle -N dotfiles_fzf_cdf_widget 2>/dev/null || return 0
+	bindkey '^[c' dotfiles_fzf_cdf_widget 2>/dev/null || true
+}
+
 if [[ -n ${BASH_VERSION:-} ]]; then
 	dotfiles_fzf_history__install_bindings_bash
+	dotfiles_fzf_cdf__install_bindings_bash
 elif [[ -n ${ZSH_VERSION:-} ]]; then
 	dotfiles_fzf_history__install_bindings_zsh
+	dotfiles_fzf_cdf__install_bindings_zsh
 fi
