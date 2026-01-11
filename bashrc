@@ -42,6 +42,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_NAVI; then
   source ~/dotfiles/components/navi
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_PICKER; then
+  source ~/dotfiles/components/ssh_picker
+fi
 
 # load aliases
 if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then

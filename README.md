@@ -44,6 +44,7 @@ bash ~/dotfiles/install.sh
 - Prompt: bash `components/prompt`, zsh `components/prompt_zsh` (Git, SSH, sudo, exit code)
 - Completions: bash (bash-completion + `bash_completion.d/*`), zsh (`compinit`)
 - FZF: installed via `modules/fzf/install --key-bindings --completion` (never via apt)
+- SSH picker: `sshp` (pick host from `~/.ssh/config` via `fzf`)
 - Navi: `Ctrl+G` widget + cheats in `cheats/`
 - Tmux: oh-my-tmux + TPM + `config/tmux.conf.local`
 - MOTD: hostname-based scripts in `motd/`
@@ -68,6 +69,7 @@ Available flags:
 - `DOTFILES_ENABLE_FZF`
 - `DOTFILES_ENABLE_NAVI`
 - `DOTFILES_ENABLE_ALIASES`
+- `DOTFILES_ENABLE_SSH_PICKER`
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
