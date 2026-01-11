@@ -46,6 +46,7 @@ bash ~/dotfiles/install.sh
 - FZF: installed via `modules/fzf/install --key-bindings --completion` (never via apt)
 - FZF extras: `fh` history picker and `cdf` directory picker (optionally binds keys)
 - Helpers: `dcheat`, `cheat`, `helpme` (local cheats + help wrappers)
+- oh-my-zsh (optional, submodule `modules/oh-my-zsh`)
 - SSH picker: `sshp` (pick host from `~/.ssh/config` via `fzf`)
 - Git + fzf helpers: `gco`, `gshow`, `gaddp`, `gstashp`, `gfixup`, `gcp`
 - Navi: `Ctrl+G` widget + cheats in `cheats/`
@@ -80,6 +81,7 @@ Available flags:
 - `DOTFILES_ENABLE_HELPERS`
 - `DOTFILES_ENABLE_FZF_TAB_COMPLETION`
 - `DOTFILES_ENABLE_EXTRACT_EXT`
+- `DOTFILES_ENABLE_OH_MY_ZSH`
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
@@ -149,6 +151,14 @@ Enabled by default via `DOTFILES_ENABLE_FZF_EXTRAS`.
 - `cdf`: pick a directory via `fzf` and `cd` into it
 - `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS`: when enabled, binds `Ctrl+R` to the `fh` picker (bash + zsh)
 - `DOTFILES_ENABLE_FZF_CDF_BINDING`: when enabled, binds `Alt+C` to the `cdf` picker (bash + zsh)
+
+## oh-my-zsh (optional)
+
+Enabled via `DOTFILES_ENABLE_OH_MY_ZSH` (default `false`).
+
+- Loads `modules/oh-my-zsh/oh-my-zsh.sh` if the submodule is present (`git submodule update --init --recursive modules/oh-my-zsh`)
+- Disables oh-my-zsh auto-update and compfix to avoid prompts
+- Uses empty `plugins=()` by default; customize in your own zsh local config if needed
 
 ## FZF tab completion
 

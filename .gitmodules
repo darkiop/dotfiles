@@ -20,3 +20,6 @@
 	path = modules/fzf
 	url = https://github.com/junegunn/fzf
 	shallow = true
+[submodule "modules/oh-my-zsh"]
+	path = modules/oh-my-zsh
+	url = https://github.com/ohmyzsh/ohmyzsh

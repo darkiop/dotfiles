@@ -33,6 +33,16 @@ ADD_TO_PATH "/bin"
 source ~/dotfiles/components/platform
 source ~/dotfiles/components/feature_flags
 
+# Optional: oh-my-zsh
+if dotfiles_flag_enabled DOTFILES_ENABLE_OH_MY_ZSH && [[ -d "$HOME/dotfiles/modules/oh-my-zsh" ]]; then
+  export ZSH="$HOME/dotfiles/modules/oh-my-zsh"
+  export ZSH_DISABLE_COMPFIX=true
+  export DISABLE_AUTO_UPDATE=true
+  plugins=()
+  # shellcheck disable=SC1090
+  source "$ZSH/oh-my-zsh.sh"
+fi
+
 # Let tmux inherit the shell you started it from (bash vs zsh).
 # This is consumed by config/tmux.conf.local via $DOTFILES_TMUX_SHELL.
 export DOTFILES_TMUX_SHELL="${commands[zsh]:-$(command -v zsh 2>/dev/null || true)}"
