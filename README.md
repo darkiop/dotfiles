@@ -227,16 +227,26 @@ Optional:
 
 ## Keyboard-Bindings
 
+Some bindings below are enabled via feature flags (see `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS` and `DOTFILES_ENABLE_FZF_CDF_BINDING`).
+
 ### Bash
 
 | Key                                      | Function                        |
 | :--------------------------------------- | :------------------------------ |
 | <kbd>CTRL</kbd> + <kbd>A</kbd>           | jump to the beginning of a line |
 | <kbd>CTRL</kbd> + <kbd>E</kbd>           | jump to the end of the line     |
-| <kbd>CTRL</kbd> + <kbd>R</kbd>           | reverse-search                  |
+| <kbd>CTRL</kbd> + <kbd>R</kbd>           | `fh` history picker (or reverse-search) |
 | <kbd>CTRL</kbd> + <kbd>C</kbd>           | interrupt command               |
 | <kbd>CTRL</kbd> + <kbd>L</kbd>           | clear screen                    |
+| <kbd>ALT</kbd> + <kbd>C</kbd>            | `cdf` directory picker          |
 | <kbd>ALTGR</kbd> + <kbd>Mousewheel</kbd> | bash history                    |
+
+### Zsh
+
+| Key                           | Function               |
+| :---------------------------- | :--------------------- |
+| <kbd>CTRL</kbd> + <kbd>R</kbd> | `fh` history picker (or reverse-search) |
+| <kbd>ALT</kbd> + <kbd>C</kbd>  | `cdf` directory picker |
 
 ### Navi
 
@@ -246,10 +256,18 @@ Optional:
 
 ### tmux
 
-Prefix is <kbd>CTRL</kbd> + <kbd>a</kbd>
+PREFIX is <kbd>CTRL</kbd> + <kbd>a</kbd>
 
 | Key                                                | Function                                   |
 | :------------------------------------------------- | :----------------------------------------- |
+| <kbd>ALT</kbd> + <kbd>LEFT</kbd>                   | switch to the left pane                    |
+| <kbd>ALT</kbd> + <kbd>RIGHT</kbd>                  | switch to the right pane                   |
+| <kbd>ALT</kbd> + <kbd>UP</kbd>                     | switch to the upper pane                   |
+| <kbd>ALT</kbd> + <kbd>DOWN</kbd>                   | switch to the lower pane                   |
+| <kbd>CTRL</kbd> + <kbd>t</kbd>                     | create a new window (no prefix)            |
+| <kbd>F11</kbd>                                     | pane > fullscreen                          |
+| <kbd>SHIFT</kbd> + <kbd>LEFT</kbd>                 | switch to left window                      |
+| <kbd>SHIFT</kbd> + <kbd>RIGHT</kbd>                | switch to right window                     |
 | <kbd>PREFIX</kbd> + <kbd><</kbd>                   | Split the screen vertically                |
 | <kbd>PREFIX</kbd> + <kbd>-</kbd>                   | Split the screen horizontally              |
 | <kbd>PREFIX</kbd> + <kbd>c</kbd>                   | create a new window                        |
@@ -260,16 +278,9 @@ Prefix is <kbd>CTRL</kbd> + <kbd>a</kbd>
 | <kbd>PREFIX</kbd> + <kbd>d</kbd>                   | detach session                             |
 | <kbd>PREFIX</kbd> + <kbd>e</kbd>                   | open tmux.conf.local                       |
 | <kbd>PREFIX</kbd> + <kbd>TAB</kbd>                 | switch between last and current window     |
-| <kbd>SHIFT</kbd> + <kbd>LEFT</kbd>                 | switch to left window                      |
-| <kbd>SHIFT</kbd> + <kbd>RIGHT</kbd>                | switch to right window                     |
 | <kbd>PREFIX</kbd> + <kbd>z</kbd>                   | pane > fullscreen                          |
 | <kbd>PREFIX</kbd> + <kbd>r</kbd>                   | reload tmux.conf                           |
-| <kbd>F11</kbd>                                     | pane > fullscreen                          |
 | <kbd>PREFIX</kbd> + <kbd>?</kbd>                   | list shortcuts                             |
-| <kbd>ALT</kbd> + <kbd>LEFT</kbd>                   | switch to the left pane                    |
-| <kbd>ALT</kbd> + <kbd>RIGHT</kbd>                  | switch to the right pane                   |
-| <kbd>ALT</kbd> + <kbd>UP</kbd>                     | switch to the upper pane                   |
-| <kbd>ALT</kbd> + <kbd>DOWN</kbd>                   | switch to the lower pane                   |
 | <kbd>PREFIX</kbd> + <kbd>CTRL</kbd> + <kbd>s</kbd> | save tmux environment to ~/.tmux/resurrect |
 | <kbd>PREFIX</kbd> + <kbd>CTRL</kbd> + <kbd>r</kbd> | restore tmux environment                   |
 | <kbd>PREFIX</kbd> + <kbd>$</kbd>                   | rename session                             |
