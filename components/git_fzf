@@ -63,7 +63,7 @@ type gco >/dev/null 2>&1 || gco() {
 	)" || return 1
 
 	[[ -n "${ref}" ]] || return 1
-	git checkout -- "${ref}"
+	git checkout "${ref}"
 }
 
 type gshow >/dev/null 2>&1 || gshow() {
