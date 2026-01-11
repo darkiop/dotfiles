@@ -331,11 +331,10 @@ tmux_conf_copy_to_os_clipboard=false
 # -- user customizations -------------------------------------------------------
 # this is the place to override or undo settings
 
-# Use zsh as the default shell (so new windows/panes start in zsh, not bash).
-if-shell 'test -x /usr/bin/zsh' 'set -g default-shell /usr/bin/zsh'
-if-shell 'test -x /usr/bin/zsh' 'set -g default-command /usr/bin/zsh'
-if-shell 'test ! -x /usr/bin/zsh && test -x /bin/zsh' 'set -g default-shell /bin/zsh'
-if-shell 'test ! -x /usr/bin/zsh && test -x /bin/zsh' 'set -g default-command /bin/zsh'
+# Inherit the shell you started tmux from (bash vs zsh).
+# DOTFILES_TMUX_SHELL is exported by ~/dotfiles/bashrc and ~/dotfiles/zshrc.
+if-shell 'test -n "$DOTFILES_TMUX_SHELL" && test -x "$DOTFILES_TMUX_SHELL"' 'set -g default-shell "$DOTFILES_TMUX_SHELL"'
+if-shell 'test -n "$DOTFILES_TMUX_SHELL" && test -x "$DOTFILES_TMUX_SHELL"' 'set -g default-command "$DOTFILES_TMUX_SHELL"'
 
 # increase history size
 set -g history-limit 10000

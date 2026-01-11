@@ -30,6 +30,10 @@ source ~/dotfiles/components/defaults
 source ~/dotfiles/components/platform
 source ~/dotfiles/components/feature_flags
 
+# Let tmux inherit the shell you started it from (bash vs zsh).
+# This is consumed by config/tmux.conf.local via $DOTFILES_TMUX_SHELL.
+export DOTFILES_TMUX_SHELL="${BASH:-$(command -v bash 2>/dev/null || true)}"
+
 if dotfiles_flag_enabled DOTFILES_ENABLE_PROMPT; then
   source ~/dotfiles/components/prompt
 fi
