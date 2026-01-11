@@ -79,6 +79,7 @@ Available flags:
 - `DOTFILES_ENABLE_FZF_CDF_BINDING`
 - `DOTFILES_ENABLE_HELPERS`
 - `DOTFILES_ENABLE_FZF_TAB_COMPLETION`
+- `DOTFILES_ENABLE_EXTRACT_EXT`
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
@@ -167,6 +168,14 @@ Enabled by default via `DOTFILES_ENABLE_HELPERS`.
 
 Optional:
 - Set `DOTFILES_CHEATS_DIR` to use a different cheats directory than `~/dotfiles/cheats`.
+
+## extract() Erweiterung
+
+Enabled by default via `DOTFILES_ENABLE_EXTRACT_EXT`.
+
+- Adds extra formats to `extract <file>`: `*.7z` (7z), `*.xz` (unxz/xz -d), `*.zst`/`*.zstd` (unzstd/zstd -d)
+- Existing formats remain (tar.gz/tbz2/zip/rar/etc.)
+- Each format checks whether the required tool is installed and prints a helpful error if missing.
 
 ## Platform detection
 
