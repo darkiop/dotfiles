@@ -26,7 +26,7 @@ ADD_TO_PATH "/usr/bin"
 ADD_TO_PATH "/bin"
 
 # load dotfiles components
-source ~/dotfiles/components/defaults
+source ~/dotfiles/components/bash_defaults
 source ~/dotfiles/components/platform
 source ~/dotfiles/components/feature_flags
 
@@ -35,7 +35,7 @@ source ~/dotfiles/components/feature_flags
 export DOTFILES_TMUX_SHELL="${BASH:-$(command -v bash 2>/dev/null || true)}"
 
 if dotfiles_flag_enabled DOTFILES_ENABLE_PROMPT; then
-  source ~/dotfiles/components/prompt
+  source ~/dotfiles/components/bash_prompt
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_BASH_COMPLETION; then
   source ~/dotfiles/components/bash_completion
@@ -50,7 +50,7 @@ if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_PICKER; then
   source ~/dotfiles/components/ssh_picker
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_GIT_FZF; then
-  source ~/dotfiles/components/git_fzf
+  source ~/dotfiles/components/fzf_git
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
   source ~/dotfiles/components/fzf_extras

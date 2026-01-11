@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-# Prompt for zsh, styled similar to components/prompt (bash).
+# Prompt for zsh, styled similar to components/bash_prompt (bash).
 # Uses zsh-native %F/%f color escapes and avoids non-ASCII source text.
 
 if [[ -z "${ZSH_VERSION:-}" ]]; then

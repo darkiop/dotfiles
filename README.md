@@ -41,7 +41,7 @@ bash ~/dotfiles/install.sh
 - Bash: `bashrc`, `bash_profile`, `inputrc`, `dircolors`
 - Zsh: `zshrc`, `zprofile`
 - Git: `gitconfig` (includes optional `~/.gitconfig.local`)
-- Prompt: bash `components/prompt`, zsh `components/prompt_zsh` (Git, SSH, sudo, exit code)
+- Prompt: bash `components/bash_prompt`, zsh `components/zsh_prompt` (Git, SSH, sudo, exit code)
 - Completions: bash (bash-completion + `bash_completion.d/*`), zsh (`compinit`)
 - FZF: installed via `modules/fzf/install --key-bindings --completion` (never via apt)
 - FZF extras: `fh` history picker and `cdf` directory picker (optionally binds keys)

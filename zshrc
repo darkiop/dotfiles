@@ -39,7 +39,7 @@ export DOTFILES_TMUX_SHELL="${commands[zsh]:-$(command -v zsh 2>/dev/null || tru
 
 # components
 if dotfiles_flag_enabled DOTFILES_ENABLE_PROMPT; then
-  source ~/dotfiles/components/prompt_zsh
+  source ~/dotfiles/components/zsh_prompt
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_BASH_COMPLETION; then
   source ~/dotfiles/components/zsh_completion
@@ -57,7 +57,7 @@ if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_PICKER; then
   source ~/dotfiles/components/ssh_picker
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_GIT_FZF; then
-  source ~/dotfiles/components/git_fzf
+  source ~/dotfiles/components/fzf_git
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
   source ~/dotfiles/components/fzf_extras

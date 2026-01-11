@@ -12,7 +12,7 @@ This repository contains personal shell dotfiles (bash/zsh) organized as modular
 
 - Configuration & flags: `components/feature_flags`, `components/platform`, and `config/local_dotfiles_settings` (gitignored) for host overrides.
 - Shell entrypoints: `bashrc`, `zshrc`, `bash_profile`, `zprofile`.
-- Prompt components: `components/prompt` (bash) and `components/prompt_zsh` (zsh).
+- Prompt components: `components/bash_prompt` (bash) and `components/zsh_prompt` (zsh).
 - Modules: `modules/<name>/` — add an `install` script and `README.md` when adding new modules (see `modules/fzf`).
 - tmux: `modules/oh-my-tmux/.tmux.conf.local` and `config/tmux.conf.local` for local overrides.
 - Cheats and docs: `cheats/` contains many usage examples and keybindings.
@@ -39,7 +39,7 @@ This repository contains personal shell dotfiles (bash/zsh) organized as modular
 
 ## Examples (where to implement common changes)
 
-- Add new prompt segments: edit `components/prompt` and `components/prompt_zsh`.
+- Add new prompt segments: edit `components/bash_prompt` and `components/zsh_prompt`.
 - Add an alias set: create `alias/alias-<name>` and enable via `components/feature_flags`.
 - Add a completion: put script into `bash_completion.d/` and enable via `DOTFILES_ENABLE_BASH_COMPLETION`.
 
