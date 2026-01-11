@@ -116,13 +116,22 @@ function BUILD_PROMPT() {
 	# Some terminal emulators respond to OSC queries (e.g. background color query OSC 11)
 	# by writing escape sequences to the pty. If nothing consumes that response, readline
 	# can treat it as typed input and it shows up as garbage in the prompt line.
-	# Flush any pending bytes once per shell start, without blocking.
+	# Flush any pending bytes once per shell start.
 	if [[ -z ${DOTFILES_STDIN_FLUSHED+x} ]]; then
 		DOTFILES_STDIN_FLUSHED=1
+		local _dotfiles_wait=0.05
+		[[ -n "${TMUX:-}" ]] && _dotfiles_wait=0.2
 		local _dotfiles_i=0
 		while IFS= read -r -t 0 -n 1 _dotfiles_discard; do
 			((_dotfiles_i++ > 256)) && break
 		done
+		# Catch slightly delayed terminal responses (common when tmux attaches on login).
+		if IFS= read -r -t "${_dotfiles_wait}" -n 1 _dotfiles_discard; then
+			_dotfiles_i=0
+			while IFS= read -r -t 0 -n 1 _dotfiles_discard; do
+				((_dotfiles_i++ > 256)) && break
+			done
+		fi
 	fi
 
 	BASH_PROMPT="\n"
