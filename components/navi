@@ -2,6 +2,17 @@
 
 # load shell widget for navi (STRG + G)
 if [[ -x /usr/local/bin/navi ]]; then
+	# navi uses fzf by default; make sure the dotfiles-managed fzf is on PATH.
+	if ! command -v fzf >/dev/null 2>&1; then
+		if command -v ADD_TO_PATH >/dev/null 2>&1; then
+			ADD_TO_PATH "$HOME/.fzf/bin"
+			ADD_TO_PATH "$HOME/dotfiles/modules/fzf/bin"
+		else
+			[[ -d "$HOME/.fzf/bin" && ":${PATH:-}:" != *":$HOME/.fzf/bin:"* ]] && export PATH="${PATH:+${PATH}:}$HOME/.fzf/bin"
+			[[ -d "$HOME/dotfiles/modules/fzf/bin" && ":${PATH:-}:" != *":$HOME/dotfiles/modules/fzf/bin:"* ]] && export PATH="${PATH:+${PATH}:}$HOME/dotfiles/modules/fzf/bin"
+		fi
+	fi
+
 	if [[ -n ${BASH_VERSION:-} ]]; then
 		eval "$(navi widget bash || true)" >/dev/null 2>&1
 	elif [[ -n ${ZSH_VERSION:-} ]]; then
