@@ -34,7 +34,6 @@ if [[ -n ${ZSH_VERSION:-} ]]; then
 	# `~/.fzf.bash` contains `eval "$(fzf --bash)"` and must not be sourced by zsh.
 	if [[ -f ~/.fzf.zsh ]]; then
 		source ~/.fzf.zsh
-		return 0
 	fi
 
 	# `eval "$(fzf --zsh)"` breaks because backslash-newline continuations in the
@@ -45,7 +44,6 @@ else
 	# bash
 	if [[ -f ~/.fzf.bash ]]; then
 		source ~/.fzf.bash
-		return 0
 	fi
 
 	# Same rationale as above: source the generated script to preserve continuations.
