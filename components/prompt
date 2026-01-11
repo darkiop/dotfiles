@@ -119,7 +119,10 @@ function BUILD_PROMPT() {
 	# Flush any pending bytes once per shell start, without blocking.
 	if [[ -z ${DOTFILES_STDIN_FLUSHED+x} ]]; then
 		DOTFILES_STDIN_FLUSHED=1
-		while IFS= read -r -t 0 -n 1 _dotfiles_discard; do :; done
+		local _dotfiles_i=0
+		while IFS= read -r -t 0 -n 1 _dotfiles_discard; do
+			((_dotfiles_i++ > 256)) && break
+		done
 	fi
 
 	BASH_PROMPT="\n"
@@ -143,15 +146,40 @@ function BUILD_PROMPT() {
 	BASH_PROMPT+="\[$COLOR_RESET\] ($(SHOW_PERMISSIONS_OF_CUR_DIR))"
 	BASH_PROMPT+="\[$COLOR_BRACKET\]]"
 
-	if CHECK_IF_GIT_REPO; then
-		git_part="$(GIT_PROMPT)"
-		if [[ -n ${git_part} ]]; then
-			BASH_PROMPT+=" "
-			BASH_PROMPT+="\[$COLOR_BRACKET\]["
-			BASH_PROMPT+="\[$COLOR_GIT_BRANCH\]${git_part}"
-			BASH_PROMPT+="\[$COLOR_BRACKET\]]"
+		if CHECK_IF_GIT_REPO; then
+			git_part="$(GIT_PROMPT)"
+			if [[ -n ${git_part} ]]; then
+				local git_body="$git_part"
+				local git_upstream=""
+				case "$git_part" in
+					*"<>" )
+						git_body="${git_part%<>}"
+						git_upstream="<>"
+						;;
+					*">" )
+						git_body="${git_part%>}"
+						git_upstream=">"
+						;;
+					*"<" )
+						git_body="${git_part%<}"
+						git_upstream="<"
+						;;
+					*"=" )
+						git_body="${git_part%=}"
+						git_upstream="="
+						;;
+				esac
+
+				BASH_PROMPT+=" "
+				BASH_PROMPT+="\[$COLOR_BRACKET\]["
+				BASH_PROMPT+="\[$COLOR_GIT_BRANCH\]${git_body}"
+				if [[ -n ${git_upstream} ]]; then
+					# Match the git-prompt upstream marker color (ANSI red), so it matches *% etc.
+					BASH_PROMPT+="\[\033[31m\]${git_upstream}"
+				fi
+				BASH_PROMPT+="\[$COLOR_BRACKET\]]"
+			fi
 		fi
-	fi
 
 	if CHECK_IF_SUDO_IS_ACTIVE; then
 		BASH_PROMPT+=" "

@@ -17,24 +17,68 @@ setopt PROMPT_SUBST
 DOTFILES_PROMPT_IP="${DOTFILES_PROMPT_IP:-}"
 
 DOTFILES_PROMPT_GIT=""
+DOTFILES_PROMPT_GIT_BRANCH=""
+DOTFILES_PROMPT_GIT_FLAGS=""
 DOTFILES_PROMPT_PERMS=""
 DOTFILES_PROMPT_SSH=0
 DOTFILES_PROMPT_SUDO=0
+
+dotfiles_prompt_escape_percent() {
+  # '%' is special in zsh prompt strings; '%%' renders a literal '%'.
+  print -r -- "${1//\%/%%}"
+}
 
 dotfiles_prompt_git() {
   command -v git >/dev/null 2>&1 || return 0
   git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 0
 
-  local branch staged dirty untracked stashed
+  DOTFILES_PROMPT_GIT_BRANCH=""
+  DOTFILES_PROMPT_GIT_FLAGS=""
+  DOTFILES_PROMPT_GIT_UPSTREAM=""
+  DOTFILES_PROMPT_GIT=""
+
+  local branch staged dirty untracked stashed upstream ahead behind
   branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null || git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)"
 
   staged=""; dirty=""; untracked=""; stashed=""
   git diff --cached --quiet 2>/dev/null || staged="+"
-  git diff --quiet 2>/dev/null || dirty="!"
+  git diff --quiet 2>/dev/null || dirty="*"
   [[ -n "$(git ls-files --others --exclude-standard 2>/dev/null | head -n 1)" ]] && untracked="%"
   git rev-parse --verify refs/stash >/dev/null 2>&1 && stashed="$"
 
-  print -r -- "git:${branch}${staged}${dirty}${stashed}${untracked}"
+  DOTFILES_PROMPT_GIT_BRANCH="$(dotfiles_prompt_escape_percent "${branch}")"
+
+  # Match bash-like markers ordering: staged (+), dirty (*), stashed ($), untracked (%).
+  local flags="${staged}${dirty}${stashed}${untracked}"
+  DOTFILES_PROMPT_GIT_FLAGS="$(dotfiles_prompt_escape_percent "${flags}")"
+
+  # Upstream marker (like bash __git_ps1 with GIT_PS1_SHOWUPSTREAM=auto):
+  #   '>' ahead, '<' behind, '<>' diverged, '=' equal.
+  upstream="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || true)"
+  if [[ -n "${upstream}" ]]; then
+    local counts
+    counts="$(git rev-list --left-right --count HEAD...@{u} 2>/dev/null || true)"
+    # git uses a tab separator here; normalize whitespace then split.
+    counts="${counts//$'\t'/ }"
+    counts="${counts//$'\n'/ }"
+    local -a parts
+    parts=(${=counts})
+    ahead="${parts[1]:-0}"
+    behind="${parts[2]:-0}"
+
+    if [[ "${ahead}" -gt 0 && "${behind}" -gt 0 ]]; then
+      DOTFILES_PROMPT_GIT_UPSTREAM="<>"
+    elif [[ "${ahead}" -gt 0 ]]; then
+      DOTFILES_PROMPT_GIT_UPSTREAM=">"
+    elif [[ "${behind}" -gt 0 ]]; then
+      DOTFILES_PROMPT_GIT_UPSTREAM="<"
+    else
+      DOTFILES_PROMPT_GIT_UPSTREAM="="
+    fi
+  fi
+
+  # Backwards-compatible full string (used nowhere else, but handy for debugging).
+  DOTFILES_PROMPT_GIT="git:${DOTFILES_PROMPT_GIT_BRANCH}${DOTFILES_PROMPT_GIT_FLAGS}${DOTFILES_PROMPT_GIT_UPSTREAM}"
 }
 
 dotfiles_prompt_perms() {
@@ -110,11 +154,14 @@ dotfiles_prompt_precmd() {
   if [[ -z ${DOTFILES_STDIN_FLUSHED:-} ]]; then
     typeset -g DOTFILES_STDIN_FLUSHED=1
     local _dotfiles_discard=''
-    while read -rk 1 -t 0 _dotfiles_discard 2>/dev/null; do :; done
+    local _dotfiles_i=0
+    while read -rk 1 -t 0 _dotfiles_discard 2>/dev/null; do
+      (( _dotfiles_i++ > 256 )) && break
+    done
   fi
 
   DOTFILES_PROMPT_PERMS="$(dotfiles_prompt_perms)"
-  DOTFILES_PROMPT_GIT="$(dotfiles_prompt_git)"
+  dotfiles_prompt_git
   [[ -n "${DOTFILES_PROMPT_IP}" ]] || DOTFILES_PROMPT_IP="$(dotfiles_prompt_ip)"
 
   DOTFILES_PROMPT_SSH=0
@@ -128,13 +175,20 @@ dotfiles_prompt_precmd() {
   local color_bracket="%F{${bracket_color}}"
   local color_host='%F{39}'
   local color_dir='%F{214}'
-  local color_sep='%F{37}'
+  # Bash uses ANSI white (\e[37m) for separators like '@', ':' and parentheses.
+  # In zsh prompt escapes, `%F{7}` is ANSI white, while `%F{37}` is 256-color index 37.
+  local color_sep='%F{7}'
   local color_date='%F{83}'
-  local color_git='%F{227}'
+  # Match bash git-prompt colors: label yellow, branch green, flags red.
+  local color_git_label='%F{227}'
+  # Use ANSI green (index 2) to match the common bash git-prompt branch green.
+  local color_git_branch='%F{2}'
+  # Use ANSI red (index 1) to match bash git-prompt status red.
+  local color_git_flags='%F{1}'
   local color_ssh='%F{81}'
   local color_sudo='%F{99}'
   local color_user='%F{81}'
-  local color_symbol='%F{37}'
+  local color_symbol='%F{7}'
   (( EUID == 0 )) && color_user='%F{196}' && color_symbol='%F{196}'
 
   local status_color='%F{39}'
@@ -160,15 +214,19 @@ dotfiles_prompt_precmd() {
   [[ -n "${DOTFILES_PROMPT_PERMS}" ]] && perms_part=" %f(${DOTFILES_PROMPT_PERMS})"
 
   local git_part=""
-  if [[ -n "${DOTFILES_PROMPT_GIT}" ]]; then
-    git_part=" ${color_bracket}[${color_git}${DOTFILES_PROMPT_GIT}${color_bracket}]"
+  if [[ -n "${DOTFILES_PROMPT_GIT_BRANCH}" ]]; then
+    local git_tail=""
+    if [[ -n "${DOTFILES_PROMPT_GIT_FLAGS}" || -n "${DOTFILES_PROMPT_GIT_UPSTREAM}" ]]; then
+      git_tail=" ${color_git_flags}${DOTFILES_PROMPT_GIT_FLAGS}${DOTFILES_PROMPT_GIT_UPSTREAM}"
+    fi
+    git_part=" ${color_bracket}[${color_git_label}git:${color_git_branch}${DOTFILES_PROMPT_GIT_BRANCH}${git_tail}${color_bracket}]"
   fi
 
   local sudo_part=""
   (( DOTFILES_PROMPT_SUDO == 1 )) && sudo_part=" ${color_bracket}[${color_sudo}sudo${color_bracket}]"
 
   PROMPT=$'\n'
-  PROMPT+="${status_color}${lead}${color_bracket}[${color_date}%*${color_bracket}] "
+  PROMPT+="${status_color}${lead}${color_bracket}[${color_date}%D{%H:%M:%S}${color_bracket}] "
   PROMPT+="${color_bracket}[${ssh_part}${color_user}%n${color_sep}@${color_host}%m"
   PROMPT+="${ip_part}${color_sep}: ${color_dir}%~${perms_part}${color_bracket}]"
   PROMPT+="${git_part}${sudo_part}"
