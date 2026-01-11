@@ -113,6 +113,15 @@ function BUILD_PROMPT() {
 	local exit_status=$?
 	local git_part
 
+	# Some terminal emulators respond to OSC queries (e.g. background color query OSC 11)
+	# by writing escape sequences to the pty. If nothing consumes that response, readline
+	# can treat it as typed input and it shows up as garbage in the prompt line.
+	# Flush any pending bytes once per shell start, without blocking.
+	if [[ -z ${DOTFILES_STDIN_FLUSHED+x} ]]; then
+		DOTFILES_STDIN_FLUSHED=1
+		while IFS= read -r -t 0 -n 1 _dotfiles_discard; do :; done
+	fi
+
 	BASH_PROMPT="\n"
 	BASH_PROMPT+="\[$(COLOR_EXIT_STATUS "${exit_status}")\]┌"
 	BASH_PROMPT+="\[$COLOR_BRACKET\]["

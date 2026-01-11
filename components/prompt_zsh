@@ -103,6 +103,16 @@ dotfiles_prompt_ip() {
 dotfiles_prompt_precmd() {
   local exit_status=$?
 
+  # Some terminal emulators respond to OSC queries (e.g. background color query OSC 11)
+  # by writing escape sequences to the pty. If nothing consumes that response, zle can
+  # treat it as typed input and it shows up as garbage after the prompt.
+  # Flush any pending bytes once per shell start, without blocking.
+  if [[ -z ${DOTFILES_STDIN_FLUSHED:-} ]]; then
+    typeset -g DOTFILES_STDIN_FLUSHED=1
+    local _dotfiles_discard=''
+    while read -rk 1 -t 0 _dotfiles_discard 2>/dev/null; do :; done
+  fi
+
   DOTFILES_PROMPT_PERMS="$(dotfiles_prompt_perms)"
   DOTFILES_PROMPT_GIT="$(dotfiles_prompt_git)"
   [[ -n "${DOTFILES_PROMPT_IP}" ]] || DOTFILES_PROMPT_IP="$(dotfiles_prompt_ip)"
