@@ -5,7 +5,8 @@ Description=dotfiles update motd apt infos timer (daily)
 
 [Timer]
 OnCalendar=daily
-AccuracySec=12h             # allow up to 12h jitter to avoid spikes
+# allow up to 12h jitter to avoid spikes
+AccuracySec=12h
 Persistent=true
 Unit=update-motd-apt-infos.service
 
