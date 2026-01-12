@@ -121,7 +121,8 @@ function BUILD_PROMPT() {
 		DOTFILES_STDIN_FLUSHED=1
 		local _dotfiles_steps=4
 		local _dotfiles_step_wait=0.05
-		[[ -n "${TMUX:-}" ]] && _dotfiles_steps=20
+		# tmux attach on login can delay OSC replies noticeably (network / terminal latency).
+		[[ -n "${TMUX:-}" ]] && _dotfiles_steps=80
 
 		local _dotfiles_i=0
 		local _dotfiles_step=0
