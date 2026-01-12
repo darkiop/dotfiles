@@ -51,7 +51,7 @@ bash ~/dotfiles/install.sh
 - Git + fzf helpers: `gco`, `gshow`, `gaddp`, `gstashp`, `gfixup`, `gcp`
 - Navi: `Ctrl+G` widget + cheats in `cheats/`
 - Tmux: oh-my-tmux + TPM + `config/tmux.conf.local`
-- MOTD: hostname-based scripts in `motd/`
+- MOTD: hostname-based scripts in `motd/` (enable via `DOTFILES_ENABLE_MOTD`, optional auto-run `DOTFILES_ENABLE_MOTD_AUTO_RUN`)
 
 ## Feature flags (per host)
 
@@ -82,6 +82,8 @@ Available flags:
 - `DOTFILES_ENABLE_FZF_TAB_COMPLETION`
 - `DOTFILES_ENABLE_EXTRACT_EXT`
 - `DOTFILES_ENABLE_OH_MY_ZSH`
+- `DOTFILES_ENABLE_MOTD`
+- `DOTFILES_ENABLE_MOTD_AUTO_RUN`
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`

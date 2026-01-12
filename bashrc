@@ -64,6 +64,13 @@ if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then
   source ~/dotfiles/alias/alias
 fi
 
+# MOTD (opt-in)
+if dotfiles_flag_enabled DOTFILES_ENABLE_MOTD && dotfiles_flag_enabled DOTFILES_ENABLE_MOTD_AUTO_RUN; then
+  if [[ -s ~/dotfiles/motd/motd.sh ]]; then
+    source ~/dotfiles/motd/motd.sh
+  fi
+fi
+
 # Set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
   debian_chroot=$(cat /etc/debian_chroot)
