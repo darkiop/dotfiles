@@ -150,23 +150,29 @@ dotfiles_prompt_precmd() {
   # Some terminal emulators respond to OSC queries (e.g. background color query OSC 11)
   # by writing escape sequences to the pty. If nothing consumes that response, zle can
   # treat it as typed input and it shows up as garbage after the prompt.
-  # Flush any pending bytes once per shell start.
+  # Flush pending bytes once per shell start (including slightly delayed responses after tmux attach).
   if [[ -z ${DOTFILES_STDIN_FLUSHED:-} ]]; then
     typeset -g DOTFILES_STDIN_FLUSHED=1
     local _dotfiles_discard=''
-    local _dotfiles_wait=0.05
-    [[ -n "${TMUX:-}" ]] && _dotfiles_wait=0.2
+    local _dotfiles_steps=4
+    local _dotfiles_step_wait=0.05
+    [[ -n "${TMUX:-}" ]] && _dotfiles_steps=20
+
     local _dotfiles_i=0
-    while read -rk 1 -t 0 _dotfiles_discard 2>/dev/null; do
-      (( _dotfiles_i++ > 256 )) && break
-    done
-    # Catch slightly delayed terminal responses (common when tmux attaches on login).
-    if read -rk 1 -t "${_dotfiles_wait}" _dotfiles_discard 2>/dev/null; then
-      _dotfiles_i=0
+    local _dotfiles_step=0
+    for (( _dotfiles_step = 0; _dotfiles_step < _dotfiles_steps; _dotfiles_step++ )); do
+      local _dotfiles_drained=0
       while read -rk 1 -t 0 _dotfiles_discard 2>/dev/null; do
-        (( _dotfiles_i++ > 256 )) && break
+        _dotfiles_drained=1
+        (( _dotfiles_i++ > 2048 )) && break
       done
-    fi
+
+      if read -rk 1 -t "${_dotfiles_step_wait}" _dotfiles_discard 2>/dev/null; then
+        _dotfiles_drained=1
+        continue
+      fi
+      (( _dotfiles_drained == 1 )) || break
+    done
   fi
 
   DOTFILES_PROMPT_PERMS="$(dotfiles_prompt_perms)"

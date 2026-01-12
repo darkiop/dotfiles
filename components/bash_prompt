@@ -116,22 +116,29 @@ function BUILD_PROMPT() {
 	# Some terminal emulators respond to OSC queries (e.g. background color query OSC 11)
 	# by writing escape sequences to the pty. If nothing consumes that response, readline
 	# can treat it as typed input and it shows up as garbage in the prompt line.
-	# Flush any pending bytes once per shell start.
+	# Flush pending bytes once per shell start (including slightly delayed responses after tmux attach).
 	if [[ -z ${DOTFILES_STDIN_FLUSHED+x} ]]; then
 		DOTFILES_STDIN_FLUSHED=1
-		local _dotfiles_wait=0.05
-		[[ -n "${TMUX:-}" ]] && _dotfiles_wait=0.2
+		local _dotfiles_steps=4
+		local _dotfiles_step_wait=0.05
+		[[ -n "${TMUX:-}" ]] && _dotfiles_steps=20
+
 		local _dotfiles_i=0
-		while IFS= read -r -t 0 -n 1 _dotfiles_discard; do
-			((_dotfiles_i++ > 256)) && break
-		done
-		# Catch slightly delayed terminal responses (common when tmux attaches on login).
-		if IFS= read -r -t "${_dotfiles_wait}" -n 1 _dotfiles_discard; then
-			_dotfiles_i=0
+		local _dotfiles_step=0
+		for ((_dotfiles_step = 0; _dotfiles_step < _dotfiles_steps; _dotfiles_step++)); do
+			local _dotfiles_drained=0
 			while IFS= read -r -t 0 -n 1 _dotfiles_discard; do
-				((_dotfiles_i++ > 256)) && break
+				_dotfiles_drained=1
+				((_dotfiles_i++ > 2048)) && break
 			done
-		fi
+
+			# Wait briefly for delayed bytes; if nothing arrived and we didn't drain anything, we're done.
+			if IFS= read -r -t "${_dotfiles_step_wait}" -n 1 _dotfiles_discard; then
+				_dotfiles_drained=1
+				continue
+			fi
+			[[ "${_dotfiles_drained}" -eq 1 ]] || break
+		done
 	fi
 
 	BASH_PROMPT="\n"
