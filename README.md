@@ -89,6 +89,15 @@ Available flags:
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
 - `DOTFILES_ENABLE_IOBROKER`
 
+## MOTD (hostname-basiert)
+
+- Flags: `DOTFILES_ENABLE_MOTD` (aktiviert Komponenten) und optional `DOTFILES_ENABLE_MOTD_AUTO_RUN` (sourced bei Login). Default: beide `false`.
+- Einstieg: `motd/motd.sh` (Alias `motd` wird nur gesetzt, wenn MOTD-Flag an ist). Zieht Farben/Settings aus `config/dotfiles.config`.
+- Inhalte: Uptime, Root-/Home-Speicher (Home aus Cache `/usr/local/share/dotfiles/dir-sizes`), IP/OS/Load, Tasks aus `motd/tasks-$HOSTNAME` oder `motd/tasks`, optionale APT-Updates (Cache-Dateien unter `/usr/local/share/dotfiles/apt-updates-*`, gesteuert via `MOTD_SHOW_APT_UPDATES` in `config/dotfiles.config`).
+- Host-Hooks: Proxmox-Snippet `motd/motd-proxmox.sh` (auto bei `pveversion`), per-Host Skripte `motd/motd-$HOSTNAME.sh` (falls vorhanden).
+- Timer/Caches (optional, manuell installieren): `motd/systemd/update-motd-apt-infos.{service,timer}` schreibt APT-Caches; `motd/systemd/calc-dir-size-homes.{service,timer}` schreibt `dir-sizes`. Enable per `sudo systemctl enable --now <timer>`.
+- Hinweis: Wird `motd` gesourced, verbleibt dessen Umgebung im aktuellen Shell-Prozess; halte per-Host-Skripte kurz und defensiv.
+
 ## Prompt erklärt (bash + zsh)
 
 Aktiviert via `DOTFILES_ENABLE_PROMPT` (default `true`).
