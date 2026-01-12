@@ -5,16 +5,26 @@
 # uptime
 UPTIME_TEXT="$(/usr/bin/uptime -p)"
 
-# size of /
-USAGE_ROOT=$(df -h / | awk '/\// {print $(NF-1)}' | sed 's/%//g' || true)
-USAGE_ROOT_GB=$(df -h / | awk '/\// {print $(NF-3)}' || true)
-USAGE_ROOT_TOTAL=$(df -h / | awk '/\// {print $(NF-4)}' || true)
+# size of / (single df call)
+if ROOT_DF=$(df -h / 2>/dev/null | awk 'NR==2 {print $2, $3, $5}'); then
+	# shellcheck disable=SC2086
+	read -r USAGE_ROOT_TOTAL USAGE_ROOT_GB USAGE_ROOT_PCT <<<"${ROOT_DF}"
+	USAGE_ROOT="${USAGE_ROOT_PCT%\%}"
+else
+	USAGE_ROOT_TOTAL=""
+	USAGE_ROOT_GB=""
+	USAGE_ROOT=""
+fi
 
-# home-size
+# home-size (cache, fallback to df /home)
 if [[ -f /usr/local/share/dotfiles/dir-sizes ]]; then
 	USAGE_HOME=$(</usr/local/share/dotfiles/dir-sizes)
+elif HOME_DF=$(df -h /home 2>/dev/null | awk 'NR==2 {print $3, $2, $5}'); then
+	# shellcheck disable=SC2086
+	read -r USAGE_HOME_USED USAGE_HOME_TOTAL USAGE_HOME_PCT <<<"${HOME_DF}"
+	USAGE_HOME="${USAGE_HOME_USED} of ${USAGE_HOME_TOTAL} (${USAGE_HOME_PCT})"
 else
-	USAGE_HOME="Source file not found"
+	USAGE_HOME="unknown"
 fi
 
 # get hostname
