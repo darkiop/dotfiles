@@ -330,13 +330,26 @@ function INSTALL_FZF() {
 # -------------------------------------------------------------
 function INSTALL_MOTD_TIMERS() {
 	MESSAGE blue "[ Install MOTD systemd timers ]"
-	CHECK_IF_SUDO_IS_INSTALLED
-
+	local mode="${1:-interactive}" # interactive|auto
 	local DOTFILES_DIR="${HOME}/dotfiles"
 	local SYSTEMD_DIR="/etc/systemd/system"
 	local SUDO=""
 	if ! IS_USER_ROOT; then
 		SUDO="sudo"
+	fi
+
+	if [[ ${mode} != "auto" ]]; then
+		CHECK_IF_SUDO_IS_INSTALLED
+	elif ! IS_USER_ROOT && ! command -v sudo >/dev/null 2>&1; then
+		MESSAGE yellow "sudo not found; skipping MOTD timer auto-install."
+		return 0
+	fi
+
+	# Determine actual dotfiles directory (supports running install.sh from other paths)
+	if [[ -d "${DOTFILES_DIR}/motd/systemd" ]]; then
+		:
+	else
+		DOTFILES_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 	fi
 
 	if [[ ! -d "${DOTFILES_DIR}/motd/systemd" ]]; then
@@ -365,16 +378,14 @@ function INSTALL_MOTD_TIMERS() {
 
 	${SUDO} systemctl daemon-reload
 
-	local enable_now=""
-	read -r -p "Enable and start MOTD timers now? (y/N): " enable_now
-	case "${enable_now}" in
-	y | Y)
-		${SUDO} systemctl enable --now update-motd-apt-infos.timer calc-dir-size-homes.timer
-		;;
-	*)
-		MESSAGE yellow "Timers installed but not enabled."
-		;;
-	esac
+	# Always enable timers (idempotent); avoid blocking installs if a unit fails.
+	if [[ ${mode} == "auto" ]]; then
+		${SUDO} systemctl reset-failed update-motd-apt-infos.timer calc-dir-size-homes.timer >/dev/null 2>&1 || true
+		${SUDO} systemctl enable --now update-motd-apt-infos.timer calc-dir-size-homes.timer >/dev/null 2>&1 || true
+	else
+		${SUDO} systemctl reset-failed update-motd-apt-infos.timer calc-dir-size-homes.timer >/dev/null 2>&1 || true
+		${SUDO} systemctl enable --now update-motd-apt-infos.timer calc-dir-size-homes.timer || true
+	fi
 }
 
 # -------------------------------------------------------------
@@ -453,6 +464,11 @@ function INSTALL_DOTFILES() {
 # -------------------------------------------------------------
 # RUN THE SCRIPT
 # -------------------------------------------------------------
+# Always install and enable MOTD timers on systemd systems (best-effort).
+if [[ -d /run/systemd/system ]]; then
+	INSTALL_MOTD_TIMERS auto || true
+fi
+
 if [[ $1 == 'all' ]]; then
 	# skip menu and install all
 	INSTALL_DOTFILES
@@ -470,10 +486,16 @@ else
 			exit
 			;;
 		2) # install git submodules
+			if [[ -d /run/systemd/system ]]; then
+				INSTALL_MOTD_TIMERS auto || true
+			fi
 			INSTALL_GIT_SUBMODULES
 			exit
 			;;
 		3) # link dotfiles
+			if [[ -d /run/systemd/system ]]; then
+				INSTALL_MOTD_TIMERS auto || true
+			fi
 			LINK_DOTFILES
 			exit
 			;;
