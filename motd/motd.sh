@@ -73,24 +73,15 @@ odin) COLOR_CLOSE="" ;;
 *) COLOR_CLOSE="$(tput sgr0)" ;;
 esac
 
-# read tasks (prefer JSON mapping, fallback to legacy per-host files)
+# read tasks (JSON via jq; fallback to legacy files only if present)
 TASKS=""
-PYTHON_MISSING_MSG=""
-if [[ -f ~/dotfiles/motd/tasks.json ]] && command -v python3 >/dev/null 2>&1; then
-	TASKS="$(python3 - <<'PY'
-import json, os
-host = os.uname().nodename
-path = os.path.expanduser("~/dotfiles/motd/tasks.json")
-try:
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    print(data.get(host) or data.get("default", ""), end="")
-except Exception:
-    pass
-PY
-)"
-elif [[ -f ~/dotfiles/motd/tasks.json ]]; then
-	PYTHON_MISSING_MSG="(python3 missing for tasks.json)"
+JQ_MISSING_MSG=""
+if [[ -f ~/dotfiles/motd/tasks.json ]]; then
+	if command -v jq >/dev/null 2>&1; then
+		TASKS="$(jq -r --arg host "${HOSTNAME}" '(.[$host] // .default // "")' ~/dotfiles/motd/tasks.json 2>/dev/null)"
+	else
+		JQ_MISSING_MSG="(jq missing for tasks.json)"
+	fi
 fi
 
 if [[ -z ${TASKS} ]]; then
@@ -132,7 +123,9 @@ if [[ ${MOTD_SHOW_APT_UPDATES} == "y" ]]; then
 	if [[ -f /usr/local/share/dotfiles/apt-updates-count ]] && [[ -f /usr/local/share/dotfiles/apt-updates-packages ]]; then
 		UPDATES_COUNT=$(</usr/local/share/dotfiles/apt-updates-count)
 		UPDATES_PACKAGES=$(</usr/local/share/dotfiles/apt-updates-packages)
-		SHOW_UPDATES_LINE=true
+		if [[ -n ${UPDATES_COUNT} ]]; then
+			SHOW_UPDATES_LINE=true
+		fi
 	fi
 fi
 
@@ -161,9 +154,9 @@ if [[ ${SHOW_UPDATES_LINE} == true ]]; then
 		"${COLOR_GREEN}" " updates to install" "${COLOR_RESET}"
 fi
 
-# warn if tasks.json present but python3 missing
-if [[ -n ${PYTHON_MISSING_MSG} ]]; then
-	print_kv tasks "${PYTHON_MISSING_MSG}"
+# warn if tasks.json present but jq missing
+if [[ -n ${JQ_MISSING_MSG} ]]; then
+	print_kv tasks "${JQ_MISSING_MSG}"
 fi
 
 printf "\n"
