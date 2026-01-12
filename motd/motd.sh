@@ -79,11 +79,13 @@ EOF
 	;;
 esac
 
-# show updates
+# show updates (only when enabled and cache files exist)
+SHOW_UPDATES_LINE=false
 if [[ ${MOTD_SHOW_APT_UPDATES} == "y" ]]; then
 	if [[ -f /usr/local/share/dotfiles/apt-updates-count ]] && [[ -f /usr/local/share/dotfiles/apt-updates-packages ]]; then
 		UPDATES_COUNT=$(</usr/local/share/dotfiles/apt-updates-count)
 		UPDATES_PACKAGES=$(</usr/local/share/dotfiles/apt-updates-packages)
+		SHOW_UPDATES_LINE=true
 	fi
 fi
 
@@ -105,13 +107,12 @@ print_kv / "${USAGE_ROOT_GB} of ${USAGE_ROOT_TOTAL} (${USAGE_ROOT}%%)"
 print_kv /home "${USAGE_HOME}"
 
 # “updates” line needs two different colours → do it explicitly
-printf "%b%-11s%b %b%s%b%b%s%b%b%s%b\n" \
-	"${COLOR_BLUE}" "updates" "${COLOR_RESET}" \
-	"${COLOR_GREEN}" "" "${COLOR_RESET}" \
-	"${COLOR_YELLOW}" "${UPDATES_COUNT}" "${COLOR_RESET}" \
-	"${COLOR_GREEN}" " updates to install " "${COLOR_RESET}" \
-	"${COLOR_YELLOW}" "${UPDATES_PACKAGES}" \
-	"${COLOR_RESET}"
+if [[ ${SHOW_UPDATES_LINE} == true ]]; then
+	printf "%b%-11s%b %b%s%b%b%s%b\n" \
+		"${COLOR_BLUE}" "updates" "${COLOR_RESET}" \
+		"${COLOR_YELLOW}" "${UPDATES_COUNT}" "${COLOR_RESET}" \
+		"${COLOR_GREEN}" " updates to install" "${COLOR_RESET}"
+fi
 
 printf "\n"
 
