@@ -51,7 +51,7 @@ bash ~/dotfiles/install.sh
 - Git + fzf helpers: `gco`, `gshow`, `gaddp`, `gstashp`, `gfixup`, `gcp`
 - Navi: `Ctrl+G` widget + cheats in `cheats/`
 - Tmux: oh-my-tmux + TPM + `config/tmux.conf.local`
-- MOTD: hostname-based scripts in `motd/`
+- MOTD: hostname-based scripts in `motd/` (enable via `DOTFILES_ENABLE_MOTD`, optional auto-run `DOTFILES_ENABLE_MOTD_AUTO_RUN`)
 
 ## Feature flags (per host)
 
@@ -82,10 +82,25 @@ Available flags:
 - `DOTFILES_ENABLE_FZF_TAB_COMPLETION`
 - `DOTFILES_ENABLE_EXTRACT_EXT`
 - `DOTFILES_ENABLE_OH_MY_ZSH`
+- `DOTFILES_ENABLE_MOTD`
+- `DOTFILES_ENABLE_MOTD_AUTO_RUN`
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
 - `DOTFILES_ENABLE_IOBROKER`
+
+## MOTD (hostname-basiert)
+
+- Flags: `DOTFILES_ENABLE_MOTD` (aktiviert Komponenten) und optional `DOTFILES_ENABLE_MOTD_AUTO_RUN` (sourced bei Login). Default: beide `false`.
+- Einstieg: `motd/motd.sh` (Alias `motd` wird nur gesetzt, wenn MOTD-Flag an ist). Zieht Farben/Settings aus `config/dotfiles.config`.
+- Inhalte: Uptime, Root-/Home-Speicher (`/home` bevorzugt via Cache `/usr/local/share/dotfiles/dir-sizes`), IP/OS/Load, Tasks aus `motd/tasks.json` (via `jq`), optionale APT-Updates (Cache-Dateien unter `/usr/local/share/dotfiles/apt-updates-*`, gesteuert via `MOTD_SHOW_APT_UPDATES` in `config/dotfiles.config`).
+- Host-Hooks: optionales Proxmox-Snippet `motd/motd-proxmox.sh` (auto bei `pveversion`).
+- Timer/Caches: `motd/systemd/update-motd-apt-infos.{service,timer}` schreibt APT-Caches; `motd/systemd/calc-dir-size-homes.{service,timer}` schreibt `dir-sizes`.
+  - Installer: Beim Full-Install (`bash ~/dotfiles/install.sh` → `Install dotfiles (all)` oder non-interactive `all`) werden die Timer auf systemd-Systemen automatisch installiert (Menüpunkt `Install MOTD systemd timers` ist zum Neuinstallieren).
+  - Manuell: `sudo cp ~/dotfiles/motd/systemd/*.service ~/dotfiles/motd/systemd/*.timer /etc/systemd/system/ && sudo systemctl daemon-reload`
+  - Enable: `sudo systemctl enable --now update-motd-apt-infos.timer calc-dir-size-homes.timer`
+  - Manual run: `sudo systemctl start update-motd-apt-infos.service calc-dir-size-homes.service`
+  - Check: `systemctl list-timers | rg '(update-motd-apt-infos|calc-dir-size-homes)'`
 
 ## Prompt erklärt (bash + zsh)
 

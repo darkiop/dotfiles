@@ -2,9 +2,12 @@
 Description=Daily execution of calc-dir-size-homes.service
 
 [Timer]
-OnCalendar=daily          # 00:00 local time by default
-Persistent=true           # run missed occurrences after downtime
-RandomizedDelaySec=15m    # jitter to avoid exact midnight spike
+# once per day (00:00 local time by default)
+OnCalendar=daily
+# run missed occurrences after downtime
+Persistent=true
+# jitter to avoid exact midnight spike
+RandomizedDelaySec=15m
 Unit=calc-dir-size-homes.service
 
 [Install]

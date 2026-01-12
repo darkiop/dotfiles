@@ -1,23 +1,29 @@
 #!/bin/bash
 
-function update_apt_info_files() {
+set -euo pipefail
+
+OUTPUT_DIR="/usr/local/share/dotfiles"
+COUNT_FILE="${OUTPUT_DIR}/apt-updates-count"
+PKG_FILE="${OUTPUT_DIR}/apt-updates-packages"
+
+update_apt_info_files() {
+	if ! command -v apt-get >/dev/null 2>&1; then
+		echo "apt-get not found; skipping MOTD apt cache update" >&2
+		return 0
+	fi
+
+	mkdir -p "${OUTPUT_DIR}"
 	# trunk-ignore(shellcheck/SC2312)
-	apt-get -s -o Debug::NoLocking=true upgrade | grep -c ^Inst >/usr/local/share/dotfiles/apt-updates-count
-	#apt-get -s -o Debug::NoLocking=true upgrade | grep ^Inst | wc -l >/usr/local/share/dotfiles/apt-updates-count
+	apt-get -s -o Debug::NoLocking=true upgrade | grep -c ^Inst >"${COUNT_FILE}"
 	# trunk-ignore(shellcheck/SC2312)
-	apt-get -s dist-upgrade | awk '/^Inst/ { print $2 }' >/usr/local/share/dotfiles/apt-updates-packages
-	chmod 777 /usr/local/share/dotfiles/apt-updates-count
-	chmod 777 /usr/local/share/dotfiles/apt-updates-packages
+	apt-get -s dist-upgrade | awk '/^Inst/ { print $2 }' >"${PKG_FILE}"
+	chmod 644 "${COUNT_FILE}" "${PKG_FILE}"
+	chmod 755 "${OUTPUT_DIR}"
 }
 
-if [[ -d /usr/local/share/dotfiles ]]; then
-	update_apt_info_files
-else
-	mkdir /usr/local/share/dotfiles
-	update_apt_info_files
-fi
+update_apt_info_files
 
-cat /usr/local/share/dotfiles/apt-updates-count
-cat /usr/local/share/dotfiles/apt-updates-packages
+cat "${COUNT_FILE}"
+cat "${PKG_FILE}"
 
 # EOF

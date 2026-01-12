@@ -167,6 +167,9 @@ function SHOW_MAIN_MENU() {
 	printf '%b3)%b Install shell config\n' \
 		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
 
+	printf '%b4)%b Install MOTD systemd timers\n' \
+		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
+
 	echo
 
 	# Prompt line, again using %b for red “x” and reset:
@@ -323,6 +326,69 @@ function INSTALL_FZF() {
 }
 
 # -------------------------------------------------------------
+# Install: MOTD systemd timers (optional)
+# -------------------------------------------------------------
+function INSTALL_MOTD_TIMERS() {
+	MESSAGE blue "[ Install MOTD systemd timers ]"
+	local mode="${1:-interactive}" # interactive|auto
+	local DOTFILES_DIR="${HOME}/dotfiles"
+	local SYSTEMD_DIR="/etc/systemd/system"
+	local SUDO=""
+	if ! IS_USER_ROOT; then
+		SUDO="sudo"
+	fi
+
+	if [[ ${mode} != "auto" ]]; then
+		CHECK_IF_SUDO_IS_INSTALLED
+	elif ! IS_USER_ROOT && ! command -v sudo >/dev/null 2>&1; then
+		MESSAGE yellow "sudo not found; skipping MOTD timer auto-install."
+		return 0
+	fi
+
+	# Determine actual dotfiles directory (supports running install.sh from other paths)
+	if [[ -d "${DOTFILES_DIR}/motd/systemd" ]]; then
+		:
+	else
+		DOTFILES_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+	fi
+
+	if [[ ! -d "${DOTFILES_DIR}/motd/systemd" ]]; then
+		MESSAGE red "MOTD systemd directory not found at ${DOTFILES_DIR}/motd/systemd"
+		return 1
+	fi
+	if [[ ! -d "${SYSTEMD_DIR}" ]]; then
+		MESSAGE red "systemd system directory not found at ${SYSTEMD_DIR}"
+		return 1
+	fi
+	if ! command -v systemctl >/dev/null 2>&1; then
+		MESSAGE red "systemctl not found. Skipping systemd timer installation."
+		return 1
+	fi
+
+	MESSAGE lightblue "Installing unit files to ${SYSTEMD_DIR} (ExecStart paths are templated to ${DOTFILES_DIR})"
+	local unit_src unit_dst tmp
+	for unit_src in "${DOTFILES_DIR}/motd/systemd/"*.service "${DOTFILES_DIR}/motd/systemd/"*.timer; do
+		[[ -f "${unit_src}" ]] || continue
+		unit_dst="${SYSTEMD_DIR}/$(basename "${unit_src}")"
+		tmp="$(mktemp)"
+		sed "s|/home/darkiop/dotfiles|${DOTFILES_DIR}|g" "${unit_src}" >"${tmp}"
+		${SUDO} install -m 0644 "${tmp}" "${unit_dst}"
+		rm -f "${tmp}"
+	done
+
+	${SUDO} systemctl daemon-reload
+
+	# Always enable timers (idempotent); avoid blocking installs if a unit fails.
+	if [[ ${mode} == "auto" ]]; then
+		${SUDO} systemctl reset-failed update-motd-apt-infos.timer calc-dir-size-homes.timer >/dev/null 2>&1 || true
+		${SUDO} systemctl enable --now update-motd-apt-infos.timer calc-dir-size-homes.timer >/dev/null 2>&1 || true
+	else
+		${SUDO} systemctl reset-failed update-motd-apt-infos.timer calc-dir-size-homes.timer >/dev/null 2>&1 || true
+		${SUDO} systemctl enable --now update-motd-apt-infos.timer calc-dir-size-homes.timer || true
+	fi
+}
+
+# -------------------------------------------------------------
 # Install .bashrc
 # -------------------------------------------------------------
 function LINK_DOTFILES() {
@@ -393,6 +459,10 @@ function INSTALL_DOTFILES() {
 	INSTALL_TMUX
 	INSTALL_FZF
 	LINK_DOTFILES
+	# Install and enable MOTD timers on systemd systems (best-effort).
+	if [[ -d /run/systemd/system ]]; then
+		INSTALL_MOTD_TIMERS auto || true
+	fi
 }
 
 # -------------------------------------------------------------
@@ -420,6 +490,10 @@ else
 			;;
 		3) # link dotfiles
 			LINK_DOTFILES
+			exit
+			;;
+		4) # install MOTD systemd timers
+			INSTALL_MOTD_TIMERS
 			exit
 			;;
 		x | X) # exit

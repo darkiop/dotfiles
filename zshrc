@@ -76,6 +76,13 @@ if dotfiles_flag_enabled DOTFILES_ENABLE_HELPERS; then
   source ~/dotfiles/components/helpers
 fi
 
+# MOTD (opt-in)
+if dotfiles_flag_enabled DOTFILES_ENABLE_MOTD && dotfiles_flag_enabled DOTFILES_ENABLE_MOTD_AUTO_RUN; then
+  if [[ -s ~/dotfiles/motd/motd.sh ]]; then
+    source ~/dotfiles/motd/motd.sh
+  fi
+fi
+
 # Enable color support of ls and also add handy aliases
 if [[ -x /usr/bin/dircolors ]]; then
   [[ -r ~/.dircolors ]] && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"

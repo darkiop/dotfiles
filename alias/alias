@@ -207,10 +207,11 @@ if [[ -x /usr/bin/mtr ]]; then
 	alias mtr='mtr -b'
 fi
 
-# motd
-alias motd='source ~/dotfiles/motd/motd.sh'
+# motd (optional)
+if dotfiles_flag_enabled DOTFILES_ENABLE_MOTD; then
+	alias motd='source ~/dotfiles/motd/motd.sh'
+fi
 
-# clear + motd
 if [[ -n ${ZSH_VERSION:-} ]]; then
 	alias cls='source ~/.zshrc'
 	alias rl='source ~/.zshrc'
