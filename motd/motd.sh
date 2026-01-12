@@ -2,6 +2,13 @@
 # https://github.com/fedya/omv_motd.git
 # modified by thwalk
 
+# color fallbacks (if config/dotfiles.config was not sourced)
+: "${COLOR_BLUE:=}"
+: "${COLOR_LIGHT_BLUE:=}"
+: "${COLOR_GREEN:=}"
+: "${COLOR_YELLOW:=}"
+: "${COLOR_RESET:=$(tput sgr0 2>/dev/null || true)}"
+
 # uptime
 UPTIME_TEXT="$(/usr/bin/uptime -p)"
 
@@ -161,7 +168,7 @@ fi
 
 printf "\n"
 
-# motd for proxmox
+# motd for proxmox (global, not per-host scripts)
 if [[ ${EUID} -ne 0 ]]; then
 	if [[ -x /usr/bin/pveversion ]]; then
 		# shellcheck source=/dev/null
@@ -169,10 +176,4 @@ if [[ ${EUID} -ne 0 ]]; then
 	fi
 fi
 
-# motd by hostname
-if [[ -f ~/dotfiles/motd/motd-${HOSTNAME}.sh ]]; then
-	# shellcheck source=/dev/null
-	source ~/dotfiles/motd/motd-"${HOSTNAME}".sh
-else
-	echo
-fi
+echo
