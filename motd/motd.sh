@@ -35,11 +35,23 @@ case ${HOSTNAME} in
 odin)
 	GET_PLATFORM_DATA="Synology DSM "$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
 	#GET_CPU_TEMP=$(($(cat /sys/class/hwmon/hwmon0/temp1_input) / 1000))"°C"
-	GET_HOST_IP=$(/sbin/ip -o -4 addr list ovs_eth0 | awk '{print $4}' | cut -d/ -f1)
+	if GET_HOST_IP=$(/sbin/ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}'); then
+		:
+	elif GET_HOST_IP=$(hostname -I 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i !~ /^127\\./) {print $i; exit}}'); then
+		:
+	else
+		GET_HOST_IP=""
+	fi
 	;;
 *)
 	GET_PLATFORM_DATA=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
-	GET_HOST_IP=$(/sbin/ip -o -4 addr list | awk '{print $4}' | cut -d/ -f1 | tail -1)
+	if GET_HOST_IP=$(/sbin/ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}'); then
+		:
+	elif GET_HOST_IP=$(hostname -I 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i !~ /^127\\./) {print $i; exit}}'); then
+		:
+	else
+		GET_HOST_IP=""
+	fi
 	;;
 esac
 
