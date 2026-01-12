@@ -138,13 +138,19 @@ print_kv() {
 		"${COLOR_GREEN}" "$*" "${COLOR_RESET}"
 }
 printf "\n"
-print_kv ip "${GET_HOST_IP}"
-print_kv tasks "${TASKS}"
+if [[ -n ${GET_HOST_IP} ]]; then
+	print_kv ip "${GET_HOST_IP}"
+fi
+if [[ -n ${TASKS} ]]; then
+	print_kv tasks "${TASKS}"
+fi
 print_kv load "${LOAD1} / ${LOAD5} / ${LOAD15}"
 print_kv uptime "${UPTIME_TEXT}"
 print_kv os "${GET_PLATFORM_DATA}"
 print_kv / "${USAGE_ROOT_GB} of ${USAGE_ROOT_TOTAL} (${USAGE_ROOT}%%)"
-print_kv /home "${USAGE_HOME}"
+if [[ -n ${USAGE_HOME} && ${USAGE_HOME} != "unknown" ]]; then
+	print_kv /home "${USAGE_HOME}"
+fi
 
 # “updates” line needs two different colours → do it explicitly
 if [[ ${SHOW_UPDATES_LINE} == true ]]; then
