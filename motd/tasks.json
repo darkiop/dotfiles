@@ -1,0 +1,20 @@
+{
+  "default": "",
+  "freya": "NAS (Birkenwweg 17)",
+  "loki": "Local DNS Slave",
+  "loki-new": "Ser2Net, piHole",
+  "odin": "NAS (Birkenweg 5)",
+  "pve01": "Proxmox-Node 1",
+  "pve02": "Proxmox-Node 2",
+  "pve-ct-adguard-master": "Adblock",
+  "pve-ct-adguard-slave": "Adblock",
+  "pve-ct-bind-master": "Lokaler DNS (Master)",
+  "pve-ct-dev": "Development",
+  "pve-ct-iobroker": "ioBroker",
+  "pve-ct-mariadb": "MySQL-Datenbank für pve-ct-iobroker",
+  "pve-ct-vpn-gw-bw17": "VPN-Gateway Birkenweg 17",
+  "pve-ct-vpn-gw-hs6": "VPN-Gateway Hauptstraße 6",
+  "pve-ct-vpn-hetzner": "VPN-Gateway Hetzner",
+  "pve-vm-docker": "Docker Host",
+  "thor": "PC"
+}

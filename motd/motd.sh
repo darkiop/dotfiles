@@ -47,11 +47,32 @@ esac
 # set title of terminal
 trap 'echo -ne "\033]0;${USER}@${HOSTNAME}:${PWD}\007"' DEBUG
 
-# read task file
-if [[ -f ~/dotfiles/motd/tasks-${HOSTNAME} ]]; then
-	TASKS="$(cat ~/dotfiles/motd/tasks-"${HOSTNAME}")"
-else
-	TASKS="$(cat ~/dotfiles/motd/tasks)"
+# read tasks (prefer JSON mapping, fallback to legacy per-host files)
+TASKS=""
+PYTHON_MISSING_MSG=""
+if [[ -f ~/dotfiles/motd/tasks.json ]] && command -v python3 >/dev/null 2>&1; then
+	TASKS="$(python3 - <<'PY'
+import json, os
+host = os.uname().nodename
+path = os.path.expanduser("~/dotfiles/motd/tasks.json")
+try:
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    print(data.get(host) or data.get("default", ""), end="")
+except Exception:
+    pass
+PY
+)"
+elif [[ -f ~/dotfiles/motd/tasks.json ]]; then
+	PYTHON_MISSING_MSG="(python3 missing for tasks.json)"
+fi
+
+if [[ -z ${TASKS} ]]; then
+	if [[ -f ~/dotfiles/motd/tasks-${HOSTNAME} ]]; then
+		TASKS="$(cat ~/dotfiles/motd/tasks-"${HOSTNAME}")"
+	elif [[ -f ~/dotfiles/motd/tasks ]]; then
+		TASKS="$(cat ~/dotfiles/motd/tasks)"
+	fi
 fi
 
 # use toilet for title of motd
@@ -112,6 +133,11 @@ if [[ ${SHOW_UPDATES_LINE} == true ]]; then
 		"${COLOR_BLUE}" "updates" "${COLOR_RESET}" \
 		"${COLOR_YELLOW}" "${UPDATES_COUNT}" "${COLOR_RESET}" \
 		"${COLOR_GREEN}" " updates to install" "${COLOR_RESET}"
+fi
+
+# warn if tasks.json present but python3 missing
+if [[ -n ${PYTHON_MISSING_MSG} ]]; then
+	print_kv tasks "${PYTHON_MISSING_MSG}"
 fi
 
 printf "\n"
