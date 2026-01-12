@@ -66,9 +66,6 @@ odin) COLOR_CLOSE="" ;;
 *) COLOR_CLOSE="$(tput sgr0)" ;;
 esac
 
-# set title of terminal
-trap 'echo -ne "\033]0;${USER}@${HOSTNAME}:${PWD}\007"' DEBUG
-
 # read tasks (prefer JSON mapping, fallback to legacy per-host files)
 TASKS=""
 PYTHON_MISSING_MSG=""
