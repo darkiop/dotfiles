@@ -106,16 +106,14 @@ odin)
 EOF
 	echo
 	;;
-*)
-	if command -v toilet >/dev/null 2>&1; then
-		if TOILET_OUTPUT=$(toilet -f smblock -w 150 "${HOSTNAME}"); then
-			echo -e "${COLOR_YELLOW}"
-			echo -e " ${TOILET_OUTPUT//$'\n'/$'\n '}"
-			echo -e "${COLOR_CLOSE}"
+	*)
+		if command -v toilet >/dev/null 2>&1; then
+			printf '%b' "${COLOR_YELLOW}"
+			toilet -f smblock -w 150 "${HOSTNAME}" 2>/dev/null | sed 's/^/ /'
+			printf '%b' "${COLOR_CLOSE}"
 		fi
-	fi
-	;;
-esac
+		;;
+	esac
 
 # show updates (only when enabled and cache files exist)
 SHOW_UPDATES_LINE=false
