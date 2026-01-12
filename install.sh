@@ -459,16 +459,15 @@ function INSTALL_DOTFILES() {
 	INSTALL_TMUX
 	INSTALL_FZF
 	LINK_DOTFILES
+	# Install and enable MOTD timers on systemd systems (best-effort).
+	if [[ -d /run/systemd/system ]]; then
+		INSTALL_MOTD_TIMERS auto || true
+	fi
 }
 
 # -------------------------------------------------------------
 # RUN THE SCRIPT
 # -------------------------------------------------------------
-# Always install and enable MOTD timers on systemd systems (best-effort).
-if [[ -d /run/systemd/system ]]; then
-	INSTALL_MOTD_TIMERS auto || true
-fi
-
 if [[ $1 == 'all' ]]; then
 	# skip menu and install all
 	INSTALL_DOTFILES
@@ -486,16 +485,10 @@ else
 			exit
 			;;
 		2) # install git submodules
-			if [[ -d /run/systemd/system ]]; then
-				INSTALL_MOTD_TIMERS auto || true
-			fi
 			INSTALL_GIT_SUBMODULES
 			exit
 			;;
 		3) # link dotfiles
-			if [[ -d /run/systemd/system ]]; then
-				INSTALL_MOTD_TIMERS auto || true
-			fi
 			LINK_DOTFILES
 			exit
 			;;
