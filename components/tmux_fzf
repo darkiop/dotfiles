@@ -1,0 +1,67 @@
+#!/bin/bash
+
+_dotfiles_tmux_fzf_require() {
+	if ! command -v tmux >/dev/null 2>&1; then
+		printf '%s\n' "tmux not found"
+		return 1
+	fi
+	if ! command -v fzf >/dev/null 2>&1; then
+		printf '%s\n' "fzf not found"
+		return 1
+	fi
+	if [[ -z ${TMUX:-} ]]; then
+		printf '%s\n' "not inside tmux"
+		return 1
+	fi
+	return 0
+}
+
+ts() {
+	_dotfiles_tmux_fzf_require || return 1
+
+	local session
+	session="$(tmux list-sessions -F '#S' 2>/dev/null | fzf --prompt='tmux session> ' --height 40% --reverse)" || return 1
+	[[ -n ${session} ]] || return 0
+	tmux switch-client -t "${session}"
+}
+
+tw() {
+	_dotfiles_tmux_fzf_require || return 1
+
+	local selection target session
+	selection="$(tmux list-windows -a -F '#S:#I #W' 2>/dev/null | fzf --prompt='tmux window> ' --height 40% --reverse)" || return 1
+	target="${selection%% *}"
+	[[ -n ${target} ]] || return 0
+	session="${target%%:*}"
+	tmux switch-client -t "${session}"
+	tmux select-window -t "${target}"
+}
+
+tp() {
+	_dotfiles_tmux_fzf_require || return 1
+
+	local selection target session window
+	selection="$(tmux list-panes -a -F '#S:#I.#P #{pane_current_command} #{pane_path}' 2>/dev/null | fzf --prompt='tmux pane> ' --height 40% --reverse)" || return 1
+	target="${selection%% *}"
+	[[ -n ${target} ]] || return 0
+	session="${target%%:*}"
+	window="${target%.*}"
+	tmux switch-client -t "${session}"
+	tmux select-window -t "${window}"
+	tmux select-pane -t "${target}"
+}
+
+# Optional keybinding: Ctrl+F (inside tmux only).
+# Note: This overrides the default "forward-char" binding in interactive shells.
+if [[ -n ${TMUX:-} ]] && command -v tmux >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1; then
+	if [[ -n ${BASH_VERSION:-} ]]; then
+		bind -x '"\C-f":tw' 2>/dev/null || true
+	elif [[ -n ${ZSH_VERSION:-} ]]; then
+		_dotfiles_tmux_fzf_tw_widget() {
+			tw
+			zle reset-prompt
+		}
+		zle -N dotfiles_tmux_fzf_tw_widget _dotfiles_tmux_fzf_tw_widget 2>/dev/null || true
+		bindkey '^F' dotfiles_tmux_fzf_tw_widget 2>/dev/null || true
+	fi
+fi

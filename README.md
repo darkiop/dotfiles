@@ -46,11 +46,13 @@ bash ~/dotfiles/install.sh
 - FZF: installed via `modules/fzf/install --key-bindings --completion` (never via apt)
 - FZF extras: `fh` history picker and `cdf` directory picker (optionally binds keys)
 - Helpers: `dcheat`, `cheat`, `helpme` (local cheats + help wrappers)
+- dot doctor: `dot doctor` quick diagnostics for common issues
 - oh-my-zsh (optional, submodule `modules/oh-my-zsh`)
 - SSH picker: `sshp` (pick host from `~/.ssh/config` via `fzf`)
 - Git + fzf helpers: `gco`, `gshow`, `gaddp`, `gstashp`, `gfixup`, `gcp`
 - Navi: `Ctrl+G` widget + cheats in `cheats/`
 - Tmux: oh-my-tmux + TPM + `config/tmux.conf.local`
+- Tmux fzf picker: `ts`/`tw`/`tp` (sessions/windows/panes via `fzf`)
 - MOTD: hostname-based scripts in `motd/` (enable via `DOTFILES_ENABLE_MOTD`, optional auto-run `DOTFILES_ENABLE_MOTD_AUTO_RUN`)
 
 ## Feature flags (per host)
@@ -87,6 +89,10 @@ Available flags:
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
+- `DOTFILES_ENABLE_TMUX_FZF`
+- `DOTFILES_ENABLE_JOURNALCTL_PICKER`
+- `DOTFILES_ENABLE_DOT_DOCTOR`
+- `DOTFILES_ENABLE_DOCKER_FZF`
 - `DOTFILES_ENABLE_IOBROKER`
 
 ## MOTD (hostname-basiert)
@@ -157,6 +163,83 @@ Enabled by default via `DOTFILES_ENABLE_GIT_FZF` (disable per host via `~/dotfil
 - `gstashp show|apply|pop|drop`: pick a stash and run the action
 - `gfixup`: pick a commit and create a `git commit --fixup`
 - `gcp`: pick a commit hash and copy it (uses `wl-copy`/`xclip`/`pbcopy` if available)
+
+## Tmux fzf picker
+
+Enabled by default via `DOTFILES_ENABLE_TMUX_FZF`.
+
+- `ts`: pick a session and switch client
+- `tw`: pick a window across sessions and focus it
+- `tp`: pick a pane across sessions and focus it
+- Keybinding: `Ctrl+F` triggers `tw` (only inside tmux; overrides the default forward-char binding)
+
+## journalctl picker
+
+Enabled by default via `DOTFILES_ENABLE_JOURNALCTL_PICKER`.
+
+- `jctl`: pick a systemd service unit via `fzf` and view the last 500 log lines
+- `jctl follow`: same, but follows the log (`journalctl -f`)
+
+## Docker fzf helpers
+
+Enabled by default via `DOTFILES_ENABLE_DOCKER_FZF`.
+
+Commands:
+
+- `dps`: pick a container via `fzf` and show its `docker ps` line
+- `dexec [cmd...]`: pick a container and `docker exec -it` into it
+  - default command: `bash --login` (fallback: `sh`)
+  - example: `dexec env` or `dexec bash`
+- `dlogs [follow]`: pick a container and show logs
+  - `dlogs`: last ~500 lines (or full logs in `lnav`)
+  - `dlogs follow`: follow logs (`docker logs -f`)
+
+How it works:
+
+- Container list: `docker ps -a` is formatted into a picker list (ID, name, image, status, ports).
+- Preview: shows the last ~50 log lines for the currently highlighted container.
+- Permissions: if `docker ps` is not readable for the current user, the helper auto-falls back to `sudo docker` (so you may see a sudo password prompt).
+- Compatibility: if you already have `dps`/`dexec`/`dlogs` as aliases (e.g. from `alias/alias-docker`), the functions override them when this feature is enabled.
+
+Disable per host:
+
+```bash
+DOTFILES_ENABLE_DOCKER_FZF=false
+```
+
+## dot doctor
+
+Enabled by default via `DOTFILES_ENABLE_DOT_DOCTOR`.
+
+- `dot doctor`: quick diagnostics for common dotfiles issues.
+
+What it checks (high level):
+
+- Git repo: whether `~/dotfiles` exists and is a git repo
+- Git status: current branch + whether the repo is clean/dirty
+- Submodules: whether submodules are initialized/up-to-date
+- Symlinks: whether common links like `~/.bashrc`, `~/.zshrc`, `~/.tmux.conf`, `~/.tmux.conf.local` point to `~/dotfiles/*`
+- Required tools: checks common binaries, and more depending on enabled flags (e.g. `fzf`, `jq`, `journalctl`, `lnav`, `tmux`)
+- MOTD timers: on systemd systems prints `is-enabled` state for `update-motd-apt-infos.timer` and `calc-dir-size-homes.timer`
+
+Interpreting the output:
+
+- `OK`: check passed
+- `WARN`: something is unusual but dotfiles might still work; usually includes a hint what to fix
+- `FAIL`: required piece is missing (e.g. not a git repo)
+- `INFO`: informational rows (e.g. enabled timers, selected feature flags)
+
+Examples:
+
+```bash
+dot doctor
+```
+
+Disable per host:
+
+```bash
+DOTFILES_ENABLE_DOT_DOCTOR=false
+```
 
 ## FZF extras
 
@@ -282,6 +365,7 @@ Some bindings below are enabled via feature flags (see `DOTFILES_ENABLE_FZF_HIST
 | <kbd>CTRL</kbd> + <kbd>C</kbd>           | interrupt command               |
 | <kbd>CTRL</kbd> + <kbd>L</kbd>           | clear screen                    |
 | <kbd>TAB</kbd>                           | fzf tab-completion (optional)   |
+| <kbd>CTRL</kbd> + <kbd>F</kbd>           | tmux window picker `tw` (inside tmux) |
 | <kbd>ALT</kbd> + <kbd>C</kbd>            | `cdf` directory picker          |
 | <kbd>ALTGR</kbd> + <kbd>Mousewheel</kbd> | bash history                    |
 
@@ -291,6 +375,7 @@ Some bindings below are enabled via feature flags (see `DOTFILES_ENABLE_FZF_HIST
 | :---------------------------- | :--------------------- |
 | <kbd>CTRL</kbd> + <kbd>R</kbd> | `fh` history picker (or reverse-search) |
 | <kbd>TAB</kbd>                  | fzf tab-completion (optional)          |
+| <kbd>CTRL</kbd> + <kbd>F</kbd>  | tmux window picker `tw` (inside tmux) |
 | <kbd>ALT</kbd> + <kbd>C</kbd>  | `cdf` directory picker |
 
 ### Navi

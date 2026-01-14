@@ -58,6 +58,18 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_HELPERS; then
   source ~/dotfiles/components/helpers
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_TMUX_FZF; then
+  source ~/dotfiles/components/tmux_fzf
+fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
+  source ~/dotfiles/components/journalctl_picker
+fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_DOT_DOCTOR; then
+  source ~/dotfiles/components/dot_doctor
+fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_DOCKER_FZF; then
+  source ~/dotfiles/components/docker_fzf
+fi
 
 # load aliases
 if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then

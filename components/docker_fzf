@@ -1,0 +1,126 @@
+#!/bin/bash
+
+_dotfiles_docker_cmd() {
+	if [[ -n ${DOTFILES_DOCKER_CMD:-} ]]; then
+		printf '%s' "${DOTFILES_DOCKER_CMD}"
+		return 0
+	fi
+
+	if ! command -v docker >/dev/null 2>&1; then
+		return 1
+	fi
+
+	# Prefer plain docker; fallback to sudo when access is denied.
+	if docker ps >/dev/null 2>&1; then
+		DOTFILES_DOCKER_CMD="docker"
+	elif [[ ${EUID} -ne 0 ]] && command -v sudo >/dev/null 2>&1; then
+		DOTFILES_DOCKER_CMD="sudo docker"
+	else
+		DOTFILES_DOCKER_CMD="docker"
+	fi
+
+	printf '%s' "${DOTFILES_DOCKER_CMD}"
+}
+
+_dotfiles_docker_require() {
+	if ! command -v fzf >/dev/null 2>&1; then
+		printf '%s\n' "fzf not found"
+		return 1
+	fi
+	if ! command -v docker >/dev/null 2>&1; then
+		printf '%s\n' "docker not found"
+		return 1
+	fi
+	if ! _dotfiles_docker_cmd >/dev/null 2>&1; then
+		printf '%s\n' "docker not available"
+		return 1
+	fi
+	return 0
+}
+
+_dotfiles_docker_pick_container() {
+	local docker_cmd
+	docker_cmd="$(_dotfiles_docker_cmd)" || return 1
+
+	# ID, Name, Image, Status, Ports
+	${docker_cmd} ps -a --format '{{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}' 2>/dev/null \
+		| fzf --prompt='docker> ' --height 60% --reverse \
+			--header='enter: select  |  ctrl-c: cancel' \
+			--preview "${docker_cmd} logs --tail 50 {1} 2>/dev/null" \
+			--preview-window 'right:60%:wrap'
+}
+
+# Interactive picker: select a container and show its current ps line.
+dps() {
+	_dotfiles_docker_require || return 1
+
+	local selection id docker_cmd
+	selection="$(_dotfiles_docker_pick_container)" || return 1
+	id="${selection%%$'\t'*}"
+	[[ -n ${id} ]] || return 0
+	docker_cmd="$(_dotfiles_docker_cmd)" || return 1
+	${docker_cmd} ps -a --filter "id=${id}" --format 'table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'
+}
+
+# Exec into a selected container.
+# Usage:
+#   dexec            # picks container, exec bash/sh
+#   dexec <cmd...>   # picks container, exec provided command
+dexec() {
+	_dotfiles_docker_require || return 1
+
+	local selection id docker_cmd
+	selection="$(_dotfiles_docker_pick_container)" || return 1
+	id="${selection%%$'\t'*}"
+	[[ -n ${id} ]] || return 0
+	docker_cmd="$(_dotfiles_docker_cmd)" || return 1
+
+	if [[ $# -gt 0 ]]; then
+		${docker_cmd} exec -it "${id}" "$@"
+		return $?
+	fi
+
+	if ${docker_cmd} exec -it "${id}" bash --login 2>/dev/null; then
+		return 0
+	fi
+	${docker_cmd} exec -it "${id}" sh
+}
+
+# Show logs for a selected container.
+# Usage:
+#   dlogs            # last 500 lines (or lnav if installed)
+#   dlogs follow     # follow logs (or lnav if installed)
+dlogs() {
+	_dotfiles_docker_require || return 1
+
+	local selection id docker_cmd mode="${1:-view}"
+	selection="$(_dotfiles_docker_pick_container)" || return 1
+	id="${selection%%$'\t'*}"
+	[[ -n ${id} ]] || return 0
+	docker_cmd="$(_dotfiles_docker_cmd)" || return 1
+
+	case "${mode}" in
+	follow | -f | --follow)
+		if command -v lnav >/dev/null 2>&1; then
+			${docker_cmd} logs -f --timestamps "${id}" 2>/dev/null | lnav
+		else
+			${docker_cmd} logs -f --timestamps "${id}"
+		fi
+		;;
+	*)
+		if command -v lnav >/dev/null 2>&1; then
+			${docker_cmd} logs --timestamps "${id}" 2>/dev/null | lnav
+		elif command -v less >/dev/null 2>&1; then
+			${docker_cmd} logs -n 500 --timestamps "${id}" 2>/dev/null | less -R
+		else
+			${docker_cmd} logs -n 500 --timestamps "${id}"
+		fi
+		;;
+	esac
+}
+
+# If legacy aliases exist (alias/alias-docker), prefer these functions when enabled.
+if alias dps >/dev/null 2>&1; then unalias dps 2>/dev/null || true; fi
+if alias dexec >/dev/null 2>&1; then unalias dexec 2>/dev/null || true; fi
+if alias dlogs >/dev/null 2>&1; then unalias dlogs 2>/dev/null || true; fi
+

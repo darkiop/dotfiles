@@ -1,0 +1,218 @@
+#!/bin/bash
+
+_dot_doctor_print_row() {
+	local check="$1"
+	local status="$2"
+	shift 2
+
+	local use_color=0
+	if [[ -t 1 ]] && [[ -z ${NO_COLOR:-} ]]; then
+		use_color=1
+	fi
+
+	local c_reset="${COLOR_RESET:-}"
+	local c_ok="${COLOR_GREEN:-}"
+	local c_warn="${COLOR_YELLOW:-}"
+	local c_fail="${COLOR_RED:-}"
+	local c_info="${COLOR_LIGHT_BLUE:-}"
+	if [[ ${use_color} -eq 1 ]] && [[ -z ${c_reset} ]]; then
+		c_ok=$'\033[32m'
+		c_warn=$'\033[33m'
+		c_fail=$'\033[31m'
+		c_info=$'\033[36m'
+		c_reset=$'\033[0m'
+	fi
+
+	# Print aligned columns; keep padding independent of color codes.
+	printf '%-24s ' "${check}"
+	if [[ ${use_color} -eq 1 ]]; then
+		case "${status}" in
+		OK) printf '%b' "${c_ok}" ;;
+		WARN) printf '%b' "${c_warn}" ;;
+		FAIL) printf '%b' "${c_fail}" ;;
+		INFO) printf '%b' "${c_info}" ;;
+		esac
+		printf '%-6s' "${status}"
+		printf '%b ' "${c_reset}"
+	else
+		printf '%-6s ' "${status}"
+	fi
+	printf '%s\n' "$*"
+}
+
+_dot_doctor_ok() { _dot_doctor_print_row "$1" "OK" "$2"; }
+_dot_doctor_warn() { _dot_doctor_print_row "$1" "WARN" "$2"; }
+_dot_doctor_fail() { _dot_doctor_print_row "$1" "FAIL" "$2"; }
+
+_dot_doctor_flag_enabled() {
+	if command -v dotfiles_flag_enabled >/dev/null 2>&1; then
+		dotfiles_flag_enabled "$1"
+		return $?
+	fi
+	return 1
+}
+
+dot() {
+	local cmd="${1:-}"
+	shift || true
+
+	case "${cmd}" in
+	doctor)
+		dot_doctor "$@"
+		;;
+	""|-h|--help|help)
+		printf '%s\n' "Usage: dot doctor"
+		;;
+	*)
+		printf '%s\n' "Unknown subcommand: ${cmd}"
+		printf '%s\n' "Usage: dot doctor"
+		return 1
+		;;
+	esac
+}
+
+dot_doctor() {
+	local DOTFILES_DIR="${HOME}/dotfiles"
+	local repo_ok=true
+
+	printf '%-24s %-6s %s\n' "CHECK" "STATUS" "INFO"
+	printf '%-24s %-6s %s\n' "------------------------" "------" "----"
+
+	if [[ ! -d "${DOTFILES_DIR}" ]]; then
+		_dot_doctor_fail "dotfiles dir" "${DOTFILES_DIR} missing"
+		return 1
+	fi
+	if [[ ! -d "${DOTFILES_DIR}/.git" ]]; then
+		_dot_doctor_fail "git repo" "${DOTFILES_DIR}/.git missing"
+		repo_ok=false
+	else
+		_dot_doctor_ok "git repo" "${DOTFILES_DIR}"
+	fi
+
+	# Load feature flags if not already available (best-effort).
+	if ! command -v dotfiles_flag_enabled >/dev/null 2>&1 && [[ -f "${DOTFILES_DIR}/components/feature_flags" ]]; then
+		# shellcheck source=/dev/null
+		source "${DOTFILES_DIR}/components/feature_flags" >/dev/null 2>&1 || true
+	fi
+
+	# Git status
+	if ${repo_ok} && command -v git >/dev/null 2>&1; then
+		local branch dirty_count
+		branch="$(git -C "${DOTFILES_DIR}" branch --show-current 2>/dev/null || true)"
+		branch="${branch:-unknown}"
+		dirty_count="$(git -C "${DOTFILES_DIR}" status --porcelain=v1 2>/dev/null | wc -l | tr -d ' ')"
+		if [[ ${dirty_count} -eq 0 ]]; then
+			_dot_doctor_ok "git status" "clean (branch ${branch})"
+		else
+			_dot_doctor_warn "git status" "${dirty_count} changes (branch ${branch})"
+		fi
+	fi
+
+	# Submodules
+	if ${repo_ok} && command -v git >/dev/null 2>&1; then
+		local sub_status
+		sub_status="$(git -C "${DOTFILES_DIR}" submodule status --recursive 2>/dev/null | awk '{print $1}' | head -n 1 || true)"
+		case "${sub_status}" in
+		-*)
+			_dot_doctor_warn "submodules" "not initialized (run: git submodule update --init --recursive --depth 1)"
+			;;
+		+*)
+			_dot_doctor_warn "submodules" "not up-to-date (run: git submodule update --init --recursive --depth 1)"
+			;;
+		"")
+			_dot_doctor_warn "submodules" "unable to read status"
+			;;
+		*)
+			_dot_doctor_ok "submodules" "ok"
+			;;
+		esac
+	fi
+
+	# Symlinks
+	_dot_doctor_check_link() {
+		local target="$1"
+		local expected="$2"
+		if [[ -L "${target}" ]]; then
+			local resolved
+			resolved="$(readlink -f -- "${target}" 2>/dev/null || true)"
+			if [[ ${resolved} == "${expected}" ]]; then
+				_dot_doctor_ok "link ${target##*/}" "ok"
+			else
+				_dot_doctor_warn "link ${target##*/}" "points to ${resolved:-unknown} (expected ${expected})"
+			fi
+		elif [[ -e "${target}" ]]; then
+			_dot_doctor_warn "link ${target##*/}" "exists but is not a symlink"
+		else
+			_dot_doctor_warn "link ${target##*/}" "missing"
+		fi
+	}
+	_dot_doctor_check_link "${HOME}/.bashrc" "${DOTFILES_DIR}/bashrc"
+	_dot_doctor_check_link "${HOME}/.zshrc" "${DOTFILES_DIR}/zshrc"
+	_dot_doctor_check_link "${HOME}/.tmux.conf" "${DOTFILES_DIR}/modules/oh-my-tmux/.tmux.conf"
+	_dot_doctor_check_link "${HOME}/.tmux.conf.local" "${DOTFILES_DIR}/config/tmux.conf.local"
+
+	# Binaries (based on enabled features)
+	_dot_doctor_need_bin() {
+		local name="$1"
+		local hint="$2"
+		if command -v "${name}" >/dev/null 2>&1; then
+			_dot_doctor_ok "bin ${name}" "ok"
+		else
+			_dot_doctor_warn "bin ${name}" "${hint}"
+		fi
+	}
+
+	_dot_doctor_need_bin git "required"
+	_dot_doctor_need_bin curl "required for installer"
+	_dot_doctor_need_bin bash "required"
+	_dot_doctor_need_bin zsh "optional"
+
+	if _dot_doctor_flag_enabled DOTFILES_ENABLE_TMUX_AUTOSTART || _dot_doctor_flag_enabled DOTFILES_ENABLE_TMUX_FZF; then
+		_dot_doctor_need_bin tmux "tmux enabled"
+	fi
+	if _dot_doctor_flag_enabled DOTFILES_ENABLE_FZF || _dot_doctor_flag_enabled DOTFILES_ENABLE_FZF_EXTRAS || _dot_doctor_flag_enabled DOTFILES_ENABLE_TMUX_FZF || _dot_doctor_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
+		_dot_doctor_need_bin fzf "fzf enabled"
+	fi
+	if [[ -f "${DOTFILES_DIR}/motd/tasks.json" ]]; then
+		_dot_doctor_need_bin jq "required for motd/tasks.json"
+	fi
+	if _dot_doctor_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
+	_dot_doctor_need_bin journalctl "required for jctl"
+	_dot_doctor_need_bin lnav "optional pager for jctl"
+	fi
+
+	# Feature flags summary (selected)
+	if command -v dotfiles_flag_enabled >/dev/null 2>&1; then
+		local flags=(
+			DOTFILES_ENABLE_PROMPT
+			DOTFILES_ENABLE_FZF
+			DOTFILES_ENABLE_FZF_EXTRAS
+			DOTFILES_ENABLE_FZF_TAB_COMPLETION
+			DOTFILES_ENABLE_GIT_FZF
+			DOTFILES_ENABLE_HELPERS
+			DOTFILES_ENABLE_MOTD
+			DOTFILES_ENABLE_MOTD_AUTO_RUN
+			DOTFILES_ENABLE_TMUX_AUTOSTART
+			DOTFILES_ENABLE_TMUX_FZF
+			DOTFILES_ENABLE_JOURNALCTL_PICKER
+			DOTFILES_ENABLE_DOT_DOCTOR
+		)
+		local f enabled
+		for f in "${flags[@]}"; do
+			if dotfiles_flag_enabled "${f}"; then
+				enabled="true"
+			else
+				enabled="false"
+			fi
+			_dot_doctor_print_row "flag ${f#DOTFILES_ENABLE_}" "INFO" "${enabled}"
+		done
+	fi
+
+	# MOTD timers (systemd)
+	if [[ -d /run/systemd/system ]] && command -v systemctl >/dev/null 2>&1; then
+		local enabled_a enabled_h
+		enabled_a="$(systemctl is-enabled update-motd-apt-infos.timer 2>/dev/null || true)"
+		enabled_h="$(systemctl is-enabled calc-dir-size-homes.timer 2>/dev/null || true)"
+		_dot_doctor_print_row "motd timers" "INFO" "apt=${enabled_a:-unknown}, home=${enabled_h:-unknown}"
+	fi
+}
