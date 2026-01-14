@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Avoid alias expansion conflicts when defining functions.
+unalias dps 2>/dev/null || true
+unalias dexec 2>/dev/null || true
+unalias dlogs 2>/dev/null || true
+
 _dotfiles_docker_cmd() {
 	if [[ -n ${DOTFILES_DOCKER_CMD:-} ]]; then
 		printf '%s' "${DOTFILES_DOCKER_CMD}"
@@ -118,9 +123,3 @@ dlogs() {
 		;;
 	esac
 }
-
-# If legacy aliases exist (alias/alias-docker), prefer these functions when enabled.
-if alias dps >/dev/null 2>&1; then unalias dps 2>/dev/null || true; fi
-if alias dexec >/dev/null 2>&1; then unalias dexec 2>/dev/null || true; fi
-if alias dlogs >/dev/null 2>&1; then unalias dlogs 2>/dev/null || true; fi
-
