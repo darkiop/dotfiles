@@ -67,6 +67,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_DOT_DOCTOR; then
   source ~/dotfiles/components/dot_doctor
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_DOCKER_FZF; then
+  source ~/dotfiles/components/docker_fzf
+fi
 
 # load aliases
 if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then

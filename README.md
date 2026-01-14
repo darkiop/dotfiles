@@ -92,6 +92,7 @@ Available flags:
 - `DOTFILES_ENABLE_TMUX_FZF`
 - `DOTFILES_ENABLE_JOURNALCTL_PICKER`
 - `DOTFILES_ENABLE_DOT_DOCTOR`
+- `DOTFILES_ENABLE_DOCKER_FZF`
 - `DOTFILES_ENABLE_IOBROKER`
 
 ## MOTD (hostname-basiert)
@@ -178,6 +179,33 @@ Enabled by default via `DOTFILES_ENABLE_JOURNALCTL_PICKER`.
 
 - `jctl`: pick a systemd service unit via `fzf` and view the last 500 log lines
 - `jctl follow`: same, but follows the log (`journalctl -f`)
+
+## Docker fzf helpers
+
+Enabled by default via `DOTFILES_ENABLE_DOCKER_FZF`.
+
+Commands:
+
+- `dps`: pick a container via `fzf` and show its `docker ps` line
+- `dexec [cmd...]`: pick a container and `docker exec -it` into it
+  - default command: `bash --login` (fallback: `sh`)
+  - example: `dexec env` or `dexec bash`
+- `dlogs [follow]`: pick a container and show logs
+  - `dlogs`: last ~500 lines (or full logs in `lnav`)
+  - `dlogs follow`: follow logs (`docker logs -f`)
+
+How it works:
+
+- Container list: `docker ps -a` is formatted into a picker list (ID, name, image, status, ports).
+- Preview: shows the last ~50 log lines for the currently highlighted container.
+- Permissions: if `docker ps` is not readable for the current user, the helper auto-falls back to `sudo docker` (so you may see a sudo password prompt).
+- Compatibility: if you already have `dps`/`dexec`/`dlogs` as aliases (e.g. from `alias/alias-docker`), the functions override them when this feature is enabled.
+
+Disable per host:
+
+```bash
+DOTFILES_ENABLE_DOCKER_FZF=false
+```
 
 ## dot doctor
 
