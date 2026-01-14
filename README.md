@@ -46,6 +46,7 @@ bash ~/dotfiles/install.sh
 - FZF: installed via `modules/fzf/install --key-bindings --completion` (never via apt)
 - FZF extras: `fh` history picker and `cdf` directory picker (optionally binds keys)
 - Helpers: `dcheat`, `cheat`, `helpme` (local cheats + help wrappers)
+- dot doctor: `dot doctor` quick diagnostics for common issues
 - oh-my-zsh (optional, submodule `modules/oh-my-zsh`)
 - SSH picker: `sshp` (pick host from `~/.ssh/config` via `fzf`)
 - Git + fzf helpers: `gco`, `gshow`, `gaddp`, `gstashp`, `gfixup`, `gcp`
@@ -90,6 +91,7 @@ Available flags:
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
 - `DOTFILES_ENABLE_TMUX_FZF`
 - `DOTFILES_ENABLE_JOURNALCTL_PICKER`
+- `DOTFILES_ENABLE_DOT_DOCTOR`
 - `DOTFILES_ENABLE_IOBROKER`
 
 ## MOTD (hostname-basiert)
@@ -176,6 +178,40 @@ Enabled by default via `DOTFILES_ENABLE_JOURNALCTL_PICKER`.
 
 - `jctl`: pick a systemd service unit via `fzf` and view the last 500 log lines
 - `jctl follow`: same, but follows the log (`journalctl -f`)
+
+## dot doctor
+
+Enabled by default via `DOTFILES_ENABLE_DOT_DOCTOR`.
+
+- `dot doctor`: quick diagnostics for common dotfiles issues.
+
+What it checks (high level):
+
+- Git repo: whether `~/dotfiles` exists and is a git repo
+- Git status: current branch + whether the repo is clean/dirty
+- Submodules: whether submodules are initialized/up-to-date
+- Symlinks: whether common links like `~/.bashrc`, `~/.zshrc`, `~/.tmux.conf`, `~/.tmux.conf.local` point to `~/dotfiles/*`
+- Required tools: checks common binaries, and more depending on enabled flags (e.g. `fzf`, `jq`, `journalctl`, `lnav`, `tmux`)
+- MOTD timers: on systemd systems prints `is-enabled` state for `update-motd-apt-infos.timer` and `calc-dir-size-homes.timer`
+
+Interpreting the output:
+
+- `OK`: check passed
+- `WARN`: something is unusual but dotfiles might still work; usually includes a hint what to fix
+- `FAIL`: required piece is missing (e.g. not a git repo)
+- `INFO`: informational rows (e.g. enabled timers, selected feature flags)
+
+Examples:
+
+```bash
+dot doctor
+```
+
+Disable per host:
+
+```bash
+DOTFILES_ENABLE_DOT_DOCTOR=false
+```
 
 ## FZF extras
 
