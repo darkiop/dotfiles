@@ -75,6 +75,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_HELPERS; then
   source ~/dotfiles/components/helpers
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_TMUX_FZF; then
+  source ~/dotfiles/components/tmux_fzf
+fi
 
 # MOTD (opt-in)
 if dotfiles_flag_enabled DOTFILES_ENABLE_MOTD && dotfiles_flag_enabled DOTFILES_ENABLE_MOTD_AUTO_RUN; then

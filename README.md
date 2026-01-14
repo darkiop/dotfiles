@@ -51,6 +51,7 @@ bash ~/dotfiles/install.sh
 - Git + fzf helpers: `gco`, `gshow`, `gaddp`, `gstashp`, `gfixup`, `gcp`
 - Navi: `Ctrl+G` widget + cheats in `cheats/`
 - Tmux: oh-my-tmux + TPM + `config/tmux.conf.local`
+- Tmux fzf picker: `ts`/`tw`/`tp` (sessions/windows/panes via `fzf`)
 - MOTD: hostname-based scripts in `motd/` (enable via `DOTFILES_ENABLE_MOTD`, optional auto-run `DOTFILES_ENABLE_MOTD_AUTO_RUN`)
 
 ## Feature flags (per host)
@@ -87,6 +88,7 @@ Available flags:
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
+- `DOTFILES_ENABLE_TMUX_FZF`
 - `DOTFILES_ENABLE_IOBROKER`
 
 ## MOTD (hostname-basiert)
@@ -157,6 +159,15 @@ Enabled by default via `DOTFILES_ENABLE_GIT_FZF` (disable per host via `~/dotfil
 - `gstashp show|apply|pop|drop`: pick a stash and run the action
 - `gfixup`: pick a commit and create a `git commit --fixup`
 - `gcp`: pick a commit hash and copy it (uses `wl-copy`/`xclip`/`pbcopy` if available)
+
+## Tmux fzf picker
+
+Enabled by default via `DOTFILES_ENABLE_TMUX_FZF`.
+
+- `ts`: pick a session and switch client
+- `tw`: pick a window across sessions and focus it
+- `tp`: pick a pane across sessions and focus it
+- Keybinding: `Ctrl+F` triggers `tw` (only inside tmux; overrides the default forward-char binding)
 
 ## FZF extras
 
@@ -282,6 +293,7 @@ Some bindings below are enabled via feature flags (see `DOTFILES_ENABLE_FZF_HIST
 | <kbd>CTRL</kbd> + <kbd>C</kbd>           | interrupt command               |
 | <kbd>CTRL</kbd> + <kbd>L</kbd>           | clear screen                    |
 | <kbd>TAB</kbd>                           | fzf tab-completion (optional)   |
+| <kbd>CTRL</kbd> + <kbd>F</kbd>           | tmux window picker `tw` (inside tmux) |
 | <kbd>ALT</kbd> + <kbd>C</kbd>            | `cdf` directory picker          |
 | <kbd>ALTGR</kbd> + <kbd>Mousewheel</kbd> | bash history                    |
 
@@ -291,6 +303,7 @@ Some bindings below are enabled via feature flags (see `DOTFILES_ENABLE_FZF_HIST
 | :---------------------------- | :--------------------- |
 | <kbd>CTRL</kbd> + <kbd>R</kbd> | `fh` history picker (or reverse-search) |
 | <kbd>TAB</kbd>                  | fzf tab-completion (optional)          |
+| <kbd>CTRL</kbd> + <kbd>F</kbd>  | tmux window picker `tw` (inside tmux) |
 | <kbd>ALT</kbd> + <kbd>C</kbd>  | `cdf` directory picker |
 
 ### Navi
