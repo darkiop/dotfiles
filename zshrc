@@ -78,6 +78,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_TMUX_FZF; then
   source ~/dotfiles/components/tmux_fzf
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
+  source ~/dotfiles/components/journalctl_picker
+fi
 
 # MOTD (opt-in)
 if dotfiles_flag_enabled DOTFILES_ENABLE_MOTD && dotfiles_flag_enabled DOTFILES_ENABLE_MOTD_AUTO_RUN; then

@@ -61,6 +61,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_TMUX_FZF; then
   source ~/dotfiles/components/tmux_fzf
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
+  source ~/dotfiles/components/journalctl_picker
+fi
 
 # load aliases
 if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then

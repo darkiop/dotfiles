@@ -1,0 +1,76 @@
+#!/bin/bash
+
+jctl() {
+	if ! command -v journalctl >/dev/null 2>&1; then
+		printf '%s\n' "journalctl not found"
+		return 1
+	fi
+	if ! command -v fzf >/dev/null 2>&1; then
+		printf '%s\n' "fzf not found"
+		return 1
+	fi
+
+	local mode="${1:-view}" # view|follow
+	local unit line pager_cmd journal_prefix="" units_list=""
+
+	if command -v lnav >/dev/null 2>&1; then
+		pager_cmd="lnav"
+	elif command -v less >/dev/null 2>&1; then
+		pager_cmd="less -R"
+	else
+		pager_cmd="cat"
+	fi
+
+	# Some systems require root (or group systemd-journal) to read logs.
+	# If we're likely missing permissions, prefer sudo automatically (will prompt for password).
+	if [[ ${EUID} -ne 0 ]] && command -v sudo >/dev/null 2>&1; then
+		if ! id -nG "${USER}" 2>/dev/null | tr ' ' '\n' | grep -qxE '(adm|systemd-journal)'; then
+			if sudo -v; then
+				journal_prefix="sudo"
+			else
+				printf '%s\n' "sudo failed; showing accessible logs only"
+			fi
+		fi
+	fi
+
+	# Build unit list:
+	# Prefer systemctl if it's available and usable (running systemd).
+	# Fallback to journalctl field list if systemd isn't available (containers, minimal systems).
+	if command -v systemctl >/dev/null 2>&1; then
+		# --plain avoids glyphs like "●" which break parsing.
+		units_list="$(systemctl list-units --type=service --all --no-legend --plain 2>/dev/null || true)"
+	fi
+	if [[ -z ${units_list} ]]; then
+		if command -v rg >/dev/null 2>&1; then
+			units_list="$(${journal_prefix:+${journal_prefix} }journalctl -q -F _SYSTEMD_UNIT --no-pager 2>/dev/null | rg -e '\\.service$' -S || true)"
+		else
+			units_list="$(${journal_prefix:+${journal_prefix} }journalctl -q -F _SYSTEMD_UNIT --no-pager 2>/dev/null | grep -E '\\.service$' || true)"
+		fi
+	fi
+
+	if [[ -z ${units_list} ]]; then
+		printf '%s\n' "No systemd units found (systemctl unusable and journal not readable)."
+		return 1
+	fi
+
+	line="$(printf '%s\n' "${units_list}" | fzf --prompt='systemd unit> ' --height 50% --reverse)" || return 1
+	unit="${line%% *}"
+	[[ -n ${unit} ]] || return 0
+
+	case "${mode}" in
+	follow | -f | --follow)
+		if [[ ${pager_cmd} == "lnav" ]]; then
+			${journal_prefix:+${journal_prefix} }journalctl -q -u "${unit}" -f -o short-iso --no-pager | lnav
+		else
+			${journal_prefix:+${journal_prefix} }journalctl -q -u "${unit}" -f -o short-iso --no-pager
+		fi
+		;;
+	*)
+		if [[ ${pager_cmd} == "lnav" ]]; then
+			${journal_prefix:+${journal_prefix} }journalctl -q -u "${unit}" -o short-iso --no-pager | lnav
+		else
+			${journal_prefix:+${journal_prefix} }journalctl -q -u "${unit}" -n 500 -o short-iso --no-pager | ${pager_cmd}
+		fi
+		;;
+	esac
+}

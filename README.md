@@ -89,6 +89,7 @@ Available flags:
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
 - `DOTFILES_ENABLE_TMUX_FZF`
+- `DOTFILES_ENABLE_JOURNALCTL_PICKER`
 - `DOTFILES_ENABLE_IOBROKER`
 
 ## MOTD (hostname-basiert)
@@ -168,6 +169,13 @@ Enabled by default via `DOTFILES_ENABLE_TMUX_FZF`.
 - `tw`: pick a window across sessions and focus it
 - `tp`: pick a pane across sessions and focus it
 - Keybinding: `Ctrl+F` triggers `tw` (only inside tmux; overrides the default forward-char binding)
+
+## journalctl picker
+
+Enabled by default via `DOTFILES_ENABLE_JOURNALCTL_PICKER`.
+
+- `jctl`: pick a systemd service unit via `fzf` and view the last 500 log lines
+- `jctl follow`: same, but follows the log (`journalctl -f`)
 
 ## FZF extras
 
