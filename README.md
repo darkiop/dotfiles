@@ -94,6 +94,8 @@ Available flags:
 - `DOTFILES_ENABLE_JOURNALCTL_PICKER`
 - `DOTFILES_ENABLE_DOT_DOCTOR`
 - `DOTFILES_ENABLE_DOT_HELP`
+- `DOTFILES_ENABLE_DOT_HELP_BINDING` (default `true`)
+- `DOTFILES_ENABLE_RELOAD_BINDING` (default `true`)
 - `DOTFILES_ENABLE_DOCKER_FZF`
 - `DOTFILES_ENABLE_IOBROKER`
 
@@ -249,7 +251,19 @@ Enabled by default via `DOTFILES_ENABLE_DOT_HELP`.
 
 - `dot help`: prints a CLI overview of enabled dotfiles commands and keybindings
 - `dot`: same as `dot help`
+- Requires: `jq` (reads JSON metadata)
 - Data source: `~/dotfiles/config/dot_help.json` (optional override via `DOTFILES_DOT_HELP_JSON`)
+
+Optional keybindings (bash + zsh):
+
+- `DOTFILES_ENABLE_DOT_HELP_BINDING`: binds `Ctrl+H` to open `dot help`
+- `DOTFILES_ENABLE_RELOAD_BINDING`: binds `Alt+R` to run `dot reload`
+
+Commands:
+
+- `dot reload`: clears the screen and reloads your current shell rc file
+  - Bash: `~/.bashrc` (fallback: `~/dotfiles/bashrc`)
+  - Zsh: `~/.zshrc` (fallback: `~/dotfiles/zshrc`)
 
 Disable per host:
 
@@ -369,7 +383,7 @@ Enabled by default via `DOTFILES_ENABLE_EXTRACT_EXT`.
 
 ## Keyboard-Bindings
 
-Some bindings below are enabled via feature flags (see `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS` and `DOTFILES_ENABLE_FZF_CDF_BINDING`).
+Some bindings below are enabled via feature flags (e.g. `DOTFILES_ENABLE_FZF_HISTORY_BINDINGS`, `DOTFILES_ENABLE_FZF_CDF_BINDING`, `DOTFILES_ENABLE_DOT_HELP_BINDING`, `DOTFILES_ENABLE_RELOAD_BINDING`).
 
 ### Bash
 
@@ -382,7 +396,9 @@ Some bindings below are enabled via feature flags (see `DOTFILES_ENABLE_FZF_HIST
 | <kbd>CTRL</kbd> + <kbd>L</kbd>           | clear screen                    |
 | <kbd>TAB</kbd>                           | fzf tab-completion (optional)   |
 | <kbd>CTRL</kbd> + <kbd>F</kbd>           | tmux window picker `tw` (inside tmux) |
+| <kbd>CTRL</kbd> + <kbd>H</kbd>           | open `dot help` (optional)      |
 | <kbd>ALT</kbd> + <kbd>C</kbd>            | `cdf` directory picker          |
+| <kbd>ALT</kbd> + <kbd>R</kbd>            | reload shell rc (`dot reload`)  |
 | <kbd>ALTGR</kbd> + <kbd>Mousewheel</kbd> | bash history                    |
 
 ### Zsh
@@ -392,7 +408,9 @@ Some bindings below are enabled via feature flags (see `DOTFILES_ENABLE_FZF_HIST
 | <kbd>CTRL</kbd> + <kbd>R</kbd> | `fh` history picker (or reverse-search) |
 | <kbd>TAB</kbd>                  | fzf tab-completion (optional)          |
 | <kbd>CTRL</kbd> + <kbd>F</kbd>  | tmux window picker `tw` (inside tmux) |
+| <kbd>CTRL</kbd> + <kbd>H</kbd>  | open `dot help` (optional)            |
 | <kbd>ALT</kbd> + <kbd>C</kbd>  | `cdf` directory picker |
+| <kbd>ALT</kbd> + <kbd>R</kbd>  | reload shell rc (`dot reload`)        |
 
 ### Navi
 
