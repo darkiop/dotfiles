@@ -187,6 +187,16 @@
       ]
     },
     {
+      "name": "Alt+R",
+      "desc": "(dot reload) reload shell rc",
+      "details": "Reloads your current shell rc file and clears the screen.\nBash: ~/.bashrc (fallback: ~/dotfiles/bashrc)\nZsh: ~/.zshrc (fallback: ~/dotfiles/zshrc)\nEnter in dot help runs: dot reload",
+      "run": "dot reload",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP",
+        "DOTFILES_ENABLE_RELOAD_BINDING"
+      ]
+    },
+    {
       "name": "Ctrl+R",
       "desc": "(fh) fzf history",
       "details": "Replaces reverse-i-search when DOTFILES_ENABLE_FZF_HISTORY_BINDINGS is true.\nEnter in dot help runs: fh",

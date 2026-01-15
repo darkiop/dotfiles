@@ -45,8 +45,19 @@ _dot_help_plain() {
 		local requires_csv="${1:-}"
 		[[ -z ${requires_csv} ]] && return 0
 		local flag
-		IFS=',' read -r -a _dot_help_flags <<<"${requires_csv}"
-		for flag in "${_dot_help_flags[@]}"; do
+		if [[ -n ${ZSH_VERSION:-} ]]; then
+			local -a _dot_help_flags
+			_dot_help_flags=("${(s:,:)requires_csv}")
+			for flag in "${_dot_help_flags[@]}"; do
+				[[ -z ${flag} ]] && continue
+				if ! _dot_help_is_enabled "${flag}"; then
+					return 1
+				fi
+			done
+			return 0
+		fi
+		local IFS=','
+		for flag in ${requires_csv}; do
 			[[ -z ${flag} ]] && continue
 			if ! _dot_help_is_enabled "${flag}"; then
 				return 1
@@ -106,8 +117,19 @@ _dot_help_fzf() {
 		local requires_csv="${1:-}"
 		[[ -z ${requires_csv} ]] && return 0
 		local flag
-		IFS=',' read -r -a _dot_help_flags <<<"${requires_csv}"
-		for flag in "${_dot_help_flags[@]}"; do
+		if [[ -n ${ZSH_VERSION:-} ]]; then
+			local -a _dot_help_flags
+			_dot_help_flags=("${(s:,:)requires_csv}")
+			for flag in "${_dot_help_flags[@]}"; do
+				[[ -z ${flag} ]] && continue
+				if ! _dot_help_is_enabled "${flag}"; then
+					return 1
+				fi
+			done
+			return 0
+		fi
+		local IFS=','
+		for flag in ${requires_csv}; do
 			[[ -z ${flag} ]] && continue
 			if ! _dot_help_is_enabled "${flag}"; then
 				return 1
@@ -156,49 +178,93 @@ _dot_help_fzf() {
 	fi
 }
 
-_dot_help_setup_keybindings() {
-	if ! _dot_help_is_enabled DOTFILES_ENABLE_DOT_HELP_BINDING; then
-		return 0
-	fi
+	_dot_help_setup_keybindings() {
+		if _dot_help_is_enabled DOTFILES_ENABLE_DOT_HELP_BINDING; then
+			# Ctrl+H is often mapped to Backspace depending on terminal settings.
+			if [[ -n ${BASH_VERSION:-} ]]; then
+				# Use bind -x so we don't have to inject text into the line editor.
+				bind -x '"\C-h":"dot help"' 2>/dev/null || true
+			fi
 
-	# Ctrl+H is often mapped to Backspace depending on terminal settings.
-	# This binding is opt-in via DOTFILES_ENABLE_DOT_HELP_BINDING.
-	if [[ -n ${BASH_VERSION:-} ]]; then
-		# Use bind -x so we don't have to inject text into the line editor.
-		bind -x '"\C-h":"dot help"' 2>/dev/null || true
-	fi
+			if [[ -n ${ZSH_VERSION:-} ]]; then
+				_dot_help_zle_widget() {
+					dot help
+					zle reset-prompt
+				}
+				zle -N dot-help _dot_help_zle_widget 2>/dev/null || true
+				bindkey '^H' dot-help 2>/dev/null || true
+			fi
+		fi
 
-	if [[ -n ${ZSH_VERSION:-} ]]; then
-		_dot_help_zle_widget() {
-			dot help
-			zle reset-prompt
-		}
-		zle -N dot-help  _dot_help_zle_widget 2>/dev/null || true
-		bindkey '^H' dot-help 2>/dev/null || true
-	fi
-}
+		if _dot_help_is_enabled DOTFILES_ENABLE_RELOAD_BINDING; then
+			# Alt+R -> reload shell rc
+			if [[ -n ${BASH_VERSION:-} ]]; then
+				# Use a readline macro (not bind -x), so the command runs via the normal
+				# command loop and the multi-line prompt redraw works reliably.
+				bind '"\er":"\C-u dot reload\C-m"' 2>/dev/null || true
+			fi
+
+			if [[ -n ${ZSH_VERSION:-} ]]; then
+				_dot_reload_zle_widget() {
+					# Run through the normal accept-line flow to avoid prompt redraw issues.
+					BUFFER="dot reload"
+					zle accept-line
+				}
+				zle -N dot-reload _dot_reload_zle_widget 2>/dev/null || true
+				bindkey '^[r' dot-reload 2>/dev/null || true
+			fi
+		fi
+	}
 
 _dot_help_setup_keybindings
 
-dot() {
-	local cmd="${1:-}"
-	shift || true
+	dot() {
+		local cmd="${1:-}"
+		shift || true
 
-	case "${cmd}" in
+		case "${cmd}" in
 	help)
 		dot_help "$@"
 		;;
 	"")
 		dot_help
 		;;
-	*)
-		if command -v dot_doctor >/dev/null 2>&1 && [[ ${cmd} == "doctor" ]]; then
-			dot_doctor "$@"
-			return $?
-		fi
-		printf '%s\n' "Unknown subcommand: ${cmd}"
-		printf '%s\n' "Usage: dot help | dot doctor"
-		return 1
-		;;
-	esac
-}
+		*)
+			if [[ ${cmd} == "reload" ]]; then
+				local rc=""
+				if [[ -n ${BASH_VERSION:-} ]]; then
+					rc="${HOME}/.bashrc"
+					[[ -f ${rc} ]] || rc="${HOME}/dotfiles/bashrc"
+				elif [[ -n ${ZSH_VERSION:-} ]]; then
+					rc="${HOME}/.zshrc"
+					[[ -f ${rc} ]] || rc="${HOME}/dotfiles/zshrc"
+				fi
+
+					if [[ -n ${rc} ]] && [[ -f ${rc} ]]; then
+						# Clear screen to make the reload effect obvious.
+						if [[ -t 1 ]]; then
+							if command -v clear >/dev/null 2>&1; then
+								clear
+							else
+								printf '\033[2J\033[H'
+							fi
+						fi
+						# shellcheck source=/dev/null
+						source "${rc}"
+						return 0
+					fi
+
+				printf '%s\n' "dot reload: could not determine rc file" >&2
+				return 1
+			fi
+
+			if command -v dot_doctor >/dev/null 2>&1 && [[ ${cmd} == "doctor" ]]; then
+				dot_doctor "$@"
+				return $?
+			fi
+			printf '%s\n' "Unknown subcommand: ${cmd}"
+			printf '%s\n' "Usage: dot help | dot doctor | dot reload"
+			return 1
+			;;
+		esac
+	}
