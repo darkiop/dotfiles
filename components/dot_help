@@ -223,13 +223,41 @@ _dot_help_setup_keybindings
 		shift || true
 
 		case "${cmd}" in
-	help)
-		dot_help "$@"
-		;;
-	"")
-		dot_help
-		;;
-		*)
+		help | h)
+			dot_help "$@"
+			;;
+		"")
+			dot_help
+			;;
+			*)
+			if [[ ${cmd} == "install" || ${cmd} == "i" ]]; then
+				local installer="${HOME}/dotfiles/install.sh"
+				if [[ ! -f ${installer} ]]; then
+					printf '%s\n' "dot install: missing installer: ${installer}" >&2
+					return 1
+				fi
+				command bash "${installer}" "$@"
+				return $?
+			fi
+
+			if [[ ${cmd} == "update" || ${cmd} == "u" ]]; then
+				local repo_dir="${HOME}/dotfiles"
+				if [[ ! -d ${repo_dir} ]]; then
+					printf '%s\n' "dot update: missing repo dir: ${repo_dir}" >&2
+					return 1
+				fi
+				if ! command -v git >/dev/null 2>&1; then
+					printf '%s\n' "dot update: missing dependency: git" >&2
+					return 1
+				fi
+				(
+					cd "${repo_dir}" || exit 1
+					git pull --ff-only &&
+						git submodule update --init --recursive --depth 1
+				)
+				return $?
+			fi
+
 			if [[ ${cmd} == "reload" ]]; then
 				local rc=""
 				if [[ -n ${BASH_VERSION:-} ]]; then
@@ -263,7 +291,7 @@ _dot_help_setup_keybindings
 				return $?
 			fi
 			printf '%s\n' "Unknown subcommand: ${cmd}"
-			printf '%s\n' "Usage: dot help | dot doctor | dot reload"
+			printf '%s\n' "Usage: dot help | dot doctor | dot reload | dot install | dot update"
 			return 1
 			;;
 		esac

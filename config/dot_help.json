@@ -22,6 +22,51 @@
       "requires": []
     },
     {
+      "name": "dot install",
+      "desc": "Run dotfiles installer",
+      "details": "Runs ~/dotfiles/install.sh.\nEnter in dot help runs: dot install",
+      "run": "dot install",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
+    },
+    {
+      "name": "dot update",
+      "desc": "Update repo + submodules",
+      "details": "Runs:\n- git pull --ff-only\n- git submodule update --init --recursive --depth 1\nEnter in dot help runs: dot update",
+      "run": "dot update",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
+    },
+    {
+      "name": "dot i",
+      "desc": "Alias for dot install",
+      "details": "Alias for dot install.\nEnter in dot help runs: dot i",
+      "run": "dot i",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
+    },
+    {
+      "name": "dot u",
+      "desc": "Alias for dot update",
+      "details": "Alias for dot update.\nEnter in dot help runs: dot u",
+      "run": "dot u",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
+    },
+    {
+      "name": "dot h",
+      "desc": "Alias for dot help",
+      "details": "Alias for dot help.\nEnter in dot help runs: dot h",
+      "run": "dot h",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
+    },
+    {
       "name": "sshp",
       "desc": "SSH host picker (fzf)",
       "details": "Pick a host from ~/.ssh/config and connect via ssh.",
