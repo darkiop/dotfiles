@@ -87,6 +87,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_DOCKER_FZF; then
   source ~/dotfiles/components/docker_fzf
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_DOT_HELP; then
+  source ~/dotfiles/components/dot_help
+fi
 
 # MOTD (opt-in)
 if dotfiles_flag_enabled DOTFILES_ENABLE_MOTD && dotfiles_flag_enabled DOTFILES_ENABLE_MOTD_AUTO_RUN; then

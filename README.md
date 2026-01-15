@@ -47,6 +47,7 @@ bash ~/dotfiles/install.sh
 - FZF extras: `fh` history picker and `cdf` directory picker (optionally binds keys)
 - Helpers: `dcheat`, `cheat`, `helpme` (local cheats + help wrappers)
 - dot doctor: `dot doctor` quick diagnostics for common issues
+- dot help: `dot help` prints CLI overview of commands and keybindings
 - oh-my-zsh (optional, submodule `modules/oh-my-zsh`)
 - SSH picker: `sshp` (pick host from `~/.ssh/config` via `fzf`)
 - Git + fzf helpers: `gco`, `gshow`, `gaddp`, `gstashp`, `gfixup`, `gcp`
@@ -92,6 +93,7 @@ Available flags:
 - `DOTFILES_ENABLE_TMUX_FZF`
 - `DOTFILES_ENABLE_JOURNALCTL_PICKER`
 - `DOTFILES_ENABLE_DOT_DOCTOR`
+- `DOTFILES_ENABLE_DOT_HELP`
 - `DOTFILES_ENABLE_DOCKER_FZF`
 - `DOTFILES_ENABLE_IOBROKER`
 
@@ -239,6 +241,20 @@ Disable per host:
 
 ```bash
 DOTFILES_ENABLE_DOT_DOCTOR=false
+```
+
+## dot help
+
+Enabled by default via `DOTFILES_ENABLE_DOT_HELP`.
+
+- `dot help`: prints a CLI overview of enabled dotfiles commands and keybindings
+- `dot`: same as `dot help`
+- Data source: `~/dotfiles/config/dot_help.json` (optional override via `DOTFILES_DOT_HELP_JSON`)
+
+Disable per host:
+
+```bash
+DOTFILES_ENABLE_DOT_HELP=false
 ```
 
 ## FZF extras

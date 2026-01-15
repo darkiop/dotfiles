@@ -52,25 +52,6 @@ _dot_doctor_flag_enabled() {
 	return 1
 }
 
-dot() {
-	local cmd="${1:-}"
-	shift || true
-
-	case "${cmd}" in
-	doctor)
-		dot_doctor "$@"
-		;;
-	""|-h|--help|help)
-		printf '%s\n' "Usage: dot doctor"
-		;;
-	*)
-		printf '%s\n' "Unknown subcommand: ${cmd}"
-		printf '%s\n' "Usage: dot doctor"
-		return 1
-		;;
-	esac
-}
-
 dot_doctor() {
 	local DOTFILES_DIR="${HOME}/dotfiles"
 	local repo_ok=true

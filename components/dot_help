@@ -1,0 +1,265 @@
+#!/bin/bash
+
+_dot_help_is_enabled() {
+	if command -v dotfiles_flag_enabled >/dev/null 2>&1; then
+		dotfiles_flag_enabled "$1"
+		return $?
+	fi
+	return 1
+}
+
+dot_help() {
+	local use_color=0
+	if [[ -t 1 ]] && [[ -z ${NO_COLOR:-} ]]; then
+		use_color=1
+	fi
+	DOT_HELP_C_RESET="${COLOR_RESET:-}"
+	DOT_HELP_C_HEAD="${COLOR_LIGHT_BLUE:-}"
+	DOT_HELP_C_MUTED="${COLOR_BLUE:-}"
+	if [[ ${use_color} -eq 1 ]] && [[ -z ${DOT_HELP_C_RESET} ]]; then
+		DOT_HELP_C_HEAD=$'\033[36m'
+		DOT_HELP_C_MUTED=$'\033[34m'
+		DOT_HELP_C_RESET=$'\033[0m'
+	fi
+
+	printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "dotfiles help" "${DOT_HELP_C_RESET}"
+	printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "=============" "${DOT_HELP_C_RESET}"
+
+	if [[ ${1:-} == "--plain" ]]; then
+		shift || true
+		_dot_help_plain
+		return $?
+	fi
+
+	if command -v fzf >/dev/null 2>&1 && [[ -t 1 ]]; then
+		_dot_help_fzf
+		return $?
+	fi
+	_dot_help_plain
+}
+
+_dot_help_plain() {
+	_dot_help_heading() {
+		printf '\n%b%s%b\n' "${DOT_HELP_C_HEAD}" "$1" "${DOT_HELP_C_RESET}"
+		printf '%b%s%b\n' "${DOT_HELP_C_MUTED}" "-----------------------------" "${DOT_HELP_C_RESET}"
+		printf '%-24s %s\n' "NAME" "INFO"
+		printf '%-24s %s\n' "------------------------" "----"
+	}
+
+	_dot_help_kv() {
+		local name="$1"
+		local info="$2"
+		printf '%-24s %s\n' "${name}" "${info}"
+	}
+
+	local json_path="${DOTFILES_DOT_HELP_JSON:-${HOME}/dotfiles/config/dot_help.json}"
+	if command -v jq >/dev/null 2>&1 && [[ -f ${json_path} ]]; then
+		local section name desc
+		while IFS=$'\t' read -r section name desc; do
+			case "${section}" in
+			Commands|Bindings|Notes)
+				_dot_help_heading "${section}"
+				;;
+			*)
+				_dot_help_kv "${name}" "${desc}"
+				;;
+			esac
+		done < <(jq -r '
+			("Commands\t\t"),
+			(.commands[] | "item\t\(.name)\t\(.desc)"),
+			("Bindings\t\t"),
+			(.bindings[] | "item\t\(.name)\t\(.desc)"),
+			("Notes\t\t"),
+			(.notes[] | "item\t\(.name)\t\(.desc)")
+		' "${json_path}")
+		return 0
+	fi
+
+	_dot_help_heading "Commands"
+	_dot_help_kv "dot doctor" "diagnostics overview"
+	_dot_help_kv "dot help" "this help"
+
+	if _dot_help_is_enabled DOTFILES_ENABLE_SSH_PICKER; then
+		_dot_help_kv "sshp" "SSH host picker (fzf)"
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_GIT_FZF; then
+		_dot_help_kv "gco" "git checkout picker"
+		_dot_help_kv "gshow" "git show picker"
+		_dot_help_kv "gaddp" "git add picker"
+		_dot_help_kv "gstashp" "git stash picker"
+		_dot_help_kv "gfixup" "git fixup picker"
+		_dot_help_kv "gcp" "git commit hash copy"
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
+		_dot_help_kv "fh" "history picker"
+		_dot_help_kv "cdf" "directory picker"
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_TMUX_FZF; then
+		_dot_help_kv "ts" "tmux session picker"
+		_dot_help_kv "tw" "tmux window picker"
+		_dot_help_kv "tp" "tmux pane picker"
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
+		_dot_help_kv "jctl" "journalctl picker"
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_DOCKER_FZF; then
+		_dot_help_kv "dps" "docker container picker"
+		_dot_help_kv "dexec" "docker exec picker"
+		_dot_help_kv "dlogs" "docker logs picker"
+	fi
+
+	_dot_help_heading "Bindings"
+	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_HISTORY_BINDINGS; then
+		_dot_help_kv "Ctrl+R" "fzf history (fh)"
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_CDF_BINDING; then
+		_dot_help_kv "Alt+C" "fzf directory picker (cdf)"
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_TMUX_FZF; then
+		_dot_help_kv "Ctrl+F" "tmux window picker (tw) inside tmux"
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_NAVI; then
+		_dot_help_kv "Ctrl+G" "navi cheats"
+	fi
+
+	_dot_help_heading "Notes"
+	_dot_help_kv "Config" "~/dotfiles/config/local_dotfiles_settings"
+	_dot_help_kv "Feature flags" "~/dotfiles/components/feature_flags"
+}
+
+_dot_help_fzf() {
+	local items=()
+	local json_path="${DOTFILES_DOT_HELP_JSON:-${HOME}/dotfiles/config/dot_help.json}"
+
+	if command -v jq >/dev/null 2>&1 && [[ -f ${json_path} ]]; then
+		local line
+		while IFS= read -r line; do
+			items+=("${line}")
+		done < <(jq -r '
+			["Commands", "Bindings", "Notes"] as $sections
+			| ($sections[] | .) as $sec
+			| if $sec == "Commands" then
+					("Commands\t"),
+					(.commands[] | "\(.name)\t\(.desc)\t\(.details)")
+				elif $sec == "Bindings" then
+					("Bindings\t"),
+					(.bindings[] | "\(.name)\t\(.desc)\t\(.details)")
+				else
+					("Notes\t"),
+					(.notes[] | "\(.name)\t\(.desc)\t\(.details)")
+				end
+		' "${json_path}")
+		local selection cmd
+		selection="$(printf '%s\n' "${items[@]}" \
+			| fzf --prompt='dot help> ' --height 60% --reverse \
+				--header='enter: run  |  ctrl-c: cancel' \
+				--delimiter=$'\t' --with-nth=1 --preview 'printf "%s\n" {3}' \
+				--preview-window 'right:60%:wrap')"
+		[[ -n ${selection} ]] || return 0
+
+		cmd="${selection%%$'\t'*}"
+		case "${cmd}" in
+		Commands|Bindings|Notes)
+			return 0
+			;;
+		esac
+
+		if [[ -n ${cmd} ]]; then
+			eval "${cmd}"
+		fi
+		return 0
+	fi
+
+	items+=($'Commands\t')
+	items+=($'dot doctor\tdiagnostics overview')
+	items+=($'dot help\tthis help')
+	if _dot_help_is_enabled DOTFILES_ENABLE_SSH_PICKER; then
+		items+=($'sshp\tSSH host picker (fzf)')
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_GIT_FZF; then
+		items+=($'gco\tgit checkout picker')
+		items+=($'gshow\tgit show picker')
+		items+=($'gaddp\tgit add picker')
+		items+=($'gstashp\tgit stash picker')
+		items+=($'gfixup\tgit fixup picker')
+		items+=($'gcp\tgit commit hash copy')
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
+		items+=($'fh\thistory picker')
+		items+=($'cdf\tdirectory picker')
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_TMUX_FZF; then
+		items+=($'ts\ttmux session picker')
+		items+=($'tw\ttmux window picker')
+		items+=($'tp\ttmux pane picker')
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
+		items+=($'jctl\tjournalctl picker')
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_DOCKER_FZF; then
+		items+=($'dps\tdocker container picker')
+		items+=($'dexec\tdocker exec picker')
+		items+=($'dlogs\tdocker logs picker')
+	fi
+
+	items+=($'Bindings\t')
+	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_HISTORY_BINDINGS; then
+		items+=($'Ctrl+R\tfzf history (fh)')
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_CDF_BINDING; then
+		items+=($'Alt+C\tfzf directory picker (cdf)')
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_TMUX_FZF; then
+		items+=($'Ctrl+F\ttmux window picker (tw) inside tmux')
+	fi
+	if _dot_help_is_enabled DOTFILES_ENABLE_NAVI; then
+		items+=($'Ctrl+G\tnavi cheats')
+	fi
+
+	items+=($'Notes\t')
+	items+=($'Config\t~/dotfiles/config/local_dotfiles_settings')
+	items+=($'Feature flags\t~/dotfiles/components/feature_flags')
+
+	local selection cmd
+	selection="$(printf '%s\n' "${items[@]}" \
+		| fzf --prompt='dot help> ' --height 60% --reverse \
+			--header='enter: run  |  ctrl-c: cancel' \
+			--delimiter=$'\t' --with-nth=1 --preview 'printf "%s\n" {2}' \
+			--preview-window 'right:60%:wrap')"
+	[[ -n ${selection} ]] || return 0
+
+	cmd="${selection%%$'\t'*}"
+	case "${cmd}" in
+	Commands|Bindings|Notes)
+		return 0
+		;;
+	esac
+
+	# Execute selected command in the current shell.
+	if [[ -n ${cmd} ]]; then
+		eval "${cmd}"
+	fi
+}
+
+dot() {
+	local cmd="${1:-}"
+	shift || true
+
+	case "${cmd}" in
+	help)
+		dot_help "$@"
+		;;
+	"")
+		dot_help
+		;;
+	*)
+		if command -v dot_doctor >/dev/null 2>&1 && [[ ${cmd} == "doctor" ]]; then
+			dot_doctor "$@"
+			return $?
+		fi
+		printf '%s\n' "Unknown subcommand: ${cmd}"
+		printf '%s\n' "Usage: dot help | dot doctor"
+		return 1
+		;;
+	esac
+}

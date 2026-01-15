@@ -16,6 +16,7 @@ This repository contains personal shell dotfiles (bash/zsh) organized as modular
 - Modules: `modules/<name>/` — add an `install` script and `README.md` when adding new modules (see `modules/fzf`).
 - tmux: `modules/oh-my-tmux/.tmux.conf.local` and `config/tmux.conf.local` for local overrides.
 - Cheats and docs: `cheats/` contains many usage examples and keybindings.
+- dot help data: `config/dot_help.json` stores descriptions for `dot help` (keep it in sync when adding/removing commands or keybindings).
 
 ## Conventions and patterns
 
