@@ -22,11 +22,10 @@ dot_help() {
 		DOT_HELP_C_RESET=$'\033[0m'
 	fi
 
-	printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "dotfiles help" "${DOT_HELP_C_RESET}"
-	printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "=============" "${DOT_HELP_C_RESET}"
-
 	if [[ ${1:-} == "--plain" ]]; then
 		shift || true
+		printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "dotfiles help" "${DOT_HELP_C_RESET}"
+		printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "=============" "${DOT_HELP_C_RESET}"
 		_dot_help_plain
 		return $?
 	fi
@@ -35,6 +34,9 @@ dot_help() {
 		_dot_help_fzf
 		return $?
 	fi
+
+	printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "dotfiles help" "${DOT_HELP_C_RESET}"
+	printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "=============" "${DOT_HELP_C_RESET}"
 	_dot_help_plain
 }
 
@@ -136,108 +138,88 @@ _dot_help_fzf() {
 		while IFS= read -r line; do
 			items+=("${line}")
 		done < <(jq -r '
-			["Commands", "Bindings", "Notes"] as $sections
-			| ($sections[] | .) as $sec
-			| if $sec == "Commands" then
-					("Commands\t"),
-					(.commands[] | "\(.name)\t\(.desc)\t\(.details)")
-				elif $sec == "Bindings" then
-					("Bindings\t"),
-					(.bindings[] | "\(.name)\t\(.desc)\t\(.details)")
-				else
-					("Notes\t"),
-					(.notes[] | "\(.name)\t\(.desc)\t\(.details)")
-				end
+			def norm: gsub("\t"; "    ") | gsub("\n"; "\\n");
+			(.commands[] | [.name, .desc, (.details | norm), (.run // "")] | @tsv),
+			(.bindings[] | [.name, .desc, (.details | norm), (.run // "")] | @tsv),
+			(.notes[] | [.name, .desc, (.details | norm), (.run // "")] | @tsv)
 		' "${json_path}")
-		local selection cmd
+		local selection
 		selection="$(printf '%s\n' "${items[@]}" \
 			| fzf --prompt='dot help> ' --height 60% --reverse \
 				--header='enter: run  |  ctrl-c: cancel' \
-				--delimiter=$'\t' --with-nth=1 --preview 'printf "%s\n" {3}' \
+				--delimiter=$'\t' --with-nth=1,2 --tabstop=24 --preview 'printf "%b\n" {3}' \
 				--preview-window 'right:60%:wrap')"
 		[[ -n ${selection} ]] || return 0
 
-		cmd="${selection%%$'\t'*}"
-		case "${cmd}" in
-		Commands|Bindings|Notes)
-			return 0
-			;;
-		esac
-
-		if [[ -n ${cmd} ]]; then
-			eval "${cmd}"
+		local run
+		run="${selection##*$'\t'}"
+		if [[ -n ${run} ]]; then
+			eval "${run}"
 		fi
 		return 0
 	fi
 
-	items+=($'Commands\t')
-	items+=($'dot doctor\tdiagnostics overview')
-	items+=($'dot help\tthis help')
+	items+=($'dot doctor\tdiagnostics overview\tdiagnostics overview\tdot doctor')
+	items+=($'dot help\tthis help\tthis help\tdot help')
 	if _dot_help_is_enabled DOTFILES_ENABLE_SSH_PICKER; then
-		items+=($'sshp\tSSH host picker (fzf)')
+		items+=($'sshp\tSSH host picker (fzf)\tSSH host picker (fzf)\tsshp')
 	fi
 	if _dot_help_is_enabled DOTFILES_ENABLE_GIT_FZF; then
-		items+=($'gco\tgit checkout picker')
-		items+=($'gshow\tgit show picker')
-		items+=($'gaddp\tgit add picker')
-		items+=($'gstashp\tgit stash picker')
-		items+=($'gfixup\tgit fixup picker')
-		items+=($'gcp\tgit commit hash copy')
+		items+=($'gco\tgit checkout picker\tgit checkout picker\tgco')
+		items+=($'gshow\tgit show picker\tgit show picker\tgshow')
+		items+=($'gaddp\tgit add picker\tgit add picker\tgaddp')
+		items+=($'gstashp\tgit stash picker\tgit stash picker\tgstashp')
+		items+=($'gfixup\tgit fixup picker\tgit fixup picker\tgfixup')
+		items+=($'gcp\tgit commit hash copy\tgit commit hash copy\tgcp')
 	fi
 	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
-		items+=($'fh\thistory picker')
-		items+=($'cdf\tdirectory picker')
+		items+=($'fh\thistory picker\thistory picker\tfh')
+		items+=($'cdf\tdirectory picker\tdirectory picker\tcdf')
 	fi
 	if _dot_help_is_enabled DOTFILES_ENABLE_TMUX_FZF; then
-		items+=($'ts\ttmux session picker')
-		items+=($'tw\ttmux window picker')
-		items+=($'tp\ttmux pane picker')
+		items+=($'ts\ttmux session picker\ttmux session picker\tts')
+		items+=($'tw\ttmux window picker\ttmux window picker\ttw')
+		items+=($'tp\ttmux pane picker\ttmux pane picker\ttp')
 	fi
 	if _dot_help_is_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
-		items+=($'jctl\tjournalctl picker')
+		items+=($'jctl\tjournalctl picker\tjournalctl picker\tjctl')
 	fi
 	if _dot_help_is_enabled DOTFILES_ENABLE_DOCKER_FZF; then
-		items+=($'dps\tdocker container picker')
-		items+=($'dexec\tdocker exec picker')
-		items+=($'dlogs\tdocker logs picker')
+		items+=($'dps\tdocker container picker\tdocker container picker\tdps')
+		items+=($'dexec\tdocker exec picker\tdocker exec picker\tdexec')
+		items+=($'dlogs\tdocker logs picker\tdocker logs picker\tdlogs')
 	fi
 
-	items+=($'Bindings\t')
 	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_HISTORY_BINDINGS; then
-		items+=($'Ctrl+R\tfzf history (fh)')
+		items+=($'Ctrl+R\tfzf history (fh)\tfzf history (fh)\tfh')
 	fi
 	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_CDF_BINDING; then
-		items+=($'Alt+C\tfzf directory picker (cdf)')
+		items+=($'Alt+C\tfzf directory picker (cdf)\tfzf directory picker (cdf)\tcdf')
 	fi
 	if _dot_help_is_enabled DOTFILES_ENABLE_TMUX_FZF; then
-		items+=($'Ctrl+F\ttmux window picker (tw) inside tmux')
+		items+=($'Ctrl+F\ttmux window picker (tw) inside tmux\ttmux window picker (tw) inside tmux\ttw')
 	fi
 	if _dot_help_is_enabled DOTFILES_ENABLE_NAVI; then
-		items+=($'Ctrl+G\tnavi cheats')
+		items+=($'Ctrl+G\tnavi cheats\tnavi cheats\tnavi')
 	fi
 
-	items+=($'Notes\t')
-	items+=($'Config\t~/dotfiles/config/local_dotfiles_settings')
-	items+=($'Feature flags\t~/dotfiles/components/feature_flags')
+	items+=($'Config\t~/dotfiles/config/local_dotfiles_settings\t~/dotfiles/config/local_dotfiles_settings\t')
+	items+=($'Feature flags\t~/dotfiles/components/feature_flags\t~/dotfiles/components/feature_flags\t')
 
-	local selection cmd
+	local selection cmd run
 	selection="$(printf '%s\n' "${items[@]}" \
 		| fzf --prompt='dot help> ' --height 60% --reverse \
 			--header='enter: run  |  ctrl-c: cancel' \
-			--delimiter=$'\t' --with-nth=1 --preview 'printf "%s\n" {2}' \
+			--delimiter=$'\t' --with-nth=1,2 --tabstop=24 --preview 'printf "%b\n" {3}' \
 			--preview-window 'right:60%:wrap')"
 	[[ -n ${selection} ]] || return 0
 
 	cmd="${selection%%$'\t'*}"
-	case "${cmd}" in
-	Commands|Bindings|Notes)
-		return 0
-		;;
-	esac
+	run="${selection##*$'\t'}"
 
 	# Execute selected command in the current shell.
-	if [[ -n ${cmd} ]]; then
-		eval "${cmd}"
+	if [[ -n ${run} ]]; then
+		eval "${run}"
 	fi
 }
 
