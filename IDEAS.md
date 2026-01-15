@@ -13,7 +13,12 @@ Prompt mit Linien vervollständigen, z.B.:
 
 - `dot install`: `install.sh` ausführen
 - `dot update`: Pull + Submodule Update
-- `dot upgrade`: Pull aus Git Repo
+
+dot aliasse:
+
+dot i -> install
+dot u -> update
+dot h -> help
 
 
-componets/dot_help soll seine help informationen auch immer aus config/dot_help.json beziehen
+Aktualsiere die AGENTS.md das die README.md immer aktuell gehalten werden soll.

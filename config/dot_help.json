@@ -4,147 +4,223 @@
       "name": "dot help",
       "desc": "CLI overview of dotfiles commands and keybindings",
       "details": "Shows available commands and bindings based on enabled feature flags. Uses fzf if available; use --plain to force text output.",
-      "run": "dot help"
+      "run": "dot help",
+      "requires": []
     },
     {
       "name": "dot doctor",
       "desc": "Diagnostics overview",
       "details": "Checks git repo state, submodules, expected symlinks, required tools, and MOTD timer status (systemd).",
-      "run": "dot doctor"
+      "run": "dot doctor",
+      "requires": []
     },
     {
       "name": "dot help --plain",
       "desc": "CLI overview (text output)",
       "details": "Forces non-fzf output even if fzf is installed.",
-      "run": "dot help --plain"
+      "run": "dot help --plain",
+      "requires": []
     },
     {
       "name": "sshp",
       "desc": "SSH host picker (fzf)",
       "details": "Pick a host from ~/.ssh/config and connect via ssh.",
-      "run": "sshp"
+      "run": "sshp",
+      "requires": [
+        "DOTFILES_ENABLE_SSH_PICKER"
+      ]
     },
     {
       "name": "gco",
       "desc": "git checkout picker",
       "details": "Pick a branch or tag and checkout.",
-      "run": "gco"
+      "run": "gco",
+      "requires": [
+        "DOTFILES_ENABLE_GIT_FZF"
+      ]
     },
     {
       "name": "gshow",
       "desc": "git show picker",
       "details": "Pick a commit and show it.",
-      "run": "gshow"
+      "run": "gshow",
+      "requires": [
+        "DOTFILES_ENABLE_GIT_FZF"
+      ]
     },
     {
       "name": "gaddp",
       "desc": "git add picker",
       "details": "Pick modified files and add to index.",
-      "run": "gaddp"
+      "run": "gaddp",
+      "requires": [
+        "DOTFILES_ENABLE_GIT_FZF"
+      ]
     },
     {
       "name": "gstashp",
       "desc": "git stash picker",
       "details": "Pick a stash and run: show|apply|pop|drop (e.g. gstashp show).",
-      "run": "gstashp"
+      "run": "gstashp",
+      "requires": [
+        "DOTFILES_ENABLE_GIT_FZF"
+      ]
     },
     {
       "name": "gfixup",
       "desc": "git fixup picker",
       "details": "Pick a commit and create a fixup commit.",
-      "run": "gfixup"
+      "run": "gfixup",
+      "requires": [
+        "DOTFILES_ENABLE_GIT_FZF"
+      ]
     },
     {
       "name": "gcp",
       "desc": "git commit hash copy",
       "details": "Pick a commit hash and copy to clipboard.",
-      "run": "gcp"
+      "run": "gcp",
+      "requires": [
+        "DOTFILES_ENABLE_GIT_FZF"
+      ]
     },
     {
       "name": "fh",
       "desc": "history picker",
       "details": "Pick a command from shell history via fzf.",
-      "run": "fh"
+      "run": "fh",
+      "requires": [
+        "DOTFILES_ENABLE_FZF_EXTRAS"
+      ]
     },
     {
       "name": "cdf",
       "desc": "directory picker",
       "details": "Pick a directory via fzf and cd into it.",
-      "run": "cdf"
+      "run": "cdf",
+      "requires": [
+        "DOTFILES_ENABLE_FZF_EXTRAS"
+      ]
     },
     {
       "name": "ts",
       "desc": "tmux session picker",
       "details": "Pick a tmux session and switch client.",
-      "run": "ts"
+      "run": "ts",
+      "requires": [
+        "DOTFILES_ENABLE_TMUX_FZF"
+      ]
     },
     {
       "name": "tw",
       "desc": "tmux window picker",
       "details": "Pick a tmux window across sessions and focus it.",
-      "run": "tw"
+      "run": "tw",
+      "requires": [
+        "DOTFILES_ENABLE_TMUX_FZF"
+      ]
     },
     {
       "name": "tp",
       "desc": "tmux pane picker",
       "details": "Pick a tmux pane across sessions and focus it.",
-      "run": "tp"
+      "run": "tp",
+      "requires": [
+        "DOTFILES_ENABLE_TMUX_FZF"
+      ]
     },
     {
       "name": "jctl",
       "desc": "journalctl picker",
       "details": "Pick a systemd unit and show logs; use 'jctl follow' to tail.",
-      "run": "jctl"
+      "run": "jctl",
+      "requires": [
+        "DOTFILES_ENABLE_JOURNALCTL_PICKER"
+      ]
     },
     {
       "name": "jctl follow",
       "desc": "journalctl follow",
       "details": "Pick a systemd unit and follow logs (journalctl -f).",
-      "run": "jctl follow"
+      "run": "jctl follow",
+      "requires": [
+        "DOTFILES_ENABLE_JOURNALCTL_PICKER"
+      ]
     },
     {
       "name": "dps",
       "desc": "docker container picker",
       "details": "Pick a container and show its docker ps line.",
-      "run": "dps"
+      "run": "dps",
+      "requires": [
+        "DOTFILES_ENABLE_DOCKER_FZF"
+      ]
     },
     {
       "name": "dexec",
       "desc": "docker exec picker",
       "details": "Pick a container and exec into it. Args are passed to the exec (e.g. dexec bash).",
-      "run": "dexec"
+      "run": "dexec",
+      "requires": [
+        "DOTFILES_ENABLE_DOCKER_FZF"
+      ]
     },
     {
       "name": "dlogs",
       "desc": "docker logs picker",
       "details": "Pick a container and view logs; use 'dlogs follow' to tail.",
-      "run": "dlogs"
+      "run": "dlogs",
+      "requires": [
+        "DOTFILES_ENABLE_DOCKER_FZF"
+      ]
     }
   ],
   "bindings": [
     {
+      "name": "Ctrl+H",
+      "desc": "(dot help) show dot help menu",
+      "details": "Opens dot help.\nEnter in dot help runs: dot help",
+      "run": "dot help",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP",
+        "DOTFILES_ENABLE_DOT_HELP_BINDING"
+      ]
+    },
+    {
       "name": "Ctrl+R",
       "desc": "(fh) fzf history",
       "details": "Replaces reverse-i-search when DOTFILES_ENABLE_FZF_HISTORY_BINDINGS is true.\nEnter in dot help runs: fh",
-      "run": "fh"
+      "run": "fh",
+      "requires": [
+        "DOTFILES_ENABLE_FZF_HISTORY_BINDINGS"
+      ]
     },
     {
       "name": "Ctrl+F",
       "desc": "(tw) tmux window picker inside tmux",
       "details": "Overrides forward-char in shells inside tmux.\nEnter in dot help runs: tw",
-      "run": "tw"
+      "run": "tw",
+      "requires": [
+        "DOTFILES_ENABLE_TMUX_FZF"
+      ]
     },
     {
       "name": "Ctrl+G",
       "desc": "Display the navi cheats",
       "details": "Opens navi menu.\nEnter in dot help runs: navi",
-      "run": "navi"
+      "run": "navi",
+      "requires": [
+        "DOTFILES_ENABLE_NAVI"
+      ]
     },
     {
       "name": "Alt+C",
       "desc": "(cdf) fzf directory picker",
       "details": "Jump to a directory selected via fzf.\nEnter in dot help runs: cdf",
-      "run": "cdf"
+      "run": "cdf",
+      "requires": [
+        "DOTFILES_ENABLE_FZF_CDF_BINDING"
+      ]
     }
   ],
   "notes": [
@@ -152,13 +228,15 @@
       "name": "Config",
       "desc": "~/dotfiles/config/local_dotfiles_settings",
       "details": "Per-host feature flags and overrides (gitignored).",
-      "run": ""
+      "run": "",
+      "requires": []
     },
     {
       "name": "Feature flags",
       "desc": "~/dotfiles/components/feature_flags",
       "details": "Defaults and flag helpers.",
-      "run": ""
+      "run": "",
+      "requires": []
     }
   ]
 }

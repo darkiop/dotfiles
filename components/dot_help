@@ -41,6 +41,20 @@ dot_help() {
 }
 
 _dot_help_plain() {
+	_dot_help_requires_enabled() {
+		local requires_csv="${1:-}"
+		[[ -z ${requires_csv} ]] && return 0
+		local flag
+		IFS=',' read -r -a _dot_help_flags <<<"${requires_csv}"
+		for flag in "${_dot_help_flags[@]}"; do
+			[[ -z ${flag} ]] && continue
+			if ! _dot_help_is_enabled "${flag}"; then
+				return 1
+			fi
+		done
+		return 0
+	}
+
 	_dot_help_heading() {
 		printf '\n%b%s%b\n' "${DOT_HELP_C_HEAD}" "$1" "${DOT_HELP_C_RESET}"
 		printf '%b%s%b\n' "${DOT_HELP_C_MUTED}" "-----------------------------" "${DOT_HELP_C_RESET}"
@@ -55,156 +69,75 @@ _dot_help_plain() {
 	}
 
 	local json_path="${DOTFILES_DOT_HELP_JSON:-${HOME}/dotfiles/config/dot_help.json}"
-	if command -v jq >/dev/null 2>&1 && [[ -f ${json_path} ]]; then
-		local section name desc
-		while IFS=$'\t' read -r section name desc; do
-			case "${section}" in
-			Commands|Bindings|Notes)
-				_dot_help_heading "${section}"
-				;;
-			*)
+	if ! command -v jq >/dev/null 2>&1; then
+		printf '%s\n' "dot help: missing dependency: jq"
+		printf '%s\n' "Install jq or set DOTFILES_DOT_HELP_JSON to a pre-rendered TSV."
+		return 1
+	fi
+	if [[ ! -f ${json_path} ]]; then
+		printf '%s\n' "dot help: missing file: ${json_path}"
+		return 1
+	fi
+
+	local kind section name desc requires
+	while IFS=$'\t' read -r kind section name desc requires; do
+		case "${kind}" in
+		head)
+			_dot_help_heading "${section}"
+			;;
+		item)
+			if _dot_help_requires_enabled "${requires}"; then
 				_dot_help_kv "${name}" "${desc}"
-				;;
-			esac
-		done < <(jq -r '
-			("Commands\t\t"),
-			(.commands[] | "item\t\(.name)\t\(.desc)"),
-			("Bindings\t\t"),
-			(.bindings[] | "item\t\(.name)\t\(.desc)"),
-			("Notes\t\t"),
-			(.notes[] | "item\t\(.name)\t\(.desc)")
-		' "${json_path}")
-		return 0
-	fi
-
-	_dot_help_heading "Commands"
-	_dot_help_kv "dot doctor" "diagnostics overview"
-	_dot_help_kv "dot help" "this help"
-
-	if _dot_help_is_enabled DOTFILES_ENABLE_SSH_PICKER; then
-		_dot_help_kv "sshp" "SSH host picker (fzf)"
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_GIT_FZF; then
-		_dot_help_kv "gco" "git checkout picker"
-		_dot_help_kv "gshow" "git show picker"
-		_dot_help_kv "gaddp" "git add picker"
-		_dot_help_kv "gstashp" "git stash picker"
-		_dot_help_kv "gfixup" "git fixup picker"
-		_dot_help_kv "gcp" "git commit hash copy"
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
-		_dot_help_kv "fh" "history picker"
-		_dot_help_kv "cdf" "directory picker"
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_TMUX_FZF; then
-		_dot_help_kv "ts" "tmux session picker"
-		_dot_help_kv "tw" "tmux window picker"
-		_dot_help_kv "tp" "tmux pane picker"
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
-		_dot_help_kv "jctl" "journalctl picker"
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_DOCKER_FZF; then
-		_dot_help_kv "dps" "docker container picker"
-		_dot_help_kv "dexec" "docker exec picker"
-		_dot_help_kv "dlogs" "docker logs picker"
-	fi
-
-	_dot_help_heading "Bindings"
-	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_HISTORY_BINDINGS; then
-		_dot_help_kv "Ctrl+R" "fzf history (fh)"
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_CDF_BINDING; then
-		_dot_help_kv "Alt+C" "fzf directory picker (cdf)"
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_TMUX_FZF; then
-		_dot_help_kv "Ctrl+F" "tmux window picker (tw) inside tmux"
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_NAVI; then
-		_dot_help_kv "Ctrl+G" "navi cheats"
-	fi
-
-	_dot_help_heading "Notes"
-	_dot_help_kv "Config" "~/dotfiles/config/local_dotfiles_settings"
-	_dot_help_kv "Feature flags" "~/dotfiles/components/feature_flags"
+			fi
+			;;
+		esac
+	done < <(jq -r '
+		("head\tCommands\t\t\t"),
+		(.commands[] | ["item","Commands",.name,.desc,((.requires // []) | join(","))] | @tsv),
+		("head\tBindings\t\t\t"),
+		(.bindings[] | ["item","Bindings",.name,.desc,((.requires // []) | join(","))] | @tsv),
+		("head\tNotes\t\t\t"),
+		(.notes[] | ["item","Notes",.name,.desc,((.requires // []) | join(","))] | @tsv)
+	' "${json_path}")
 }
 
 _dot_help_fzf() {
+	_dot_help_requires_enabled() {
+		local requires_csv="${1:-}"
+		[[ -z ${requires_csv} ]] && return 0
+		local flag
+		IFS=',' read -r -a _dot_help_flags <<<"${requires_csv}"
+		for flag in "${_dot_help_flags[@]}"; do
+			[[ -z ${flag} ]] && continue
+			if ! _dot_help_is_enabled "${flag}"; then
+				return 1
+			fi
+		done
+		return 0
+	}
+
 	local items=()
 	local json_path="${DOTFILES_DOT_HELP_JSON:-${HOME}/dotfiles/config/dot_help.json}"
 
-	if command -v jq >/dev/null 2>&1 && [[ -f ${json_path} ]]; then
-		local line
-		while IFS= read -r line; do
-			items+=("${line}")
-		done < <(jq -r '
-			def norm: gsub("\t"; "    ") | gsub("\n"; "\\n");
-			(.commands[] | [.name, .desc, (.details | norm), (.run // "")] | @tsv),
-			(.bindings[] | [.name, .desc, (.details | norm), (.run // "")] | @tsv),
-			(.notes[] | [.name, .desc, (.details | norm), (.run // "")] | @tsv)
-		' "${json_path}")
-		local selection
-		selection="$(printf '%s\n' "${items[@]}" \
-			| fzf --prompt='dot help> ' --height 60% --reverse \
-				--header='enter: run  |  ctrl-c: cancel' \
-				--delimiter=$'\t' --with-nth=1,2 --tabstop=24 --preview 'printf "%b\n" {3}' \
-				--preview-window 'right:60%:wrap')"
-		[[ -n ${selection} ]] || return 0
+	if ! command -v jq >/dev/null 2>&1; then
+		printf '%s\n' "dot help: missing dependency: jq"
+		return 1
+	fi
+	if [[ ! -f ${json_path} ]]; then
+		printf '%s\n' "dot help: missing file: ${json_path}"
+		return 1
+	fi
 
-		local run
-		run="${selection##*$'\t'}"
-		if [[ -n ${run} ]]; then
-			eval "${run}"
+	local name desc details run requires
+	while IFS=$'\t' read -r name desc details run requires; do
+		if _dot_help_requires_enabled "${requires}"; then
+			items+=("${name}"$'\t'"${desc}"$'\t'"${details}"$'\t'"${run}")
 		fi
-		return 0
-	fi
-
-	items+=($'dot doctor\tdiagnostics overview\tdiagnostics overview\tdot doctor')
-	items+=($'dot help\tthis help\tthis help\tdot help')
-	if _dot_help_is_enabled DOTFILES_ENABLE_SSH_PICKER; then
-		items+=($'sshp\tSSH host picker (fzf)\tSSH host picker (fzf)\tsshp')
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_GIT_FZF; then
-		items+=($'gco\tgit checkout picker\tgit checkout picker\tgco')
-		items+=($'gshow\tgit show picker\tgit show picker\tgshow')
-		items+=($'gaddp\tgit add picker\tgit add picker\tgaddp')
-		items+=($'gstashp\tgit stash picker\tgit stash picker\tgstashp')
-		items+=($'gfixup\tgit fixup picker\tgit fixup picker\tgfixup')
-		items+=($'gcp\tgit commit hash copy\tgit commit hash copy\tgcp')
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
-		items+=($'fh\thistory picker\thistory picker\tfh')
-		items+=($'cdf\tdirectory picker\tdirectory picker\tcdf')
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_TMUX_FZF; then
-		items+=($'ts\ttmux session picker\ttmux session picker\tts')
-		items+=($'tw\ttmux window picker\ttmux window picker\ttw')
-		items+=($'tp\ttmux pane picker\ttmux pane picker\ttp')
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
-		items+=($'jctl\tjournalctl picker\tjournalctl picker\tjctl')
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_DOCKER_FZF; then
-		items+=($'dps\tdocker container picker\tdocker container picker\tdps')
-		items+=($'dexec\tdocker exec picker\tdocker exec picker\tdexec')
-		items+=($'dlogs\tdocker logs picker\tdocker logs picker\tdlogs')
-	fi
-
-	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_HISTORY_BINDINGS; then
-		items+=($'Ctrl+R\tfzf history (fh)\tfzf history (fh)\tfh')
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_FZF_CDF_BINDING; then
-		items+=($'Alt+C\tfzf directory picker (cdf)\tfzf directory picker (cdf)\tcdf')
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_TMUX_FZF; then
-		items+=($'Ctrl+F\ttmux window picker (tw) inside tmux\ttmux window picker (tw) inside tmux\ttw')
-	fi
-	if _dot_help_is_enabled DOTFILES_ENABLE_NAVI; then
-		items+=($'Ctrl+G\tnavi cheats\tnavi cheats\tnavi')
-	fi
-
-	items+=($'Config\t~/dotfiles/config/local_dotfiles_settings\t~/dotfiles/config/local_dotfiles_settings\t')
-	items+=($'Feature flags\t~/dotfiles/components/feature_flags\t~/dotfiles/components/feature_flags\t')
+	done < <(jq -r '
+		(.commands[] | [.name, .desc, .details, (.run // ""), ((.requires // []) | join(","))] | @tsv),
+		(.bindings[] | [.name, .desc, .details, (.run // ""), ((.requires // []) | join(","))] | @tsv),
+		(.notes[] | [.name, .desc, .details, (.run // ""), ((.requires // []) | join(","))] | @tsv)
+	' "${json_path}")
 
 	local selection cmd run
 	selection="$(printf '%s\n' "${items[@]}" \
@@ -222,6 +155,30 @@ _dot_help_fzf() {
 		eval "${run}"
 	fi
 }
+
+_dot_help_setup_keybindings() {
+	if ! _dot_help_is_enabled DOTFILES_ENABLE_DOT_HELP_BINDING; then
+		return 0
+	fi
+
+	# Ctrl+H is often mapped to Backspace depending on terminal settings.
+	# This binding is opt-in via DOTFILES_ENABLE_DOT_HELP_BINDING.
+	if [[ -n ${BASH_VERSION:-} ]]; then
+		# Use bind -x so we don't have to inject text into the line editor.
+		bind -x '"\C-h":"dot help"' 2>/dev/null || true
+	fi
+
+	if [[ -n ${ZSH_VERSION:-} ]]; then
+		_dot_help_zle_widget() {
+			dot help
+			zle reset-prompt
+		}
+		zle -N dot-help  _dot_help_zle_widget 2>/dev/null || true
+		bindkey '^H' dot-help 2>/dev/null || true
+	fi
+}
+
+_dot_help_setup_keybindings
 
 dot() {
 	local cmd="${1:-}"
