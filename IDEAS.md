@@ -1,1 +1,5 @@
-Help function for dotfiles
+
+Prompt mit linien vervollständen, wie der hier:
+
+┌──(darkiop㉿thor)-[~]
+└─$
