@@ -102,6 +102,9 @@ qm list | awk '{print $1}' | sed '1d' | while read VMID; do qm migrate $VMID <ta
 # list qm ids
 qm list | awk '{print $1}' | grep -Eo '[0-9]{1,3}'
 
+# rescan hard of id
+qm rescan --vmid <qmids>
+
 # list pct ids
 pct list | awk '{print $1}' | grep -Eo '[0-9]{1,3}'
 
@@ -121,3 +124,5 @@ echo "1" > /dev/watchdog
 pvecm updatecerts -f
 
 $ images: pveam list <storage>
+
+$ qmids: qm list | awk 'NR>1 {print $1}'
