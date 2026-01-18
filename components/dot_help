@@ -112,7 +112,7 @@ _dot_help_plain() {
 	' "${json_path}")
 }
 
-_dot_help_fzf() {
+	_dot_help_fzf() {
 	_dot_help_requires_enabled() {
 		local requires_csv="${1:-}"
 		[[ -z ${requires_csv} ]] && return 0
@@ -161,39 +161,105 @@ _dot_help_fzf() {
 		(.notes[] | [.name, .desc, .details, (.run // ""), ((.requires // []) | join(","))] | @tsv)
 	' "${json_path}")
 
-	local selection cmd run
-	selection="$(printf '%s\n' "${items[@]}" \
-		| fzf --prompt='dot help> ' --height 60% --reverse \
-			--header='enter: run  |  ctrl-c: cancel' \
-			--delimiter=$'\t' --with-nth=1,2 --tabstop=24 --preview 'printf "%b\n" {3}' \
-			--preview-window 'right:60%:wrap')"
-	[[ -n ${selection} ]] || return 0
+		local selection cmd run
+		selection="$(printf '%s\n' "${items[@]}" \
+			| fzf --prompt='dot help> ' --height 60% --reverse \
+				--header='enter: run  |  ctrl-c: cancel' \
+				--delimiter=$'\t' --with-nth=1,2 --tabstop=24 --preview 'printf "%b\n" {3}' \
+				--preview-window 'right:60%:wrap')"
+		[[ -n ${selection} ]] || return 0
 
-	cmd="${selection%%$'\t'*}"
-	run="${selection##*$'\t'}"
+		local name desc details
+		IFS=$'\t' read -r name desc details run <<<"${selection}"
 
-	# Execute selected command in the current shell.
-	if [[ -n ${run} ]]; then
-		eval "${run}"
-	fi
-}
+		# Execute selected command in the current shell.
+		if [[ -n ${run} ]]; then
+			eval "${run}"
+			return 0
+		fi
 
-	_dot_help_setup_keybindings() {
-		if _dot_help_is_enabled DOTFILES_ENABLE_DOT_HELP_BINDING; then
-			# Ctrl+H is often mapped to Backspace depending on terminal settings.
-			if [[ -n ${BASH_VERSION:-} ]]; then
-				# Use bind -x so we don't have to inject text into the line editor.
-				bind -x '"\C-h":"dot help"' 2>/dev/null || true
+		# Notes: open the referenced file path in the user's editor when there is no run target.
+		# We treat the 2nd column (desc) as a path (e.g. ~/dotfiles/config/local_dotfiles_settings).
+		if [[ -n ${desc} ]]; then
+			_dot_help_open_in_editor() {
+				local file="$1"
+				local editor="${VISUAL:-${EDITOR:-}}"
+
+				if [[ -z ${editor} ]] && command -v sensible-editor >/dev/null 2>&1; then
+					editor="sensible-editor"
+				fi
+				if [[ -z ${editor} ]]; then
+					if command -v nano >/dev/null 2>&1; then
+						editor="nano"
+					else
+						editor="vi"
+					fi
+				fi
+
+				# Split editor command into argv (zsh does not do word-splitting by default).
+				if [[ -n ${ZSH_VERSION:-} ]]; then
+					local -a argv
+					argv=(${(z)editor})
+					command "${argv[@]}" -- "${file}"
+					return $?
+				fi
+
+				local -a argv
+				# shellcheck disable=SC2206
+				argv=(${editor})
+				command "${argv[@]}" -- "${file}"
+			}
+
+			local path="${desc}"
+
+			# Normalize broken paths like "/home/user/~/dotfiles/..." by stripping the prefix
+			# up to the embedded "~/" and rebuilding from $HOME.
+			if [[ ${path} == *"/~/"* ]]; then
+				path="${HOME}/${path#*~/}"
 			fi
 
-			if [[ -n ${ZSH_VERSION:-} ]]; then
-				_dot_help_zle_widget() {
-					dot help
-					zle reset-prompt
-				}
-				zle -N dot-help _dot_help_zle_widget 2>/dev/null || true
-				bindkey '^H' dot-help 2>/dev/null || true
+			# Expand "~" and "$HOME" in a predictable way (tilde expansion does not happen inside quotes).
+			case "${path}" in
+			"~")
+				path="${HOME}"
+				;;
+			"~/"*)
+				path="${HOME}/${path#~/}"
+				;;
+			esac
+			path="${path//\$HOME/${HOME}}"
+			# Collapse accidental double slashes.
+			while [[ ${path} == *"//"* ]]; do
+				path="${path//\/\//\/}"
+			done
+
+			if [[ -e ${path} ]]; then
+				_dot_help_open_in_editor "${path}"
+				return $?
 			fi
+
+			printf '%s\n' "dot help: note target not found: ${path}" >&2
+			return 1
+		fi
+	}
+
+		_dot_help_setup_keybindings() {
+			if _dot_help_is_enabled DOTFILES_ENABLE_DOT_HELP_BINDING; then
+				# Ctrl+H is often mapped to Backspace depending on terminal settings.
+				if [[ -n ${BASH_VERSION:-} ]]; then
+					# Use a readline macro (not bind -x), so interactive programs (fzf/editor)
+					# work reliably and the prompt redraw remains correct.
+					bind '"\C-h":"\C-u dot help\C-m"' 2>/dev/null || true
+				fi
+
+				if [[ -n ${ZSH_VERSION:-} ]]; then
+					_dot_help_zle_widget() {
+						BUFFER="dot help"
+						zle accept-line
+					}
+					zle -N dot-help _dot_help_zle_widget 2>/dev/null || true
+					bindkey '^H' dot-help 2>/dev/null || true
+				fi
 		fi
 
 		if _dot_help_is_enabled DOTFILES_ENABLE_RELOAD_BINDING; then
