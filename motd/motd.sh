@@ -97,19 +97,21 @@ fi
 case ${HOSTNAME} in
 odin)
 	clear
+	echo
 	echo -e "${COLOR_YELLOW}"
 	cat <<EOF
-     ▌▗    
-▞▀▖▞▀▌▄ ▛▀▖
-▌ ▌▌ ▌▐ ▌ ▌
-▝▀ ▝▀▘▀▘▘ ▘
+       ▌▗
+  ▞▀▖▞▀▌▄ ▛▀▖
+  ▌ ▌▌ ▌▐ ▌ ▌
+  ▝▀ ▝▀▘▀▘▘ ▘
 EOF
 	echo
 	;;
 	*)
 		if command -v toilet >/dev/null 2>&1; then
+			echo
 			printf '%b' "${COLOR_YELLOW}"
-			toilet -f smblock -w 150 "${HOSTNAME}" 2>/dev/null | sed 's/^/ /'
+			toilet -f smblock -w 150 "${HOSTNAME}" 2>/dev/null | sed 's/^/  /'
 			printf '%b' "${COLOR_CLOSE}"
 		fi
 		;;
@@ -131,7 +133,7 @@ fi
 print_kv() {
 	local label=$1
 	shift # first arg  = label
-	printf "%b%-11s%b %b%s%b\n" \
+	printf "  %b%-11s%b %b%s%b\n" \
 		"${COLOR_BLUE}" "${label}" "${COLOR_RESET}" \
 		"${COLOR_GREEN}" "$*" "${COLOR_RESET}"
 }
@@ -150,9 +152,9 @@ if [[ -n ${USAGE_HOME} && ${USAGE_HOME} != "unknown" ]]; then
 	print_kv /home "${USAGE_HOME}"
 fi
 
-# “updates” line needs two different colours → do it explicitly
+# "updates" line needs two different colours → do it explicitly
 if [[ ${SHOW_UPDATES_LINE} == true ]]; then
-	printf "%b%-11s%b %b%s%b%b%s%b\n" \
+	printf "  %b%-11s%b %b%s%b%b%s%b\n" \
 		"${COLOR_BLUE}" "updates" "${COLOR_RESET}" \
 		"${COLOR_YELLOW}" "${UPDATES_COUNT}" "${COLOR_RESET}" \
 		"${COLOR_GREEN}" " updates to install" "${COLOR_RESET}"
