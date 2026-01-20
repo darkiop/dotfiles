@@ -175,6 +175,15 @@
       ]
     },
     {
+      "name": "sctl",
+      "desc": "systemd service manager",
+      "details": "Interactive systemd service manager with fzf. Pick a service and perform actions: start, stop, restart, reload, enable, disable, status, logs, follow.",
+      "run": "sctl",
+      "requires": [
+        "DOTFILES_ENABLE_SYSTEMCTL_FZF"
+      ]
+    },
+    {
       "name": "jctl",
       "desc": "journalctl picker",
       "details": "Pick a systemd unit and show logs; use 'jctl follow' to tail.",

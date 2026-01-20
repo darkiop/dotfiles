@@ -1,0 +1,193 @@
+#!/bin/bash
+
+# Avoid alias expansion conflicts when defining functions.
+unalias sctl 2>/dev/null || true
+
+_dotfiles_systemctl_cmd() {
+	if [[ -n ${DOTFILES_SYSTEMCTL_CMD:-} ]]; then
+		printf '%s' "${DOTFILES_SYSTEMCTL_CMD}"
+		return 0
+	fi
+
+	if ! command -v systemctl >/dev/null 2>&1; then
+		return 1
+	fi
+
+	# Prefer plain systemctl; fallback to sudo when needed for privileged operations.
+	if systemctl list-units >/dev/null 2>&1; then
+		DOTFILES_SYSTEMCTL_CMD="systemctl"
+	elif [[ ${EUID} -ne 0 ]] && command -v sudo >/dev/null 2>&1; then
+		DOTFILES_SYSTEMCTL_CMD="sudo systemctl"
+	else
+		DOTFILES_SYSTEMCTL_CMD="systemctl"
+	fi
+
+	printf '%s' "${DOTFILES_SYSTEMCTL_CMD}"
+}
+
+_dotfiles_systemctl_require() {
+	if ! command -v fzf >/dev/null 2>&1; then
+		printf '%s\n' "fzf not found"
+		return 1
+	fi
+	if ! command -v systemctl >/dev/null 2>&1; then
+		printf '%s\n' "systemctl not found (systemd required)"
+		return 1
+	fi
+	if ! _dotfiles_systemctl_cmd >/dev/null 2>&1; then
+		printf '%s\n' "systemctl not available"
+		return 1
+	fi
+	return 0
+}
+
+_dotfiles_systemctl_pick_unit() {
+	local systemctl_cmd
+	systemctl_cmd="$(_dotfiles_systemctl_cmd)" || return 1
+
+	# List all service units (running and stopped)
+	# Format: UNIT, LOAD, ACTIVE, SUB, DESCRIPTION
+	${systemctl_cmd} list-units --type=service --all --no-legend --plain --no-pager 2>/dev/null \
+		| awk '{unit=$1; $1=""; print unit"\t"$0}' \
+		| fzf --prompt='systemd service> ' --height 70% --reverse \
+			--header='enter: actions  |  ctrl-c: cancel' \
+			--delimiter=$'\t' --with-nth=1,2 \
+			--preview "echo '=== Status ==='; echo; systemctl status {1} --no-pager 2>/dev/null || echo 'Status unavailable'; echo; echo '=== Recent Logs ==='; journalctl -q -u {1} -n 20 -o short-iso --no-pager 2>/dev/null || echo 'Logs unavailable'" \
+			--preview-window 'right:60%:wrap'
+}
+
+_dotfiles_systemctl_action_menu() {
+	local unit="$1"
+	local systemctl_cmd="$2"
+
+	# Get current state
+	local is_active is_enabled
+	is_active="$(${systemctl_cmd} is-active "${unit}" 2>/dev/null || echo "inactive")"
+	is_enabled="$(${systemctl_cmd} is-enabled "${unit}" 2>/dev/null || echo "disabled")"
+
+	# Build action menu based on state
+	local actions=()
+
+	# Status is always available
+	actions+=("status"$'\t'"Show detailed status")
+
+	# State-dependent actions
+	if [[ ${is_active} == "active" ]]; then
+		actions+=("stop"$'\t'"Stop the service")
+		actions+=("restart"$'\t'"Restart the service")
+		actions+=("reload"$'\t'"Reload service configuration")
+	else
+		actions+=("start"$'\t'"Start the service")
+	fi
+
+	# Enable/disable actions
+	if [[ ${is_enabled} == "enabled" ]]; then
+		actions+=("disable"$'\t'"Disable service at boot")
+	else
+		actions+=("enable"$'\t'"Enable service at boot")
+	fi
+
+	# Additional actions
+	actions+=("logs"$'\t'"View recent logs")
+	actions+=("follow"$'\t'"Follow logs in real-time")
+
+	# Show menu
+	local action
+	action="$(printf '%s\n' "${actions[@]}" \
+		| fzf --prompt="Action for ${unit}> " --height 40% --reverse \
+			--header="Current: ${is_active} | ${is_enabled}" \
+			--delimiter=$'\t' --with-nth=2)" || return 1
+
+	action="${action%%$'\t'*}"
+	[[ -n ${action} ]] || return 0
+
+	# Execute action
+	case "${action}" in
+	status)
+		${systemctl_cmd} status "${unit}" --no-pager
+		;;
+	start|stop|restart|reload)
+		# These require privileges
+		local cmd="${systemctl_cmd}"
+		if [[ ${cmd} != "sudo "* ]] && [[ ${EUID} -ne 0 ]]; then
+			cmd="sudo ${cmd}"
+		fi
+		printf '%s\n' "Executing: ${cmd} ${action} ${unit}"
+		${cmd} "${action}" "${unit}"
+		;;
+	enable|disable)
+		# These require privileges
+		local cmd="${systemctl_cmd}"
+		if [[ ${cmd} != "sudo "* ]] && [[ ${EUID} -ne 0 ]]; then
+			cmd="sudo ${cmd}"
+		fi
+		printf '%s\n' "Executing: ${cmd} ${action} ${unit}"
+		${cmd} "${action}" "${unit}"
+		;;
+	logs)
+		# View logs (similar to jctl)
+		local pager_cmd journal_prefix=""
+
+		if command -v lnav >/dev/null 2>&1; then
+			pager_cmd="lnav"
+		elif command -v less >/dev/null 2>&1; then
+			pager_cmd="less -R"
+		else
+			pager_cmd="cat"
+		fi
+
+		if [[ ${EUID} -ne 0 ]] && command -v sudo >/dev/null 2>&1; then
+			if ! id -nG "${USER}" 2>/dev/null | tr ' ' '\n' | grep -qxE '(adm|systemd-journal)'; then
+				journal_prefix="sudo"
+			fi
+		fi
+
+		if [[ ${pager_cmd} == "lnav" ]]; then
+			${journal_prefix:+${journal_prefix} }journalctl -q -u "${unit}" -o short-iso --no-pager | lnav
+		else
+			${journal_prefix:+${journal_prefix} }journalctl -q -u "${unit}" -n 500 -o short-iso --no-pager | ${pager_cmd}
+		fi
+		;;
+	follow)
+		# Follow logs in real-time
+		local pager_cmd journal_prefix=""
+
+		if command -v lnav >/dev/null 2>&1; then
+			pager_cmd="lnav"
+		else
+			pager_cmd=""
+		fi
+
+		if [[ ${EUID} -ne 0 ]] && command -v sudo >/dev/null 2>&1; then
+			if ! id -nG "${USER}" 2>/dev/null | tr ' ' '\n' | grep -qxE '(adm|systemd-journal)'; then
+				journal_prefix="sudo"
+			fi
+		fi
+
+		if [[ ${pager_cmd} == "lnav" ]]; then
+			${journal_prefix:+${journal_prefix} }journalctl -q -u "${unit}" -f -o short-iso --no-pager | lnav
+		else
+			${journal_prefix:+${journal_prefix} }journalctl -q -u "${unit}" -f -o short-iso --no-pager
+		fi
+		;;
+	*)
+		printf '%s\n' "Unknown action: ${action}"
+		return 1
+		;;
+	esac
+}
+
+# Interactive systemd service manager
+# Usage:
+#   sctl            # pick service and show action menu
+sctl() {
+	_dotfiles_systemctl_require || return 1
+
+	local selection unit systemctl_cmd
+	selection="$(_dotfiles_systemctl_pick_unit)" || return 1
+	unit="${selection%%$'\t'*}"
+	[[ -n ${unit} ]] || return 0
+	systemctl_cmd="$(_dotfiles_systemctl_cmd)" || return 1
+
+	_dotfiles_systemctl_action_menu "${unit}" "${systemctl_cmd}"
+}

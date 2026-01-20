@@ -81,6 +81,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
   source ~/dotfiles/components/journalctl_picker
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_SYSTEMCTL_FZF; then
+  source ~/dotfiles/components/systemctl_fzf
+fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_DOT_DOCTOR; then
   source ~/dotfiles/components/dot_doctor
 fi
