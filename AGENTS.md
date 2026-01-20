@@ -37,11 +37,33 @@ This repository contains personal shell dotfiles (bash/zsh) organized as modular
 - When adding a new module, include an `install` script and `README.md` under `modules/<name>/` and document any prerequisites in the root `README.md`.
 - Prefer runtime checks using `components/platform` rather than hardcoding OS checks.
 - For updates affecting install flow, update `install.sh` and include idempotent checks (e.g., skip when already installed).
+- **Keep README.md in sync**: When adding/removing features, commands, bindings, or flags, update the corresponding sections in `README.md`:
+  - New commands → update "What it configures" section
+  - New flags → update "Feature flags (per host)" list
+  - New bindings → update "Keyboard-Bindings" tables
+  - Prompt changes → update "Prompt erklärt" section
+  - MOTD changes → update "MOTD (hostname-basiert)" section
+  - dot help changes → update "dot help" section
 
 ## Examples (where to implement common changes)
 
-- Add new prompt segments: edit `components/bash_prompt` and `components/zsh_prompt`.
-- Add an alias set: create `alias/alias-<name>` and enable via `components/feature_flags`.
+- Add new prompt segments: edit `components/bash_prompt` and `components/zsh_prompt`. Then update README.md "Prompt erklärt" section.
+- Add an alias set: create `alias/alias-<name>` and enable via `components/feature_flags`. Document in README.md if user-facing.
 - Add a completion: put script into `bash_completion.d/` and enable via `DOTFILES_ENABLE_BASH_COMPLETION`.
+- After implementing any change: verify that relevant sections in README.md reflect new behavior.
+
+## Change checklist (for significant changes)
+
+Before committing changes that affect user-facing features:
+
+- [ ] Code changes implemented and tested
+- [ ] Feature flags added/updated in `components/feature_flags`
+- [ ] `config/dot_help.json` updated (if adding commands/bindings)
+- [ ] README.md updated:
+  - [ ] "What it configures" section
+  - [ ] Feature flags list
+  - [ ] Keyboard-Bindings tables
+  - [ ] Relevant detailed sections (Prompt/MOTD/dot help/etc.)
+- [ ] AGENTS.md updated if new conventions were established
 
 If anything here is unclear or you want me to expand examples, tell me which area to iterate on.
