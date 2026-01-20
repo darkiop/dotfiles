@@ -165,6 +165,15 @@ if [[ -n ${JQ_MISSING_MSG} ]]; then
 	print_kv tasks "${JQ_MISSING_MSG}"
 fi
 
+# Load and run MOTD widgets (if enabled)
+if [[ ${DOTFILES_ENABLE_MOTD_WIDGETS:-true} == true ]]; then
+	if [[ -f ~/dotfiles/motd/widgets.sh ]]; then
+		# shellcheck source=/dev/null
+		source ~/dotfiles/motd/widgets.sh
+		motd_run_widgets
+	fi
+fi
+
 printf "\n"
 
 # motd for proxmox (global, not per-host scripts)

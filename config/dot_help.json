@@ -308,6 +308,13 @@
       "details": "Set prompt style in ~/dotfiles/config/dotfiles.config or ~/.bashrc/~/.zshrc:\n\nAvailable styles:\n- classic (default): Full info with ┌ and └─\n  Shows: time, user㉿host, IP, directory, permissions, git, sudo\n\n- compact: Minimal with ┌── and └─\n  Shows: user㉿host, directory, git, sudo\n\nUsage:\nexport DOTFILES_PROMPT_STYLE=\"compact\"\n\nThen reload shell with Alt+R or restart terminal.",
       "run": "",
       "requires": []
+    },
+    {
+      "name": "MOTD Widgets",
+      "desc": "~/dotfiles/motd/widgets/",
+      "details": "Extensible widget system for MOTD.\n\nBuilt-in widgets:\n- docker: Container stats (running/stopped/total)\n\nCustom widgets:\nCreate host-specific widgets in ~/dotfiles/motd/widgets/<hostname>/\n\nWidget script format:\n#!/bin/bash\necho \"label:value\"\n\nMake executable: chmod +x widget.sh\n\nDisable widgets:\nDOTFILES_ENABLE_MOTD_WIDGETS=false in ~/dotfiles/config/local_dotfiles_settings",
+      "run": "",
+      "requires": []
     }
   ]
 }
