@@ -146,6 +146,7 @@ dotfiles_prompt_ip() {
 
 dotfiles_prompt_precmd() {
   local exit_status=$?
+  local prompt_style="${DOTFILES_PROMPT_STYLE:-classic}"
 
   # Some terminal emulators respond to OSC queries (e.g. background color query OSC 11)
   # by writing escape sequences to the pty. If nothing consumes that response, zle can
@@ -214,20 +215,14 @@ dotfiles_prompt_precmd() {
   # NOTE: don't use `$'..'` in the env vars; put the actual characters in there.
   local lead="${DOTFILES_PROMPT_LEAD-}"
   local tail="${DOTFILES_PROMPT_TAIL-}"
-  [[ -n "${lead}" ]] || lead=$'\u250c'         # ┌
-  [[ -n "${tail}" ]] || tail=$'\u2514\u2500'   # └─
 
-  local ssh_part=""
-  (( DOTFILES_PROMPT_SSH == 1 )) && ssh_part="${color_ssh}ssh${color_sep}:"
-
-  local ip_part=""
-  if [[ -n "${DOTFILES_PROMPT_IP}" ]]; then
-    ip_part="${color_sep} (%f${DOTFILES_PROMPT_IP}${color_sep})"
+  if [[ ${prompt_style} == "compact" ]]; then
+    [[ -n "${lead}" ]] || lead=$'\u250c\u2500\u2500'  # ┌──
+    [[ -n "${tail}" ]] || tail=$'\u2514\u2500'        # └─
+  else
+    [[ -n "${lead}" ]] || lead=$'\u250c'              # ┌
+    [[ -n "${tail}" ]] || tail=$'\u2514\u2500'        # └─
   fi
-
-  local perms_part=""
-  # Reset color before the opening "(" so it doesn't inherit the directory color.
-  [[ -n "${DOTFILES_PROMPT_PERMS}" ]] && perms_part=" %f(${DOTFILES_PROMPT_PERMS})"
 
   local git_part=""
   if [[ -n "${DOTFILES_PROMPT_GIT_BRANCH}" ]]; then
@@ -241,13 +236,37 @@ dotfiles_prompt_precmd() {
   local sudo_part=""
   (( DOTFILES_PROMPT_SUDO == 1 )) && sudo_part=" ${color_bracket}[${color_sudo}sudo${color_bracket}]"
 
-  PROMPT=$'\n'
-  PROMPT+="${status_color}${lead}${color_bracket}[${color_date}%D{%H:%M:%S}${color_bracket}] "
-  PROMPT+="${color_bracket}[${ssh_part}${color_user}%n${color_sep}@${color_host}%m"
-  PROMPT+="${ip_part}${color_sep}: ${color_dir}%~${perms_part}${color_bracket}]"
-  PROMPT+="${git_part}${sudo_part}"
-  PROMPT+=$'\n'
-  PROMPT+="${status_color}${tail}${color_symbol}$ %f"
+  if [[ ${prompt_style} == "compact" ]]; then
+    # Compact style: ┌──(user㉿host)-[dir]
+    PROMPT=$'\n'
+    PROMPT+="${status_color}${lead}${color_bracket}("
+    PROMPT+="${color_user}%n${color_sep}㉿${color_host}%m"
+    PROMPT+="${color_bracket})-[${color_dir}%~${color_bracket}]"
+    PROMPT+="${git_part}${sudo_part}"
+    PROMPT+=$'\n'
+    PROMPT+="${status_color}${tail}${color_symbol}$ %f"
+  else
+    # Classic style: Full info
+    local ssh_part=""
+    (( DOTFILES_PROMPT_SSH == 1 )) && ssh_part="${color_ssh}ssh${color_sep}:"
+
+    local ip_part=""
+    if [[ -n "${DOTFILES_PROMPT_IP}" ]]; then
+      ip_part="${color_sep} (%f${DOTFILES_PROMPT_IP}${color_sep})"
+    fi
+
+    local perms_part=""
+    # Reset color before the opening "(" so it doesn't inherit the directory color.
+    [[ -n "${DOTFILES_PROMPT_PERMS}" ]] && perms_part=" %f(${DOTFILES_PROMPT_PERMS})"
+
+    PROMPT=$'\n'
+    PROMPT+="${status_color}${lead}${color_bracket}[${color_date}%D{%H:%M:%S}${color_bracket}] "
+    PROMPT+="${color_bracket}[${ssh_part}${color_user}%n${color_sep}@${color_host}%m"
+    PROMPT+="${ip_part}${color_sep}: ${color_dir}%~${perms_part}${color_bracket}]"
+    PROMPT+="${git_part}${sudo_part}"
+    PROMPT+=$'\n'
+    PROMPT+="${status_color}${tail}${color_symbol}$ %f"
+  fi
 }
 
 autoload -Uz add-zsh-hook

@@ -112,6 +112,7 @@ function SHOW_PERMISSIONS_OF_CUR_DIR() {
 function BUILD_PROMPT() {
 	local exit_status=$?
 	local git_part
+	local prompt_style="${DOTFILES_PROMPT_STYLE:-classic}"
 
 	# Some terminal emulators respond to OSC queries (e.g. background color query OSC 11)
 	# by writing escape sequences to the pty. If nothing consumes that response, readline
@@ -142,61 +143,75 @@ function BUILD_PROMPT() {
 		done
 	fi
 
-	BASH_PROMPT="\n"
-	BASH_PROMPT+="\[$(COLOR_EXIT_STATUS "${exit_status}")\]┌"
-	BASH_PROMPT+="\[$COLOR_BRACKET\]["
-	BASH_PROMPT+="\[$COLOR_DATE\]\\t"
-	BASH_PROMPT+="\[$COLOR_BRACKET\]]"
-	BASH_PROMPT+=" "
-	BASH_PROMPT+="\[$COLOR_BRACKET\]["
+	if [[ ${prompt_style} == "compact" ]]; then
+		# Compact style: ┌──(user㉿host)-[dir]
+		BASH_PROMPT="\n"
+		BASH_PROMPT+="\[$(COLOR_EXIT_STATUS "${exit_status}")\]┌──"
+		BASH_PROMPT+="\[$COLOR_BRACKET\]("
+		BASH_PROMPT+="\[$COLOR_USER\]\\u"
+		BASH_PROMPT+="\[$COLOR_SEPARATOR\]㉿"
+		BASH_PROMPT+="\[$COLOR_HOST\]\\h"
+		BASH_PROMPT+="\[$COLOR_BRACKET\])-["
+		BASH_PROMPT+="\[$COLOR_DIR\]\\w"
+		BASH_PROMPT+="\[$COLOR_BRACKET\]]"
+	else
+		# Classic style: Full info
+		BASH_PROMPT="\n"
+		BASH_PROMPT+="\[$(COLOR_EXIT_STATUS "${exit_status}")\]┌"
+		BASH_PROMPT+="\[$COLOR_BRACKET\]["
+		BASH_PROMPT+="\[$COLOR_DATE\]\\t"
+		BASH_PROMPT+="\[$COLOR_BRACKET\]]"
+		BASH_PROMPT+=" "
+		BASH_PROMPT+="\[$COLOR_BRACKET\]["
 
-	if CHECK_IF_SSH_SESSION; then
-		BASH_PROMPT+="\[$COLOR_SSH_ACTIVE\]ssh\[$COLOR_SEPARATOR\]:"
-	fi
-
-	BASH_PROMPT+="\[$COLOR_USER\]\\u\[$COLOR_SEPARATOR\]@\[$COLOR_HOST\]\\h"
-	if [[ -n ${IP} ]]; then
-		BASH_PROMPT+="\[$COLOR_SEPARATOR\] (\[$COLOR_RESET\]${IP}\[$COLOR_SEPARATOR\])"
-	fi
-	BASH_PROMPT+="\[$COLOR_SEPARATOR\]: "
-	BASH_PROMPT+="\[$COLOR_DIR\]\\w"
-	BASH_PROMPT+="\[$COLOR_RESET\] ($(SHOW_PERMISSIONS_OF_CUR_DIR))"
-	BASH_PROMPT+="\[$COLOR_BRACKET\]]"
-
-		if CHECK_IF_GIT_REPO; then
-			git_part="$(GIT_PROMPT)"
-			if [[ -n ${git_part} ]]; then
-				local git_body="$git_part"
-				local git_upstream=""
-				case "$git_part" in
-					*"<>" )
-						git_body="${git_part%<>}"
-						git_upstream="<>"
-						;;
-					*">" )
-						git_body="${git_part%>}"
-						git_upstream=">"
-						;;
-					*"<" )
-						git_body="${git_part%<}"
-						git_upstream="<"
-						;;
-					*"=" )
-						git_body="${git_part%=}"
-						git_upstream="="
-						;;
-				esac
-
-				BASH_PROMPT+=" "
-				BASH_PROMPT+="\[$COLOR_BRACKET\]["
-				BASH_PROMPT+="\[$COLOR_GIT_BRANCH\]${git_body}"
-				if [[ -n ${git_upstream} ]]; then
-					# Match the git-prompt upstream marker color (ANSI red), so it matches *% etc.
-					BASH_PROMPT+="\[\033[31m\]${git_upstream}"
-				fi
-				BASH_PROMPT+="\[$COLOR_BRACKET\]]"
-			fi
+		if CHECK_IF_SSH_SESSION; then
+			BASH_PROMPT+="\[$COLOR_SSH_ACTIVE\]ssh\[$COLOR_SEPARATOR\]:"
 		fi
+
+		BASH_PROMPT+="\[$COLOR_USER\]\\u\[$COLOR_SEPARATOR\]@\[$COLOR_HOST\]\\h"
+		if [[ -n ${IP} ]]; then
+			BASH_PROMPT+="\[$COLOR_SEPARATOR\] (\[$COLOR_RESET\]${IP}\[$COLOR_SEPARATOR\])"
+		fi
+		BASH_PROMPT+="\[$COLOR_SEPARATOR\]: "
+		BASH_PROMPT+="\[$COLOR_DIR\]\\w"
+		BASH_PROMPT+="\[$COLOR_RESET\] ($(SHOW_PERMISSIONS_OF_CUR_DIR))"
+		BASH_PROMPT+="\[$COLOR_BRACKET\]]"
+	fi
+
+	if CHECK_IF_GIT_REPO; then
+		git_part="$(GIT_PROMPT)"
+		if [[ -n ${git_part} ]]; then
+			local git_body="$git_part"
+			local git_upstream=""
+			case "$git_part" in
+				*"<>" )
+					git_body="${git_part%<>}"
+					git_upstream="<>"
+					;;
+				*">" )
+					git_body="${git_part%>}"
+					git_upstream=">"
+					;;
+				*"<" )
+					git_body="${git_part%<}"
+					git_upstream="<"
+					;;
+				*"=" )
+					git_body="${git_part%=}"
+					git_upstream="="
+					;;
+			esac
+
+			BASH_PROMPT+=" "
+			BASH_PROMPT+="\[$COLOR_BRACKET\]["
+			BASH_PROMPT+="\[$COLOR_GIT_BRANCH\]${git_body}"
+			if [[ -n ${git_upstream} ]]; then
+				# Match the git-prompt upstream marker color (ANSI red), so it matches *% etc.
+				BASH_PROMPT+="\[\033[31m\]${git_upstream}"
+			fi
+			BASH_PROMPT+="\[$COLOR_BRACKET\]]"
+		fi
+	fi
 
 	if CHECK_IF_SUDO_IS_ACTIVE; then
 		BASH_PROMPT+=" "
