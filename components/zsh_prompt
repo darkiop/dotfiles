@@ -261,7 +261,7 @@ dotfiles_prompt_precmd() {
 
     PROMPT=$'\n'
     PROMPT+="${status_color}${lead}${color_bracket}[${color_date}%D{%H:%M:%S}${color_bracket}] "
-    PROMPT+="${color_bracket}[${ssh_part}${color_user}%n${color_sep}@${color_host}%m"
+    PROMPT+="${color_bracket}[${ssh_part}${color_user}%n${color_sep}㉿${color_host}%m"
     PROMPT+="${ip_part}${color_sep}: ${color_dir}%~${perms_part}${color_bracket}]"
     PROMPT+="${git_part}${sudo_part}"
     PROMPT+=$'\n'

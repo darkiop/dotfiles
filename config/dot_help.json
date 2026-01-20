@@ -296,7 +296,7 @@
     {
       "name": "Prompt style",
       "desc": "DOTFILES_PROMPT_STYLE environment variable",
-      "details": "Set prompt style in ~/dotfiles/config/dotfiles.config or ~/.bashrc/~/.zshrc:\n\nAvailable styles:\n- classic (default): Full info with ┌ and └─\n  Shows: time, user@host, IP, directory, permissions, git, sudo\n\n- compact: Minimal with ┌── and └─\n  Shows: user㉿host, directory, git, sudo\n\nUsage:\nexport DOTFILES_PROMPT_STYLE=\"compact\"\n\nThen reload shell with Alt+R or restart terminal.",
+      "details": "Set prompt style in ~/dotfiles/config/dotfiles.config or ~/.bashrc/~/.zshrc:\n\nAvailable styles:\n- classic (default): Full info with ┌ and └─\n  Shows: time, user㉿host, IP, directory, permissions, git, sudo\n\n- compact: Minimal with ┌── and └─\n  Shows: user㉿host, directory, git, sudo\n\nUsage:\nexport DOTFILES_PROMPT_STYLE=\"compact\"\n\nThen reload shell with Alt+R or restart terminal.",
       "run": "",
       "requires": []
     }

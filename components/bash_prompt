@@ -168,7 +168,7 @@ function BUILD_PROMPT() {
 			BASH_PROMPT+="\[$COLOR_SSH_ACTIVE\]ssh\[$COLOR_SEPARATOR\]:"
 		fi
 
-		BASH_PROMPT+="\[$COLOR_USER\]\\u\[$COLOR_SEPARATOR\]@\[$COLOR_HOST\]\\h"
+		BASH_PROMPT+="\[$COLOR_USER\]\\u\[$COLOR_SEPARATOR\]㉿\[$COLOR_HOST\]\\h"
 		if [[ -n ${IP} ]]; then
 			BASH_PROMPT+="\[$COLOR_SEPARATOR\] (\[$COLOR_RESET\]${IP}\[$COLOR_SEPARATOR\])"
 		fi
@@ -223,6 +223,7 @@ function BUILD_PROMPT() {
 	BASH_PROMPT+="\n"
 	BASH_PROMPT+="\[$(COLOR_EXIT_STATUS "${exit_status}")\]└─"
 	BASH_PROMPT+="\[$COLOR_SYMBOL\]${SYMBOL} "
+
 	BASH_PROMPT+="\[$COLOR_RESET\]"
 
 	PS1=${BASH_PROMPT}
