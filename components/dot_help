@@ -224,7 +224,7 @@ _dot_help_plain() {
 				path="${HOME}"
 				;;
 			"~/"*)
-				path="${HOME}/${path#~/}"
+				path="${HOME}${path#\~}"
 				;;
 			esac
 			path="${path//\$HOME/${HOME}}"
