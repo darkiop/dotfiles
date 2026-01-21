@@ -175,13 +175,13 @@ if [[ -x /usr/bin/batcat ]]; then
 fi
 
 # ls or lsd
-if [[ -x /usr/bin/eza ]]; then
+if command -v eza >/dev/null 2>&1; then
 	alias ls='eza --sort type --icons --git'
 	alias l='eza -l --sort type --icons --git'
 	alias ll='eza -la --sort type --icons --git --colour=always'
 	alias la='eza -a --sort type --icons --git'
 	alias lt='eza --tree'
-elif [[ -x /usr/bin/lsd ]] || [[ -x /usr/local/bin/lsd ]]; then
+elif command -v lsd >/dev/null 2>&1; then
 	alias ls='lsd'
 	alias l='lsd -lh'
 	alias ll='lsd -lah'
