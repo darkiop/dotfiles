@@ -58,6 +58,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_HELPERS; then
   source ~/dotfiles/components/helpers
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_BREW; then
+  source ~/dotfiles/components/brew
+fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_TMUX_FZF; then
   source ~/dotfiles/components/fzf_tmux
 fi

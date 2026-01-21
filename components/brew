@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Homebrew setup for macOS.
+
+if ! dotfiles_is_darwin; then
+	return 0
+fi
+
+if command -v brew >/dev/null 2>&1; then
+	return 0
+fi
+
+for prefix in /opt/homebrew /usr/local; do
+	if [[ -x "${prefix}/bin/brew" ]]; then
+		eval "$("${prefix}/bin/brew" shellenv)"
+		return 0
+	fi
+done
