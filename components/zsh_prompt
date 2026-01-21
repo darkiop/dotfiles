@@ -206,7 +206,11 @@ dotfiles_prompt_precmd() {
   local color_sudo='%F{99}'
   local color_user='%F{81}'
   local color_symbol='%F{7}'
-  (( EUID == 0 )) && color_user='%F{196}' && color_symbol='%F{196}'
+  if (( EUID == 0 )); then
+    color_user='%F{196}'
+    color_host='%F{196}'
+    color_symbol='%F{196}'
+  fi
 
   local status_color='%F{39}'
   (( exit_status == 0 )) || status_color='%F{196}'
@@ -236,11 +240,15 @@ dotfiles_prompt_precmd() {
   local sudo_part=""
   (( DOTFILES_PROMPT_SUDO == 1 )) && sudo_part=" ${color_bracket}[${color_sudo}sudo${color_bracket}]"
 
+  # User-host separator: skull for root, circled katakana for normal user
+  local user_host_sep='㉿'
+  (( EUID == 0 )) && user_host_sep='💀'
+
   if [[ ${prompt_style} == "compact" ]]; then
     # Compact style: ┌──(user㉿host)-[dir]
     PROMPT=$'\n'
     PROMPT+="${status_color}${lead}${color_bracket}("
-    PROMPT+="${color_user}%n${color_sep}㉿${color_host}%m"
+    PROMPT+="${color_user}%n${color_sep}${user_host_sep}${color_host}%m"
     PROMPT+="${color_bracket})-[${color_dir}%~${color_bracket}]"
     PROMPT+="${git_part}${sudo_part}"
     PROMPT+=$'\n'
@@ -261,7 +269,7 @@ dotfiles_prompt_precmd() {
 
     PROMPT=$'\n'
     PROMPT+="${status_color}${lead}${color_bracket}[${color_date}%D{%H:%M:%S}${color_bracket}] "
-    PROMPT+="${color_bracket}[${ssh_part}${color_user}%n${color_sep}㉿${color_host}%m"
+    PROMPT+="${color_bracket}[${ssh_part}${color_user}%n${color_sep}${user_host_sep}${color_host}%m"
     PROMPT+="${ip_part}${color_sep}: ${color_dir}%~${perms_part}${color_bracket}]"
     PROMPT+="${git_part}${sudo_part}"
     PROMPT+=$'\n'

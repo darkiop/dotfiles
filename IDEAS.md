@@ -4,6 +4,13 @@
 
 root: darkiop💀thor
 
+
+## motd
+
+more widgets
+
+widgetize the current standard lines
+
 ## Proposal Table
 
 | ID | Priority | Name | Category | Complexity | Dependencies | Estimated Effort |
