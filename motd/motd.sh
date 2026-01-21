@@ -19,10 +19,14 @@ if [[ -z ${DOTFILES_OS:-} ]]; then
 fi
 
 # uptime
-if UPTIME_TEXT="$(/usr/bin/uptime -p 2>/dev/null)"; then
-	:
-else
+if [[ ${DOTFILES_OS} == "darwin" ]]; then
 	UPTIME_TEXT="$(/usr/bin/uptime 2>/dev/null | sed -e 's/.*up *//' -e 's/, *[0-9]* users.*//')"
+else
+	if UPTIME_TEXT="$(/usr/bin/uptime -p 2>/dev/null)"; then
+		:
+	else
+		UPTIME_TEXT="$(/usr/bin/uptime 2>/dev/null | sed -e 's/.*up *//' -e 's/, *[0-9]* users.*//')"
+	fi
 fi
 UPTIME_TEXT="${UPTIME_TEXT:-unknown}"
 
@@ -39,7 +43,9 @@ fi
 
 # home-size (cache, fallback to df /home or /Users)
 HOME_MOUNT="/home"
-if [[ ! -d /home && -d /Users ]]; then
+if [[ ${DOTFILES_OS} == "darwin" && -d /Users ]]; then
+	HOME_MOUNT="/Users"
+elif [[ ! -d /home && -d /Users ]]; then
 	HOME_MOUNT="/Users"
 fi
 if [[ -f /usr/local/share/dotfiles/dir-sizes ]]; then
@@ -86,9 +92,9 @@ odin)
 	;;
 *)
 	if [[ -r /etc/os-release ]]; then
-		GET_PLATFORM_DATA=$(grep PRETTY_NAME /etc/os-release | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
+		GET_PLATFORM_DATA=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
 	elif command -v sw_vers >/dev/null 2>&1; then
-		GET_PLATFORM_DATA="$(sw_vers -productName) $(sw_vers -productVersion)"
+		GET_PLATFORM_DATA="$(sw_vers -productName 2>/dev/null) $(sw_vers -productVersion 2>/dev/null)"
 	else
 		GET_PLATFORM_DATA="$(uname -s)"
 	fi
@@ -104,9 +110,9 @@ if [[ -r /proc/loadavg ]]; then
 elif command -v sysctl >/dev/null 2>&1; then
 	read -r LOAD1 LOAD5 LOAD15 <<<"$(sysctl -n vm.loadavg 2>/dev/null | tr -d '{}' | awk '{print $1, $2, $3}')"
 fi
-LOAD1="${LOAD1:-}"
-LOAD5="${LOAD5:-}"
-LOAD15="${LOAD15:-}"
+LOAD1="${LOAD1:-n/a}"
+LOAD5="${LOAD5:-n/a}"
+LOAD15="${LOAD15:-n/a}"
 
 # set COLOR_CLOSE
 case ${HOSTNAME} in
