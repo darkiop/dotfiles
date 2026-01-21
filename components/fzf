@@ -112,6 +112,12 @@ if dotfiles_fzf__flag_enabled DOTFILES_ENABLE_FZF_TAB_COMPLETION; then
 	elif [[ -n ${ZSH_VERSION:-} && -f ~/dotfiles/modules/fzf-tab-completion/zsh/fzf-zsh-completion.sh ]]; then
 		# shellcheck source=/dev/null
 		source ~/dotfiles/modules/fzf-tab-completion/zsh/fzf-zsh-completion.sh
+		# Ensure zsh completion is initialized (fzf completion depends on _main_complete).
+		if [[ -z "${DOTFILES_ZSH_COMPINIT_DONE:-}" ]] && ! whence -w _main_complete >/dev/null 2>&1; then
+			autoload -Uz compinit
+			compinit -d "${HOME}/.zcompdump"
+			export DOTFILES_ZSH_COMPINIT_DONE=1
+		fi
 		# `which` on some systems prints "... not found" to stdout; sanitize command vars.
 		dotfiles_fzf__set_cmd_var _fzf_bash_completion_awk gawk awk
 		dotfiles_fzf__set_cmd_var _fzf_bash_completion_sed gsed sed
