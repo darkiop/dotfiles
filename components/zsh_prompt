@@ -241,7 +241,7 @@ dotfiles_prompt_precmd() {
   (( DOTFILES_PROMPT_SUDO == 1 )) && sudo_part=" ${color_bracket}[${color_sudo}sudo${color_bracket}]"
 
   # User-host separator: skull for root, circled katakana for normal user
-  local user_host_sep='㉿'
+  local user_host_sep='🤘'
   (( EUID == 0 )) && user_host_sep='💀'
 
   if [[ ${prompt_style} == "compact" ]]; then

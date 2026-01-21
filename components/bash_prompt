@@ -18,7 +18,7 @@ if [[ ${EUID} -ne 0 ]]; then
 	COLOR_USER=${COLOR_LIGHT_BLUE}
 	COLOR_HOST=${COLOR_BLUE}
 	COLOR_SYMBOL=${COLOR_WHITE}
-	USER_HOST_SEP='㉿'
+	USER_HOST_SEP='🤘'
 else
 	# User = root
 	COLOR_USER=${COLOR_RED}

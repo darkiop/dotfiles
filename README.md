@@ -130,7 +130,7 @@ Der Prompt wird in `BUILD_PROMPT()` gebaut und per `PROMPT_COMMAND` nach jedem K
 - `┌` / `└─`: Farbe hängt vom Exit-Code des letzten Befehls ab (0 → blau, sonst rot).
 - `[TIME]`: `\t` (HH:MM:SS), grün, in eckigen Klammern.
 - `[ssh:…]`: erscheint nur, wenn eine SSH-Session erkannt wird (`SSH_CONNECTION` oder `SSH_CLIENT`).
-- `USER@HOST`: `\u@\h` (User/Host). User ist hellblau (root rot), Host blau.
+- `USER🤘HOST`: `\u` + Separator + `\h` (User/Host). Separator ist `🤘` (root: `💀`), User hellblau (root rot), Host blau.
 - `(IP)`: eine IPv4-Adresse (nur wenn gefunden). Ermittelt einmal beim Laden von `components/bash_prompt` via `ip a` und gefiltert (kein `127.*`, kein `172.*`, kein `100.*`).
 - `CWD`: `\w` (aktuelles Verzeichnis), orange.
 - `(PERMS)`: Rechte des aktuellen Verzeichnisses via `stat -c %a .` (z.B. `755`).
@@ -147,6 +147,7 @@ Der Prompt wird in `dotfiles_prompt_precmd()` gebaut (Hook via `precmd`) und ver
 
 - Zeilenaufbau: gleiches Layout wie in bash, nur mit `%n` (User), `%m` (Host), `%~` (Pfad mit `~`) und `%D{%H:%M:%S}` (Zeit).
 - Linienzeichen: können via `DOTFILES_PROMPT_LEAD` und `DOTFILES_PROMPT_TAIL` überschrieben werden (standard: `┌` und `└─`).
+- User/Host-Separator: `🤘` (root: `💀`).
 - `(IP)`: bevorzugt bei SSH die Server-IP aus `SSH_CONNECTION`, sonst wird per `ip -4 a` (oder fallback `hostname -I`) eine IPv4 gesucht (ähnliche Filter wie bash).
 - `[git:…]`: wird ohne `__git_ps1` berechnet:
   - Branch/Ref: Branchname (oder Tag, oder short SHA).
