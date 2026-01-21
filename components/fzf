@@ -113,9 +113,11 @@ if dotfiles_fzf__flag_enabled DOTFILES_ENABLE_FZF_TAB_COMPLETION; then
 		# shellcheck source=/dev/null
 		source ~/dotfiles/modules/fzf-tab-completion/zsh/fzf-zsh-completion.sh
 		# Ensure zsh completion is initialized (fzf completion depends on _main_complete).
-		if [[ -z "${DOTFILES_ZSH_COMPINIT_DONE:-}" ]] && ! whence -w _main_complete >/dev/null 2>&1; then
+		if ! whence -w _main_complete >/dev/null 2>&1; then
 			autoload -Uz compinit
-			compinit -d "${HOME}/.zcompdump"
+			if ! compinit -d "${HOME}/.zcompdump" 2>/dev/null; then
+				compinit -i -d "${HOME}/.zcompdump" 2>/dev/null || true
+			fi
 			export DOTFILES_ZSH_COMPINIT_DONE=1
 		fi
 		# `which` on some systems prints "... not found" to stdout; sanitize command vars.
