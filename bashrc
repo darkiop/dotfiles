@@ -104,8 +104,10 @@ xterm*|rxvt*)
 esac
 
 # Enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
+if command -v dircolors >/dev/null 2>&1; then
   test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+elif command -v gdircolors >/dev/null 2>&1; then
+  test -r ~/.dircolors && eval "$(gdircolors -b ~/.dircolors)" || eval "$(gdircolors -b)"
 fi
 
 # Autoupdate dotfiles after 20 logins

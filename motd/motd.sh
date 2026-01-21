@@ -9,8 +9,22 @@
 : "${COLOR_YELLOW:=}"
 : "${COLOR_RESET:=$(tput sgr0 2>/dev/null || true)}"
 
+# Detect OS if not already set (DOTFILES_OS is exported by components/platform).
+if [[ -z ${DOTFILES_OS:-} ]]; then
+	case "$(uname -s 2>/dev/null)" in
+	Linux) DOTFILES_OS="linux" ;;
+	Darwin) DOTFILES_OS="darwin" ;;
+	*) DOTFILES_OS="unknown" ;;
+	esac
+fi
+
 # uptime
-UPTIME_TEXT="$(/usr/bin/uptime -p)"
+if UPTIME_TEXT="$(/usr/bin/uptime -p 2>/dev/null)"; then
+	:
+else
+	UPTIME_TEXT="$(/usr/bin/uptime 2>/dev/null | sed -e 's/.*up *//' -e 's/, *[0-9]* users.*//')"
+fi
+UPTIME_TEXT="${UPTIME_TEXT:-unknown}"
 
 # size of / (single df call)
 if ROOT_DF=$(df -h / 2>/dev/null | awk 'NR==2 {print $2, $3, $5}'); then
@@ -23,10 +37,14 @@ else
 	USAGE_ROOT=""
 fi
 
-# home-size (cache, fallback to df /home)
+# home-size (cache, fallback to df /home or /Users)
+HOME_MOUNT="/home"
+if [[ ! -d /home && -d /Users ]]; then
+	HOME_MOUNT="/Users"
+fi
 if [[ -f /usr/local/share/dotfiles/dir-sizes ]]; then
 	USAGE_HOME=$(</usr/local/share/dotfiles/dir-sizes)
-elif HOME_DF=$(df -h /home 2>/dev/null | awk 'NR==2 {print $3, $2, $5}'); then
+elif HOME_DF=$(df -h "${HOME_MOUNT}" 2>/dev/null | awk 'NR==2 {print $3, $2, $5}'); then
 	# shellcheck disable=SC2086
 	read -r USAGE_HOME_USED USAGE_HOME_TOTAL USAGE_HOME_PCT <<<"${HOME_DF}"
 	USAGE_HOME="${USAGE_HOME_USED} of ${USAGE_HOME_TOTAL} (${USAGE_HOME_PCT})"
@@ -37,35 +55,58 @@ fi
 # get hostname
 HOSTNAME=$(hostname)
 
+# get primary host IP
+dotfiles_motd_get_ip() {
+	if [[ ${DOTFILES_OS} == "darwin" ]]; then
+		if command -v ipconfig >/dev/null 2>&1; then
+			ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || true
+			return 0
+		fi
+		if command -v ifconfig >/dev/null 2>&1; then
+			ifconfig 2>/dev/null | awk '/inet / {print $2}' | grep -v '^127\\.' | grep -v '^169\\.254\\.' | head -n 1 || true
+			return 0
+		fi
+	fi
+
+	if command -v /sbin/ip >/dev/null 2>&1; then
+		/sbin/ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}'
+	elif command -v ip >/dev/null 2>&1; then
+		ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}'
+	else
+		hostname -I 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i !~ /^127\\./) {print $i; exit}}'
+	fi
+}
+
 # get os version & ip & cputemp
 case ${HOSTNAME} in
 odin)
 	GET_PLATFORM_DATA="Synology DSM "$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
 	#GET_CPU_TEMP=$(($(cat /sys/class/hwmon/hwmon0/temp1_input) / 1000))"°C"
-	if GET_HOST_IP=$(/sbin/ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}'); then
-		:
-	elif GET_HOST_IP=$(hostname -I 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i !~ /^127\\./) {print $i; exit}}'); then
-		:
-	else
-		GET_HOST_IP=""
-	fi
+	GET_HOST_IP="$(dotfiles_motd_get_ip || true)"
 	;;
 *)
-	GET_PLATFORM_DATA=$(cat /etc/os-release | grep PRETTY_NAME | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
-	if GET_HOST_IP=$(/sbin/ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}'); then
-		:
-	elif GET_HOST_IP=$(hostname -I 2>/dev/null | awk '{for (i=1;i<=NF;i++) if ($i !~ /^127\\./) {print $i; exit}}'); then
-		:
+	if [[ -r /etc/os-release ]]; then
+		GET_PLATFORM_DATA=$(grep PRETTY_NAME /etc/os-release | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
+	elif command -v sw_vers >/dev/null 2>&1; then
+		GET_PLATFORM_DATA="$(sw_vers -productName) $(sw_vers -productVersion)"
 	else
-		GET_HOST_IP=""
+		GET_PLATFORM_DATA="$(uname -s)"
 	fi
+	GET_HOST_IP="$(dotfiles_motd_get_ip || true)"
 	;;
 esac
 
 # cpu load av
-LOAD1=$(awk '{ print $1 }' /proc/loadavg || true)
-LOAD5=$(awk '{ print $2 }' /proc/loadavg || true)
-LOAD15=$(cat /proc/loadavg | awk '{ print $3 }' || true)
+if [[ -r /proc/loadavg ]]; then
+	LOAD1=$(awk '{ print $1 }' /proc/loadavg || true)
+	LOAD5=$(awk '{ print $2 }' /proc/loadavg || true)
+	LOAD15=$(awk '{ print $3 }' /proc/loadavg || true)
+elif command -v sysctl >/dev/null 2>&1; then
+	read -r LOAD1 LOAD5 LOAD15 <<<"$(sysctl -n vm.loadavg 2>/dev/null | tr -d '{}' | awk '{print $1, $2, $3}')"
+fi
+LOAD1="${LOAD1:-}"
+LOAD5="${LOAD5:-}"
+LOAD15="${LOAD15:-}"
 
 # set COLOR_CLOSE
 case ${HOSTNAME} in

@@ -113,9 +113,22 @@ dot_doctor() {
 	_dot_doctor_check_link() {
 		local target="$1"
 		local expected="$2"
+		local resolved=""
+
+		_dot_doctor_resolve_path() {
+			local path="$1"
+			readlink -f -- "${path}" 2>/dev/null || true
+		}
+		resolved="$(_dot_doctor_resolve_path "${target}")"
+		if [[ -z ${resolved} ]]; then
+			if command -v greadlink >/dev/null 2>&1; then
+				resolved="$(greadlink -f -- "${target}" 2>/dev/null || true)"
+			elif command -v realpath >/dev/null 2>&1; then
+				resolved="$(realpath "${target}" 2>/dev/null || true)"
+			fi
+		fi
+
 		if [[ -L "${target}" ]]; then
-			local resolved
-			resolved="$(readlink -f -- "${target}" 2>/dev/null || true)"
 			if [[ ${resolved} == "${expected}" ]]; then
 				_dot_doctor_ok "link ${target##*/}" "ok"
 			else

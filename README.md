@@ -33,8 +33,20 @@ bash ~/dotfiles/install.sh
 ## Requirements / supported systems
 
 - Shell: bash or zsh
-- Distro: the installer is built around `apt` (Debian/Ubuntu). Other distros need manual package installation.
+- Distro: the installer is built around `apt` (Debian/Ubuntu). Other distros/macOS need manual package installation.
 - Tools: `git`, `curl` (the installer can install missing dependencies via apt/sudo).
+
+### macOS (Homebrew)
+
+The installer does not use Homebrew; install dependencies manually:
+
+```bash
+brew install git curl jq fzf tmux coreutils reattach-to-user-namespace
+```
+
+Notes:
+- `coreutils` provides `gdircolors` and `greadlink` used by prompts/dot doctor on macOS.
+- systemd/journalctl features (MOTD timers, `jctl`, systemctl pickers) are Linux-only.
 
 ## What it configures
 
@@ -104,6 +116,7 @@ Available flags:
 - Flags: `DOTFILES_ENABLE_MOTD` (aktiviert Komponenten) und optional `DOTFILES_ENABLE_MOTD_AUTO_RUN` (sourced bei Login). Default: beide `false`.
 - Einstieg: `motd/motd.sh` (Alias `motd` wird nur gesetzt, wenn MOTD-Flag an ist). Zieht Farben/Settings aus `config/dotfiles.config`.
 - Inhalte: Uptime, Root-/Home-Speicher (`/home` bevorzugt via Cache `/usr/local/share/dotfiles/dir-sizes`), IP/OS/Load, Tasks aus `motd/tasks.json` (via `jq`), optionale APT-Updates (Cache-Dateien unter `/usr/local/share/dotfiles/apt-updates-*`, gesteuert via `MOTD_SHOW_APT_UPDATES` in `config/dotfiles.config`).
+- macOS: OS-Name via `sw_vers`, IP via `ipconfig`/`ifconfig`, Load via `sysctl -n vm.loadavg`, Home-Fallback `/Users`.
 - Host-Hooks: optionales Proxmox-Snippet `motd/motd-proxmox.sh` (auto bei `pveversion`).
 - Timer/Caches: `motd/systemd/update-motd-apt-infos.{service,timer}` schreibt APT-Caches; `motd/systemd/calc-dir-size-homes.{service,timer}` schreibt `dir-sizes`.
   - Installer: Beim Full-Install (`bash ~/dotfiles/install.sh` → `Install dotfiles (all)` oder non-interactive `all`) werden die Timer auf systemd-Systemen automatisch installiert (Menüpunkt `Install MOTD systemd timers` ist zum Neuinstallieren).
@@ -131,9 +144,12 @@ Der Prompt wird in `BUILD_PROMPT()` gebaut und per `PROMPT_COMMAND` nach jedem K
 - `[TIME]`: `\t` (HH:MM:SS), grün, in eckigen Klammern.
 - `[ssh:…]`: erscheint nur, wenn eine SSH-Session erkannt wird (`SSH_CONNECTION` oder `SSH_CLIENT`).
 - `USER🤘HOST`: `\u` + Separator + `\h` (User/Host). Separator ist `🤘` (root: `💀`), User hellblau (root rot), Host blau.
-- `(IP)`: eine IPv4-Adresse (nur wenn gefunden). Ermittelt einmal beim Laden von `components/bash_prompt` via `ip a` und gefiltert (kein `127.*`, kein `172.*`, kein `100.*`).
+- `(IP)`: eine IPv4-Adresse (nur wenn gefunden). Ermittelt einmal beim Laden von `components/bash_prompt`:
+  - Linux: `ip -4 a` (Fallback: `hostname -I`)
+  - macOS: `ipconfig getifaddr` (Fallback: `ifconfig`)
+  - Filter: kein `127.*`, kein `169.254.*`, kein `172.*`, kein `100.*`.
 - `CWD`: `\w` (aktuelles Verzeichnis), orange.
-- `(PERMS)`: Rechte des aktuellen Verzeichnisses via `stat -c %a .` (z.B. `755`).
+- `(PERMS)`: Rechte des aktuellen Verzeichnisses (Linux: `stat -c %a .`, macOS: `stat -f %Lp .`).
 - `[git:…]`: erscheint nur innerhalb eines Git-Repos und nur wenn `__git_ps1` verfügbar ist.
   - Basis kommt aus `__git_ps1` (mit `GIT_PS1_SHOWDIRTYSTATE`, `…STASHSTATE`, `…UNTRACKEDFILES`, `…UPSTREAM=auto`).
   - Typische Marker am Branch: `+` (staged), `*` (dirty), `$` (stash), `%` (untracked).
@@ -148,7 +164,10 @@ Der Prompt wird in `dotfiles_prompt_precmd()` gebaut (Hook via `precmd`) und ver
 - Zeilenaufbau: gleiches Layout wie in bash, nur mit `%n` (User), `%m` (Host), `%~` (Pfad mit `~`) und `%D{%H:%M:%S}` (Zeit).
 - Linienzeichen: können via `DOTFILES_PROMPT_LEAD` und `DOTFILES_PROMPT_TAIL` überschrieben werden (standard: `┌` und `└─`).
 - User/Host-Separator: `🤘` (root: `💀`).
-- `(IP)`: bevorzugt bei SSH die Server-IP aus `SSH_CONNECTION`, sonst wird per `ip -4 a` (oder fallback `hostname -I`) eine IPv4 gesucht (ähnliche Filter wie bash).
+- `(IP)`: bevorzugt bei SSH die Server-IP aus `SSH_CONNECTION`, sonst wird eine IPv4 gesucht:
+  - Linux: `ip -4 a` (Fallback: `hostname -I`)
+  - macOS: `ipconfig getifaddr` (Fallback: `ifconfig`)
+  - Filter: kein `127.*`, kein `169.254.*`, kein `172.*`, kein `100.*`.
 - `[git:…]`: wird ohne `__git_ps1` berechnet:
   - Branch/Ref: Branchname (oder Tag, oder short SHA).
   - Flags: `+` (staged), `*` (dirty), `$` (stash), `%` (untracked).

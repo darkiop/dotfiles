@@ -30,10 +30,28 @@ fi
 # Define the prompt terminator character
 SYMBOL="\\$"
 
-# Get the IP
-IP=$(
-	ip a | grep 'inet' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | grep -v '172' | grep -v '^100.' | head -n 1 || true
-)
+# Get the IP (Linux: ip/hostname; macOS: ipconfig/ifconfig).
+DOTFILES_GET_PRIMARY_IP() {
+	if command -v dotfiles_is_darwin >/dev/null 2>&1 && dotfiles_is_darwin; then
+		local ip=""
+		if command -v ipconfig >/dev/null 2>&1; then
+			ip="$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || true)"
+		fi
+		if [[ -z ${ip} ]] && command -v ifconfig >/dev/null 2>&1; then
+			ip="$(ifconfig 2>/dev/null | awk '/inet / {print $2}' | grep -v '^127\.' | grep -v '^169\.254\.' | head -n 1 || true)"
+		fi
+		printf '%s' "${ip}"
+		return 0
+	fi
+
+	if command -v ip >/dev/null 2>&1; then
+		ip -4 a 2>/dev/null | grep 'inet' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '^127\\.' | grep -v '^169\\.254\\.' | grep -v '^172\\.' | grep -v '^100\\.' | head -n 1 || true
+	elif command -v hostname >/dev/null 2>&1; then
+		hostname -I 2>/dev/null | tr ' ' '\n' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '^127\\.' | grep -v '^169\\.254\\.' | grep -v '^172\\.' | grep -v '^100\\.' | head -n 1 || true
+	fi
+}
+
+IP="$(DOTFILES_GET_PRIMARY_IP)"
 
 # Set the color with the exit status of the last command
 function COLOR_EXIT_STATUS() {
@@ -102,7 +120,11 @@ function CHECK_IF_SSH_SESSION() {
 # %A drwxr-xr-xr-x
 # %a 755
 function SHOW_PERMISSIONS_OF_CUR_DIR() {
-	stat -c %a .
+	if command -v dotfiles_is_darwin >/dev/null 2>&1 && dotfiles_is_darwin; then
+		stat -f %Lp . 2>/dev/null || true
+	else
+		stat -c %a . 2>/dev/null || true
+	fi
 }
 
 # Build the prompt

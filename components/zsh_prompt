@@ -83,7 +83,11 @@ dotfiles_prompt_git() {
 
 dotfiles_prompt_perms() {
   command -v stat >/dev/null 2>&1 || return 0
-  stat -c %a . 2>/dev/null || true
+  if (( ${+functions[dotfiles_is_darwin]} )) && dotfiles_is_darwin; then
+    stat -f %Lp . 2>/dev/null || true
+  else
+    stat -c %a . 2>/dev/null || true
+  fi
 }
 
 dotfiles_prompt_ip() {
@@ -98,6 +102,18 @@ dotfiles_prompt_ip() {
   fi
 
   # Resolve `ip` even if PATH doesn't include /usr/sbin, and ignore aliases.
+  if (( ${+functions[dotfiles_is_darwin]} )) && dotfiles_is_darwin; then
+    local ip=""
+    if command -v ipconfig >/dev/null 2>&1; then
+      ip="$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || true)"
+    fi
+    if [[ -z "${ip}" ]] && command -v ifconfig >/dev/null 2>&1; then
+      ip="$(ifconfig 2>/dev/null | awk '/inet / {print $2}' | grep -v '^127\\.' | grep -v '^169\\.254\\.' | head -n 1 || true)"
+    fi
+    [[ -n "${ip}" ]] && print -r -- "${ip}"
+    return 0
+  fi
+
   local ip_cmd=""
   ip_cmd="${commands[ip]:-}"
   if [[ -z "${ip_cmd}" ]]; then
