@@ -35,13 +35,14 @@ bash ~/dotfiles/install.sh
 - Shell: bash or zsh
 - Distro: the installer is built around `apt` (Debian/Ubuntu). Other distros/macOS need manual package installation.
 - Tools: `git`, `curl` (the installer can install missing dependencies via apt/sudo).
+- Detailed checklist: `install-checklist.md`
 
 ### macOS (Homebrew)
 
 The installer does not use Homebrew; install dependencies manually:
 
 ```bash
-brew install git curl jq fzf tmux coreutils reattach-to-user-namespace
+brew install git curl jq tmux coreutils reattach-to-user-namespace
 ```
 
 Notes:
