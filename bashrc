@@ -59,19 +59,19 @@ if dotfiles_flag_enabled DOTFILES_ENABLE_HELPERS; then
   source ~/dotfiles/components/helpers
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_TMUX_FZF; then
-  source ~/dotfiles/components/tmux_fzf
+  source ~/dotfiles/components/fzf_tmux
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
   source ~/dotfiles/components/journalctl_picker
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_SYSTEMCTL_FZF; then
-  source ~/dotfiles/components/systemctl_fzf
+  source ~/dotfiles/components/fzf_systemctl
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_DOT_DOCTOR; then
   source ~/dotfiles/components/dot_doctor
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_DOCKER_FZF; then
-  source ~/dotfiles/components/docker_fzf
+  source ~/dotfiles/components/fzf_docker
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_DOT_HELP; then
   source ~/dotfiles/components/dot_help

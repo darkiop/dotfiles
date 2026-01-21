@@ -86,7 +86,7 @@ root: darkiop💀thor
 
 ### P001: Kubernetes/kubectl fzf helpers
 
-**Description**: Interactive fzf-based helpers for Kubernetes management, similar to existing docker_fzf component.
+**Description**: Interactive fzf-based helpers for Kubernetes management, similar to existing fzf_docker component.
 
 **Features**:
 - `kpods` - Interactive pod selector with namespace filtering
@@ -99,7 +99,7 @@ root: darkiop💀thor
 **Feature Flag**: `DOTFILES_ENABLE_KUBECTL_FZF`
 
 **Files to create**:
-- `components/kubectl_fzf`
+- `components/fzf_kubectl`
 - Add entry to `config/dot_help.json`
 
 ---
@@ -117,7 +117,7 @@ root: darkiop💀thor
 **Feature Flag**: `DOTFILES_ENABLE_SYSTEMCTL_FZF`
 
 **Files to create**:
-- `components/systemctl_fzf`
+- `components/fzf_systemctl`
 - Add entry to `config/dot_help.json`
 
 ---
@@ -318,7 +318,7 @@ root: darkiop💀thor
 **Feature Flag**: `DOTFILES_ENABLE_PROCESS_FZF`
 
 **Files to create**:
-- `components/process_fzf`
+- `components/fzf_process`
 - Add entries to `config/dot_help.json`
 
 ---
@@ -386,7 +386,7 @@ root: darkiop💀thor
 **Feature Flag**: `DOTFILES_ENABLE_CLOUD_FZF` (with sub-flags per provider)
 
 **Files to create**:
-- `components/cloud_fzf`
+- `components/fzf_cloud`
 - Add entries to `config/dot_help.json`
 
 ---
@@ -570,7 +570,7 @@ root: darkiop💀thor
 **Feature Flag**: `DOTFILES_ENABLE_NETWORK_FZF`
 
 **Files to create**:
-- `components/network_fzf`
+- `components/fzf_network`
 - Add entries to `config/dot_help.json`
 
 ---
