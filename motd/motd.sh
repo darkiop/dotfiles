@@ -60,6 +60,7 @@ fi
 
 # get hostname
 HOSTNAME=$(hostname)
+HOSTNAME_SHORT="${HOSTNAME%%.*}"
 
 # get primary host IP
 dotfiles_motd_get_ip() {
@@ -158,7 +159,7 @@ EOF
 		if command -v toilet >/dev/null 2>&1; then
 			echo
 			printf '%b' "${COLOR_YELLOW}"
-			toilet -f smblock -w 150 "${HOSTNAME}" 2>/dev/null | sed 's/^/  /'
+			toilet -f smblock -w 150 "${HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /'
 			printf '%b' "${COLOR_CLOSE}"
 		fi
 		;;
