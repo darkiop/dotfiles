@@ -188,11 +188,23 @@ elif [[ -x /usr/bin/lsd ]] || [[ -x /usr/local/bin/lsd ]]; then
 	alias la='lsd -Ah'
 	alias lt='lsd --tree'
 else
-	alias ls='ls --sort=extension --color=auto'
-	alias l='ls -lh'
-	alias ll='ls -lah'
-	alias la='ls -A'
-	alias lt='ls --tree'
+	if dotfiles_is_darwin; then
+		alias ls='ls -G -X'
+		alias l='ls -lhG -X'
+		alias ll='ls -lahG -X'
+		alias la='ls -AG -X'
+		if command -v tree >/dev/null 2>&1; then
+			alias lt='tree'
+		else
+			alias lt='ls -R'
+		fi
+	else
+		alias ls='ls --sort=extension --color=auto'
+		alias l='ls -lh'
+		alias ll='ls -lah'
+		alias la='ls -A'
+		alias lt='ls --tree'
+	fi
 fi
 
 # cd - show content after cd
