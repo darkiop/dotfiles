@@ -1,9 +1,16 @@
 # Ideas
 
-## Prompt
+## Shells
 
-root: darkiop💀thor
+Unter Window > Powershell
+- oh-my-posh
 
+## install.sh
+mit brew und apt die dependicies installieren
+
+## install-checklist
+
+generell und für jedes system (linux, debian), ausführlicher
 
 ## motd
 
