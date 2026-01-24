@@ -40,6 +40,20 @@ Suggested install:
 brew install git curl jq fzf tmux coreutils reattach-to-user-namespace
 ```
 
+## Suggested install (quick list)
+
+macOS (Homebrew):
+
+```bash
+brew install git curl jq fzf tmux coreutils reattach-to-user-namespace
+```
+
+Linux (Debian/Ubuntu):
+
+```bash
+sudo apt update && sudo apt install -y git curl jq fzf tmux coreutils
+```
+
 ## Debian/Ubuntu installer prerequisites
 - [ ] apt + sudo (installer uses apt)
 

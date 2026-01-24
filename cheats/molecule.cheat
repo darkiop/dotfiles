@@ -1,0 +1,34 @@
+% molecule
+
+# create a new role skeleton
+molecule init role <role_name>
+
+# init a scenario in current role
+molecule init scenario -r <role_name> -s <scenario>
+
+# create instances
+molecule create
+
+# converge role
+molecule converge
+
+# run full test sequence
+molecule test
+
+# run full test with sceanrio default
+molecule test -s default
+
+# verify tests only
+molecule verify
+
+# lint role
+molecule lint
+
+# login to instance
+molecule login -h <instance>
+
+# list instances
+molecule list
+
+# destroy instances
+molecule destroy
