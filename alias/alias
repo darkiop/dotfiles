@@ -167,10 +167,10 @@ function psg() {
 }
 
 # bat
-if [[ -x /usr/bin/bat ]]; then
+if command -v bat >/dev/null 2>&1; then
 	alias cat='bat'
 fi
-if [[ -x /usr/bin/batcat ]]; then
+if command -v batcat >/dev/null 2>&1; then
 	alias cat='batcat'
 fi
 
@@ -215,7 +215,7 @@ cd() {
 alias ..='cd ..'
 
 # mtr (-b = show ips)
-if [[ -x /usr/bin/mtr ]]; then
+if command -v mtr >/dev/null 2>&1; then
 	alias mtr='mtr -b'
 fi
 
@@ -264,7 +264,7 @@ fi
 alias dmesg='dmesg -T'
 
 # fd-find
-if [[ -x /usr/bin/fdfind ]]; then
+if command -v fdfind >/dev/null 2>&1; then
 	alias fd='fdfind'
 fi
 
@@ -292,7 +292,7 @@ esac
 alias man="TERMINFO=~/.terminfo TERM=mostlike LESS=C PAGER=less man"
 
 # color
-if [[ -x /usr/bin/dircolors ]]; then
+if command -v dircolors >/dev/null 2>&1; then
 	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 	alias grep='grep --color=auto'
 	alias fgrep='fgrep --color=auto'
@@ -314,12 +314,12 @@ alias wol-pve01='/usr/bin/wakeonlan -i 192.168.1.71 00:e0:4c:68:a1:6e'
 alias wol-pve02='/usr/bin/wakeonlan -i 192.168.1.72 1c:69:7a:62:9b:95'
 
 # locate
-if [[ -x /usr/bin/locate ]]; then
+if command -v locate >/dev/null 2>&1; then
 	alias locate='locate -A -i'
 fi
 
 # load git alias
-if [[ -x /usr/bin/git ]]; then
+if command -v git >/dev/null 2>&1; then
 	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-git
 fi
@@ -331,31 +331,31 @@ if command -v navi >/dev/null 2>&1; then
 fi
 
 # load docker alias
-if [[ -x $(command -v docker || true) ]]; then
+if command -v docker >/dev/null 2>&1; then
 	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-docker
 fi
 
 # load proxmox alias
-if [[ -x $(command -v pveversion || true) ]]; then
+if command -v pveversion >/dev/null 2>&1; then
 	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-proxmox
 fi
 
 # load glusterfs alias
-if [[ -x $(command -v gluster || true) ]]; then
+if command -v gluster >/dev/null 2>&1; then
 	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-glusterfs
 fi
 
 # load wireguard alias
-if [[ -x $(command -v wg || true) ]]; then
+if command -v wg >/dev/null 2>&1; then
 	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-wireguard
 fi
 
 # load ansible alias
-if [[ -x $(command -v ansible || true) ]]; then
+if command -v ansible >/dev/null 2>&1; then
 	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-ansible
 fi

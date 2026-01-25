@@ -105,7 +105,7 @@ if dotfiles_flag_enabled DOTFILES_ENABLE_MOTD && dotfiles_flag_enabled DOTFILES_
 fi
 
 # Enable color support of ls and also add handy aliases
-if [[ -x /usr/bin/dircolors ]]; then
+if command -v dircolors >/dev/null 2>&1; then
   [[ -r ~/.dircolors ]] && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 fi
 
