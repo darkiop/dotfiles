@@ -168,18 +168,17 @@ _motd_widget_wireguard() {
 		return 0
 	fi
 
-	# Check if wg is available
-	if ! command -v wg >/dev/null 2>&1; then
-		return 1
-	fi
+	# Check if wg is available and get full path
+	local wg_bin
+	wg_bin=$(command -v wg 2>/dev/null) || return 1
 
 	# Try to get WireGuard status (may need sudo)
 	local wg_output
 	if [[ ${EUID} -eq 0 ]]; then
-		wg_output=$(wg show 2>/dev/null)
+		wg_output=$("${wg_bin}" show 2>/dev/null)
 	elif command -v sudo >/dev/null 2>&1; then
-		# Try sudo with non-interactive mode
-		wg_output=$(sudo -n wg show 2>/dev/null)
+		# Try sudo with non-interactive mode (use full path)
+		wg_output=$(sudo -n "${wg_bin}" show 2>/dev/null)
 	else
 		return 1
 	fi
