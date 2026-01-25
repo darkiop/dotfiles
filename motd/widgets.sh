@@ -174,7 +174,7 @@ _motd_widget_wireguard() {
 
 	# Check if any WireGuard interfaces exist (no sudo needed)
 	local wg_ifaces
-	wg_ifaces=$(ip link show type wireguard 2>/dev/null | grep -oP '^\d+: \K[^:@]+')
+	wg_ifaces=$(ip link show type wireguard 2>/dev/null | awk -F'[: ]+' '/^[0-9]+:/ {print $2}')
 
 	if [[ -z ${wg_ifaces} ]]; then
 		# No WireGuard interfaces exist
