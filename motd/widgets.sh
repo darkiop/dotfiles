@@ -35,7 +35,7 @@ _motd_cache_read() {
 _motd_cache_write() {
 	local cache_file="$1"
 	local content="$2"
-	printf '%s' "${content}" > "${cache_file}" 2>/dev/null || true
+	printf "%s" "${content}" > "${cache_file}" 2>/dev/null || true
 }
 
 # ============================================================================
@@ -74,7 +74,7 @@ _motd_widget_docker() {
 
 	# Cache and return
 	_motd_cache_write "${cache_file}" "${output}"
-	printf '%s' "${output}"
+	printf "%s" "${output}"
 }
 
 # ============================================================================
