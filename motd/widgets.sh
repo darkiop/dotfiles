@@ -241,21 +241,34 @@ _motd_widget_brew() {
 		return 1
 	fi
 
-	# Count outdated packages (suppress auto-update)
-	local outdated_count output
-	outdated_count=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated 2>/dev/null | wc -l | tr -d ' ')
+	# Count outdated formulas and casks separately (suppress auto-update)
+	local formula_count cask_count total output
+	formula_count=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --formula 2>/dev/null | wc -l | tr -d ' ')
+	cask_count=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --cask 2>/dev/null | wc -l | tr -d ' ')
+	total=$((formula_count + cask_count))
 
 	# Only show if there are updates
-	if [[ ${outdated_count} -eq 0 ]]; then
+	if [[ ${total} -eq 0 ]]; then
 		# Cache empty result to avoid repeated checks
 		_motd_cache_write "${cache_file}" ""
 		return 1
 	fi
 
-	if [[ ${outdated_count} -eq 1 ]]; then
-		output="1 update available"
+	# Build output: "X updates (Y formulas, Z casks)" or simpler variants
+	if [[ ${formula_count} -gt 0 && ${cask_count} -gt 0 ]]; then
+		output="${total} updates (${formula_count} formulas, ${cask_count} casks)"
+	elif [[ ${formula_count} -gt 0 ]]; then
+		if [[ ${formula_count} -eq 1 ]]; then
+			output="1 formula update"
+		else
+			output="${formula_count} formula updates"
+		fi
 	else
-		output="${outdated_count} updates available"
+		if [[ ${cask_count} -eq 1 ]]; then
+			output="1 cask update"
+		else
+			output="${cask_count} cask updates"
+		fi
 	fi
 
 	# Cache and return
