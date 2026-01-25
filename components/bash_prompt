@@ -147,6 +147,9 @@ function BUILD_PROMPT() {
 		DOTFILES_STDIN_FLUSHED=1
 		local _dotfiles_steps=4
 		local _dotfiles_step_wait=0.05
+		if [[ -n ${BASH_VERSINFO[0]:-} && ${BASH_VERSINFO[0]} -lt 4 ]]; then
+			_dotfiles_step_wait=1
+		fi
 		# tmux attach on login can delay OSC replies noticeably (network / terminal latency).
 		[[ -n "${TMUX:-}" ]] && _dotfiles_steps=80
 
