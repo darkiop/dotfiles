@@ -78,6 +78,84 @@ _motd_widget_docker() {
 }
 
 # ============================================================================
+# Tailscale Widget
+# ============================================================================
+_motd_widget_tailscale() {
+	local cache_file="${MOTD_CACHE_DIR}/tailscale"
+	local cache_ttl=60
+
+	# Return cached if fresh
+	if _motd_cache_fresh "${cache_file}" "${cache_ttl}"; then
+		_motd_cache_read "${cache_file}"
+		return 0
+	fi
+
+	# Check if tailscale is available
+	if ! command -v tailscale >/dev/null 2>&1; then
+		return 1
+	fi
+
+	# Get tailscale status (JSON for reliable parsing)
+	local status_json
+	if ! status_json=$(tailscale status --json 2>/dev/null); then
+		return 1
+	fi
+
+	# Check if jq is available for JSON parsing
+	if ! command -v jq >/dev/null 2>&1; then
+		# Fallback: simple status check without jq
+		local ip output
+		ip=$(tailscale ip -4 2>/dev/null | head -1)
+		if [[ -n ${ip} ]]; then
+			output="${ip}"
+		else
+			output="stopped"
+		fi
+		_motd_cache_write "${cache_file}" "${output}"
+		printf "%s" "${output}"
+		return 0
+	fi
+
+	# Parse status with jq
+	local backend_state self_ip exit_node_ip peer_count output
+	backend_state=$(printf "%s" "${status_json}" | jq -r '.BackendState // empty')
+
+	# Show status if not running
+	if [[ ${backend_state} != "Running" ]]; then
+		output="${backend_state:-stopped}"
+		_motd_cache_write "${cache_file}" "${output}"
+		printf "%s" "${output}"
+		return 0
+	fi
+
+	# Get own IP
+	self_ip=$(printf "%s" "${status_json}" | jq -r '.Self.TailscaleIPs[0] // empty')
+
+	# Count online peers (excluding self)
+	peer_count=$(printf "%s" "${status_json}" | jq '[.Peer[] | select(.Online == true)] | length')
+
+	# Check for exit node
+	exit_node_ip=$(printf "%s" "${status_json}" | jq -r '.ExitNodeStatus.TailscaleIPs[0] // empty')
+
+	# Build output
+	if [[ -n ${self_ip} ]]; then
+		output="${self_ip}"
+		if [[ ${peer_count} -gt 0 ]]; then
+			output="${output}, ${peer_count} peers"
+		fi
+		if [[ -n ${exit_node_ip} ]]; then
+			output="${output}, exit: ${exit_node_ip}"
+		fi
+	else
+		return 1
+	fi
+
+	# Cache and return
+	_motd_cache_write "${cache_file}" "${output}"
+	printf "%s" "${output}"
+}
+
+# ============================================================================
 # Widget Runner - Call all enabled widgets
 # ============================================================================
 motd_run_widgets() {
@@ -86,6 +164,11 @@ motd_run_widgets() {
 	# Docker widget
 	if widget_output=$(_motd_widget_docker 2>/dev/null); then
 		print_kv "docker" "${widget_output}"
+	fi
+
+	# Tailscale widget
+	if widget_output=$(_motd_widget_tailscale 2>/dev/null); then
+		print_kv "tailscale" "${widget_output}"
 	fi
 
 	# Host-specific widgets (if directory exists)
