@@ -1,1 +1,81 @@
-# TODO add most used brew commands (cheats) here
+% brew
+
+# show brew version
+brew --version
+
+# diagnose brew setup
+brew doctor
+
+# update formulae/casks
+brew update
+
+# upgrade installed formulae
+brew upgrade
+
+# upgrade all casks (including greedy)
+brew upgrade --cask --greedy
+
+# list outdated formulae/casks
+brew outdated
+
+# search formulae/casks
+brew search <query>
+
+# show formula info
+brew info <formula>
+
+# install formula
+brew install <formula>
+
+# reinstall formula
+brew reinstall <formula>
+
+# uninstall formula
+brew uninstall <formula>
+
+# list installed formulae
+brew list
+
+# list formulae with versions
+brew list --versions
+
+# list installed casks
+brew list --cask
+
+# list services
+brew services list
+
+# start a service
+brew services start <service>
+
+# stop a service
+brew services stop <service>
+
+# restart a service
+brew services restart <service>
+
+# cleanup old versions
+brew cleanup
+
+# dry-run cleanup
+brew cleanup -n
+
+# remove unused deps
+brew autoremove
+
+# pin formula to prevent upgrades
+brew pin <formula>
+
+# unpin formula
+brew unpin <formula>
+
+# add a tap
+brew tap <tap>
+
+# remove a tap
+brew untap <tap>
+
+$ query: brew search
+$ formula: brew list --formula
+$ service: brew services list | awk 'NR>1 {print $1}'
+$ tap: brew tap
