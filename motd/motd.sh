@@ -180,11 +180,9 @@ fi
 # BUILD THE MOTD OUTPUT
 _motd_defang_ips() {
 	local value="$1"
-	local dot
 
-	# Use a non-ASCII dot to avoid terminal auto-linking of IPs.
-	dot=$'\u2024'
-	value=${value//./${dot}}
+	# Remove dots to avoid any terminal auto-linking of IPs.
+	value=${value//./}
 	printf "%s" "${value}"
 }
 
