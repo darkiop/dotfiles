@@ -174,7 +174,8 @@ _motd_widget_wireguard() {
 
 	# Only show wg0 status; if not connected, show a minimal message
 	local wg_ip output allowed_ips
-	wg_ip=$(ip -c never -4 addr show dev wg0 2>/dev/null | awk '/inet / {split($2, a, "/"); print a[1]; exit}')
+	# Strip ANSI escape sequences from ip output (ip may colorize even in pipes)
+	wg_ip=$(ip -4 addr show dev wg0 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | awk '/inet / {split($2, a, "/"); print a[1]; exit}')
 
 	if [[ -n ${wg_ip} ]]; then
 		output="${wg_ip}"
