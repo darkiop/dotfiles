@@ -238,11 +238,11 @@ fi
 printf "\n"
 
 # motd for proxmox (global, not per-host scripts)
-if [[ ${EUID} -ne 0 ]]; then
-	if command -v pveversion >/dev/null 2>&1; then
-		# shellcheck source=/dev/null
-		source ~/dotfiles/motd/motd-proxmox.sh
-	fi
-fi
+#if [[ ${EUID} -ne 0 ]]; then
+#	if command -v pveversion >/dev/null 2>&1; then
+#		# shellcheck source=/dev/null
+#		source ~/dotfiles/motd/motd-proxmox.sh
+#	fi
+#fi
 
 echo
