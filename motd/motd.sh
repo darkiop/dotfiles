@@ -180,11 +180,11 @@ fi
 # BUILD THE MOTD OUTPUT
 _motd_defang_ips() {
 	local value="$1"
-	local break_seq
+	local joiner
 
-	# Build a non-printing color toggle to break terminal link detection.
-	printf -v break_seq '%b%b' "${COLOR_RESET}" "${COLOR_GREEN}"
-	value=${value//./${break_seq}.}
+	# Insert a zero-width word joiner to break terminal link detection.
+	joiner=$'\u2060'
+	value=${value//./${joiner}.}
 	printf "%s" "${value}"
 }
 
