@@ -2,8 +2,12 @@
 
 # check if root, when not define alias with sudo
 if [[ ${EUID} -ne 0 ]]; then
-	alias docker='sudo '$(command -v docker)
-	alias docker-compose='sudo '$(command -v docker-compose)
+	if command -v docker >/dev/null 2>&1; then
+		alias docker='sudo docker'
+	fi
+	if command -v docker-compose >/dev/null 2>&1; then
+		alias docker-compose='sudo docker-compose'
+	fi
 fi
 
 alias dk='docker'
