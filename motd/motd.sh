@@ -180,8 +180,12 @@ fi
 # BUILD THE MOTD OUTPUT
 _motd_defang_ips() {
 	local value="$1"
-	local break_seq="${COLOR_RESET}${COLOR_GREEN}"
-	printf "%s" "${value}" | sed -E "s/([0-9])\\.([0-9])/\\1${break_seq}.\\2/g"
+	local break_seq
+
+	# Build a non-printing color toggle to break terminal link detection.
+	printf -v break_seq '%b%b' "${COLOR_RESET}" "${COLOR_GREEN}"
+	value=${value//./${break_seq}.}
+	printf "%s" "${value}"
 }
 
 print_kv() {
