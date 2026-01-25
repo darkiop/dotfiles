@@ -1,7 +1,21 @@
 #!/bin/bash
 
 # load shell widget for navi (STRG + G)
+if ! command -v navi >/dev/null 2>&1; then
+	for navi_bin in /opt/homebrew/bin/navi /usr/local/bin/navi; do
+		if [[ -x "${navi_bin}" ]]; then
+			export PATH="${PATH:+${PATH}:}$(dirname "${navi_bin}")"
+			break
+		fi
+	done
+fi
+
 if command -v navi >/dev/null 2>&1; then
+	cheats_dir="${DOTFILES_CHEATS_DIR:-$HOME/dotfiles/cheats}"
+	if [[ -d "${cheats_dir}" && ":${NAVI_PATH:-}:" != *":${cheats_dir}:"* ]]; then
+		export NAVI_PATH="${cheats_dir}${NAVI_PATH:+:${NAVI_PATH}}"
+	fi
+
 	# navi uses fzf by default; make sure the dotfiles-managed fzf is on PATH.
 	if ! command -v fzf >/dev/null 2>&1; then
 		if command -v ADD_TO_PATH >/dev/null 2>&1; then

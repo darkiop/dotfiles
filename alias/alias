@@ -325,7 +325,7 @@ if [[ -x /usr/bin/git ]]; then
 fi
 
 # load navi alias
-if [[ -x /usr/local/bin/navi ]]; then
+if command -v navi >/dev/null 2>&1; then
 	# shellcheck source=/dev/null
 	source ~/dotfiles/alias/alias-navi
 fi
