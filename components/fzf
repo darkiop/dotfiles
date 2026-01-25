@@ -97,21 +97,45 @@ dotfiles_fzf__set_cmd_var() {
 	printf -v "${var_name}" '%s' "${resolved}"
 }
 
+dotfiles_fzf__bash_tab_completion_supported() {
+	# fzf-tab-completion bash script needs bash 4+ (readarray, exec {var}>)
+	[[ -n ${BASH_VERSINFO[0]:-} && ${BASH_VERSINFO[0]} -ge 4 ]]
+}
+
+dotfiles_fzf__zsh_tab_completion_supported() {
+	# zsh script relies on gawk (or awk with -W interactive)
+	if command -v gawk >/dev/null 2>&1; then
+		return 0
+	fi
+	awk -W interactive 'BEGIN{exit 0}' >/dev/null 2>&1
+}
+
 # fzf tab-completion (bash + zsh)
 # https://github.com/lincheney/fzf-tab-completion
 if dotfiles_fzf__flag_enabled DOTFILES_ENABLE_FZF_TAB_COMPLETION; then
 	if [[ -n ${BASH_VERSION:-} && -f ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh ]]; then
-		# shellcheck source=/dev/null
-		source ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh
+		if dotfiles_fzf__bash_tab_completion_supported; then
+			# shellcheck source=/dev/null
+			source ~/dotfiles/modules/fzf-tab-completion/bash/fzf-bash-completion.sh
+		else
+			# macOS ships bash 3.2; skip fzf-tab-completion to keep default completion working.
+			:
+		fi
 		# `which` on some systems prints "... not found" to stdout; sanitize command vars.
 		dotfiles_fzf__set_cmd_var _fzf_bash_completion_awk gawk awk
 		dotfiles_fzf__set_cmd_var _fzf_bash_completion_sed gsed sed
 		dotfiles_fzf__set_cmd_var _fzf_bash_completion_egrep rg egrep
-		# Replace TAB completion with fzf-powered completion.
-		bind -x '"\t": fzf_bash_completion' 2>/dev/null || true
+		if dotfiles_fzf__bash_tab_completion_supported; then
+			# Replace TAB completion with fzf-powered completion.
+			bind -x '"\t": fzf_bash_completion' 2>/dev/null || true
+		fi
 	elif [[ -n ${ZSH_VERSION:-} && -f ~/dotfiles/modules/fzf-tab-completion/zsh/fzf-zsh-completion.sh ]]; then
-		# shellcheck source=/dev/null
-		source ~/dotfiles/modules/fzf-tab-completion/zsh/fzf-zsh-completion.sh
+		if dotfiles_fzf__zsh_tab_completion_supported; then
+			# shellcheck source=/dev/null
+			source ~/dotfiles/modules/fzf-tab-completion/zsh/fzf-zsh-completion.sh
+		else
+			bindkey '^I' expand-or-complete 2>/dev/null || true
+		fi
 		# Ensure zsh completion is initialized (fzf completion depends on _main_complete).
 		if ! whence -w _main_complete >/dev/null 2>&1; then
 			autoload -Uz compinit
@@ -124,8 +148,14 @@ if dotfiles_fzf__flag_enabled DOTFILES_ENABLE_FZF_TAB_COMPLETION; then
 		dotfiles_fzf__set_cmd_var _fzf_bash_completion_awk gawk awk
 		dotfiles_fzf__set_cmd_var _fzf_bash_completion_sed gsed sed
 		dotfiles_fzf__set_cmd_var _fzf_bash_completion_egrep rg egrep
-		# Bind TAB to fzf completion widget.
-		bindkey '^I' fzf_completion 2>/dev/null || true
+		if dotfiles_fzf__zsh_tab_completion_supported; then
+			# Bind TAB to fzf completion widget (fallback to default if unavailable).
+			if whence -w fzf_completion >/dev/null 2>&1; then
+				bindkey '^I' fzf_completion 2>/dev/null || true
+			else
+				bindkey '^I' expand-or-complete 2>/dev/null || true
+			fi
+		fi
 	fi
 fi
 
