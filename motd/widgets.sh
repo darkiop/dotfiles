@@ -247,11 +247,11 @@ _motd_widget_brew() {
 	cask_count=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --cask 2>/dev/null | wc -l | tr -d ' ')
 	total=$((formula_count + cask_count))
 
-	# Only show if there are updates
+	# Show "up2date" if no updates available
 	if [[ ${total} -eq 0 ]]; then
-		# Cache empty result to avoid repeated checks
-		_motd_cache_write "${cache_file}" ""
-		return 1
+		_motd_cache_write "${cache_file}" "up2date"
+		printf "up2date"
+		return 0
 	fi
 
 	# Build output: "X updates (Y formulas, Z casks)" or simpler variants
