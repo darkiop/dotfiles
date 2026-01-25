@@ -198,7 +198,7 @@ _motd_widget_wireguard() {
 	first_iface=$(printf "%s" "${wg_ifaces}" | head -1)
 
 	if [[ -n ${first_iface} ]]; then
-		wg_ip=$(ip -4 addr show "${first_iface}" 2>/dev/null | grep -oP 'inet \K[0-9.]+')
+		wg_ip=$(ip -4 addr show "${first_iface}" 2>/dev/null | awk '/inet / {split($2, a, "/"); print a[1]; exit}')
 	fi
 
 	# If we have detailed wg output, count peers
