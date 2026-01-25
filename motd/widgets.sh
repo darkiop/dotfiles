@@ -156,6 +156,87 @@ _motd_widget_tailscale() {
 }
 
 # ============================================================================
+# WireGuard Widget
+# ============================================================================
+_motd_widget_wireguard() {
+	local cache_file="${MOTD_CACHE_DIR}/wireguard"
+	local cache_ttl=60
+
+	# Return cached if fresh
+	if _motd_cache_fresh "${cache_file}" "${cache_ttl}"; then
+		_motd_cache_read "${cache_file}"
+		return 0
+	fi
+
+	# Check if wg is available
+	if ! command -v wg >/dev/null 2>&1; then
+		return 1
+	fi
+
+	# Try to get WireGuard status (may need sudo)
+	local wg_output
+	if [[ ${EUID} -eq 0 ]]; then
+		wg_output=$(wg show 2>/dev/null)
+	elif command -v sudo >/dev/null 2>&1; then
+		# Try sudo with non-interactive mode
+		wg_output=$(sudo -n wg show 2>/dev/null)
+	else
+		return 1
+	fi
+
+	# Check if we got any output
+	if [[ -z ${wg_output} ]]; then
+		# No interfaces active
+		local output="no active tunnels"
+		_motd_cache_write "${cache_file}" "${output}"
+		printf "%s" "${output}"
+		return 0
+	fi
+
+	# Count interfaces and peers
+	local interfaces total_peers active_peers
+	interfaces=$(printf "%s" "${wg_output}" | grep -c "^interface:")
+	total_peers=$(printf "%s" "${wg_output}" | grep -c "^peer:")
+
+	# Count active peers (handshake within last 3 minutes = 180 seconds)
+	active_peers=0
+	local now handshake_line handshake_ago
+	now=$(date +%s)
+
+	while IFS= read -r handshake_line; do
+		if [[ ${handshake_line} =~ ([0-9]+)\ (second|minute|hour|day)s?\ ago ]]; then
+			local num="${BASH_REMATCH[1]}"
+			local unit="${BASH_REMATCH[2]}"
+			case "${unit}" in
+				second) handshake_ago="${num}" ;;
+				minute) handshake_ago=$((num * 60)) ;;
+				hour)   handshake_ago=$((num * 3600)) ;;
+				day)    handshake_ago=$((num * 86400)) ;;
+			esac
+			if [[ ${handshake_ago} -lt 180 ]]; then
+				((active_peers++))
+			fi
+		fi
+	done <<< "$(printf "%s" "${wg_output}" | grep "latest handshake:")"
+
+	# Build output
+	local output
+	if [[ ${interfaces} -eq 1 ]]; then
+		output="1 tunnel"
+	else
+		output="${interfaces} tunnels"
+	fi
+
+	if [[ ${total_peers} -gt 0 ]]; then
+		output="${output}, ${active_peers}/${total_peers} peers active"
+	fi
+
+	# Cache and return
+	_motd_cache_write "${cache_file}" "${output}"
+	printf "%s" "${output}"
+}
+
+# ============================================================================
 # Widget Runner - Call all enabled widgets
 # ============================================================================
 motd_run_widgets() {
@@ -169,6 +250,11 @@ motd_run_widgets() {
 	# Tailscale widget
 	if widget_output=$(_motd_widget_tailscale 2>/dev/null); then
 		print_kv "tailscale" "${widget_output}"
+	fi
+
+	# WireGuard widget
+	if widget_output=$(_motd_widget_wireguard 2>/dev/null); then
+		print_kv "wireguard" "${widget_output}"
 	fi
 
 	# Host-specific widgets (if directory exists)
