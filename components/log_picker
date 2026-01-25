@@ -19,12 +19,13 @@ lctl() {
 	fi
 
 	local mode="${1:-view}" # view|follow
-	local pager_cmd
+	local pager_cmd pager_args=""
 
 	if command -v lnav >/dev/null 2>&1; then
 		pager_cmd="lnav"
 	elif command -v less >/dev/null 2>&1; then
-		pager_cmd="less -R"
+		pager_cmd="less"
+		pager_args="-R"
 	else
 		pager_cmd="cat"
 	fi
@@ -96,14 +97,14 @@ lctl() {
 			local logfile="${HOME}/Library/Logs/Homebrew/${service_name}.log"
 			local logfile_alt="/usr/local/var/log/${service_name}.log"
 			if [[ -f ${logfile} ]]; then
-				${pager_cmd} "${logfile}"
+				${pager_cmd} ${pager_args} "${logfile}"
 			elif [[ -f ${logfile_alt} ]]; then
-				${pager_cmd} "${logfile_alt}"
+				${pager_cmd} ${pager_args} "${logfile_alt}"
 			else
-				log show --predicate "${predicate}" --style compact --last 1h 2>/dev/null | ${pager_cmd}
+				log show --predicate "${predicate}" --style compact --last 1h 2>/dev/null | ${pager_cmd} ${pager_args}
 			fi
 		else
-			log show --predicate "${predicate}" --style compact --last 1h 2>/dev/null | ${pager_cmd}
+			log show --predicate "${predicate}" --style compact --last 1h 2>/dev/null | ${pager_cmd} ${pager_args}
 		fi
 		;;
 	esac
