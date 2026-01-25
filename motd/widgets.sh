@@ -172,87 +172,14 @@ _motd_widget_wireguard() {
 	local wg_bin
 	wg_bin=$(command -v wg 2>/dev/null) || return 1
 
-	# Check if any WireGuard interfaces exist (no sudo needed)
-	local wg_ifaces
-	wg_ifaces=$(ip link show type wireguard 2>/dev/null | awk -F'[: ]+' '/^[0-9]+:/ {print $2}')
+	# Only show wg0 status; if not connected, show a minimal message
+	local wg_ip output
+	wg_ip=$(ip -4 addr show dev wg0 2>/dev/null | awk '/inet / {split($2, a, "/"); print a[1]; exit}')
 
-	if [[ -z ${wg_ifaces} ]]; then
-		# No WireGuard interfaces exist
-		return 1
-	fi
-
-	# Try to get detailed WireGuard status (may need sudo)
-	local wg_output wg_exit
-
-	if [[ ${EUID} -eq 0 ]]; then
-		wg_output=$("${wg_bin}" show 2>/dev/null)
-		wg_exit=$?
-	elif command -v sudo >/dev/null 2>&1; then
-		wg_output=$(sudo -n "${wg_bin}" show 2>/dev/null)
-		wg_exit=$?
-	fi
-
-	# Get interface count and first interface IP
-	local interfaces first_iface wg_ip
-	interfaces=$(printf "%s\n" "${wg_ifaces}" | grep -c .)
-	first_iface=$(printf "%s" "${wg_ifaces}" | head -1 | tr -d '[:space:]')
-
-	if [[ -n ${first_iface} ]]; then
-		wg_ip=$(ip -4 addr show "${first_iface}" 2>/dev/null | awk '/inet / {split($2, a, "/"); print a[1]; exit}')
-	fi
-
-	# If we have detailed wg output, count peers
-	local total_peers active_peers
-	total_peers=0
-	active_peers=0
-
-	if [[ ${wg_exit} -eq 0 && -n ${wg_output} ]]; then
-		total_peers=$(printf "%s" "${wg_output}" | grep -c "^peer:")
-
-		# Count active peers (handshake within last 3 minutes = 180 seconds)
-		local handshake_line handshake_ago
-		while IFS= read -r handshake_line; do
-			if [[ ${handshake_line} =~ ([0-9]+)\ (second|minute|hour|day)s?\ ago ]]; then
-				local num="${BASH_REMATCH[1]}"
-				local unit="${BASH_REMATCH[2]}"
-				case "${unit}" in
-					second) handshake_ago="${num}" ;;
-					minute) handshake_ago=$((num * 60)) ;;
-					hour)   handshake_ago=$((num * 3600)) ;;
-					day)    handshake_ago=$((num * 86400)) ;;
-				esac
-				if [[ ${handshake_ago} -lt 180 ]]; then
-					((active_peers++))
-				fi
-			fi
-		done <<< "$(printf "%s" "${wg_output}" | grep "latest handshake:")"
-	fi
-
-	# Build output
-	local output=""
-
-	# Add IP if available
 	if [[ -n ${wg_ip} ]]; then
 		output="${wg_ip}"
-	fi
-
-	# Add tunnel count
-	if [[ ${interfaces} -eq 1 ]]; then
-		if [[ -n ${output} ]]; then
-			output="${output}, 1 tunnel"
-		else
-			output="1 tunnel"
-		fi
 	else
-		if [[ -n ${output} ]]; then
-			output="${output}, ${interfaces} tunnels"
-		else
-			output="${interfaces} tunnels"
-		fi
-	fi
-
-	if [[ ${total_peers} -gt 0 ]]; then
-		output="${output}, ${active_peers}/${total_peers} peers active"
+		output="not connected"
 	fi
 
 	# Cache and return
