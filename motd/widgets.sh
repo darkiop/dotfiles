@@ -203,7 +203,7 @@ _motd_widget_proxmox() {
 		return 1
 	fi
 
-	local lxc_running=0 vm_running=0 output parts=()
+	local lxc_running=0 vm_running=0 output
 
 	# Count running LXC containers
 	if command -v pct >/dev/null 2>&1; then
@@ -215,20 +215,8 @@ _motd_widget_proxmox() {
 		vm_running=$(qm list 2>/dev/null | awk '$3 == "running" {count++} END {print count+0}')
 	fi
 
-	# Build output
-	if [[ ${lxc_running} -gt 0 ]]; then
-		parts+=("${lxc_running} lxc")
-	fi
-	if [[ ${vm_running} -gt 0 ]]; then
-		parts+=("${vm_running} vm")
-	fi
-
-	# Only show if something is running
-	if [[ ${#parts[@]} -eq 0 ]]; then
-		return 1
-	fi
-
-	output=$(IFS=', '; printf '%s' "${parts[*]}")
+	# Build output (always show both counts)
+	output="${lxc_running} lxc, ${vm_running} vm"
 
 	# Cache and return
 	_motd_cache_write "${cache_file}" "${output}"
