@@ -1,0 +1,110 @@
+#!/bin/bash
+
+# macOS Log Picker - Alternative to jctl (journalctl_picker) for macOS.
+# Uses macOS Unified Logging (log command) and launchctl services.
+#
+# Usage:
+#   lctl        - View recent logs for selected service
+#   lctl -f     - Follow/stream logs for selected service
+#   lctl follow - Same as -f
+
+lctl() {
+	if [[ "${DOTFILES_OS:-$(uname -s)}" != "darwin" && "${DOTFILES_OS:-$(uname -s)}" != "Darwin" ]]; then
+		printf '%s\n' "lctl is macOS only - use jctl for Linux"
+		return 1
+	fi
+	if ! command -v fzf >/dev/null 2>&1; then
+		printf '%s\n' "fzf not found"
+		return 1
+	fi
+
+	local mode="${1:-view}" # view|follow
+	local pager_cmd
+
+	if command -v lnav >/dev/null 2>&1; then
+		pager_cmd="lnav"
+	elif command -v less >/dev/null 2>&1; then
+		pager_cmd="less -R"
+	else
+		pager_cmd="cat"
+	fi
+
+	# Collect services from various sources
+	local services=""
+
+	# 1. Homebrew Services (if available)
+	if command -v brew >/dev/null 2>&1; then
+		local brew_services
+		brew_services="$(brew services list 2>/dev/null | tail -n +2)" || true
+		if [[ -n "${brew_services}" ]]; then
+			services+="$(printf '%s\n' "${brew_services}" | awk '{print "[brew] " $1 " (" $2 ")"}')"
+			services+=$'\n'
+		fi
+	fi
+
+	# 2. System LaunchDaemons
+	local system_services
+	system_services="$(launchctl list 2>/dev/null | tail -n +2 | awk '$3 != "" {print "[system] " $3}')" || true
+	if [[ -n "${system_services}" ]]; then
+		services+="${system_services}"
+		services+=$'\n'
+	fi
+
+	# Filter out empty lines and sort
+	services="$(printf '%s\n' "${services}" | grep -v '^$' | grep -v '^\[.*\] $' | sort -u)"
+
+	if [[ -z ${services} ]]; then
+		printf '%s\n' "No services found"
+		return 1
+	fi
+
+	local selection
+	selection="$(printf '%s\n' "${services}" | fzf --prompt='service> ' --height 50% --reverse)" || return 0
+
+	# Extract service type and name
+	local type service_name
+	type="$(printf '%s' "${selection}" | sed 's/^\[\([^]]*\)\].*/\1/')"
+	service_name="$(printf '%s' "${selection}" | sed 's/^\[[^]]*\] \([^ ]*\).*/\1/')"
+
+	[[ -n ${service_name} ]] || return 0
+
+	# Build predicate for log command
+	# Try multiple predicates: subsystem, process name, or sender name
+	local predicate="subsystem == '${service_name}' OR process == '${service_name}' OR senderImagePath ENDSWITH '${service_name}'"
+
+	case "${mode}" in
+	follow | -f | --follow)
+		printf '%s\n' "Streaming logs for: ${service_name} (Ctrl+C to stop)"
+		if [[ ${type} == "brew" ]]; then
+			# Homebrew services often log to ~/Library/Logs/Homebrew/
+			local logfile="${HOME}/Library/Logs/Homebrew/${service_name}.log"
+			local logfile_alt="/usr/local/var/log/${service_name}.log"
+			if [[ -f ${logfile} ]]; then
+				tail -f "${logfile}"
+			elif [[ -f ${logfile_alt} ]]; then
+				tail -f "${logfile_alt}"
+			else
+				log stream --predicate "${predicate}" --style compact
+			fi
+		else
+			log stream --predicate "${predicate}" --style compact
+		fi
+		;;
+	*)
+		printf '%s\n' "Showing recent logs for: ${service_name}"
+		if [[ ${type} == "brew" ]]; then
+			local logfile="${HOME}/Library/Logs/Homebrew/${service_name}.log"
+			local logfile_alt="/usr/local/var/log/${service_name}.log"
+			if [[ -f ${logfile} ]]; then
+				${pager_cmd} "${logfile}"
+			elif [[ -f ${logfile_alt} ]]; then
+				${pager_cmd} "${logfile_alt}"
+			else
+				log show --predicate "${predicate}" --style compact --last 1h 2>/dev/null | ${pager_cmd}
+			fi
+		else
+			log show --predicate "${predicate}" --style compact --last 1h 2>/dev/null | ${pager_cmd}
+		fi
+		;;
+	esac
+}

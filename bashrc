@@ -67,6 +67,9 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
   source ~/dotfiles/components/journalctl_picker
 fi
+if dotfiles_flag_enabled DOTFILES_ENABLE_LOG_PICKER; then
+  source ~/dotfiles/components/log_picker
+fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_SYSTEMCTL_FZF; then
   source ~/dotfiles/components/fzf_systemctl
 fi

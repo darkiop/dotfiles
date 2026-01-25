@@ -202,6 +202,24 @@
       ]
     },
     {
+      "name": "lctl",
+      "desc": "macOS log picker",
+      "details": "Pick a macOS service (launchctl/brew) and show logs via Unified Logging.",
+      "run": "lctl",
+      "requires": [
+        "DOTFILES_ENABLE_LOG_PICKER"
+      ]
+    },
+    {
+      "name": "lctl follow",
+      "desc": "macOS log follow",
+      "details": "Pick a macOS service and stream logs (log stream).",
+      "run": "lctl follow",
+      "requires": [
+        "DOTFILES_ENABLE_LOG_PICKER"
+      ]
+    },
+    {
       "name": "dps",
       "desc": "docker container picker",
       "details": "Pick a container and show its docker ps line.",
