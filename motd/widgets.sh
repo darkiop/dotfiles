@@ -58,10 +58,10 @@ _motd_widget_docker() {
 
 	# Get docker stats (suppress errors if docker daemon not running)
 	local running stopped total output
-	if ! running=$(docker ps -q 2>/dev/null | wc -l); then
+	if ! running=$(docker ps -q 2>/dev/null | wc -l | tr -d ' '); then
 		return 1
 	fi
-	if ! stopped=$(docker ps -aq --filter "status=exited" 2>/dev/null | wc -l); then
+	if ! stopped=$(docker ps -aq --filter "status=exited" 2>/dev/null | wc -l | tr -d ' '); then
 		stopped=0
 	fi
 	total=$((running + stopped))
