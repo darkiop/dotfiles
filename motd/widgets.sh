@@ -117,7 +117,7 @@ _motd_widget_tailscale() {
 	fi
 
 	# Parse status with jq
-	local backend_state self_ip exit_node_ip peer_count output
+	local backend_state self_ip output
 	backend_state=$(printf "%s" "${status_json}" | jq -r '.BackendState // empty')
 
 	# Show status if not running
@@ -128,27 +128,13 @@ _motd_widget_tailscale() {
 		return 0
 	fi
 
-	# Get own IP
+	# Get own IP only
 	self_ip=$(printf "%s" "${status_json}" | jq -r '.Self.TailscaleIPs[0] // empty')
 
-	# Count online peers (excluding self)
-	peer_count=$(printf "%s" "${status_json}" | jq '[.Peer[] | select(.Online == true)] | length')
-
-	# Check for exit node
-	exit_node_ip=$(printf "%s" "${status_json}" | jq -r '.ExitNodeStatus.TailscaleIPs[0] // empty')
-
-	# Build output
-	if [[ -n ${self_ip} ]]; then
-		output="${self_ip}"
-		if [[ ${peer_count} -gt 0 ]]; then
-			output="${output}, ${peer_count} peers"
-		fi
-		if [[ -n ${exit_node_ip} ]]; then
-			output="${output}, exit: ${exit_node_ip}"
-		fi
-	else
+	if [[ -z ${self_ip} ]]; then
 		return 1
 	fi
+	output="${self_ip}"
 
 	# Cache and return
 	_motd_cache_write "${cache_file}" "${output}"
