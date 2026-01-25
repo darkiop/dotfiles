@@ -186,6 +186,56 @@ _motd_widget_wireguard() {
 }
 
 # ============================================================================
+# Proxmox Widget
+# ============================================================================
+_motd_widget_proxmox() {
+	local cache_file="${MOTD_CACHE_DIR}/proxmox"
+	local cache_ttl=60
+
+	# Return cached if fresh
+	if _motd_cache_fresh "${cache_file}" "${cache_ttl}"; then
+		_motd_cache_read "${cache_file}"
+		return 0
+	fi
+
+	# Check if we're on a Proxmox host
+	if ! command -v pveversion >/dev/null 2>&1; then
+		return 1
+	fi
+
+	local lxc_running=0 vm_running=0 output parts=()
+
+	# Count running LXC containers
+	if command -v pct >/dev/null 2>&1; then
+		lxc_running=$(pct list 2>/dev/null | awk '$2 == "running" {count++} END {print count+0}')
+	fi
+
+	# Count running VMs
+	if command -v qm >/dev/null 2>&1; then
+		vm_running=$(qm list 2>/dev/null | awk '$3 == "running" {count++} END {print count+0}')
+	fi
+
+	# Build output
+	if [[ ${lxc_running} -gt 0 ]]; then
+		parts+=("${lxc_running} lxc")
+	fi
+	if [[ ${vm_running} -gt 0 ]]; then
+		parts+=("${vm_running} vm")
+	fi
+
+	# Only show if something is running
+	if [[ ${#parts[@]} -eq 0 ]]; then
+		return 1
+	fi
+
+	output=$(IFS=', '; printf '%s' "${parts[*]}")
+
+	# Cache and return
+	_motd_cache_write "${cache_file}" "${output}"
+	printf "%s" "${output}"
+}
+
+# ============================================================================
 # Widget Runner - Call all enabled widgets
 # ============================================================================
 motd_run_widgets() {
@@ -204,6 +254,11 @@ motd_run_widgets() {
 	# WireGuard widget
 	if widget_output=$(_motd_widget_wireguard 2>/dev/null); then
 		print_kv "wireguard" "${widget_output}"
+	fi
+
+	# Proxmox widget
+	if widget_output=$(_motd_widget_proxmox 2>/dev/null); then
+		print_kv "proxmox" "${widget_output}"
 	fi
 
 	# Host-specific widgets (if directory exists)
