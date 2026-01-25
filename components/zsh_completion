@@ -13,6 +13,10 @@ esac
 
 autoload -Uz compinit
 if [[ -z "${DOTFILES_ZSH_COMPINIT_DONE:-}" ]]; then
-  compinit -d "${HOME}/.zcompdump"
-  export DOTFILES_ZSH_COMPINIT_DONE=1
+  if compinit -d "${HOME}/.zcompdump" 2>/dev/null; then
+    export DOTFILES_ZSH_COMPINIT_DONE=1
+  else
+    compinit -i -d "${HOME}/.zcompdump" 2>/dev/null || return 0
+    export DOTFILES_ZSH_COMPINIT_DONE=1
+  fi
 fi
