@@ -178,11 +178,9 @@ if [[ ${MOTD_SHOW_APT_UPDATES} == "y" ]]; then
 fi
 
 # BUILD THE MOTD OUTPUT
-# Insert zero-width space after dots to prevent iTerm2 from auto-linking IPs
-_motd_defang_ips() {
-	local value="$1"
-	# U+200B (zero-width space) after each dot breaks iTerm2's IP detection
-	printf '%s' "${value//./.​}"
+# Pass value through printf %s to sanitize any hidden escape sequences
+_motd_sanitize_value() {
+	printf '%s' "$1"
 }
 
 print_kv() {
@@ -192,7 +190,7 @@ print_kv() {
 
 	case "${label}" in
 		ip|tailscale|wireguard)
-			value=$(_motd_defang_ips "${value}")
+			value=$(_motd_sanitize_value "${value}")
 			;;
 	esac
 
