@@ -193,10 +193,16 @@ _motd_widget_wireguard() {
 		return 0
 	fi
 
-	# Count interfaces and peers
-	local interfaces total_peers active_peers
+	# Get interface names and count
+	local interfaces total_peers active_peers first_iface wg_ip
 	interfaces=$(printf "%s" "${wg_output}" | grep -c "^interface:")
 	total_peers=$(printf "%s" "${wg_output}" | grep -c "^peer:")
+
+	# Get first interface name and its IP
+	first_iface=$(printf "%s" "${wg_output}" | grep "^interface:" | head -1 | awk '{print $2}')
+	if [[ -n ${first_iface} ]]; then
+		wg_ip=$(ip -4 addr show "${first_iface}" 2>/dev/null | grep -oP 'inet \K[0-9.]+')
+	fi
 
 	# Count active peers (handshake within last 3 minutes = 180 seconds)
 	active_peers=0
@@ -220,11 +226,26 @@ _motd_widget_wireguard() {
 	done <<< "$(printf "%s" "${wg_output}" | grep "latest handshake:")"
 
 	# Build output
-	local output
+	local output=""
+
+	# Add IP if available
+	if [[ -n ${wg_ip} ]]; then
+		output="${wg_ip}"
+	fi
+
+	# Add tunnel count
 	if [[ ${interfaces} -eq 1 ]]; then
-		output="1 tunnel"
+		if [[ -n ${output} ]]; then
+			output="${output}, 1 tunnel"
+		else
+			output="1 tunnel"
+		fi
 	else
-		output="${interfaces} tunnels"
+		if [[ -n ${output} ]]; then
+			output="${output}, ${interfaces} tunnels"
+		else
+			output="${interfaces} tunnels"
+		fi
 	fi
 
 	if [[ ${total_peers} -gt 0 ]]; then
