@@ -180,10 +180,9 @@ _motd_widget_wireguard() {
 		output="${wg_ip}"
 
 		# Append allowed IPs if available
-		if [[ ${EUID} -eq 0 ]]; then
-			allowed_ips=$("${wg_bin}" show wg0 allowed-ips 2>/dev/null | awk '{print $2}' | paste -sd ",")
-		elif command -v sudo >/dev/null 2>&1; then
-			allowed_ips=$(sudo -n "${wg_bin}" show wg0 allowed-ips 2>/dev/null | awk '{print $2}' | paste -sd ",")
+		allowed_ips=$("${wg_bin}" show wg0 allowed-ips 2>/dev/null | awk '{$1=""; sub(/^ /,""); print}' | paste -sd ",")
+		if [[ -z ${allowed_ips} && ${EUID} -ne 0 && $(command -v sudo) ]]; then
+			allowed_ips=$(sudo -n "${wg_bin}" show wg0 allowed-ips 2>/dev/null | awk '{$1=""; sub(/^ /,""); print}' | paste -sd ",")
 		fi
 		if [[ -n ${allowed_ips} ]]; then
 			output="${output}, allowed: ${allowed_ips}"
