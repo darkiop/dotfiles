@@ -6,17 +6,88 @@ This repository contains personal shell dotfiles (bash/zsh) organized as modular
 
 ```
 dotfiles/
-├── alias/              # Alias sets (alias, alias-docker, alias-git, etc.)
+├── alias/              # Shell-Alias-Definitionen (9 Dateien nach Kategorie)
+│   ├── alias           # Main aliases (sudo-Präfixe, globale Aliases)
+│   ├── alias-docker    # Docker-Befehle
+│   ├── alias-git       # Git-Befehle
+│   ├── alias-systemctl # Systemctl-Befehle
+│   ├── alias-proxmox   # Proxmox PVE Commands
+│   ├── alias-wireguard # WireGuard VPN
+│   ├── alias-glusterfs # Gluster Filesystem
+│   ├── alias-iobroker  # ioBroker Smart Home
+│   └── alias-navi      # Navi Cheat-Widget
 ├── bash_completion.d/  # Custom bash completions
-├── bin/                # Custom scripts
-├── cheats/             # Usage examples and keybindings documentation
-├── components/         # Shell components (prompt, fzf, helpers, etc.)
-├── config/             # Configuration files (dot_help.json, tmux.conf.local, etc.)
-├── modules/            # Git submodules (fzf, oh-my-tmux, oh-my-zsh, vimrc, tpm)
-└── motd/               # Message of the day scripts and widgets
-    ├── widgets/        # Individual widget scripts
-    └── systemd/        # Systemd units for MOTD updates
+├── bin/                # Hilfsskripte (archive, etc.)
+├── cheats/             # 60 Navi Cheat-Dateien (.cheat Format)
+├── components/         # 22 modulare Shell-Komponenten (siehe unten)
+├── config/             # Konfigurationsdateien
+│   ├── dotfiles.config       # Farben und globale Einstellungen
+│   ├── local_dotfiles_settings # Per-Host Overrides (gitignored)
+│   ├── dot_help.json         # Datenbank für `dot help`
+│   ├── tmux.conf.local       # Tmux lokale Overrides
+│   └── helix/                # Helix Editor Konfiguration
+├── modules/            # Git Submodules (shallow)
+│   ├── fzf/            # Fuzzy finder (binary + shell scripts)
+│   ├── fzf-tab-completion/ # Tab-Completion mit FZF-Preview
+│   ├── oh-my-zsh/      # Zsh Framework (optional)
+│   ├── oh-my-tmux/     # Tmux Configuration Framework
+│   ├── tpm/            # Tmux Plugin Manager
+│   └── vimrc/          # Vim Configuration
+└── motd/               # Message of the day System
+    ├── motd.sh         # Main MOTD (hostname routing)
+    ├── motd-<host>.sh  # Host-spezifische MOTDs
+    ├── widgets.sh      # Widget-System mit Caching
+    ├── widgets/        # Custom Widget-Erweiterungen
+    └── systemd/        # Timer für Background-Updates
 ```
+
+## Components (22 Module)
+
+| Kategorie | Komponenten |
+|-----------|-------------|
+| **Shell** | `bash_prompt`, `zsh_prompt`, `bash_defaults`, `zsh_defaults`, `bash_completion`, `zsh_completion` |
+| **FZF** | `fzf`, `fzf_git`, `fzf_tmux`, `fzf_docker`, `fzf_systemctl`, `fzf_extras` |
+| **Pickers** | `ssh_picker`, `journalctl_picker` |
+| **Tools** | `dot_help`, `dot_doctor`, `helpers`, `navi` |
+| **System** | `platform`, `feature_flags`, `brew` |
+
+## Shell Entry Points Flow
+
+```
+bashrc/zshrc
+├── config/dotfiles.config (Colors, Settings)
+├── components/platform (OS Detection)
+├── components/feature_flags (Load flags + local overrides)
+├── components/*_defaults (Shell settings)
+├── components/*_prompt (if ENABLED)
+├── components/fzf* (if ENABLED)
+├── alias/* (if ENABLED)
+├── components/helpers (if ENABLED)
+└── components/navi (if ENABLED)
+```
+
+## Key Functions & Commands
+
+| Command | Description |
+|---------|-------------|
+| `dot help` | Kommando & Keybinding Übersicht |
+| `dot doctor` | Diagnose für häufige Probleme |
+| `fh` | FZF History Picker |
+| `cdf` | FZF Directory Picker |
+| `gco` | Git Checkout (Branch Picker) |
+| `gshow` | Git Show (Commit Picker) |
+| `ts`/`tw`/`tp` | Tmux Session/Window/Pane Picker |
+| `sshp` | SSH Host Picker |
+| `dcheat`/`cheat` | Lokale Cheat-Sheet Navigation |
+
+## MOTD Widgets
+
+Aktuelle Widgets in `motd/widgets.sh`:
+- **docker** - Running/stopped container counts
+- **tailscale** - Tailscale IP oder Status
+- **wireguard** - WireGuard IP und allowed IPs
+- **proxmox** - LXC/VM counts (running/total)
+- **homebrew** - Verfügbare Updates (formulas/casks)
 
 ## Quick entrypoints
 
