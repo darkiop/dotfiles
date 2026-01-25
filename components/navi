@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # load shell widget for navi (STRG + G)
-if [[ -x /usr/local/bin/navi ]]; then
+if command -v navi >/dev/null 2>&1; then
 	# navi uses fzf by default; make sure the dotfiles-managed fzf is on PATH.
 	if ! command -v fzf >/dev/null 2>&1; then
 		if command -v ADD_TO_PATH >/dev/null 2>&1; then
