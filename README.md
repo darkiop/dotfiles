@@ -42,11 +42,12 @@ bash ~/dotfiles/install.sh
 The installer does not use Homebrew; install dependencies manually:
 
 ```bash
-brew install git curl jq tmux coreutils reattach-to-user-namespace
+brew install git curl jq tmux coreutils reattach-to-user-namespace gawk
 ```
 
 Notes:
 - `coreutils` provides `gdircolors` and `greadlink` used by prompts/dot doctor on macOS.
+- `gawk` enables fzf tab-completion in zsh on macOS.
 - systemd/journalctl features (MOTD timers, `jctl`, systemctl pickers) are Linux-only.
 
 ## What it configures
