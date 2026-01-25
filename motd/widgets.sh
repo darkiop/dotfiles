@@ -168,67 +168,65 @@ _motd_widget_wireguard() {
 		return 0
 	fi
 
-	# Check if wg is available and get full path
+	# Check if wg is available
 	local wg_bin
 	wg_bin=$(command -v wg 2>/dev/null) || return 1
 
-	# Try to get WireGuard status (may need sudo)
+	# Check if any WireGuard interfaces exist (no sudo needed)
+	local wg_ifaces
+	wg_ifaces=$(ip link show type wireguard 2>/dev/null | grep -oP '^\d+: \K[^:@]+')
+
+	if [[ -z ${wg_ifaces} ]]; then
+		# No WireGuard interfaces exist
+		return 1
+	fi
+
+	# Try to get detailed WireGuard status (may need sudo)
 	local wg_output wg_exit
+
 	if [[ ${EUID} -eq 0 ]]; then
 		wg_output=$("${wg_bin}" show 2>/dev/null)
 		wg_exit=$?
 	elif command -v sudo >/dev/null 2>&1; then
-		# Try sudo with non-interactive mode (use full path)
 		wg_output=$(sudo -n "${wg_bin}" show 2>/dev/null)
 		wg_exit=$?
-	else
-		return 1
 	fi
 
-	# If sudo failed (permission denied), don't show widget
-	if [[ ${wg_exit} -ne 0 ]]; then
-		return 1
-	fi
+	# Get interface count and first interface IP
+	local interfaces first_iface wg_ip
+	interfaces=$(printf "%s" "${wg_ifaces}" | wc -l)
+	first_iface=$(printf "%s" "${wg_ifaces}" | head -1)
 
-	# Check if we got any output (no tunnels active)
-	if [[ -z ${wg_output} ]]; then
-		local output="no active tunnels"
-		_motd_cache_write "${cache_file}" "${output}"
-		printf "%s" "${output}"
-		return 0
-	fi
-
-	# Get interface names and count
-	local interfaces total_peers active_peers first_iface wg_ip
-	interfaces=$(printf "%s" "${wg_output}" | grep -c "^interface:")
-	total_peers=$(printf "%s" "${wg_output}" | grep -c "^peer:")
-
-	# Get first interface name and its IP
-	first_iface=$(printf "%s" "${wg_output}" | grep "^interface:" | head -1 | awk '{print $2}')
 	if [[ -n ${first_iface} ]]; then
 		wg_ip=$(ip -4 addr show "${first_iface}" 2>/dev/null | grep -oP 'inet \K[0-9.]+')
 	fi
 
-	# Count active peers (handshake within last 3 minutes = 180 seconds)
+	# If we have detailed wg output, count peers
+	local total_peers active_peers
+	total_peers=0
 	active_peers=0
-	local now handshake_line handshake_ago
-	now=$(date +%s)
 
-	while IFS= read -r handshake_line; do
-		if [[ ${handshake_line} =~ ([0-9]+)\ (second|minute|hour|day)s?\ ago ]]; then
-			local num="${BASH_REMATCH[1]}"
-			local unit="${BASH_REMATCH[2]}"
-			case "${unit}" in
-				second) handshake_ago="${num}" ;;
-				minute) handshake_ago=$((num * 60)) ;;
-				hour)   handshake_ago=$((num * 3600)) ;;
-				day)    handshake_ago=$((num * 86400)) ;;
-			esac
-			if [[ ${handshake_ago} -lt 180 ]]; then
-				((active_peers++))
+	if [[ ${wg_exit} -eq 0 && -n ${wg_output} ]]; then
+		total_peers=$(printf "%s" "${wg_output}" | grep -c "^peer:")
+
+		# Count active peers (handshake within last 3 minutes = 180 seconds)
+		local handshake_line handshake_ago
+		while IFS= read -r handshake_line; do
+			if [[ ${handshake_line} =~ ([0-9]+)\ (second|minute|hour|day)s?\ ago ]]; then
+				local num="${BASH_REMATCH[1]}"
+				local unit="${BASH_REMATCH[2]}"
+				case "${unit}" in
+					second) handshake_ago="${num}" ;;
+					minute) handshake_ago=$((num * 60)) ;;
+					hour)   handshake_ago=$((num * 3600)) ;;
+					day)    handshake_ago=$((num * 86400)) ;;
+				esac
+				if [[ ${handshake_ago} -lt 180 ]]; then
+					((active_peers++))
+				fi
 			fi
-		fi
-	done <<< "$(printf "%s" "${wg_output}" | grep "latest handshake:")"
+		done <<< "$(printf "%s" "${wg_output}" | grep "latest handshake:")"
+	fi
 
 	# Build output
 	local output=""
