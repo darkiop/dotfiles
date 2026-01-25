@@ -170,7 +170,7 @@ _motd_widget_wireguard() {
 
 	# Check if wg is available
 	local wg_bin
-	wg_bin=$(command -v wg 2>/dev/null) || return 1
+	wg_bin=$(type -P wg 2>/dev/null) || return 1
 
 	# Only show wg0 status; if not connected, show a minimal message
 	local wg_ip output allowed_ips
@@ -181,8 +181,10 @@ _motd_widget_wireguard() {
 
 		# Append allowed IPs if available
 		allowed_ips=$("${wg_bin}" show wg0 allowed-ips 2>/dev/null | awk '{$1=""; sub(/^ /,""); print}' | paste -sd ",")
-		if [[ -z ${allowed_ips} && ${EUID} -ne 0 && $(command -v sudo) ]]; then
-			allowed_ips=$(sudo -n "${wg_bin}" show wg0 allowed-ips 2>/dev/null | awk '{$1=""; sub(/^ /,""); print}' | paste -sd ",")
+		if [[ -z ${allowed_ips} && ${EUID} -ne 0 ]]; then
+			if command -v sudo >/dev/null 2>&1; then
+				allowed_ips=$(sudo -n "${wg_bin}" show wg0 allowed-ips 2>/dev/null | awk '{$1=""; sub(/^ /,""); print}' | paste -sd ",")
+			fi
 		fi
 		if [[ -n ${allowed_ips} ]]; then
 			output="${output}, allowed: ${allowed_ips}"
