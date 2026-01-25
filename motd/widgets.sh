@@ -194,7 +194,7 @@ _motd_widget_wireguard() {
 
 	# Get interface count and first interface IP
 	local interfaces first_iface wg_ip
-	interfaces=$(printf "%s" "${wg_ifaces}" | wc -l)
+	interfaces=$(printf "%s\n" "${wg_ifaces}" | grep -c .)
 	first_iface=$(printf "%s" "${wg_ifaces}" | head -1)
 
 	if [[ -n ${first_iface} ]]; then
