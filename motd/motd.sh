@@ -178,24 +178,10 @@ if [[ ${MOTD_SHOW_APT_UPDATES} == "y" ]]; then
 fi
 
 # BUILD THE MOTD OUTPUT
-_motd_defang_ips() {
-	local value="$1"
-
-	# Remove dots to avoid any terminal auto-linking of IPs.
-	value=${value//./}
-	printf "%s" "${value}"
-}
-
 print_kv() {
 	local label=$1
 	shift # first arg  = label
 	local value="$*"
-
-	case "${label}" in
-		ip|tailscale|wireguard)
-			value=$(_motd_defang_ips "${value}")
-			;;
-	esac
 
 	printf "  %b%-11s%b %b%s%b\n" \
 		"${COLOR_BLUE}" "${label}" "${COLOR_RESET}" \
