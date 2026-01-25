@@ -203,20 +203,20 @@ _motd_widget_proxmox() {
 		return 1
 	fi
 
-	local lxc_running=0 vm_running=0 output
+	local lxc_running=0 lxc_total=0 vm_running=0 vm_total=0 output
 
-	# Count running LXC containers
+	# Count LXC containers (running and total)
 	if command -v pct >/dev/null 2>&1; then
-		lxc_running=$(pct list 2>/dev/null | awk '$2 == "running" {count++} END {print count+0}')
+		read -r lxc_running lxc_total < <(pct list 2>/dev/null | awk 'NR>1 {total++; if($2=="running") running++} END {print running+0, total+0}')
 	fi
 
-	# Count running VMs
+	# Count VMs (running and total)
 	if command -v qm >/dev/null 2>&1; then
-		vm_running=$(qm list 2>/dev/null | awk '$3 == "running" {count++} END {print count+0}')
+		read -r vm_running vm_total < <(qm list 2>/dev/null | awk 'NR>1 {total++; if($3=="running") running++} END {print running+0, total+0}')
 	fi
 
-	# Build output (always show both counts)
-	output="${lxc_running} lxc, ${vm_running} vm"
+	# Build output (running/total format)
+	output="${lxc_running}/${lxc_total} lxc, ${vm_running}/${vm_total} vm"
 
 	# Cache and return
 	_motd_cache_write "${cache_file}" "${output}"
