@@ -224,6 +224,46 @@ _motd_widget_proxmox() {
 }
 
 # ============================================================================
+# Homebrew Widget (macOS)
+# ============================================================================
+_motd_widget_brew() {
+	local cache_file="${MOTD_CACHE_DIR}/brew"
+	local cache_ttl=3600  # 1 hour - brew outdated is slow
+
+	# Return cached if fresh
+	if _motd_cache_fresh "${cache_file}" "${cache_ttl}"; then
+		_motd_cache_read "${cache_file}"
+		return 0
+	fi
+
+	# Check if brew is available
+	if ! command -v brew >/dev/null 2>&1; then
+		return 1
+	fi
+
+	# Count outdated packages (suppress auto-update)
+	local outdated_count output
+	outdated_count=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated 2>/dev/null | wc -l | tr -d ' ')
+
+	# Only show if there are updates
+	if [[ ${outdated_count} -eq 0 ]]; then
+		# Cache empty result to avoid repeated checks
+		_motd_cache_write "${cache_file}" ""
+		return 1
+	fi
+
+	if [[ ${outdated_count} -eq 1 ]]; then
+		output="1 update available"
+	else
+		output="${outdated_count} updates available"
+	fi
+
+	# Cache and return
+	_motd_cache_write "${cache_file}" "${output}"
+	printf "%s" "${output}"
+}
+
+# ============================================================================
 # Widget Runner - Call all enabled widgets
 # ============================================================================
 motd_run_widgets() {
@@ -247,6 +287,11 @@ motd_run_widgets() {
 	# Proxmox widget
 	if widget_output=$(_motd_widget_proxmox 2>/dev/null); then
 		print_kv "proxmox" "${widget_output}"
+	fi
+
+	# Homebrew widget (macOS)
+	if widget_output=$(_motd_widget_brew 2>/dev/null); then
+		print_kv "homebrew" "${widget_output}"
 	fi
 
 	# Host-specific widgets (if directory exists)
