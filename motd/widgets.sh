@@ -173,19 +173,25 @@ _motd_widget_wireguard() {
 	wg_bin=$(command -v wg 2>/dev/null) || return 1
 
 	# Try to get WireGuard status (may need sudo)
-	local wg_output
+	local wg_output wg_exit
 	if [[ ${EUID} -eq 0 ]]; then
 		wg_output=$("${wg_bin}" show 2>/dev/null)
+		wg_exit=$?
 	elif command -v sudo >/dev/null 2>&1; then
 		# Try sudo with non-interactive mode (use full path)
 		wg_output=$(sudo -n "${wg_bin}" show 2>/dev/null)
+		wg_exit=$?
 	else
 		return 1
 	fi
 
-	# Check if we got any output
+	# If sudo failed (permission denied), don't show widget
+	if [[ ${wg_exit} -ne 0 ]]; then
+		return 1
+	fi
+
+	# Check if we got any output (no tunnels active)
 	if [[ -z ${wg_output} ]]; then
-		# No interfaces active
 		local output="no active tunnels"
 		_motd_cache_write "${cache_file}" "${output}"
 		printf "%s" "${output}"

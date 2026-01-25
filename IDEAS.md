@@ -1,5 +1,9 @@
 # Ideas
 
+## dot doctor
+
+Prüfe ob alle flags und weiteren sinnvolle checks in dot doctor enthalten sind
+
 ## Shells
 
 Unter Window > Powershell
@@ -8,13 +12,24 @@ Unter Window > Powershell
 ## install.sh
 mit brew und apt die dependicies installieren
 
+## docker
+
+einbinden von, optional
+https://github.com/Mikescher/better-docker-ps?tab=readme-ov-file
+oder
+https://github.com/devemio/docker-color-output
+
 ## install-checklist
 
 generell und für jedes system (linux, debian), ausführlicher
 
 ## motd
 
-more widgets
+widgets in einzele dateien aufteilen
+
+proxmox widget
+
+docker widget: auch anzeigen wenn keine container laufenc
 
 widgetize the current standard lines
 

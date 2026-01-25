@@ -2,5 +2,5 @@
 
 # check if root, when not define alias with sudo
 if [[ ${EUID} -ne 0 ]]; then
-	alias wg='sudo $(command -v wg)'
+	alias wg='sudo wg'
 fi
