@@ -69,6 +69,8 @@ Notes:
 - Tmux: oh-my-tmux + TPM + `config/tmux.conf.local`
 - Tmux fzf picker: `ts`/`tw`/`tp` (sessions/windows/panes via `fzf`)
 - MOTD: hostname-based scripts in `motd/` (enable via `DOTFILES_ENABLE_MOTD`, optional auto-run `DOTFILES_ENABLE_MOTD_AUTO_RUN`)
+- systemctl + fzf manager: `sctl` (interactive service management with start/stop/restart/logs)
+- macOS log picker: `lctl` (pick launchd/brew services and view logs via Unified Logging)
 
 ## Feature flags (per host)
 
@@ -102,11 +104,14 @@ Available flags:
 - `DOTFILES_ENABLE_OH_MY_ZSH`
 - `DOTFILES_ENABLE_MOTD`
 - `DOTFILES_ENABLE_MOTD_AUTO_RUN`
+- `DOTFILES_ENABLE_MOTD_WIDGETS`
 - `DOTFILES_ENABLE_AUTOUPDATE`
 - `DOTFILES_ENABLE_TMUX_AUTOSTART`
 - `DOTFILES_ENABLE_SSH_TMUX_RENAME`
 - `DOTFILES_ENABLE_TMUX_FZF`
 - `DOTFILES_ENABLE_JOURNALCTL_PICKER`
+- `DOTFILES_ENABLE_LOG_PICKER` (macOS only, default `true` on macOS)
+- `DOTFILES_ENABLE_SYSTEMCTL_FZF`
 - `DOTFILES_ENABLE_DOT_DOCTOR`
 - `DOTFILES_ENABLE_DOT_HELP`
 - `DOTFILES_ENABLE_DOT_HELP_BINDING` (default `true`)
@@ -122,6 +127,7 @@ Available flags:
 - Inhalte: Uptime, Root-/Home-Speicher (`/home` bevorzugt via Cache `/usr/local/share/dotfiles/dir-sizes`), IP/OS/Load, Tasks aus `motd/tasks.json` (via `jq`), optionale APT-Updates (Cache-Dateien unter `/usr/local/share/dotfiles/apt-updates-*`, gesteuert via `MOTD_SHOW_APT_UPDATES` in `config/dotfiles.config`).
 - macOS: OS-Name via `sw_vers`, IP via `ipconfig`/`ifconfig`, Load via `sysctl -n vm.loadavg`, Home-Fallback `/Users`.
 - Host-Hooks: optionales Proxmox-Snippet `motd/motd-proxmox.sh` (auto bei `pveversion`).
+- Widgets: via `DOTFILES_ENABLE_MOTD_WIDGETS` (default `true`). Built-in widgets: docker, tailscale, wireguard, proxmox, homebrew, network. Custom widgets can be added in `motd/widgets/<hostname>/`.
 - Network Widget: zeigt Erreichbarkeitsstatus konfigurierter Hosts an (gruen = erreichbar, rot = nicht erreichbar). Aktivieren via `DOTFILES_ENABLE_NETWORK_WIDGET=true`. Hosts konfigurieren in `config/network-hosts.conf` (ein Host pro Zeile). Systemd-Timer fuer Cache-Updates: `motd/systemd/update-motd-network.{service,timer}`.
 - Timer/Caches: `motd/systemd/update-motd-apt-infos.{service,timer}` schreibt APT-Caches; `motd/systemd/calc-dir-size-homes.{service,timer}` schreibt `dir-sizes`.
   - Installer: Beim Full-Install (`bash ~/dotfiles/install.sh` → `Install dotfiles (all)` oder non-interactive `all`) werden die Timer auf systemd-Systemen automatisch installiert (Menüpunkt `Install MOTD systemd timers` ist zum Neuinstallieren).
@@ -208,6 +214,36 @@ Enabled by default via `DOTFILES_ENABLE_JOURNALCTL_PICKER`.
 
 - `jctl`: pick a systemd service unit via `fzf` and view the last 500 log lines
 - `jctl follow`: same, but follows the log (`journalctl -f`)
+
+## systemctl fzf manager
+
+Enabled by default via `DOTFILES_ENABLE_SYSTEMCTL_FZF`.
+
+- `sctl`: interactive systemd service manager via `fzf`
+  - Pick a service unit from `systemctl list-units --type=service`
+  - Preview shows current status and recent logs
+  - Action menu: start, stop, restart, reload, enable, disable, logs, follow
+  - Automatically uses `sudo` when needed for privileged operations
+
+## macOS log picker
+
+Enabled by default on macOS via `DOTFILES_ENABLE_LOG_PICKER`.
+
+- `lctl`: pick a macOS service (launchd/Homebrew) and view logs
+- `lctl follow`: stream logs in real-time (`log stream`)
+
+How it works:
+
+- Lists services from Homebrew (`brew services list`) and system LaunchDaemons (`launchctl list`)
+- Uses macOS Unified Logging (`log show`/`log stream`) for system services
+- For Homebrew services, checks common log paths (`~/Library/Logs/Homebrew/`, `/usr/local/var/log/`)
+- Uses `lnav` for viewing if available, otherwise falls back to `less`
+
+Disable per host:
+
+```bash
+DOTFILES_ENABLE_LOG_PICKER=false
+```
 
 ## Docker fzf helpers
 
