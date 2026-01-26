@@ -356,8 +356,36 @@ _dot_help_setup_keybindings
 				dot_doctor "$@"
 				return $?
 			fi
+
+			if [[ ${cmd} == "cache" ]]; then
+				local cache_cmd="${1:-}"
+				shift || true
+				case "${cache_cmd}" in
+				remove|rm|clear)
+					local cache_dir="${HOME}/.cache/dotfiles/motd"
+					if [[ -d ${cache_dir} ]]; then
+						rm -rf "${cache_dir}"
+						printf '%s\n' "Cache removed: ${cache_dir}"
+					else
+						printf '%s\n' "Cache directory does not exist: ${cache_dir}"
+					fi
+					return 0
+					;;
+				"")
+					printf '%s\n' "Usage: dot cache remove"
+					printf '%s\n' "       dot cache remove  - Remove MOTD widget cache"
+					return 0
+					;;
+				*)
+					printf '%s\n' "Unknown cache subcommand: ${cache_cmd}"
+					printf '%s\n' "Usage: dot cache remove"
+					return 1
+					;;
+				esac
+			fi
+
 			printf '%s\n' "Unknown subcommand: ${cmd}"
-			printf '%s\n' "Usage: dot help | dot doctor | dot reload | dot install | dot update"
+			printf '%s\n' "Usage: dot help | dot doctor | dot reload | dot install | dot update | dot cache"
 			return 1
 			;;
 		esac
