@@ -1,0 +1,14 @@
+# /etc/systemd/system/dotfiles-update-motd-network@.timer
+# Template timer - use with: systemctl enable dotfiles-update-motd-network@USERNAME.timer
+
+[Unit]
+Description=dotfiles update motd network status timer for %i (every 5 minutes)
+
+[Timer]
+OnCalendar=*:0/5
+AccuracySec=1min
+Persistent=true
+Unit=dotfiles-update-motd-network@%i.service
+
+[Install]
+WantedBy=timers.target

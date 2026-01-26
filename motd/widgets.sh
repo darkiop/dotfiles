@@ -2,6 +2,12 @@
 # MOTD Widget System (P021)
 # Extensible widget architecture for displaying additional system information
 
+# Source local settings if not already loaded (for standalone motd.sh calls)
+if [[ -z ${DOTFILES_ENABLE_NETWORK_WIDGET+x} && -f "${HOME}/dotfiles/config/local_dotfiles_settings" ]]; then
+	# shellcheck source=/dev/null
+	source "${HOME}/dotfiles/config/local_dotfiles_settings"
+fi
+
 # Widget cache directory
 MOTD_CACHE_DIR="${HOME}/.cache/dotfiles/motd"
 mkdir -p "${MOTD_CACHE_DIR}" 2>/dev/null || true
@@ -277,6 +283,75 @@ _motd_widget_brew() {
 }
 
 # ============================================================================
+# Network Status Widget
+# ============================================================================
+_motd_widget_network() {
+	# Check feature flag first
+	if [[ ${DOTFILES_ENABLE_NETWORK_WIDGET:-false} != true ]]; then
+		return 1
+	fi
+
+	local cache_file="${MOTD_CACHE_DIR}/network"
+	local cache_ttl=300  # 5 minutes - systemd updates more frequently
+
+	# Return cached if fresh
+	if _motd_cache_fresh "${cache_file}" "${cache_ttl}"; then
+		_motd_cache_read "${cache_file}"
+		return 0
+	fi
+
+	# Config file path
+	local config_file="${HOME}/dotfiles/config/network-hosts.conf"
+	if [[ ! -f ${config_file} ]]; then
+		return 1
+	fi
+
+	# Color codes (hardcoded - dotfiles.config uses non-interpreted escapes)
+	local c_green=$'\x1b[38;5;83m'
+	local c_red=$'\x1b[38;5;196m'
+	local c_reset=$'\x1b[m'
+
+	# Platform-specific ping timeout flag
+	local ping_timeout_flag="-W"
+	if [[ ${DOTFILES_OS:-} == "darwin" ]]; then
+		ping_timeout_flag="-t"
+	fi
+
+	local output=""
+	local host status_color status_symbol
+
+	while IFS= read -r host || [[ -n ${host} ]]; do
+		# Skip empty lines and comments
+		[[ -z ${host} ]] && continue
+		[[ ${host} =~ ^[[:space:]]*# ]] && continue
+		# Trim whitespace
+		host=$(echo "${host}" | xargs)
+		[[ -z ${host} ]] && continue
+
+		# Check reachability (quick ping, 1 second timeout)
+		if ping -c 1 ${ping_timeout_flag} 1 "${host}" >/dev/null 2>&1; then
+			status_color="${c_green}"
+		else
+			status_color="${c_red}"
+		fi
+
+		# Append to output
+		if [[ -n ${output} ]]; then
+			output="${output} "
+		fi
+		output="${output}${status_color}${host}${c_reset}"
+	done < "${config_file}"
+
+	if [[ -z ${output} ]]; then
+		return 1
+	fi
+
+	# Cache and return
+	_motd_cache_write "${cache_file}" "${output}"
+	printf "%s" "${output}"
+}
+
+# ============================================================================
 # Widget Runner - Call all enabled widgets
 # ============================================================================
 motd_run_widgets() {
@@ -305,6 +380,11 @@ motd_run_widgets() {
 	# Homebrew widget (macOS)
 	if widget_output=$(_motd_widget_brew 2>/dev/null); then
 		print_kv "homebrew" "${widget_output}"
+	fi
+
+	# Network status widget
+	if widget_output=$(_motd_widget_network 2>/dev/null); then
+		print_kv "network" "${widget_output}"
 	fi
 
 	# Host-specific widgets (if directory exists)

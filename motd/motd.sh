@@ -7,6 +7,7 @@
 : "${COLOR_LIGHT_BLUE:=}"
 : "${COLOR_GREEN:=}"
 : "${COLOR_YELLOW:=}"
+: "${COLOR_RED:=}"
 : "${COLOR_RESET:=$(tput sgr0 2>/dev/null || true)}"
 
 # Detect OS if not already set (DOTFILES_OS is exported by components/platform).
@@ -187,16 +188,23 @@ print_kv() {
 	local label=$1
 	shift # first arg  = label
 	local value="$*"
+	local value_color="${COLOR_GREEN}"
+	local value_reset="${COLOR_RESET}"
 
 	case "${label}" in
 		ip|tailscale|wireguard)
 			value=$(_motd_sanitize_value "${value}")
 			;;
+		network)
+			# Network widget provides its own colors
+			value_color=""
+			value_reset=""
+			;;
 	esac
 
 	printf "  %b%-11s%b %b%s%b\n" \
 		"${COLOR_BLUE}" "${label}" "${COLOR_RESET}" \
-		"${COLOR_GREEN}" "${value}" "${COLOR_RESET}"
+		"${value_color}" "${value}" "${value_reset}"
 }
 printf "\n"
 if [[ -n ${GET_HOST_IP} ]]; then

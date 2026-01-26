@@ -113,6 +113,7 @@ Available flags:
 - `DOTFILES_ENABLE_RELOAD_BINDING` (default `true`)
 - `DOTFILES_ENABLE_DOCKER_FZF`
 - `DOTFILES_ENABLE_IOBROKER`
+- `DOTFILES_ENABLE_NETWORK_WIDGET` (only via `local_dotfiles_settings`)
 
 ## MOTD (hostname-basiert)
 
@@ -121,6 +122,7 @@ Available flags:
 - Inhalte: Uptime, Root-/Home-Speicher (`/home` bevorzugt via Cache `/usr/local/share/dotfiles/dir-sizes`), IP/OS/Load, Tasks aus `motd/tasks.json` (via `jq`), optionale APT-Updates (Cache-Dateien unter `/usr/local/share/dotfiles/apt-updates-*`, gesteuert via `MOTD_SHOW_APT_UPDATES` in `config/dotfiles.config`).
 - macOS: OS-Name via `sw_vers`, IP via `ipconfig`/`ifconfig`, Load via `sysctl -n vm.loadavg`, Home-Fallback `/Users`.
 - Host-Hooks: optionales Proxmox-Snippet `motd/motd-proxmox.sh` (auto bei `pveversion`).
+- Network Widget: zeigt Erreichbarkeitsstatus konfigurierter Hosts an (gruen = erreichbar, rot = nicht erreichbar). Aktivieren via `DOTFILES_ENABLE_NETWORK_WIDGET=true`. Hosts konfigurieren in `config/network-hosts.conf` (ein Host pro Zeile). Systemd-Timer fuer Cache-Updates: `motd/systemd/update-motd-network.{service,timer}`.
 - Timer/Caches: `motd/systemd/update-motd-apt-infos.{service,timer}` schreibt APT-Caches; `motd/systemd/calc-dir-size-homes.{service,timer}` schreibt `dir-sizes`.
   - Installer: Beim Full-Install (`bash ~/dotfiles/install.sh` → `Install dotfiles (all)` oder non-interactive `all`) werden die Timer auf systemd-Systemen automatisch installiert (Menüpunkt `Install MOTD systemd timers` ist zum Neuinstallieren).
   - Manuell: `sudo cp ~/dotfiles/motd/systemd/*.service ~/dotfiles/motd/systemd/*.timer /etc/systemd/system/ && sudo systemctl daemon-reload`
