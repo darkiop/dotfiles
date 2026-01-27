@@ -67,6 +67,15 @@
       ]
     },
     {
+      "name": "dot cd",
+      "desc": "Change to dotfiles directory",
+      "details": "Changes the current working directory to ~/dotfiles.\n\nUsage:\n  dot cd",
+      "run": "dot cd",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
+    },
+    {
       "name": "sshp",
       "desc": "SSH host picker (fzf)",
       "details": "Pick a host from ~/.ssh/config and connect via ssh.",

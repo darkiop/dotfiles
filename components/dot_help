@@ -384,8 +384,18 @@ _dot_help_setup_keybindings
 				esac
 			fi
 
+			if [[ ${cmd} == "cd" ]]; then
+				local repo_dir="${HOME}/dotfiles"
+				if [[ ! -d ${repo_dir} ]]; then
+					printf '%s\n' "dot cd: directory not found: ${repo_dir}" >&2
+					return 1
+				fi
+				cd "${repo_dir}" || return 1
+				return 0
+			fi
+
 			printf '%s\n' "Unknown subcommand: ${cmd}"
-			printf '%s\n' "Usage: dot help | dot doctor | dot reload | dot install | dot update | dot cache"
+			printf '%s\n' "Usage: dot help | doctor | reload | install | update | cache | cd"
 			return 1
 			;;
 		esac
