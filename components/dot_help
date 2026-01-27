@@ -541,8 +541,60 @@ _dot_help_setup_keybindings
 				return 0
 			fi
 
+			if [[ ${cmd} == "alias" || ${cmd} == "aliases" ]]; then
+				local use_color=0
+				if [[ -t 1 ]] && [[ -z ${NO_COLOR:-} ]]; then
+					use_color=1
+				fi
+				local c_reset="" c_name="" c_value="" c_head=""
+				if [[ ${use_color} -eq 1 ]]; then
+					c_reset=$'\033[0m'
+					c_name=$'\033[36m'
+					c_value=$'\033[33m'
+					c_head=$'\033[1;34m'
+				fi
+
+				local filter="${1:-}"
+
+				printf '%s\n' "${c_head}Defined aliases:${c_reset}"
+				printf '%s\n' ""
+
+				local count=0
+				local name value
+				while IFS= read -r line; do
+					# Parse alias output: alias name='value' or alias name=value
+					if [[ ${line} =~ ^alias\ ([^=]+)=(.*)$ ]]; then
+						name="${BASH_REMATCH[1]}"
+						value="${BASH_REMATCH[2]}"
+						# Remove surrounding quotes if present
+						value="${value#\'}"
+						value="${value%\'}"
+						value="${value#\"}"
+						value="${value%\"}"
+
+						# Apply filter if provided
+						if [[ -n ${filter} ]] && [[ ! ${name} == *${filter}* ]] && [[ ! ${value} == *${filter}* ]]; then
+							continue
+						fi
+
+						printf "  %s%-20s%s %s%s%s\n" "${c_name}" "${name}" "${c_reset}" "${c_value}" "${value}" "${c_reset}"
+						count=$((count + 1))
+					fi
+				done < <(alias 2>/dev/null | sort)
+
+				printf '%s\n' ""
+				if [[ -n ${filter} ]]; then
+					printf '%s\n' "Showing: ${count} aliases matching '${filter}'"
+				else
+					printf '%s\n' "Total: ${count} aliases"
+				fi
+				printf '%s\n' ""
+				printf '%s\n' "Tip: dot alias <filter> to search"
+				return 0
+			fi
+
 			printf '%s\n' "Unknown subcommand: ${cmd}"
-			printf '%s\n' "Usage: dot help | doctor | reload | install | update | cache | cd | modules | env"
+			printf '%s\n' "Usage: dot help | doctor | reload | install | update | cache | cd | modules | env | alias"
 			return 1
 			;;
 		esac

@@ -78,6 +78,15 @@
       ]
     },
     {
+      "name": "dot alias",
+      "desc": "List all defined shell aliases",
+      "details": "Shows all aliases defined in the current shell.\n\n━━━ Usage ━━━\n  dot alias           List all aliases\n  dot alias <filter>  Filter by name or value\n  dot aliases         Alternative name\n\n━━━ Examples ━━━\n  dot alias git       Show git-related aliases\n  dot alias docker    Show docker aliases\n  dot alias ll        Find specific alias\n\n━━━ Output format ━━━\n  name                 command\n\n━━━ Alias sources ━━━\n• ~/dotfiles/alias/alias\n• ~/dotfiles/alias/alias-*\n• ~/.bashrc / ~/.zshrc",
+      "run": "dot alias",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
+    },
+    {
       "name": "sshp",
       "desc": "SSH host picker (fzf)",
       "details": "Select a host from ~/.ssh/config via fzf.\n\n━━━ Usage ━━━\n  sshp              Select host\n  Ctrl+S            Keybinding (if enabled)\n\n━━━ Features ━━━\n• Reads hosts from ~/.ssh/config\n• Preview shows host configuration\n• Enter connects directly\n\n━━━ Example ~/.ssh/config ━━━\n  Host server1\n    HostName 192.168.1.10\n    User admin\n    Port 22",
