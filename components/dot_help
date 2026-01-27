@@ -546,20 +546,40 @@ _dot_help_setup_keybindings
 				if [[ -t 1 ]] && [[ -z ${NO_COLOR:-} ]]; then
 					use_color=1
 				fi
-				local c_reset="" c_name="" c_value="" c_head=""
-				if [[ ${use_color} -eq 1 ]]; then
+				local c_reset="${COLOR_RESET:-}"
+				local c_head="${COLOR_LIGHT_BLUE:-}"
+				local c_muted="${COLOR_BLUE:-}"
+				if [[ ${use_color} -eq 1 ]] && [[ -z ${c_reset} ]]; then
+					c_head=$'\033[36m'
+					c_muted=$'\033[34m'
 					c_reset=$'\033[0m'
-					c_name=$'\033[36m'
-					c_value=$'\033[33m'
-					c_head=$'\033[1;34m'
 				fi
 
 				local filter="${1:-}"
 
-				printf '%s\n' "${c_head}Defined aliases:${c_reset}"
-				printf '%s\n' ""
+				# Box drawing characters
+				local box_tl="╭" box_tr="╮" box_bl="╰" box_br="╯"
+				local title="dot alias"
+				local box_width=50
+				local padding=$(( (box_width - ${#title} - 2) ))
+				local pad_left=$(( padding / 2 ))
+				local pad_right=$(( padding - pad_left ))
 
-				local count=0
+				printf '%b%s' "${c_muted}" "${box_tl}"
+				printf '%0.s─' $(seq 1 $box_width)
+				printf '%s%b\n' "${box_tr}" "${c_reset}"
+
+				printf '%b%s%b' "${c_muted}" "│" "${c_reset}"
+				printf '%*s' "$pad_left" ""
+				printf '%b%s%b' "${c_head}" " ${title} " "${c_reset}"
+				printf '%*s' "$pad_right" ""
+				printf '%b%s%b\n' "${c_muted}" "│" "${c_reset}"
+
+				printf '%b%s' "${c_muted}" "${box_bl}"
+				printf '%0.s─' $(seq 1 $box_width)
+				printf '%s%b\n' "${box_br}" "${c_reset}"
+
+				local -a alias_items=()
 				local name value
 				while IFS= read -r line; do
 					# Parse alias output: alias name='value' or alias name=value
@@ -577,19 +597,48 @@ _dot_help_setup_keybindings
 							continue
 						fi
 
-						printf "  %s%-20s%s %s%s%s\n" "${c_name}" "${name}" "${c_reset}" "${c_value}" "${value}" "${c_reset}"
-						count=$((count + 1))
+						alias_items+=("${name}"$'\t'"${value}")
 					fi
 				done < <(alias 2>/dev/null | sort)
 
-				printf '%s\n' ""
-				if [[ -n ${filter} ]]; then
-					printf '%s\n' "Showing: ${count} aliases matching '${filter}'"
-				else
-					printf '%s\n' "Total: ${count} aliases"
+				local count=${#alias_items[@]}
+
+				_dot_alias_print_section() {
+					local section_name="$1"
+					shift
+					local -a items=("$@")
+					local item_count=${#items[@]}
+					local i=0
+
+					printf '\n%b%s%b\n' "${c_head}" "${section_name}" "${c_reset}"
+					for item in "${items[@]}"; do
+						i=$((i + 1))
+						local item_name item_desc prefix
+						IFS=$'\t' read -r item_name item_desc <<< "${item}"
+						prefix="├─"
+						[[ $i -eq $item_count ]] && prefix="╰─"
+						printf '%b%s%b %-28s %b%s%b\n' \
+							"${c_muted}" "${prefix}" "${c_reset}" \
+							"${item_name}" \
+							"${c_muted}" "${item_desc}" "${c_reset}"
+					done
+				}
+
+				if [[ ${count} -gt 0 ]]; then
+					_dot_alias_print_section "Aliases" "${alias_items[@]}"
 				fi
-				printf '%s\n' ""
-				printf '%s\n' "Tip: dot alias <filter> to search"
+
+				local -a summary_items=()
+				if [[ -n ${filter} ]]; then
+					summary_items+=("Total"$'\t'"${count} (filter: ${filter})")
+				else
+					summary_items+=("Total"$'\t'"${count}")
+				fi
+				summary_items+=("Tip"$'\t'"dot alias <filter> to search")
+
+				_dot_alias_print_section "Summary" "${summary_items[@]}"
+
+				printf '\n'
 				return 0
 			fi
 
