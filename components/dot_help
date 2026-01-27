@@ -394,8 +394,73 @@ _dot_help_setup_keybindings
 				return 0
 			fi
 
+			if [[ ${cmd} == "modules" || ${cmd} == "mod" ]]; then
+				local repo_dir="${HOME}/dotfiles"
+				if [[ ! -d ${repo_dir}/.git ]]; then
+					printf '%s\n' "dot modules: not a git repository: ${repo_dir}" >&2
+					return 1
+				fi
+				if ! command -v git >/dev/null 2>&1; then
+					printf '%s\n' "dot modules: missing dependency: git" >&2
+					return 1
+				fi
+
+				local use_color=0
+				if [[ -t 1 ]] && [[ -z ${NO_COLOR:-} ]]; then
+					use_color=1
+				fi
+				local c_reset="" c_green="" c_yellow="" c_red="" c_muted=""
+				if [[ ${use_color} -eq 1 ]]; then
+					c_reset=$'\033[0m'
+					c_green=$'\033[32m'
+					c_yellow=$'\033[33m'
+					c_red=$'\033[31m'
+					c_muted=$'\033[90m'
+				fi
+
+				printf '%s\n' "Submodules in ${repo_dir}:"
+				printf '%s\n' ""
+
+				local status_char commit path desc status_icon status_text
+				while IFS= read -r line; do
+					[[ -z ${line} ]] && continue
+					status_char="${line:0:1}"
+					line="${line:1}"
+					read -r commit path desc <<<"${line}"
+
+					case "${status_char}" in
+					" ")
+						status_icon="${c_green}✓${c_reset}"
+						status_text="synced"
+						;;
+					"+")
+						status_icon="${c_yellow}↑${c_reset}"
+						status_text="modified"
+						;;
+					"-")
+						status_icon="${c_red}✗${c_reset}"
+						status_text="not initialized"
+						;;
+					"U")
+						status_icon="${c_red}!${c_reset}"
+						status_text="merge conflict"
+						;;
+					*)
+						status_icon="?"
+						status_text="unknown"
+						;;
+					esac
+
+					printf '  %s %-28s %s%s%s\n' "${status_icon}" "${path}" "${c_muted}" "${desc}" "${c_reset}"
+				done < <(git -C "${repo_dir}" submodule status 2>/dev/null)
+
+				printf '%s\n' ""
+				printf '%s\n' "Legend: ${c_green}✓${c_reset} synced  ${c_yellow}↑${c_reset} modified  ${c_red}✗${c_reset} not initialized"
+				return 0
+			fi
+
 			printf '%s\n' "Unknown subcommand: ${cmd}"
-			printf '%s\n' "Usage: dot help | doctor | reload | install | update | cache | cd"
+			printf '%s\n' "Usage: dot help | doctor | reload | install | update | cache | cd | modules"
 			return 1
 			;;
 		esac

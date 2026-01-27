@@ -76,6 +76,15 @@
       ]
     },
     {
+      "name": "dot modules",
+      "desc": "List git submodules with status",
+      "details": "Shows all git submodules in ~/dotfiles with their sync status.\n\nStatus indicators:\n  ✓ synced        - Module matches index\n  ↑ modified      - Local changes or different commit\n  ✗ not init      - Submodule not initialized\n  ! conflict      - Merge conflict\n\nUsage:\n  dot modules\n  dot mod         (alias)",
+      "run": "dot modules",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
+    },
+    {
       "name": "sshp",
       "desc": "SSH host picker (fzf)",
       "details": "Pick a host from ~/.ssh/config and connect via ssh.",
