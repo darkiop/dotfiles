@@ -459,8 +459,45 @@ _dot_help_setup_keybindings
 				return 0
 			fi
 
+			if [[ ${cmd} == "env" ]]; then
+				local use_color=0
+				if [[ -t 1 ]] && [[ -z ${NO_COLOR:-} ]]; then
+					use_color=1
+				fi
+				local c_reset="" c_name="" c_true="" c_false="" c_value=""
+				if [[ ${use_color} -eq 1 ]]; then
+					c_reset=$'\033[0m'
+					c_name=$'\033[36m'
+					c_true=$'\033[32m'
+					c_false=$'\033[31m'
+					c_value=$'\033[33m'
+				fi
+
+				printf '%s\n' "DOTFILES_* environment variables:"
+				printf '%s\n' ""
+
+				local name value display_value
+				while IFS='=' read -r name value; do
+					[[ -z ${name} ]] && continue
+					if [[ ${value} == "true" ]]; then
+						display_value="${c_true}${value}${c_reset}"
+					elif [[ ${value} == "false" ]]; then
+						display_value="${c_false}${value}${c_reset}"
+					else
+						display_value="${c_value}${value}${c_reset}"
+					fi
+					printf "  %s%-35s%s = %s\n" "${c_name}" "${name}" "${c_reset}" "${display_value}"
+				done < <(env | grep '^DOTFILES_' | sort)
+
+				local count
+				count=$(env | grep -c '^DOTFILES_' || echo 0)
+				printf '%s\n' ""
+				printf '%s\n' "Total: ${count} variables"
+				return 0
+			fi
+
 			printf '%s\n' "Unknown subcommand: ${cmd}"
-			printf '%s\n' "Usage: dot help | doctor | reload | install | update | cache | cd | modules"
+			printf '%s\n' "Usage: dot help | doctor | reload | install | update | cache | cd | modules | env"
 			return 1
 			;;
 		esac

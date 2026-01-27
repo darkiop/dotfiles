@@ -85,6 +85,15 @@
       ]
     },
     {
+      "name": "dot env",
+      "desc": "Show DOTFILES_* environment variables",
+      "details": "Lists all environment variables starting with DOTFILES_.\n\nColor coding:\n  green  = true\n  red    = false\n  yellow = other values\n\nUseful for debugging which features are enabled.",
+      "run": "dot env",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
+    },
+    {
       "name": "sshp",
       "desc": "SSH host picker (fzf)",
       "details": "Pick a host from ~/.ssh/config and connect via ssh.",
