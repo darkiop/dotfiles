@@ -320,11 +320,20 @@ Optional keybindings (bash + zsh):
 - `DOTFILES_ENABLE_DOT_HELP_BINDING`: binds `Ctrl+H` to open `dot help`
 - `DOTFILES_ENABLE_RELOAD_BINDING`: binds `Alt+R` to run `dot reload`
 
-Commands:
+### dot Subcommands
 
-- `dot reload`: clears the screen and reloads your current shell rc file
-  - Bash: `~/.bashrc` (fallback: `~/dotfiles/bashrc`)
-  - Zsh: `~/.zshrc` (fallback: `~/dotfiles/zshrc`)
+| Command | Alias | Description |
+|---------|-------|-------------|
+| `dot help` | `dot h`, `dot` | CLI overview of commands and keybindings |
+| `dot help --plain` | | Force text output (no fzf) |
+| `dot doctor` | | Diagnostics for common issues |
+| `dot reload` | | Clear screen and reload shell rc |
+| `dot install` | `dot i` | Run `~/dotfiles/install.sh` |
+| `dot update` | `dot u` | Pull repo + update submodules |
+| `dot cd` | | Change to `~/dotfiles` directory |
+| `dot modules` | `dot mod` | List git submodules with sync status |
+| `dot env` | | Show all `DOTFILES_*` environment variables |
+| `dot cache remove` | | Remove MOTD widget cache |
 
 Disable per host:
 
