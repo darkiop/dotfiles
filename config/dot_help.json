@@ -3,28 +3,30 @@
     {
       "name": "dot help",
       "desc": "CLI overview of dotfiles commands and keybindings",
-      "details": "Shows available commands and bindings based on enabled feature flags. Uses fzf if available; use --plain to force text output.",
+      "details": "Shows all available commands and keybindings.\n\n━━━ Usage ━━━\n  dot help          Interactive fzf view\n  dot help --plain  Text output without fzf\n  dot               Alias for dot help\n  dot h             Short form\n\n━━━ Features ━━━\n• Filters by enabled feature flags\n• Enter executes selected command\n• Preview shows details on the right\n\n━━━ Dependencies ━━━\n• jq (JSON processing)\n• fzf (optional, for interactive view)",
       "run": "dot help",
       "requires": []
     },
     {
       "name": "dot doctor",
       "desc": "Diagnostics overview",
-      "details": "Checks git repo state, submodules, expected symlinks, required tools, and MOTD timer status (systemd).",
+      "details": "Checks the dotfiles installation for common issues.\n\n━━━ What is checked? ━━━\n• Git repository: existence and status\n• Submodules: initialized and up-to-date?\n• Symlinks: ~/.bashrc, ~/.zshrc, ~/.tmux.conf\n• Tools: fzf, jq, tmux, etc.\n• MOTD timers: systemd status\n\n━━━ Status symbols ━━━\n  OK    All good\n  WARN  Unusual but works\n  FAIL  Missing or broken\n  INFO  Informational\n\n━━━ Example ━━━\n  dot doctor",
       "run": "dot doctor",
       "requires": []
     },
     {
-      "name": "dot help --plain",
-      "desc": "CLI overview (text output)",
-      "details": "Forces non-fzf output even if fzf is installed.",
-      "run": "dot help --plain",
-      "requires": []
+      "name": "dot reload",
+      "desc": "Reload shell configuration",
+      "details": "Reloads the shell RC file and clears the screen.\n\n━━━ Behavior ━━━\n• Bash: source ~/.bashrc\n• Zsh:  source ~/.zshrc\n• Fallback to ~/dotfiles/bashrc or zshrc\n\n━━━ When to use? ━━━\n• After changes to dotfiles\n• After dot update\n• After feature flag changes\n\n━━━ Keybinding ━━━\n  Alt+R  (if DOTFILES_ENABLE_RELOAD_BINDING=true)",
+      "run": "dot reload",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
     },
     {
       "name": "dot install",
       "desc": "Run dotfiles installer",
-      "details": "Runs ~/dotfiles/install.sh.\nEnter in dot help runs: dot install",
+      "details": "Starts the interactive installation menu.\n\n━━━ Usage ━━━\n  dot install       Interactive menu\n  dot i             Short form\n\n━━━ Installation options ━━━\n• Create symlinks (bashrc, zshrc, etc.)\n• Initialize git submodules\n• Install fzf\n• Setup MOTD systemd timers\n• Install dependencies via apt\n\n━━━ Non-interactive ━━━\n  bash ~/dotfiles/install.sh all",
       "run": "dot install",
       "requires": [
         "DOTFILES_ENABLE_DOT_HELP"
@@ -33,35 +35,8 @@
     {
       "name": "dot update",
       "desc": "Update repo + submodules",
-      "details": "Runs:\n- git pull --ff-only\n- git submodule update --init --recursive --depth 1\nEnter in dot help runs: dot update",
+      "details": "Updates dotfiles to the latest version.\n\n━━━ What happens? ━━━\n  1. git pull --ff-only\n  2. git submodule update --init --recursive --depth 1\n\n━━━ Usage ━━━\n  dot update        Full update\n  dot u             Short form\n\n━━━ After update ━━━\n  dot reload        Reload shell\n  dot doctor        Check installation\n\n━━━ Note ━━━\nOnly fast-forward merges. For conflicts,\nmerge manually with git pull.",
       "run": "dot update",
-      "requires": [
-        "DOTFILES_ENABLE_DOT_HELP"
-      ]
-    },
-    {
-      "name": "dot i",
-      "desc": "Alias for dot install",
-      "details": "Alias for dot install.\nEnter in dot help runs: dot i",
-      "run": "dot i",
-      "requires": [
-        "DOTFILES_ENABLE_DOT_HELP"
-      ]
-    },
-    {
-      "name": "dot u",
-      "desc": "Alias for dot update",
-      "details": "Alias for dot update.\nEnter in dot help runs: dot u",
-      "run": "dot u",
-      "requires": [
-        "DOTFILES_ENABLE_DOT_HELP"
-      ]
-    },
-    {
-      "name": "dot h",
-      "desc": "Alias for dot help",
-      "details": "Alias for dot help.\nEnter in dot help runs: dot h",
-      "run": "dot h",
       "requires": [
         "DOTFILES_ENABLE_DOT_HELP"
       ]
@@ -69,7 +44,7 @@
     {
       "name": "dot cd",
       "desc": "Change to dotfiles directory",
-      "details": "Changes the current working directory to ~/dotfiles.\n\nUsage:\n  dot cd",
+      "details": "Changes to the dotfiles directory.\n\n━━━ Usage ━━━\n  dot cd\n  pwd  →  /home/<user>/dotfiles\n\n━━━ Useful for ━━━\n• Quick editing of configuration\n• Git operations in dotfiles repo\n• Adjusting cheats or aliases",
       "run": "dot cd",
       "requires": [
         "DOTFILES_ENABLE_DOT_HELP"
@@ -78,7 +53,7 @@
     {
       "name": "dot modules",
       "desc": "List git submodules with status",
-      "details": "Shows all git submodules in ~/dotfiles with their sync status.\n\nStatus indicators:\n  ✓ synced        - Module matches index\n  ↑ modified      - Local changes or different commit\n  ✗ not init      - Submodule not initialized\n  ! conflict      - Merge conflict\n\nUsage:\n  dot modules\n  dot mod         (alias)",
+      "details": "Shows all git submodules with sync status.\n\n━━━ Status symbols ━━━\n  ✓  Synchronized with index\n  ↑  Modified / different commit\n  ✗  Not initialized\n  !  Merge conflict\n\n━━━ Usage ━━━\n  dot modules       Full command\n  dot mod           Short form\n\n━━━ Submodules ━━━\n• modules/fzf              Fuzzy Finder\n• modules/fzf-tab-completion\n• modules/oh-my-tmux       Tmux Config\n• modules/oh-my-zsh        Zsh Framework\n• modules/tpm              Tmux Plugin Manager\n• modules/vimrc            Vim Configuration",
       "run": "dot modules",
       "requires": [
         "DOTFILES_ENABLE_DOT_HELP"
@@ -87,8 +62,17 @@
     {
       "name": "dot env",
       "desc": "Show DOTFILES_* environment variables",
-      "details": "Lists all environment variables starting with DOTFILES_.\n\nColor coding:\n  green  = true\n  red    = false\n  yellow = other values\n\nUseful for debugging which features are enabled.",
+      "details": "Lists all DOTFILES_* environment variables.\n\n━━━ Color coding ━━━\n  green  = true  (enabled)\n  red    = false (disabled)\n  yellow = other values\n\n━━━ Usage ━━━\n  dot env\n\n━━━ Important variables ━━━\n• DOTFILES_ENABLE_*    Feature flags\n• DOTFILES_OS          linux/darwin\n• DOTFILES_DISTRO_ID   ubuntu/debian/...\n• DOTFILES_WSL         0/1\n• DOTFILES_CONTAINER   0/1\n• DOTFILES_PROMPT_STYLE classic/compact\n\n━━━ Debugging ━━━\nHelps find out why a feature\nis not working.",
       "run": "dot env",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
+    },
+    {
+      "name": "dot cache remove",
+      "desc": "Remove MOTD widget cache",
+      "details": "Deletes the MOTD widget cache.\n\n━━━ Cache directory ━━━\n  ~/.cache/dotfiles/motd/\n\n━━━ When to use? ━━━\n• Widget shows stale data\n• After configuration changes\n• On widget errors\n\n━━━ Usage ━━━\n  dot cache remove",
+      "run": "dot cache remove",
       "requires": [
         "DOTFILES_ENABLE_DOT_HELP"
       ]
@@ -96,7 +80,7 @@
     {
       "name": "sshp",
       "desc": "SSH host picker (fzf)",
-      "details": "Pick a host from ~/.ssh/config and connect via ssh.",
+      "details": "Select a host from ~/.ssh/config via fzf.\n\n━━━ Usage ━━━\n  sshp              Select host\n  Ctrl+S            Keybinding (if enabled)\n\n━━━ Features ━━━\n• Reads hosts from ~/.ssh/config\n• Preview shows host configuration\n• Enter connects directly\n\n━━━ Example ~/.ssh/config ━━━\n  Host server1\n    HostName 192.168.1.10\n    User admin\n    Port 22",
       "run": "sshp",
       "requires": [
         "DOTFILES_ENABLE_SSH_PICKER"
@@ -105,7 +89,7 @@
     {
       "name": "gco",
       "desc": "git checkout picker",
-      "details": "Pick a branch or tag and checkout.",
+      "details": "Select a branch/tag via fzf and checkout.\n\n━━━ Usage ━━━\n  gco               Select branch/tag\n\n━━━ Features ━━━\n• Shows local and remote branches\n• Shows tags\n• Preview: recent commits of branch\n\n━━━ Equivalent ━━━\n  git checkout <branch>",
       "run": "gco",
       "requires": [
         "DOTFILES_ENABLE_GIT_FZF"
@@ -114,7 +98,7 @@
     {
       "name": "gshow",
       "desc": "git show picker",
-      "details": "Pick a commit and show it.",
+      "details": "Select a commit via fzf and show details.\n\n━━━ Usage ━━━\n  gshow             Select commit\n\n━━━ Features ━━━\n• Commit history as list\n• Preview: diff of commit\n• Enter: full git show\n\n━━━ Equivalent ━━━\n  git show <commit>",
       "run": "gshow",
       "requires": [
         "DOTFILES_ENABLE_GIT_FZF"
@@ -123,7 +107,7 @@
     {
       "name": "gaddp",
       "desc": "git add picker",
-      "details": "Pick modified files and add to index.",
+      "details": "Select modified files via fzf to stage.\n\n━━━ Usage ━━━\n  gaddp             Select files\n\n━━━ Features ━━━\n• Shows modified/untracked files\n• Preview: diff of file\n• Tab: multi-select\n• Enter: git add for selection\n\n━━━ Equivalent ━━━\n  git add <files>",
       "run": "gaddp",
       "requires": [
         "DOTFILES_ENABLE_GIT_FZF"
@@ -132,7 +116,7 @@
     {
       "name": "gstashp",
       "desc": "git stash picker",
-      "details": "Pick a stash and run: show|apply|pop|drop (e.g. gstashp show).",
+      "details": "Select a stash via fzf and perform action.\n\n━━━ Usage ━━━\n  gstashp show      Show stash\n  gstashp apply     Apply stash (keep)\n  gstashp pop       Apply stash (delete)\n  gstashp drop      Delete stash\n\n━━━ Features ━━━\n• List of all stashes\n• Preview: stash content\n• Enter: execute action",
       "run": "gstashp",
       "requires": [
         "DOTFILES_ENABLE_GIT_FZF"
@@ -141,7 +125,7 @@
     {
       "name": "gfixup",
       "desc": "git fixup picker",
-      "details": "Pick a commit and create a fixup commit.",
+      "details": "Create a fixup commit for selected commit.\n\n━━━ Usage ━━━\n  gfixup            Select commit\n\n━━━ What happens? ━━━\n  git commit --fixup=<commit>\n\n━━━ After that ━━━\n  git rebase -i --autosquash\n\n━━━ When to use? ━━━\nSmall corrections to older commits\nbefore pushing.",
       "run": "gfixup",
       "requires": [
         "DOTFILES_ENABLE_GIT_FZF"
@@ -150,7 +134,7 @@
     {
       "name": "gcp",
       "desc": "git commit hash copy",
-      "details": "Pick a commit hash and copy to clipboard.",
+      "details": "Copy commit hash to clipboard.\n\n━━━ Usage ━━━\n  gcp               Select commit\n\n━━━ Clipboard tools ━━━\n• Linux Wayland: wl-copy\n• Linux X11: xclip\n• macOS: pbcopy\n\n━━━ Useful for ━━━\n• Preparing cherry-pick\n• Referencing commit in issue/PR\n• Preparing revert",
       "run": "gcp",
       "requires": [
         "DOTFILES_ENABLE_GIT_FZF"
@@ -159,7 +143,7 @@
     {
       "name": "fh",
       "desc": "history picker",
-      "details": "Pick a command from shell history via fzf.",
+      "details": "Search shell history via fzf.\n\n━━━ Usage ━━━\n  fh                Search history\n  Ctrl+R            Keybinding (replaces reverse-i-search)\n\n━━━ Features ━━━\n• Fuzzy search in history\n• Enter: execute command\n• Sorted by frequency/recency\n\n━━━ History file ━━━\n• Bash: ~/.bash_history\n• Zsh:  ~/.zsh_history",
       "run": "fh",
       "requires": [
         "DOTFILES_ENABLE_FZF_EXTRAS"
@@ -168,7 +152,7 @@
     {
       "name": "cdf",
       "desc": "directory picker",
-      "details": "Pick a directory via fzf and cd into it.",
+      "details": "Select a directory via fzf and cd into it.\n\n━━━ Usage ━━━\n  cdf               Select directory\n  Alt+C             Keybinding\n\n━━━ Features ━━━\n• Searches recursively from current directory\n• Preview: directory contents (ls/tree)\n• Enter: cd into selected directory\n\n━━━ Configuration ━━━\n  DOTFILES_ENABLE_FZF_CDF_BINDING=true",
       "run": "cdf",
       "requires": [
         "DOTFILES_ENABLE_FZF_EXTRAS"
@@ -177,7 +161,7 @@
     {
       "name": "ts",
       "desc": "tmux session picker",
-      "details": "Pick a tmux session and switch client.",
+      "details": "Select a tmux session via fzf.\n\n━━━ Usage ━━━\n  ts                Select session\n\n━━━ Features ━━━\n• List of all sessions\n• Preview: windows of session\n• Enter: switch-client to session\n\n━━━ Requirement ━━━\nMust be run inside tmux.",
       "run": "ts",
       "requires": [
         "DOTFILES_ENABLE_TMUX_FZF"
@@ -186,7 +170,7 @@
     {
       "name": "tw",
       "desc": "tmux window picker",
-      "details": "Pick a tmux window across sessions and focus it.",
+      "details": "Select a tmux window via fzf (all sessions).\n\n━━━ Usage ━━━\n  tw                Select window\n  Ctrl+F            Keybinding (inside tmux)\n\n━━━ Features ━━━\n• Shows windows from all sessions\n• Format: session:window\n• Preview: pane content\n• Enter: focus window\n\n━━━ Requirement ━━━\nMust be run inside tmux.",
       "run": "tw",
       "requires": [
         "DOTFILES_ENABLE_TMUX_FZF"
@@ -195,7 +179,7 @@
     {
       "name": "tp",
       "desc": "tmux pane picker",
-      "details": "Pick a tmux pane across sessions and focus it.",
+      "details": "Select a tmux pane via fzf (all sessions).\n\n━━━ Usage ━━━\n  tp                Select pane\n\n━━━ Features ━━━\n• Shows panes from all sessions/windows\n• Format: session:window.pane\n• Preview: pane content\n• Enter: focus pane\n\n━━━ Requirement ━━━\nMust be run inside tmux.",
       "run": "tp",
       "requires": [
         "DOTFILES_ENABLE_TMUX_FZF"
@@ -204,7 +188,7 @@
     {
       "name": "sctl",
       "desc": "systemd service manager",
-      "details": "Interactive systemd service manager with fzf. Pick a service and perform actions: start, stop, restart, reload, enable, disable, status, logs, follow.",
+      "details": "Interactive systemd service manager via fzf.\n\n━━━ Usage ━━━\n  sctl              Select service\n\n━━━ Actions (after selection) ━━━\n  start     Start service\n  stop      Stop service\n  restart   Restart service\n  reload    Reload configuration\n  enable    Enable autostart\n  disable   Disable autostart\n  status    Show status\n  logs      Show logs\n  follow    Follow logs live\n\n━━━ Features ━━━\n• Preview: status + recent logs\n• Uses sudo automatically when needed\n• Only available on systemd systems",
       "run": "sctl",
       "requires": [
         "DOTFILES_ENABLE_SYSTEMCTL_FZF"
@@ -213,17 +197,8 @@
     {
       "name": "jctl",
       "desc": "journalctl picker",
-      "details": "Pick a systemd unit and show logs; use 'jctl follow' to tail.",
+      "details": "Select a systemd unit and show logs.\n\n━━━ Usage ━━━\n  jctl              Select unit, show logs\n  jctl follow       Select unit, follow logs\n\n━━━ Features ━━━\n• List of all systemd units\n• Shows last 500 lines\n• Uses lnav if installed\n\n━━━ Equivalent ━━━\n  journalctl -u <unit> -n 500\n  journalctl -u <unit> -f",
       "run": "jctl",
-      "requires": [
-        "DOTFILES_ENABLE_JOURNALCTL_PICKER"
-      ]
-    },
-    {
-      "name": "jctl follow",
-      "desc": "journalctl follow",
-      "details": "Pick a systemd unit and follow logs (journalctl -f).",
-      "run": "jctl follow",
       "requires": [
         "DOTFILES_ENABLE_JOURNALCTL_PICKER"
       ]
@@ -231,17 +206,8 @@
     {
       "name": "lctl",
       "desc": "macOS log picker",
-      "details": "Pick a macOS service (launchctl/brew) and show logs via Unified Logging.",
+      "details": "Select a macOS service and show logs.\n\n━━━ Usage ━━━\n  lctl              Select service, show logs\n  lctl follow       Select service, stream logs\n\n━━━ Services ━━━\n• Homebrew Services (brew services)\n• LaunchDaemons (launchctl)\n\n━━━ Log sources ━━━\n• Unified Logging (log show/stream)\n• ~/Library/Logs/Homebrew/\n• /usr/local/var/log/\n\n━━━ macOS only ━━━\nEnabled via DOTFILES_ENABLE_LOG_PICKER",
       "run": "lctl",
-      "requires": [
-        "DOTFILES_ENABLE_LOG_PICKER"
-      ]
-    },
-    {
-      "name": "lctl follow",
-      "desc": "macOS log follow",
-      "details": "Pick a macOS service and stream logs (log stream).",
-      "run": "lctl follow",
       "requires": [
         "DOTFILES_ENABLE_LOG_PICKER"
       ]
@@ -249,7 +215,7 @@
     {
       "name": "dps",
       "desc": "docker container picker",
-      "details": "Pick a container and show its docker ps line.",
+      "details": "Select a Docker container via fzf.\n\n━━━ Usage ━━━\n  dps               Select container\n\n━━━ Features ━━━\n• Shows all containers (running + stopped)\n• Preview: recent logs\n• Uses sudo if needed\n\n━━━ Displayed ━━━\nID, Name, Image, Status, Ports",
       "run": "dps",
       "requires": [
         "DOTFILES_ENABLE_DOCKER_FZF"
@@ -258,7 +224,7 @@
     {
       "name": "dexec",
       "desc": "docker exec picker",
-      "details": "Pick a container and exec into it. Args are passed to the exec (e.g. dexec bash).",
+      "details": "Select container and open shell inside.\n\n━━━ Usage ━━━\n  dexec             Open shell (bash/sh)\n  dexec bash        Explicitly bash\n  dexec sh          Explicitly sh\n  dexec <cmd>       Run any command\n\n━━━ Features ━━━\n• Only running containers\n• Default: bash --login (fallback: sh)\n• Interactive with TTY (-it)\n\n━━━ Equivalent ━━━\n  docker exec -it <container> <cmd>",
       "run": "dexec",
       "requires": [
         "DOTFILES_ENABLE_DOCKER_FZF"
@@ -267,10 +233,46 @@
     {
       "name": "dlogs",
       "desc": "docker logs picker",
-      "details": "Pick a container and view logs; use 'dlogs follow' to tail.",
+      "details": "Select container and show logs.\n\n━━━ Usage ━━━\n  dlogs             Show logs (~500 lines)\n  dlogs follow      Follow logs live\n\n━━━ Features ━━━\n• All containers (running + stopped)\n• Uses lnav if installed\n• Preview: last 50 lines\n\n━━━ Equivalent ━━━\n  docker logs <container>\n  docker logs -f <container>",
       "run": "dlogs",
       "requires": [
         "DOTFILES_ENABLE_DOCKER_FZF"
+      ]
+    },
+    {
+      "name": "cheat",
+      "desc": "Cheatsheet lookup",
+      "details": "Search help for a command/topic.\n\n━━━ Usage ━━━\n  cheat <topic>     Show help\n\n━━━ Search path (priority) ━━━\n  1. ~/dotfiles/cheats/*.cheat\n  2. cheat.sh/<topic> (online)\n  3. tldr <topic> (if installed)\n\n━━━ Examples ━━━\n  cheat tar\n  cheat git\n  cheat docker",
+      "run": "",
+      "requires": [
+        "DOTFILES_ENABLE_HELPERS"
+      ]
+    },
+    {
+      "name": "dcheat",
+      "desc": "Local cheatsheet picker",
+      "details": "Select local cheatsheets via fzf.\n\n━━━ Usage ━━━\n  dcheat            Select cheatsheet\n  dcheat <query>    Start with search term\n\n━━━ Directory ━━━\n  ~/dotfiles/cheats/*.cheat\n\n━━━ Features ━━━\n• Preview: cheatsheet content\n• Uses bat for syntax highlighting\n• Over 60 local cheats available",
+      "run": "dcheat",
+      "requires": [
+        "DOTFILES_ENABLE_HELPERS"
+      ]
+    },
+    {
+      "name": "helpme",
+      "desc": "Smart help lookup",
+      "details": "Shows best available help for a command.\n\n━━━ Usage ━━━\n  helpme <command>  Show help\n\n━━━ Search path (priority) ━━━\n  1. Local cheatsheet\n  2. <command> --help\n  3. man <command>\n\n━━━ Examples ━━━\n  helpme rsync\n  helpme find\n  helpme awk",
+      "run": "",
+      "requires": [
+        "DOTFILES_ENABLE_HELPERS"
+      ]
+    },
+    {
+      "name": "extract",
+      "desc": "Archive extractor",
+      "details": "Extracts archives of various formats.\n\n━━━ Usage ━━━\n  extract <file>\n\n━━━ Supported formats ━━━\n  .tar.gz, .tgz     tar + gzip\n  .tar.bz2, .tbz2   tar + bzip2\n  .tar.xz           tar + xz\n  .tar              tar\n  .gz               gzip\n  .bz2              bzip2\n  .xz               xz\n  .zst, .zstd       zstd\n  .zip              zip\n  .rar              rar\n  .7z               7zip\n\n━━━ Note ━━━\nRequires appropriate tools (unzip, 7z, etc.)",
+      "run": "",
+      "requires": [
+        "DOTFILES_ENABLE_EXTRACT_EXT"
       ]
     }
   ],
@@ -278,7 +280,7 @@
     {
       "name": "Ctrl+H",
       "desc": "(dot help) show dot help menu",
-      "details": "Opens dot help.\nEnter in dot help runs: dot help",
+      "details": "Opens the interactive dot help menu.\n\n━━━ Shells ━━━\n  Bash + Zsh\n\n━━━ Configuration ━━━\n  DOTFILES_ENABLE_DOT_HELP=true\n  DOTFILES_ENABLE_DOT_HELP_BINDING=true\n\n━━━ Note ━━━\nCtrl+H may be interpreted as Backspace\nin some terminals.",
       "run": "dot help",
       "requires": [
         "DOTFILES_ENABLE_DOT_HELP",
@@ -288,7 +290,7 @@
     {
       "name": "Alt+R",
       "desc": "(dot reload) reload shell rc",
-      "details": "Reloads your current shell rc file and clears the screen.\nBash: ~/.bashrc (fallback: ~/dotfiles/bashrc)\nZsh: ~/.zshrc (fallback: ~/dotfiles/zshrc)\nEnter in dot help runs: dot reload",
+      "details": "Reloads shell configuration.\n\n━━━ Shells ━━━\n  Bash + Zsh\n\n━━━ Behavior ━━━\n• Clears screen\n• Sources ~/.bashrc or ~/.zshrc\n• Fallback to ~/dotfiles/*rc\n\n━━━ Configuration ━━━\n  DOTFILES_ENABLE_RELOAD_BINDING=true\n\n━━━ When to use? ━━━\n• After changes to dotfiles\n• After feature flag changes",
       "run": "dot reload",
       "requires": [
         "DOTFILES_ENABLE_DOT_HELP",
@@ -297,8 +299,8 @@
     },
     {
       "name": "Ctrl+R",
-      "desc": "(fh) fzf history",
-      "details": "Replaces reverse-i-search when DOTFILES_ENABLE_FZF_HISTORY_BINDINGS is true.\nEnter in dot help runs: fh",
+      "desc": "(fh) fzf history search",
+      "details": "Replaces standard history search with fzf.\n\n━━━ Shells ━━━\n  Bash + Zsh\n\n━━━ Before (standard) ━━━\n  reverse-i-search (incremental)\n\n━━━ After (fzf) ━━━\n• Fuzzy search\n• Preview possible\n• Multiple matches visible at once\n\n━━━ Configuration ━━━\n  DOTFILES_ENABLE_FZF_HISTORY_BINDINGS=true",
       "run": "fh",
       "requires": [
         "DOTFILES_ENABLE_FZF_HISTORY_BINDINGS"
@@ -307,7 +309,7 @@
     {
       "name": "Ctrl+F",
       "desc": "(tw) tmux window picker inside tmux",
-      "details": "Overrides forward-char in shells inside tmux.\nEnter in dot help runs: tw",
+      "details": "Opens tmux window picker (only inside tmux).\n\n━━━ Shells ━━━\n  Bash + Zsh (only inside tmux)\n\n━━━ Features ━━━\n• Shows all windows from all sessions\n• Preview: pane content\n• Fast switching between windows\n\n━━━ Configuration ━━━\n  DOTFILES_ENABLE_TMUX_FZF=true\n\n━━━ Note ━━━\nOverrides forward-char (cursor right).\nOnly active when $TMUX is set.",
       "run": "tw",
       "requires": [
         "DOTFILES_ENABLE_TMUX_FZF"
@@ -316,7 +318,7 @@
     {
       "name": "Ctrl+G",
       "desc": "Display the navi cheats",
-      "details": "Opens navi menu.\nEnter in dot help runs: navi",
+      "details": "Opens the Navi cheatsheet menu.\n\n━━━ What is Navi? ━━━\nInteractive cheatsheet browser with\nexecutable snippets.\n\n━━━ Shells ━━━\n  Bash + Zsh\n\n━━━ Cheats directory ━━━\n  ~/dotfiles/cheats/*.cheat\n\n━━━ Features ━━━\n• Over 60 local cheats\n• Variables are prompted\n• Enter executes snippet\n\n━━━ Configuration ━━━\n  DOTFILES_ENABLE_NAVI=true",
       "run": "navi",
       "requires": [
         "DOTFILES_ENABLE_NAVI"
@@ -325,10 +327,19 @@
     {
       "name": "Alt+C",
       "desc": "(cdf) fzf directory picker",
-      "details": "Jump to a directory selected via fzf.\nEnter in dot help runs: cdf",
+      "details": "Changes to a directory selected via fzf.\n\n━━━ Shells ━━━\n  Bash + Zsh\n\n━━━ Features ━━━\n• Recursive directory search\n• Preview: directory contents\n• Fuzzy matching\n\n━━━ Configuration ━━━\n  DOTFILES_ENABLE_FZF_CDF_BINDING=true\n\n━━━ Alternative ━━━\n  cdf  (call manually)",
       "run": "cdf",
       "requires": [
         "DOTFILES_ENABLE_FZF_CDF_BINDING"
+      ]
+    },
+    {
+      "name": "Tab",
+      "desc": "fzf tab completion",
+      "details": "Replaces standard tab completion with fzf.\n\n━━━ Shells ━━━\n  Bash + Zsh\n\n━━━ Features ━━━\n• Fuzzy matching for completions\n• Preview for files\n• Faster navigation\n\n━━━ Configuration ━━━\n  DOTFILES_ENABLE_FZF_TAB_COMPLETION=true\n\n━━━ Submodule ━━━\n  modules/fzf-tab-completion/",
+      "run": "",
+      "requires": [
+        "DOTFILES_ENABLE_FZF_TAB_COMPLETION"
       ]
     }
   ],
@@ -336,28 +347,42 @@
     {
       "name": "Config",
       "desc": "~/dotfiles/config/local_dotfiles_settings",
-      "details": "Per-host feature flags and overrides (gitignored).",
+      "details": "Per-host configuration (gitignored).\n\n━━━ Usage ━━━\nOverride feature flags:\n\n  # Example local_dotfiles_settings\n  DOTFILES_ENABLE_AUTOUPDATE=false\n  DOTFILES_ENABLE_TMUX_AUTOSTART=false\n  DOTFILES_ENABLE_OH_MY_ZSH=true\n  DOTFILES_PROMPT_STYLE=compact\n\n━━━ Note ━━━\n• File is NOT committed to git repo\n• Loaded after components/feature_flags\n• Overrides default values",
       "run": "",
       "requires": []
     },
     {
       "name": "Feature flags",
       "desc": "~/dotfiles/components/feature_flags",
-      "details": "Defaults and flag helpers.",
+      "details": "All available feature flags with defaults.\n\n━━━ Structure ━━━\n  DOTFILES_ENABLE_<FEATURE>={true|false}\n\n━━━ Important flags ━━━\n  DOTFILES_ENABLE_PROMPT          Prompt\n  DOTFILES_ENABLE_FZF             fzf integration\n  DOTFILES_ENABLE_ALIASES         Alias files\n  DOTFILES_ENABLE_MOTD            Message of the Day\n  DOTFILES_ENABLE_AUTOUPDATE      Auto-update\n  DOTFILES_ENABLE_TMUX_AUTOSTART  Tmux on login\n\n━━━ Show all flags ━━━\n  dot env\n  grep DOTFILES_ENABLE components/feature_flags",
       "run": "",
       "requires": []
     },
     {
       "name": "Prompt style",
-      "desc": "DOTFILES_PROMPT_STYLE environment variable",
-      "details": "Set prompt style in ~/dotfiles/config/dotfiles.config or ~/.bashrc/~/.zshrc:\n\nAvailable styles:\n- classic (default): Full info with ┌ and └─\n  Shows: time, user㉿host, IP, directory, permissions, git, sudo\n\n- compact: Minimal with ┌── and └─\n  Shows: user㉿host, directory, git, sudo\n\nUsage:\nexport DOTFILES_PROMPT_STYLE=\"compact\"\n\nThen reload shell with Alt+R or restart terminal.",
+      "desc": "DOTFILES_PROMPT_STYLE",
+      "details": "Configure prompt style.\n\n━━━ Available styles ━━━\n\n  classic (default)\n  ┌[12:34:56] ssh:user㉿host (192.168.1.1): ~/dir (755) [git:main *+] [sudo]\n  └─$ \n\n  compact\n  ┌── user㉿host: ~/dir [git:main *]\n  └─$ \n\n━━━ Configuration ━━━\nIn local_dotfiles_settings:\n  DOTFILES_PROMPT_STYLE=compact\n\n━━━ Prompt elements ━━━\n• Time (classic only)\n• SSH indicator + IP\n• User㉿Host (💀 for root)\n• Directory + permissions\n• Git: branch, status, upstream\n• Sudo indicator\n• Exit code colors ┌└ red",
       "run": "",
       "requires": []
     },
     {
       "name": "MOTD Widgets",
       "desc": "~/dotfiles/motd/widgets/",
-      "details": "Extensible widget system for MOTD.\n\nBuilt-in widgets:\n- docker: Container stats (running/stopped/total)\n\nCustom widgets:\nCreate host-specific widgets in ~/dotfiles/motd/widgets/<hostname>/\n\nWidget script format:\n#!/bin/bash\necho \"label:value\"\n\nMake executable: chmod +x widget.sh\n\nDisable widgets:\nDOTFILES_ENABLE_MOTD_WIDGETS=false in ~/dotfiles/config/local_dotfiles_settings",
+      "details": "Extensible widget system for MOTD.\n\n━━━ Built-in widgets ━━━\n• docker     Container statistics\n• tailscale  Tailscale IP\n• wireguard  WireGuard status\n• proxmox    VM/LXC overview\n• homebrew   Available updates\n• network    Host reachability\n\n━━━ Custom widgets ━━━\nDirectory: ~/dotfiles/motd/widgets/<hostname>/\n\nFormat:\n  #!/bin/bash\n  echo \"label:value\"\n\nMake executable:\n  chmod +x widget.sh\n\n━━━ Configuration ━━━\n  DOTFILES_ENABLE_MOTD_WIDGETS=true\n\n━━━ Clear cache ━━━\n  dot cache remove",
+      "run": "",
+      "requires": []
+    },
+    {
+      "name": "Aliases",
+      "desc": "~/dotfiles/alias/",
+      "details": "Shell alias definitions by category.\n\n━━━ Alias files ━━━\n  alias           Main aliases\n  alias-docker    Docker commands\n  alias-git       Git commands\n  alias-systemctl Systemctl shortcuts\n  alias-proxmox   Proxmox VE commands\n  alias-wireguard WireGuard VPN\n  alias-glusterfs GlusterFS\n  alias-iobroker  ioBroker Smart Home\n  alias-navi      Navi cheat widget\n\n━━━ Configuration ━━━\n  DOTFILES_ENABLE_ALIASES=true\n\n━━━ Custom aliases ━━━\nIn alias/alias or local_dotfiles_settings",
+      "run": "",
+      "requires": []
+    },
+    {
+      "name": "Cheats",
+      "desc": "~/dotfiles/cheats/",
+      "details": "Local cheatsheets in Navi format.\n\n━━━ Count ━━━\n  60+ cheatsheets\n\n━━━ Categories ━━━\n• Shells: bash, zsh, fish\n• Tools: git, docker, tmux, vim\n• System: systemd, networking, disk\n• Languages: python, javascript, go\n• Cloud: kubernetes, terraform\n\n━━━ Usage ━━━\n  Ctrl+G    Navi menu\n  dcheat    fzf picker\n  cheat X   Direct search\n\n━━━ Format ━━━\n  % category, subcategory\n  # Description\n  command <arg1> <arg2>",
       "run": "",
       "requires": []
     }
