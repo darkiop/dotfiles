@@ -4,40 +4,19 @@ _dot_doctor_print_row() {
 	local check="$1"
 	local status="$2"
 	shift 2
+	local info="$*"
 
-	local use_color=0
-	if [[ -t 1 ]] && [[ -z ${NO_COLOR:-} ]]; then
-		use_color=1
-	fi
-
-	local c_reset="${COLOR_RESET:-}"
-	local c_ok="${COLOR_GREEN:-}"
-	local c_warn="${COLOR_YELLOW:-}"
-	local c_fail="${COLOR_RED:-}"
-	local c_info="${COLOR_LIGHT_BLUE:-}"
-	if [[ ${use_color} -eq 1 ]] && [[ -z ${c_reset} ]]; then
-		c_ok=$'\033[32m'
-		c_warn=$'\033[33m'
-		c_fail=$'\033[31m'
-		c_info=$'\033[36m'
-		c_reset=$'\033[0m'
-	fi
-
-	# Print aligned columns; keep padding independent of color codes.
-	printf '%-24s ' "${check}"
-	if [[ ${use_color} -eq 1 ]]; then
-		case "${status}" in
-		OK) printf '%b' "${c_ok}" ;;
-		WARN) printf '%b' "${c_warn}" ;;
-		FAIL) printf '%b' "${c_fail}" ;;
-		INFO) printf '%b' "${c_info}" ;;
-		esac
-		printf '%-6s' "${status}"
-		printf '%b ' "${c_reset}"
-	else
-		printf '%-6s ' "${status}"
-	fi
-	printf '%s\n' "$*"
+	case "${_DOT_DOCTOR_SECTION:-Checks}" in
+	Flags)
+		_DOT_DOCTOR_FLAGS+=("${check}"$'\t'"${status}"$'\t'"${info}")
+		;;
+	System)
+		_DOT_DOCTOR_SYSTEM+=("${check}"$'\t'"${status}"$'\t'"${info}")
+		;;
+	*)
+		_DOT_DOCTOR_CHECKS+=("${check}"$'\t'"${status}"$'\t'"${info}")
+		;;
+	esac
 }
 
 _dot_doctor_ok() { _dot_doctor_print_row "$1" "OK" "$2"; }
@@ -56,8 +35,31 @@ dot_doctor() {
 	local DOTFILES_DIR="${HOME}/dotfiles"
 	local repo_ok=true
 
-	printf '%-24s %-6s %s\n' "CHECK" "STATUS" "INFO"
-	printf '%-24s %-6s %s\n' "------------------------" "------" "----"
+	local use_color=0
+	if [[ -t 1 ]] && [[ -z ${NO_COLOR:-} ]]; then
+		use_color=1
+	fi
+	DOT_DOCTOR_C_RESET="${COLOR_RESET:-}"
+	DOT_DOCTOR_C_HEAD="${COLOR_LIGHT_BLUE:-}"
+	DOT_DOCTOR_C_MUTED="${COLOR_BLUE:-}"
+	DOT_DOCTOR_C_OK="${COLOR_GREEN:-}"
+	DOT_DOCTOR_C_WARN="${COLOR_YELLOW:-}"
+	DOT_DOCTOR_C_FAIL="${COLOR_RED:-}"
+	DOT_DOCTOR_C_INFO="${COLOR_LIGHT_BLUE:-}"
+	if [[ ${use_color} -eq 1 ]] && [[ -z ${DOT_DOCTOR_C_RESET} ]]; then
+		DOT_DOCTOR_C_HEAD=$'\033[36m'
+		DOT_DOCTOR_C_MUTED=$'\033[34m'
+		DOT_DOCTOR_C_OK=$'\033[32m'
+		DOT_DOCTOR_C_WARN=$'\033[33m'
+		DOT_DOCTOR_C_FAIL=$'\033[31m'
+		DOT_DOCTOR_C_INFO=$'\033[36m'
+		DOT_DOCTOR_C_RESET=$'\033[0m'
+	fi
+
+	_DOT_DOCTOR_CHECKS=()
+	_DOT_DOCTOR_FLAGS=()
+	_DOT_DOCTOR_SYSTEM=()
+	_DOT_DOCTOR_SECTION="Checks"
 
 	if [[ ! -d "${DOTFILES_DIR}" ]]; then
 		_dot_doctor_fail "dotfiles dir" "${DOTFILES_DIR} missing"
@@ -91,22 +93,19 @@ dot_doctor() {
 
 	# Submodules
 	if ${repo_ok} && command -v git >/dev/null 2>&1; then
-		local sub_status
-		sub_status="$(git -C "${DOTFILES_DIR}" submodule status --recursive 2>/dev/null | awk '{print $1}' | head -n 1 || true)"
-		case "${sub_status}" in
-		-*)
-			_dot_doctor_warn "submodules" "not initialized (run: git submodule update --init --recursive --depth 1)"
-			;;
-		+*)
-			_dot_doctor_warn "submodules" "not up-to-date (run: git submodule update --init --recursive --depth 1)"
-			;;
-		"")
+		local sub_statuses
+		sub_statuses="$(git -C "${DOTFILES_DIR}" submodule status --recursive 2>/dev/null | awk '{print $1}' || true)"
+		if [[ -z ${sub_statuses} ]]; then
 			_dot_doctor_warn "submodules" "unable to read status"
-			;;
-		*)
+		elif printf '%s\n' "${sub_statuses}" | grep -q '^-'; then
+			_dot_doctor_warn "submodules" "not initialized (run: git submodule update --init --recursive --depth 1)"
+		elif printf '%s\n' "${sub_statuses}" | grep -q '^+'; then
+			_dot_doctor_warn "submodules" "not up-to-date (run: git submodule update --init --recursive --depth 1)"
+		elif printf '%s\n' "${sub_statuses}" | grep -q '^U'; then
+			_dot_doctor_warn "submodules" "merge conflicts detected"
+		else
 			_dot_doctor_ok "submodules" "ok"
-			;;
-		esac
+		fi
 	fi
 
 	# Symlinks
@@ -146,6 +145,7 @@ dot_doctor() {
 	_dot_doctor_check_link "${HOME}/.tmux.conf.local" "${DOTFILES_DIR}/config/tmux.conf.local"
 
 	# Binaries (based on enabled features)
+	_DOT_DOCTOR_SECTION="Checks"
 	_dot_doctor_need_bin() {
 		local name="$1"
 		local hint="$2"
@@ -164,10 +164,10 @@ dot_doctor() {
 	if _dot_doctor_flag_enabled DOTFILES_ENABLE_TMUX_AUTOSTART || _dot_doctor_flag_enabled DOTFILES_ENABLE_TMUX_FZF; then
 		_dot_doctor_need_bin tmux "tmux enabled"
 	fi
-	if _dot_doctor_flag_enabled DOTFILES_ENABLE_FZF || _dot_doctor_flag_enabled DOTFILES_ENABLE_FZF_EXTRAS || _dot_doctor_flag_enabled DOTFILES_ENABLE_TMUX_FZF || _dot_doctor_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
+	if _dot_doctor_flag_enabled DOTFILES_ENABLE_FZF || _dot_doctor_flag_enabled DOTFILES_ENABLE_FZF_EXTRAS || _dot_doctor_flag_enabled DOTFILES_ENABLE_TMUX_FZF || _dot_doctor_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER || _dot_doctor_flag_enabled DOTFILES_ENABLE_GIT_FZF || _dot_doctor_flag_enabled DOTFILES_ENABLE_SYSTEMCTL_FZF || _dot_doctor_flag_enabled DOTFILES_ENABLE_DOCKER_FZF || _dot_doctor_flag_enabled DOTFILES_ENABLE_SSH_PICKER || _dot_doctor_flag_enabled DOTFILES_ENABLE_LOG_PICKER || _dot_doctor_flag_enabled DOTFILES_ENABLE_FZF_TAB_COMPLETION; then
 		_dot_doctor_need_bin fzf "fzf enabled"
 	fi
-	if [[ -f "${DOTFILES_DIR}/motd/tasks.json" ]]; then
+	if [[ -f "${DOTFILES_DIR}/motd/tasks.json" ]] || _dot_doctor_flag_enabled DOTFILES_ENABLE_DOT_HELP; then
 		_dot_doctor_need_bin jq "required for motd/tasks.json"
 	fi
 	if _dot_doctor_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
@@ -177,6 +177,7 @@ dot_doctor() {
 
 	# Feature flags summary (selected)
 	if command -v dotfiles_flag_enabled >/dev/null 2>&1; then
+		_DOT_DOCTOR_SECTION="Flags"
 		local flags=(
 			DOTFILES_ENABLE_PROMPT
 			DOTFILES_ENABLE_FZF
@@ -204,9 +205,74 @@ dot_doctor() {
 
 	# MOTD timers (systemd)
 	if [[ -d /run/systemd/system ]] && command -v systemctl >/dev/null 2>&1; then
+		_DOT_DOCTOR_SECTION="System"
 		local enabled_a enabled_h
 		enabled_a="$(systemctl is-enabled update-motd-apt-infos.timer 2>/dev/null || true)"
 		enabled_h="$(systemctl is-enabled calc-dir-size-homes.timer 2>/dev/null || true)"
 		_dot_doctor_print_row "motd timers" "INFO" "apt=${enabled_a:-unknown}, home=${enabled_h:-unknown}"
 	fi
+
+	# Render output in dot help --plain style
+	_dot_doctor_print_section() {
+		local section_name="$1"
+		shift
+		local -a items=("$@")
+		local count=${#items[@]}
+		local i=0
+
+		printf '\n%b%s%b\n' "${DOT_DOCTOR_C_HEAD}" "${section_name}" "${DOT_DOCTOR_C_RESET}"
+		for item in "${items[@]}"; do
+			i=$((i + 1))
+			local item_name item_status item_info status_color prefix
+			IFS=$'\t' read -r item_name item_status item_info <<< "${item}"
+			prefix="├─"
+			[[ $i -eq $count ]] && prefix="╰─"
+			case "${item_status}" in
+				OK) status_color="${DOT_DOCTOR_C_OK}" ;;
+				WARN) status_color="${DOT_DOCTOR_C_WARN}" ;;
+				FAIL) status_color="${DOT_DOCTOR_C_FAIL}" ;;
+				INFO) status_color="${DOT_DOCTOR_C_INFO}" ;;
+				*) status_color="${DOT_DOCTOR_C_RESET}" ;;
+			esac
+			printf '%b%s%b %-28s %b%-7s%b %b%s%b\n' \
+				"${DOT_DOCTOR_C_MUTED}" "${prefix}" "${DOT_DOCTOR_C_RESET}" \
+				"${item_name}" \
+				"${status_color}" "${item_status}" "${DOT_DOCTOR_C_RESET}" \
+				"${DOT_DOCTOR_C_MUTED}" "${item_info}" "${DOT_DOCTOR_C_RESET}"
+		done
+	}
+
+	# Box drawing characters
+	local box_tl="╭" box_tr="╮" box_bl="╰" box_br="╯"
+	local title="dot doctor"
+	local box_width=50
+	local padding=$(( (box_width - ${#title} - 2) ))
+	local pad_left=$(( padding / 2 ))
+	local pad_right=$(( padding - pad_left ))
+
+	printf '%b%s' "${DOT_DOCTOR_C_MUTED}" "${box_tl}"
+	printf '%0.s─' $(seq 1 $box_width)
+	printf '%s%b\n' "${box_tr}" "${DOT_DOCTOR_C_RESET}"
+
+	printf '%b%s%b' "${DOT_DOCTOR_C_MUTED}" "│" "${DOT_DOCTOR_C_RESET}"
+	printf '%*s' "$pad_left" ""
+	printf '%b%s%b' "${DOT_DOCTOR_C_HEAD}" " ${title} " "${DOT_DOCTOR_C_RESET}"
+	printf '%*s' "$pad_right" ""
+	printf '%b%s%b\n' "${DOT_DOCTOR_C_MUTED}" "│" "${DOT_DOCTOR_C_RESET}"
+
+	printf '%b%s' "${DOT_DOCTOR_C_MUTED}" "${box_bl}"
+	printf '%0.s─' $(seq 1 $box_width)
+	printf '%s%b\n' "${box_br}" "${DOT_DOCTOR_C_RESET}"
+
+	if [[ ${#_DOT_DOCTOR_CHECKS[@]} -gt 0 ]]; then
+		_dot_doctor_print_section "Checks" "${_DOT_DOCTOR_CHECKS[@]}"
+	fi
+	if [[ ${#_DOT_DOCTOR_FLAGS[@]} -gt 0 ]]; then
+		_dot_doctor_print_section "Flags" "${_DOT_DOCTOR_FLAGS[@]}"
+	fi
+	if [[ ${#_DOT_DOCTOR_SYSTEM[@]} -gt 0 ]]; then
+		_dot_doctor_print_section "System" "${_DOT_DOCTOR_SYSTEM[@]}"
+	fi
+
+	printf '\n'
 }
