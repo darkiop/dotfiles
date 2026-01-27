@@ -24,8 +24,6 @@ dot_help() {
 
 	if [[ ${1:-} == "--plain" ]]; then
 		shift || true
-		printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "dotfiles help" "${DOT_HELP_C_RESET}"
-		printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "=============" "${DOT_HELP_C_RESET}"
 		_dot_help_plain
 		return $?
 	fi
@@ -35,8 +33,6 @@ dot_help() {
 		return $?
 	fi
 
-	printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "dotfiles help" "${DOT_HELP_C_RESET}"
-	printf '%b%s%b\n' "${DOT_HELP_C_HEAD}" "=============" "${DOT_HELP_C_RESET}"
 	_dot_help_plain
 }
 
@@ -66,19 +62,6 @@ _dot_help_plain() {
 		return 0
 	}
 
-	_dot_help_heading() {
-		printf '\n%b%s%b\n' "${DOT_HELP_C_HEAD}" "$1" "${DOT_HELP_C_RESET}"
-		printf '%b%s%b\n' "${DOT_HELP_C_MUTED}" "-----------------------------" "${DOT_HELP_C_RESET}"
-		printf '%-24s %s\n' "NAME" "INFO"
-		printf '%-24s %s\n' "------------------------" "----"
-	}
-
-	_dot_help_kv() {
-		local name="$1"
-		local info="$2"
-		printf '%-24s %s\n' "${name}" "${info}"
-	}
-
 	local json_path="${DOTFILES_DOT_HELP_JSON:-${HOME}/dotfiles/config/dot_help.json}"
 	if ! command -v jq >/dev/null 2>&1; then
 		printf '%s\n' "dot help: missing dependency: jq"
@@ -90,26 +73,88 @@ _dot_help_plain() {
 		return 1
 	fi
 
-	local kind section name desc requires
-	while IFS=$'\t' read -r kind section name desc requires; do
-		case "${kind}" in
-		head)
-			_dot_help_heading "${section}"
-			;;
-		item)
-			if _dot_help_requires_enabled "${requires}"; then
-				_dot_help_kv "${name}" "${desc}"
-			fi
-			;;
-		esac
-	done < <(jq -r '
-		("head\tCommands\t\t\t"),
-		(.commands[] | ["item","Commands",.name,.desc,((.requires // []) | join(","))] | @tsv),
-		("head\tBindings\t\t\t"),
-		(.bindings[] | ["item","Bindings",.name,.desc,((.requires // []) | join(","))] | @tsv),
-		("head\tNotes\t\t\t"),
-		(.notes[] | ["item","Notes",.name,.desc,((.requires // []) | join(","))] | @tsv)
-	' "${json_path}")
+	# Box drawing characters
+	local box_tl="╭" box_tr="╮" box_bl="╰" box_br="╯" box_h="─" box_v="│"
+	local tree_mid="├─" tree_end="╰─"
+
+	# Header box
+	local title="dotfiles help"
+	local box_width=50
+	local padding=$(( (box_width - ${#title} - 2) ))
+	local pad_left=$(( padding / 2 ))
+	local pad_right=$(( padding - pad_left ))
+
+	printf '%b%s' "${DOT_HELP_C_MUTED}" "${box_tl}"
+	printf '%0.s─' $(seq 1 $box_width)
+	printf '%s%b\n' "${box_tr}" "${DOT_HELP_C_RESET}"
+
+	printf '%b%s%b' "${DOT_HELP_C_MUTED}" "${box_v}" "${DOT_HELP_C_RESET}"
+	printf '%*s' "$pad_left" ""
+	printf '%b%s%b' "${DOT_HELP_C_HEAD}" " ${title} " "${DOT_HELP_C_RESET}"
+	printf '%*s' "$pad_right" ""
+	printf '%b%s%b\n' "${DOT_HELP_C_MUTED}" "${box_v}" "${DOT_HELP_C_RESET}"
+
+	printf '%b%s' "${DOT_HELP_C_MUTED}" "${box_bl}"
+	printf '%0.s─' $(seq 1 $box_width)
+	printf '%s%b\n' "${box_br}" "${DOT_HELP_C_RESET}"
+
+	# Collect items per section (sorted alphabetically)
+	local -a commands_items=() bindings_items=() configs_items=()
+	local name desc requires
+
+	while IFS=$'\t' read -r name desc requires; do
+		if _dot_help_requires_enabled "${requires}"; then
+			commands_items+=("${name}"$'\t'"${desc}")
+		fi
+	done < <(jq -r '.commands | sort_by(.name | ascii_downcase)[] | [.name, .desc, ((.requires // []) | join(","))] | @tsv' "${json_path}")
+
+	while IFS=$'\t' read -r name desc requires; do
+		if _dot_help_requires_enabled "${requires}"; then
+			bindings_items+=("${name}"$'\t'"${desc}")
+		fi
+	done < <(jq -r '.bindings | sort_by(.name | ascii_downcase)[] | [.name, .desc, ((.requires // []) | join(","))] | @tsv' "${json_path}")
+
+	while IFS=$'\t' read -r name desc requires; do
+		if _dot_help_requires_enabled "${requires}"; then
+			configs_items+=("${name}"$'\t'"${desc}")
+		fi
+	done < <(jq -r '.notes | sort_by(.name | ascii_downcase)[] | [.name, .desc, ((.requires // []) | join(","))] | @tsv' "${json_path}")
+
+	# Print section helper
+	_dot_help_print_section() {
+		local section_name="$1"
+		shift
+		local -a items=("$@")
+		local count=${#items[@]}
+		local i=0
+
+		printf '\n%b%s%b\n' "${DOT_HELP_C_HEAD}" "${section_name}" "${DOT_HELP_C_RESET}"
+
+		for item in "${items[@]}"; do
+			i=$((i + 1))
+			local item_name item_desc
+			IFS=$'\t' read -r item_name item_desc <<< "${item}"
+			local prefix="${tree_mid}"
+			[[ $i -eq $count ]] && prefix="${tree_end}"
+			printf '%b%s%b %-20s %b%s%b\n' \
+				"${DOT_HELP_C_MUTED}" "${prefix}" "${DOT_HELP_C_RESET}" \
+				"${item_name}" \
+				"${DOT_HELP_C_MUTED}" "${item_desc}" "${DOT_HELP_C_RESET}"
+		done
+	}
+
+	# Print all sections
+	if [[ ${#commands_items[@]} -gt 0 ]]; then
+		_dot_help_print_section "Commands" "${commands_items[@]}"
+	fi
+	if [[ ${#bindings_items[@]} -gt 0 ]]; then
+		_dot_help_print_section "Bindings" "${bindings_items[@]}"
+	fi
+	if [[ ${#configs_items[@]} -gt 0 ]]; then
+		_dot_help_print_section "Configs" "${configs_items[@]}"
+	fi
+
+	printf '\n'
 }
 
 	_dot_help_fzf() {
@@ -156,9 +201,9 @@ _dot_help_plain() {
 			items+=("${name}"$'\t'"${desc}"$'\t'"${details}"$'\t'"${run}")
 		fi
 	done < <(jq -r '
-		(.commands[] | [.name, .desc, .details, (.run // ""), ((.requires // []) | join(","))] | @tsv),
-		(.bindings[] | [.name, .desc, .details, (.run // ""), ((.requires // []) | join(","))] | @tsv),
-		(.notes[] | [.name, .desc, .details, (.run // ""), ((.requires // []) | join(","))] | @tsv)
+		(.commands | sort_by(.name | ascii_downcase)[] | [.name, .desc, .details, (.run // ""), ((.requires // []) | join(","))] | @tsv),
+		(.bindings | sort_by(.name | ascii_downcase)[] | [.name, .desc, .details, (.run // ""), ((.requires // []) | join(","))] | @tsv),
+		(.notes | sort_by(.name | ascii_downcase)[] | [.name, .desc, .details, (.run // ""), ((.requires // []) | join(","))] | @tsv)
 	' "${json_path}")
 
 		local selection cmd run
