@@ -1,0 +1,275 @@
+#!/bin/bash
+
+# dot_profile - Shell startup profiler
+# Measures loading time for each dotfiles component
+
+dot_profile() {
+	local use_color=0
+	if [[ -t 1 ]] && [[ -z ${NO_COLOR:-} ]]; then
+		use_color=1
+	fi
+	local c_reset="" c_head="" c_muted="" c_fast="" c_medium="" c_slow="" c_bar=""
+	if [[ ${use_color} -eq 1 ]]; then
+		c_reset=$'\033[0m'
+		c_head=$'\033[36m'
+		c_muted=$'\033[34m'
+		c_fast=$'\033[32m'
+		c_medium=$'\033[33m'
+		c_slow=$'\033[31m'
+		c_bar=$'\033[36m'
+	fi
+
+	local DOTFILES_DIR="${HOME}/dotfiles"
+	if [[ ! -d "${DOTFILES_DIR}" ]]; then
+		printf '%s\n' "dot profile: dotfiles directory not found: ${DOTFILES_DIR}" >&2
+		return 1
+	fi
+
+	# Determine current shell
+	local shell_type="bash"
+	local rc_file="${DOTFILES_DIR}/bashrc"
+	if [[ -n ${ZSH_VERSION:-} ]]; then
+		shell_type="zsh"
+		rc_file="${DOTFILES_DIR}/zshrc"
+	fi
+
+	# Components to profile (in load order)
+	local -a components=()
+	local -a component_names=()
+
+	# Core components (always loaded)
+	components+=("${DOTFILES_DIR}/config/dotfiles.config")
+	component_names+=("dotfiles.config")
+
+	if [[ ${shell_type} == "bash" ]]; then
+		components+=("${DOTFILES_DIR}/components/bash_defaults")
+		component_names+=("bash_defaults")
+	else
+		components+=("${DOTFILES_DIR}/components/zsh_defaults")
+		component_names+=("zsh_defaults")
+	fi
+
+	components+=("${DOTFILES_DIR}/components/platform")
+	component_names+=("platform")
+
+	components+=("${DOTFILES_DIR}/components/feature_flags")
+	component_names+=("feature_flags")
+
+	# Conditional components (check if files exist)
+	local -a conditional_components=(
+		"bash_prompt:DOTFILES_ENABLE_PROMPT"
+		"zsh_prompt:DOTFILES_ENABLE_PROMPT"
+		"bash_completion:DOTFILES_ENABLE_BASH_COMPLETION"
+		"zsh_completion:DOTFILES_ENABLE_BASH_COMPLETION"
+		"fzf:DOTFILES_ENABLE_FZF"
+		"navi:DOTFILES_ENABLE_NAVI"
+		"ssh_picker:DOTFILES_ENABLE_SSH_PICKER"
+		"fzf_git:DOTFILES_ENABLE_GIT_FZF"
+		"fzf_extras:DOTFILES_ENABLE_FZF_EXTRAS"
+		"helpers:DOTFILES_ENABLE_HELPERS"
+		"brew:DOTFILES_ENABLE_BREW"
+		"fzf_tmux:DOTFILES_ENABLE_TMUX_FZF"
+		"journalctl_picker:DOTFILES_ENABLE_JOURNALCTL_PICKER"
+		"log_picker:DOTFILES_ENABLE_LOG_PICKER"
+		"fzf_systemctl:DOTFILES_ENABLE_SYSTEMCTL_FZF"
+		"dot_doctor:DOTFILES_ENABLE_DOT_DOCTOR"
+		"fzf_docker:DOTFILES_ENABLE_DOCKER_FZF"
+		"dot_help:DOTFILES_ENABLE_DOT_HELP"
+	)
+
+	# Filter components by shell type and existence
+	local comp flag comp_file
+	for entry in "${conditional_components[@]}"; do
+		comp="${entry%%:*}"
+		flag="${entry##*:}"
+
+		# Skip shell-specific components for wrong shell
+		if [[ ${shell_type} == "bash" && ${comp} == zsh_* ]]; then
+			continue
+		fi
+		if [[ ${shell_type} == "zsh" && ${comp} == bash_* ]]; then
+			continue
+		fi
+
+		comp_file="${DOTFILES_DIR}/components/${comp}"
+		if [[ -f ${comp_file} ]]; then
+			components+=("${comp_file}")
+			component_names+=("${comp}")
+		fi
+	done
+
+	# Add alias file
+	if [[ -f "${DOTFILES_DIR}/alias/alias" ]]; then
+		components+=("${DOTFILES_DIR}/alias/alias")
+		component_names+=("alias/*")
+	fi
+
+	# Add MOTD if exists
+	if [[ -f "${DOTFILES_DIR}/motd/motd.sh" ]]; then
+		components+=("${DOTFILES_DIR}/motd/motd.sh")
+		component_names+=("motd")
+	fi
+
+	# Time measurement helper
+	_dot_profile_get_time_ms() {
+		if [[ -n ${EPOCHREALTIME:-} ]]; then
+			# Bash 5+ / Zsh with EPOCHREALTIME
+			printf '%s' "${EPOCHREALTIME/./}"
+		elif command -v perl >/dev/null 2>&1; then
+			perl -MTime::HiRes=time -e 'printf "%.0f", time * 1000000'
+		elif command -v python3 >/dev/null 2>&1; then
+			python3 -c 'import time; print(int(time.time() * 1000000))'
+		elif command -v date >/dev/null 2>&1 && date +%s%N >/dev/null 2>&1; then
+			# GNU date with nanoseconds
+			echo $(($(date +%s%N) / 1000))
+		else
+			# Fallback: milliseconds only
+			echo $(($(date +%s) * 1000000))
+		fi
+	}
+
+	# Results storage
+	local -a results=()
+	local total_time=0
+	local max_time=0
+	local max_name_len=0
+
+	# Calculate max name length for alignment
+	for name in "${component_names[@]}"; do
+		if [[ ${#name} -gt ${max_name_len} ]]; then
+			max_name_len=${#name}
+		fi
+	done
+
+	# Profile each component
+	local i=0
+	local start_time end_time elapsed_us elapsed_ms
+	for comp_file in "${components[@]}"; do
+		local name="${component_names[$i]}"
+
+		if [[ ! -f ${comp_file} ]]; then
+			i=$((i + 1))
+			continue
+		fi
+
+		start_time=$(_dot_profile_get_time_ms)
+
+		# Source in subshell to avoid polluting current environment
+		# but still measure actual load time
+		(
+			# shellcheck source=/dev/null
+			source "${comp_file}" 2>/dev/null
+		)
+
+		end_time=$(_dot_profile_get_time_ms)
+		elapsed_us=$((end_time - start_time))
+		elapsed_ms=$((elapsed_us / 1000))
+
+		results+=("${elapsed_ms}:${name}")
+		total_time=$((total_time + elapsed_ms))
+
+		if [[ ${elapsed_ms} -gt ${max_time} ]]; then
+			max_time=${elapsed_ms}
+		fi
+
+		i=$((i + 1))
+	done
+
+	# Header box
+	local box_tl="╭" box_tr="╮" box_bl="╰" box_br="╯"
+	local title="dot profile (${shell_type})"
+	local box_width=50
+	local padding=$(( (box_width - ${#title} - 2) ))
+	local pad_left=$(( padding / 2 ))
+	local pad_right=$(( padding - pad_left ))
+
+	printf '%b%s' "${c_muted}" "${box_tl}"
+	printf '%0.s─' $(seq 1 $box_width)
+	printf '%s%b\n' "${box_tr}" "${c_reset}"
+
+	printf '%b%s%b' "${c_muted}" "│" "${c_reset}"
+	printf '%*s' "$pad_left" ""
+	printf '%b%s%b' "${c_head}" " ${title} " "${c_reset}"
+	printf '%*s' "$pad_right" ""
+	printf '%b%s%b\n' "${c_muted}" "│" "${c_reset}"
+
+	printf '%b%s' "${c_muted}" "${box_bl}"
+	printf '%0.s─' $(seq 1 $box_width)
+	printf '%s%b\n' "${box_br}" "${c_reset}"
+
+	# Sort results by time (descending)
+	local -a sorted_results=()
+	if [[ -n ${ZSH_VERSION:-} ]]; then
+		# Zsh sorting
+		sorted_results=("${(@On)results}")
+	else
+		# Bash sorting
+		IFS=$'\n' sorted_results=($(printf '%s\n' "${results[@]}" | sort -t: -k1 -rn))
+		unset IFS
+	fi
+
+	# Print results
+	printf '\n%b%s%b\n' "${c_head}" "Components (sorted by load time)" "${c_reset}"
+
+	local bar_max_width=20
+	local count=${#sorted_results[@]}
+	local idx=0
+
+	for result in "${sorted_results[@]}"; do
+		idx=$((idx + 1))
+		local time_ms="${result%%:*}"
+		local name="${result#*:}"
+
+		# Color based on time
+		local time_color="${c_fast}"
+		if [[ ${time_ms} -gt 100 ]]; then
+			time_color="${c_slow}"
+		elif [[ ${time_ms} -gt 20 ]]; then
+			time_color="${c_medium}"
+		fi
+
+		# Calculate bar width
+		local bar_width=0
+		if [[ ${max_time} -gt 0 ]]; then
+			bar_width=$(( (time_ms * bar_max_width) / max_time ))
+			[[ ${bar_width} -lt 1 && ${time_ms} -gt 0 ]] && bar_width=1
+		fi
+
+		# Build bar
+		local bar=""
+		local j
+		for ((j = 0; j < bar_width; j++)); do
+			bar+="█"
+		done
+
+		# Tree prefix
+		local prefix="├─"
+		[[ ${idx} -eq ${count} ]] && prefix="╰─"
+
+		printf '%b%s%b %-*s %b%6dms%b %b%s%b\n' \
+			"${c_muted}" "${prefix}" "${c_reset}" \
+			"${max_name_len}" "${name}" \
+			"${time_color}" "${time_ms}" "${c_reset}" \
+			"${c_bar}" "${bar}" "${c_reset}"
+	done
+
+	# Summary
+	printf '\n%b%s%b\n' "${c_head}" "Summary" "${c_reset}"
+	printf '%b├─%b %-*s %b%6dms%b\n' \
+		"${c_muted}" "${c_reset}" \
+		"${max_name_len}" "Total component time" \
+		"${c_head}" "${total_time}" "${c_reset}"
+
+	# Full shell startup time (if we can measure it)
+	local shell_startup_hint=""
+	if [[ -n ${EPOCHREALTIME:-} ]] || command -v perl >/dev/null 2>&1; then
+		shell_startup_hint=" (use 'time ${shell_type} -i -c exit' for full startup)"
+	fi
+
+	printf '%b╰─%b %-*s %b%s%b\n' \
+		"${c_muted}" "${c_reset}" \
+		"${max_name_len}" "Tip" \
+		"${c_muted}" "Components >100ms are slow${shell_startup_hint}" "${c_reset}"
+
+	printf '\n'
+}

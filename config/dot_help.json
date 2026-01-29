@@ -15,6 +15,15 @@
       "requires": []
     },
     {
+      "name": "dot profile",
+      "desc": "Shell startup profiler",
+      "details": "Measures loading time for each dotfiles component.\n\n━━━ Usage ━━━\n  dot profile       Profile all components\n  dot prof          Short form\n\n━━━ Output ━━━\n• Components sorted by load time (slowest first)\n• Visual bar chart showing relative time\n• Color coding: green <20ms, yellow <100ms, red >100ms\n\n━━━ Performance tips ━━━\n• Components >100ms are considered slow\n• Consider lazy-loading for rarely-used features\n• Check if slow components have missing dependencies\n\n━━━ Full startup time ━━━\n  time bash -i -c exit\n  time zsh -i -c exit",
+      "run": "dot profile",
+      "requires": [
+        "DOTFILES_ENABLE_DOT_HELP"
+      ]
+    },
+    {
       "name": "dot reload",
       "desc": "Reload shell configuration",
       "details": "Reloads the shell RC file and clears the screen.\n\n━━━ Behavior ━━━\n• Bash: source ~/.bashrc\n• Zsh:  source ~/.zshrc\n• Fallback to ~/dotfiles/bashrc or zshrc\n\n━━━ When to use? ━━━\n• After changes to dotfiles\n• After dot update\n• After feature flag changes\n\n━━━ Keybinding ━━━\n  Alt+R  (if DOTFILES_ENABLE_RELOAD_BINDING=true)",

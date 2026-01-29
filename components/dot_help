@@ -402,6 +402,23 @@ _dot_help_setup_keybindings
 				return $?
 			fi
 
+			if [[ ${cmd} == "profile" || ${cmd} == "prof" ]]; then
+				if command -v dot_profile >/dev/null 2>&1; then
+					dot_profile "$@"
+					return $?
+				fi
+				# Inline fallback if dot_profile component not loaded
+				local profile_comp="${HOME}/dotfiles/components/dot_profile"
+				if [[ -f ${profile_comp} ]]; then
+					# shellcheck source=/dev/null
+					source "${profile_comp}"
+					dot_profile "$@"
+					return $?
+				fi
+				printf '%s\n' "dot profile: component not found: ${profile_comp}" >&2
+				return 1
+			fi
+
 			if [[ ${cmd} == "cache" ]]; then
 				local cache_cmd="${1:-}"
 				shift || true
@@ -643,7 +660,7 @@ _dot_help_setup_keybindings
 			fi
 
 			printf '%s\n' "Unknown subcommand: ${cmd}"
-			printf '%s\n' "Usage: dot help | doctor | reload | install | update | cache | cd | modules | env | alias"
+			printf '%s\n' "Usage: dot help | doctor | profile | reload | install | update | cache | cd | modules | env | alias"
 			return 1
 			;;
 		esac
