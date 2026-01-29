@@ -1,5 +1,13 @@
 # Ideas
 
+## dot cmd
+
+dot alias im stil von dot help --plain
+
+## config
+
+bringe alle config files in ein config file (local, host pings, etc)
+
 ## dot doctor
 
 Prüfe ob alle flags und weiteren sinnvolle checks in dot doctor enthalten sind
