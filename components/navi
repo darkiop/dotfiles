@@ -27,9 +27,42 @@ if command -v navi >/dev/null 2>&1; then
 		fi
 	fi
 
+	# Load navi widget with caching (P021 optimization)
+	# Widget output is static, so we cache it and only regenerate when navi binary changes
+	_navi_load_widget() {
+		local shell_type="$1"
+		local cache_dir="${HOME}/.cache/dotfiles"
+		local cache_file="${cache_dir}/navi-widget-${shell_type}"
+		local navi_bin
+		navi_bin="$(command -v navi)"
+
+		# Check if cache is valid (exists and newer than navi binary)
+		if [[ -f ${cache_file} ]]; then
+			local cache_mtime navi_mtime
+			cache_mtime=$(stat -c %Y "${cache_file}" 2>/dev/null || stat -f %m "${cache_file}" 2>/dev/null || echo 0)
+			navi_mtime=$(stat -c %Y "${navi_bin}" 2>/dev/null || stat -f %m "${navi_bin}" 2>/dev/null || echo 0)
+			if [[ ${cache_mtime} -ge ${navi_mtime} ]]; then
+				# Cache is valid, source it
+				source "${cache_file}"
+				return 0
+			fi
+		fi
+
+		# Cache miss or stale - regenerate
+		mkdir -p "${cache_dir}" 2>/dev/null || true
+		if navi widget "${shell_type}" > "${cache_file}" 2>/dev/null; then
+			source "${cache_file}"
+		else
+			# Fallback to direct eval if caching fails
+			eval "$(navi widget "${shell_type}" || true)" 2>/dev/null
+		fi
+	}
+
 	if [[ -n ${BASH_VERSION:-} ]]; then
-		eval "$(navi widget bash || true)" >/dev/null 2>&1
+		_navi_load_widget bash
 	elif [[ -n ${ZSH_VERSION:-} ]]; then
-		eval "$(navi widget zsh || true)" >/dev/null 2>&1
+		_navi_load_widget zsh
 	fi
+
+	unset -f _navi_load_widget
 fi

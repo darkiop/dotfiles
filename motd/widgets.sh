@@ -22,7 +22,8 @@ _motd_cache_fresh() {
 	fi
 
 	local now file_mtime age
-	now=$(date +%s)
+	# Use EPOCHSECONDS (Bash 5+/Zsh) to avoid spawning date subprocess
+	now=${EPOCHSECONDS:-$(date +%s)}
 	file_mtime=$(stat -c %Y "${cache_file}" 2>/dev/null || stat -f %m "${cache_file}" 2>/dev/null || echo "0")
 	age=$((now - file_mtime))
 
@@ -33,7 +34,7 @@ _motd_cache_fresh() {
 _motd_cache_read() {
 	local cache_file="$1"
 	if [[ -f ${cache_file} ]]; then
-		cat "${cache_file}"
+		command cat "${cache_file}"
 	fi
 }
 
@@ -57,10 +58,7 @@ _motd_widget_docker() {
 		return 0
 	fi
 
-	# Check if docker is available
-	if ! command -v docker >/dev/null 2>&1; then
-		return 1
-	fi
+	# Command availability is pre-checked by motd_run_widgets
 
 	# Get docker stats (suppress errors if docker daemon not running)
 	local running stopped total output
@@ -96,10 +94,7 @@ _motd_widget_tailscale() {
 		return 0
 	fi
 
-	# Check if tailscale is available
-	if ! command -v tailscale >/dev/null 2>&1; then
-		return 1
-	fi
+	# Command availability is pre-checked by motd_run_widgets
 
 	# Get tailscale status (JSON for reliable parsing)
 	local status_json
@@ -107,8 +102,8 @@ _motd_widget_tailscale() {
 		return 1
 	fi
 
-	# Check if jq is available for JSON parsing
-	if ! command -v jq >/dev/null 2>&1; then
+	# Check if jq is available for JSON parsing (use cached check)
+	if ! _motd_has_cmd jq; then
 		# Fallback: simple status check without jq
 		local ip output
 		ip=$(tailscale ip -4 2>/dev/null | head -1)
@@ -160,7 +155,7 @@ _motd_widget_wireguard() {
 		return 0
 	fi
 
-	# Check if wg is available
+	# Command availability is pre-checked by motd_run_widgets
 	local wg_bin
 	wg_bin=$(type -P wg 2>/dev/null) || return 1
 
@@ -204,20 +199,17 @@ _motd_widget_proxmox() {
 		return 0
 	fi
 
-	# Check if we're on a Proxmox host
-	if ! command -v pveversion >/dev/null 2>&1; then
-		return 1
-	fi
+	# Command availability is pre-checked by motd_run_widgets
 
 	local lxc_running=0 lxc_total=0 vm_running=0 vm_total=0 output
 
 	# Count LXC containers (running and total)
-	if command -v pct >/dev/null 2>&1; then
+	if _motd_has_cmd pct; then
 		read -r lxc_running lxc_total < <(pct list 2>/dev/null | awk 'NR>1 {total++; if($2=="running") running++} END {print running+0, total+0}')
 	fi
 
 	# Count VMs (running and total)
-	if command -v qm >/dev/null 2>&1; then
+	if _motd_has_cmd qm; then
 		read -r vm_running vm_total < <(qm list 2>/dev/null | awk 'NR>1 {total++; if($3=="running") running++} END {print running+0, total+0}')
 	fi
 
@@ -242,10 +234,7 @@ _motd_widget_brew() {
 		return 0
 	fi
 
-	# Check if brew is available
-	if ! command -v brew >/dev/null 2>&1; then
-		return 1
-	fi
+	# Command availability is pre-checked by motd_run_widgets
 
 	# Count outdated formulas and casks separately (suppress auto-update)
 	local formula_count cask_count total output
@@ -354,32 +343,62 @@ _motd_widget_network() {
 # ============================================================================
 # Widget Runner - Call all enabled widgets
 # ============================================================================
+
+# Pre-check available commands once (avoids repeated command -v calls)
+declare -A _motd_cmd_available 2>/dev/null || true
+_motd_init_cmd_cache() {
+	local cmd
+	for cmd in docker tailscale wg pveversion pct qm brew jq; do
+		if command -v "${cmd}" >/dev/null 2>&1; then
+			_motd_cmd_available[${cmd}]=1
+		fi
+	done
+}
+
+# Helper to check cached command availability
+_motd_has_cmd() {
+	[[ ${_motd_cmd_available[$1]:-} == 1 ]]
+}
+
 motd_run_widgets() {
 	local widget_output
 
+	# Initialize command cache once
+	_motd_init_cmd_cache
+
 	# Docker widget
-	if widget_output=$(_motd_widget_docker 2>/dev/null); then
-		print_kv "docker" "${widget_output}"
+	if _motd_has_cmd docker; then
+		if widget_output=$(_motd_widget_docker 2>/dev/null); then
+			print_kv "docker" "${widget_output}"
+		fi
 	fi
 
 	# Tailscale widget
-	if widget_output=$(_motd_widget_tailscale 2>/dev/null); then
-		print_kv "tailscale" "${widget_output}"
+	if _motd_has_cmd tailscale; then
+		if widget_output=$(_motd_widget_tailscale 2>/dev/null); then
+			print_kv "tailscale" "${widget_output}"
+		fi
 	fi
 
 	# WireGuard widget
-	if widget_output=$(_motd_widget_wireguard 2>/dev/null); then
-		print_kv "wireguard" "${widget_output}"
+	if _motd_has_cmd wg; then
+		if widget_output=$(_motd_widget_wireguard 2>/dev/null); then
+			print_kv "wireguard" "${widget_output}"
+		fi
 	fi
 
 	# Proxmox widget
-	if widget_output=$(_motd_widget_proxmox 2>/dev/null); then
-		print_kv "proxmox" "${widget_output}"
+	if _motd_has_cmd pveversion; then
+		if widget_output=$(_motd_widget_proxmox 2>/dev/null); then
+			print_kv "proxmox" "${widget_output}"
+		fi
 	fi
 
 	# Homebrew widget (macOS)
-	if widget_output=$(_motd_widget_brew 2>/dev/null); then
-		print_kv "homebrew" "${widget_output}"
+	if _motd_has_cmd brew; then
+		if widget_output=$(_motd_widget_brew 2>/dev/null); then
+			print_kv "homebrew" "${widget_output}"
+		fi
 	fi
 
 	# Network status widget

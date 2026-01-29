@@ -31,32 +31,49 @@ else
 fi
 UPTIME_TEXT="${UPTIME_TEXT:-unknown}"
 
-# size of / (single df call)
-if ROOT_DF=$(df -h / 2>/dev/null | awk 'NR==2 {print $2, $3, $5}'); then
-	# shellcheck disable=SC2086
-	read -r USAGE_ROOT_TOTAL USAGE_ROOT_GB USAGE_ROOT_PCT <<<"${ROOT_DF}"
-	USAGE_ROOT="${USAGE_ROOT_PCT%\%}"
-else
-	USAGE_ROOT_TOTAL=""
-	USAGE_ROOT_GB=""
-	USAGE_ROOT=""
-fi
-
-# home-size (cache, fallback to df /home or /Users)
+# Determine home mount point
 HOME_MOUNT="/home"
 if [[ ${DOTFILES_OS} == "darwin" && -d /Users ]]; then
 	HOME_MOUNT="/Users"
 elif [[ ! -d /home && -d /Users ]]; then
 	HOME_MOUNT="/Users"
 fi
+
+# Combined df call for / and home (single subprocess instead of two)
+USAGE_ROOT_TOTAL=""
+USAGE_ROOT_GB=""
+USAGE_ROOT=""
+USAGE_HOME="unknown"
+
 if [[ -f /usr/local/share/dotfiles/dir-sizes ]]; then
+	# Use cached home size, still need df for root
 	USAGE_HOME=$(</usr/local/share/dotfiles/dir-sizes)
-elif HOME_DF=$(df -h "${HOME_MOUNT}" 2>/dev/null | awk 'NR==2 {print $3, $2, $5}'); then
-	# shellcheck disable=SC2086
-	read -r USAGE_HOME_USED USAGE_HOME_TOTAL USAGE_HOME_PCT <<<"${HOME_DF}"
-	USAGE_HOME="${USAGE_HOME_USED} of ${USAGE_HOME_TOTAL} (${USAGE_HOME_PCT})"
+	if ROOT_DF=$(df -h / 2>/dev/null | awk 'NR==2 {print $2, $3, $5}'); then
+		# shellcheck disable=SC2086
+		read -r USAGE_ROOT_TOTAL USAGE_ROOT_GB USAGE_ROOT_PCT <<<"${ROOT_DF}"
+		USAGE_ROOT="${USAGE_ROOT_PCT%\%}"
+	fi
 else
-	USAGE_HOME="unknown"
+	# Single df call for both / and home mount
+	if DF_OUTPUT=$(df -h / "${HOME_MOUNT}" 2>/dev/null); then
+		# Parse root (/) - first data line
+		if ROOT_DF=$(echo "${DF_OUTPUT}" | awk 'NR==2 {print $2, $3, $5}'); then
+			# shellcheck disable=SC2086
+			read -r USAGE_ROOT_TOTAL USAGE_ROOT_GB USAGE_ROOT_PCT <<<"${ROOT_DF}"
+			USAGE_ROOT="${USAGE_ROOT_PCT%\%}"
+		fi
+		# Parse home - second data line (if different from /)
+		if HOME_DF=$(echo "${DF_OUTPUT}" | awk 'NR==3 {print $3, $2, $5}'); then
+			if [[ -n ${HOME_DF} ]]; then
+				# shellcheck disable=SC2086
+				read -r USAGE_HOME_USED USAGE_HOME_TOTAL USAGE_HOME_PCT <<<"${HOME_DF}"
+				USAGE_HOME="${USAGE_HOME_USED} of ${USAGE_HOME_TOTAL} (${USAGE_HOME_PCT})"
+			else
+				# / and home are same mount
+				USAGE_HOME="${USAGE_ROOT_GB}"
+			fi
+		fi
+	fi
 fi
 
 # get hostname
@@ -160,7 +177,13 @@ EOF
 		if command -v toilet >/dev/null 2>&1; then
 			echo
 			printf '%b' "${COLOR_YELLOW}"
-			toilet -f smblock -w 150 "${HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /'
+			# Cache toilet output (P021 optimization)
+			banner_cache="${HOME}/.cache/dotfiles/motd/banner-${HOSTNAME_SHORT}"
+			if [[ ! -f ${banner_cache} ]]; then
+				mkdir -p "${HOME}/.cache/dotfiles/motd" 2>/dev/null || true
+				toilet -f smblock -w 150 "${HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /' > "${banner_cache}"
+			fi
+			command cat "${banner_cache}"
 			printf '%b' "${COLOR_CLOSE}"
 		fi
 		;;
