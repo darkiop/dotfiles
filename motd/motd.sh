@@ -1,8 +1,14 @@
 #!/bin/bash
 # https://github.com/fedya/omv_motd.git
 # modified by thwalk
+#
+# Supports two styles via DOTFILES_MOTD_STYLE:
+#   - "tree" (default): compact tree-style layout like `dot help --plain`
+#   - "default": toilet banner + simple key-value lines
 
-# color fallbacks (if config/dotfiles.config was not sourced)
+# ============================================================================
+# Color Setup
+# ============================================================================
 : "${COLOR_BLUE:=}"
 : "${COLOR_LIGHT_BLUE:=}"
 : "${COLOR_GREEN:=}"
@@ -19,7 +25,11 @@ if [[ -z ${DOTFILES_OS:-} ]]; then
 	esac
 fi
 
-# uptime
+# ============================================================================
+# Data Collection (shared by all styles)
+# ============================================================================
+
+# Uptime
 if [[ ${DOTFILES_OS} == "darwin" ]]; then
 	UPTIME_TEXT="$(/usr/bin/uptime 2>/dev/null | sed -e 's/.*up *//' -e 's/, *[0-9]* users.*//')"
 else
@@ -39,14 +49,13 @@ elif [[ ! -d /home && -d /Users ]]; then
 	HOME_MOUNT="/Users"
 fi
 
-# Combined df call for / and home (single subprocess instead of two)
+# Disk usage
 USAGE_ROOT_TOTAL=""
 USAGE_ROOT_GB=""
 USAGE_ROOT=""
 USAGE_HOME="unknown"
 
 if [[ -f /usr/local/share/dotfiles/dir-sizes ]]; then
-	# Use cached home size, still need df for root
 	USAGE_HOME=$(</usr/local/share/dotfiles/dir-sizes)
 	if ROOT_DF=$(df -h / 2>/dev/null | awk 'NR==2 {print $2, $3, $5}'); then
 		# shellcheck disable=SC2086
@@ -54,33 +63,29 @@ if [[ -f /usr/local/share/dotfiles/dir-sizes ]]; then
 		USAGE_ROOT="${USAGE_ROOT_PCT%\%}"
 	fi
 else
-	# Single df call for both / and home mount
 	if DF_OUTPUT=$(df -h / "${HOME_MOUNT}" 2>/dev/null); then
-		# Parse root (/) - first data line
 		if ROOT_DF=$(echo "${DF_OUTPUT}" | awk 'NR==2 {print $2, $3, $5}'); then
 			# shellcheck disable=SC2086
 			read -r USAGE_ROOT_TOTAL USAGE_ROOT_GB USAGE_ROOT_PCT <<<"${ROOT_DF}"
 			USAGE_ROOT="${USAGE_ROOT_PCT%\%}"
 		fi
-		# Parse home - second data line (if different from /)
 		if HOME_DF=$(echo "${DF_OUTPUT}" | awk 'NR==3 {print $3, $2, $5}'); then
 			if [[ -n ${HOME_DF} ]]; then
 				# shellcheck disable=SC2086
 				read -r USAGE_HOME_USED USAGE_HOME_TOTAL USAGE_HOME_PCT <<<"${HOME_DF}"
 				USAGE_HOME="${USAGE_HOME_USED} of ${USAGE_HOME_TOTAL} (${USAGE_HOME_PCT})"
 			else
-				# / and home are same mount
 				USAGE_HOME="${USAGE_ROOT_GB}"
 			fi
 		fi
 	fi
 fi
 
-# get hostname
+# Hostname
 HOSTNAME=$(hostname)
 HOSTNAME_SHORT="${HOSTNAME%%.*}"
 
-# get primary host IP
+# IP address
 dotfiles_motd_get_ip() {
 	if [[ ${DOTFILES_OS} == "darwin" ]]; then
 		if command -v ipconfig >/dev/null 2>&1; then
@@ -102,11 +107,10 @@ dotfiles_motd_get_ip() {
 	fi
 }
 
-# get os version & ip & cputemp
+# OS version & IP
 case ${HOSTNAME} in
 odin)
-	GET_PLATFORM_DATA="Synology DSM "$(cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
-	#GET_CPU_TEMP=$(($(cat /sys/class/hwmon/hwmon0/temp1_input) / 1000))"°C"
+	GET_PLATFORM_DATA="Synology DSM "$(command cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
 	GET_HOST_IP="$(dotfiles_motd_get_ip || true)"
 	;;
 *)
@@ -121,7 +125,7 @@ odin)
 	;;
 esac
 
-# cpu load av
+# CPU load
 if [[ -r /proc/loadavg ]]; then
 	LOAD1=$(awk '{ print $1 }' /proc/loadavg || true)
 	LOAD5=$(awk '{ print $2 }' /proc/loadavg || true)
@@ -133,13 +137,13 @@ LOAD1="${LOAD1:-n/a}"
 LOAD5="${LOAD5:-n/a}"
 LOAD15="${LOAD15:-n/a}"
 
-# set COLOR_CLOSE
+# Color close
 case ${HOSTNAME} in
 odin) COLOR_CLOSE="" ;;
 *) COLOR_CLOSE="$(tput sgr0)" ;;
 esac
 
-# read tasks (JSON via jq; fallback to legacy files only if present)
+# Tasks
 TASKS=""
 JQ_MISSING_MSG=""
 if [[ -f ~/dotfiles/motd/tasks.json ]]; then
@@ -152,32 +156,80 @@ fi
 
 if [[ -z ${TASKS} ]]; then
 	if [[ -f ~/dotfiles/motd/tasks-${HOSTNAME} ]]; then
-		TASKS="$(cat ~/dotfiles/motd/tasks-"${HOSTNAME}")"
+		TASKS="$(command cat ~/dotfiles/motd/tasks-"${HOSTNAME}")"
 	elif [[ -f ~/dotfiles/motd/tasks ]]; then
-		TASKS="$(cat ~/dotfiles/motd/tasks)"
+		TASKS="$(command cat ~/dotfiles/motd/tasks)"
 	fi
 fi
 
-# use toilet for title of motd
-# show all available fonts: https://gist.github.com/itzg/b889534a029855c018813458ff24f23c
-case ${HOSTNAME} in
-odin)
-	clear
-	echo
-	echo -e "${COLOR_YELLOW}"
-	cat <<EOF
+# Updates
+SHOW_UPDATES_LINE=false
+UPDATES_COUNT=""
+UPDATES_PACKAGES=""
+if [[ ${MOTD_SHOW_APT_UPDATES} == "y" ]]; then
+	if [[ -f /usr/local/share/dotfiles/apt-updates-count ]] && [[ -f /usr/local/share/dotfiles/apt-updates-packages ]]; then
+		UPDATES_COUNT=$(</usr/local/share/dotfiles/apt-updates-count)
+		UPDATES_PACKAGES=$(</usr/local/share/dotfiles/apt-updates-packages)
+		if [[ -n ${UPDATES_COUNT} ]]; then
+			SHOW_UPDATES_LINE=true
+		fi
+	fi
+fi
+
+# ============================================================================
+# Helper Functions
+# ============================================================================
+
+_motd_sanitize_value() {
+	printf '%s' "$1"
+}
+
+# ============================================================================
+# Default Style (toilet banner + key-value lines)
+# ============================================================================
+
+_motd_render_default() {
+	# Print key-value line
+	print_kv() {
+		local label=$1
+		shift
+		local value="$*"
+		local value_color="${COLOR_GREEN}"
+		local value_reset="${COLOR_RESET}"
+
+		case "${label}" in
+			ip|tailscale|wireguard)
+				value=$(_motd_sanitize_value "${value}")
+				;;
+			network)
+				value_color=""
+				value_reset=""
+				;;
+		esac
+
+		printf "  %b%-11s%b %b%s%b\n" \
+			"${COLOR_BLUE}" "${label}" "${COLOR_RESET}" \
+			"${value_color}" "${value}" "${value_reset}"
+	}
+
+	# Banner
+	case ${HOSTNAME} in
+	odin)
+		clear
+		echo
+		echo -e "${COLOR_YELLOW}"
+		command cat <<EOF
        ▌▗
   ▞▀▖▞▀▌▄ ▛▀▖
   ▌ ▌▌ ▌▐ ▌ ▌
   ▝▀ ▝▀▘▀▘▘ ▘
 EOF
-	echo
-	;;
+		echo
+		;;
 	*)
 		if command -v toilet >/dev/null 2>&1; then
 			echo
 			printf '%b' "${COLOR_YELLOW}"
-			# Cache toilet output (P021 optimization)
 			banner_cache="${HOME}/.cache/dotfiles/motd/banner-${HOSTNAME_SHORT}"
 			if [[ ! -f ${banner_cache} ]]; then
 				mkdir -p "${HOME}/.cache/dotfiles/motd" 2>/dev/null || true
@@ -189,81 +241,190 @@ EOF
 		;;
 	esac
 
-# show updates (only when enabled and cache files exist)
-SHOW_UPDATES_LINE=false
-if [[ ${MOTD_SHOW_APT_UPDATES} == "y" ]]; then
-	if [[ -f /usr/local/share/dotfiles/apt-updates-count ]] && [[ -f /usr/local/share/dotfiles/apt-updates-packages ]]; then
-		UPDATES_COUNT=$(</usr/local/share/dotfiles/apt-updates-count)
-		UPDATES_PACKAGES=$(</usr/local/share/dotfiles/apt-updates-packages)
-		if [[ -n ${UPDATES_COUNT} ]]; then
-			SHOW_UPDATES_LINE=true
+	# Output
+	printf "\n"
+	[[ -n ${GET_HOST_IP} ]] && print_kv ip "${GET_HOST_IP}"
+	[[ -n ${TASKS} ]] && print_kv tasks "${TASKS}"
+	print_kv load "${LOAD1} / ${LOAD5} / ${LOAD15}"
+	print_kv uptime "${UPTIME_TEXT}"
+	print_kv os "${GET_PLATFORM_DATA}"
+	print_kv / "${USAGE_ROOT_GB} of ${USAGE_ROOT_TOTAL} (${USAGE_ROOT}%%)"
+	[[ -n ${USAGE_HOME} && ${USAGE_HOME} != "unknown" ]] && print_kv /home "${USAGE_HOME}"
+
+	if [[ ${SHOW_UPDATES_LINE} == true ]]; then
+		printf "  %b%-11s%b %b%s%b%b%s%b\n" \
+			"${COLOR_BLUE}" "updates" "${COLOR_RESET}" \
+			"${COLOR_YELLOW}" "${UPDATES_COUNT}" "${COLOR_RESET}" \
+			"${COLOR_GREEN}" " updates to install" "${COLOR_RESET}"
+	fi
+
+	[[ -n ${JQ_MISSING_MSG} ]] && print_kv tasks "${JQ_MISSING_MSG}"
+
+	# Widgets
+	if [[ ${DOTFILES_ENABLE_MOTD_WIDGETS:-true} == true ]]; then
+		if [[ -f ~/dotfiles/motd/widgets.sh ]]; then
+			# shellcheck source=/dev/null
+			source ~/dotfiles/motd/widgets.sh
+			motd_run_widgets
 		fi
 	fi
-fi
 
-# BUILD THE MOTD OUTPUT
-# Pass value through printf %s to sanitize any hidden escape sequences
-_motd_sanitize_value() {
-	printf '%s' "$1"
+	printf "\n"
 }
 
-print_kv() {
-	local label=$1
-	shift # first arg  = label
-	local value="$*"
-	local value_color="${COLOR_GREEN}"
-	local value_reset="${COLOR_RESET}"
+# ============================================================================
+# Tree Style (tree layout like `dot help --plain`)
+# ============================================================================
 
-	case "${label}" in
-		ip|tailscale|wireguard)
-			value=$(_motd_sanitize_value "${value}")
-			;;
-		network)
-			# Network widget provides its own colors
-			value_color=""
-			value_reset=""
-			;;
-	esac
+_motd_render_tree() {
+	# Box drawing characters
+	local tree_mid="├─" tree_end="╰─"
 
-	printf "  %b%-11s%b %b%s%b\n" \
-		"${COLOR_BLUE}" "${label}" "${COLOR_RESET}" \
-		"${value_color}" "${value}" "${value_reset}"
-}
-printf "\n"
-if [[ -n ${GET_HOST_IP} ]]; then
-	print_kv ip "${GET_HOST_IP}"
-fi
-if [[ -n ${TASKS} ]]; then
-	print_kv tasks "${TASKS}"
-fi
-print_kv load "${LOAD1} / ${LOAD5} / ${LOAD15}"
-print_kv uptime "${UPTIME_TEXT}"
-print_kv os "${GET_PLATFORM_DATA}"
-print_kv / "${USAGE_ROOT_GB} of ${USAGE_ROOT_TOTAL} (${USAGE_ROOT}%%)"
-if [[ -n ${USAGE_HOME} && ${USAGE_HOME} != "unknown" ]]; then
-	print_kv /home "${USAGE_HOME}"
-fi
+	# Colors
+	local c_head="${COLOR_LIGHT_BLUE}"
+	local c_label="${COLOR_BLUE}"
+	local c_value="${COLOR_GREEN}"
+	local c_reset="${COLOR_RESET}"
 
-# "updates" line needs two different colours → do it explicitly
-if [[ ${SHOW_UPDATES_LINE} == true ]]; then
-	printf "  %b%-11s%b %b%s%b%b%s%b\n" \
-		"${COLOR_BLUE}" "updates" "${COLOR_RESET}" \
-		"${COLOR_YELLOW}" "${UPDATES_COUNT}" "${COLOR_RESET}" \
-		"${COLOR_GREEN}" " updates to install" "${COLOR_RESET}"
-fi
+	# Section header
+	_motd_tree_section() {
+		printf '  %b%s%b\n' "${c_head}" "$1" "${c_reset}"
+	}
 
-# warn if tasks.json present but jq missing
-if [[ -n ${JQ_MISSING_MSG} ]]; then
-	print_kv tasks "${JQ_MISSING_MSG}"
-fi
+	# Tree item (mid or end)
+	_motd_tree_item() {
+		local is_last="$1"
+		local label="$2"
+		shift 2
+		local value="$*"
+		local tree_char="${tree_mid}"
+		[[ ${is_last} == "1" ]] && tree_char="${tree_end}"
 
-# Load and run MOTD widgets (if enabled)
-if [[ ${DOTFILES_ENABLE_MOTD_WIDGETS:-true} == true ]]; then
-	if [[ -f ~/dotfiles/motd/widgets.sh ]]; then
+		# Handle special labels that provide their own colors
+		case "${label}" in
+			network)
+				printf '  %b%s%b %-14s %s\n' \
+					"${c_label}" "${tree_char}" "${c_reset}" \
+					"${label}" "${value}"
+				;;
+			*)
+				printf '  %b%s%b %-14s %b%s%b\n' \
+					"${c_label}" "${tree_char}" "${c_reset}" \
+					"${label}" \
+					"${c_value}" "${value}" "${c_reset}"
+				;;
+		esac
+	}
+
+	# Collect widget outputs for minimal style
+	declare -a _motd_widget_items=()
+	_motd_tree_collect_widgets() {
+		if [[ ${DOTFILES_ENABLE_MOTD_WIDGETS:-true} != true ]]; then
+			return
+		fi
+		if [[ ! -f ~/dotfiles/motd/widgets.sh ]]; then
+			return
+		fi
+
+		# Source widgets but override print_kv to collect instead of print
+		print_kv() {
+			_motd_widget_items+=("$1|$2")
+		}
+
 		# shellcheck source=/dev/null
 		source ~/dotfiles/motd/widgets.sh
 		motd_run_widgets
-	fi
-fi
 
-printf "\n"
+		unset -f print_kv
+	}
+
+	# Render
+
+	# Banner (same as default style)
+	case ${HOSTNAME} in
+	odin)
+		clear
+		echo
+		echo -e "${COLOR_YELLOW}"
+		command cat <<EOF
+       ▌▗
+  ▞▀▖▞▀▌▄ ▛▀▖
+  ▌ ▌▌ ▌▐ ▌ ▌
+  ▝▀ ▝▀▘▀▘▘ ▘
+EOF
+		echo
+		;;
+	*)
+		if command -v toilet >/dev/null 2>&1; then
+			echo
+			printf '%b' "${COLOR_YELLOW}"
+			banner_cache="${HOME}/.cache/dotfiles/motd/banner-${HOSTNAME_SHORT}"
+			if [[ ! -f ${banner_cache} ]]; then
+				mkdir -p "${HOME}/.cache/dotfiles/motd" 2>/dev/null || true
+				toilet -f smblock -w 150 "${HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /' > "${banner_cache}"
+			fi
+			command cat "${banner_cache}"
+			printf '%b\n' "${COLOR_CLOSE}"
+		fi
+		;;
+	esac
+
+	# System section
+	_motd_tree_section "System"
+	[[ -n ${GET_HOST_IP} ]] && _motd_tree_item 0 "ip" "${GET_HOST_IP}"
+	_motd_tree_item 0 "os" "${GET_PLATFORM_DATA}"
+	_motd_tree_item 0 "load" "${LOAD1} / ${LOAD5} / ${LOAD15}"
+	_motd_tree_item 1 "uptime" "${UPTIME_TEXT}"
+	_motd_tree_section "Storage"
+	if [[ -n ${USAGE_HOME} && ${USAGE_HOME} != "unknown" ]]; then
+		_motd_tree_item 0 "/" "${USAGE_ROOT_GB} of ${USAGE_ROOT_TOTAL} (${USAGE_ROOT}%)"
+		_motd_tree_item 1 "/home" "${USAGE_HOME}"
+	else
+		_motd_tree_item 1 "/" "${USAGE_ROOT_GB} of ${USAGE_ROOT_TOTAL} (${USAGE_ROOT}%)"
+	fi
+
+	# Updates (if any)
+	if [[ ${SHOW_UPDATES_LINE} == true ]]; then
+		_motd_tree_section "Updates"
+		_motd_tree_item 1 "apt" "${UPDATES_COUNT} packages available"
+	fi
+
+	# Tasks (if any)
+	if [[ -n ${TASKS} ]]; then
+		_motd_tree_section "Tasks"
+		_motd_tree_item 1 "current" "${TASKS}"
+	fi
+
+	# Widgets
+	_motd_tree_collect_widgets
+	if [[ ${#_motd_widget_items[@]} -gt 0 ]]; then
+		_motd_tree_section "Services"
+		local total=${#_motd_widget_items[@]}
+		local idx=0
+		for item in "${_motd_widget_items[@]}"; do
+			idx=$((idx + 1))
+			local label="${item%%|*}"
+			local value="${item#*|}"
+			if [[ ${idx} -eq ${total} ]]; then
+				_motd_tree_item 1 "${label}" "${value}"
+			else
+				_motd_tree_item 0 "${label}" "${value}"
+			fi
+		done
+	fi
+
+	echo
+}
+
+# ============================================================================
+# Style Selection
+# ============================================================================
+
+case "${DOTFILES_MOTD_STYLE:-tree}" in
+	default|classic)
+		_motd_render_default
+		;;
+	*)
+		_motd_render_tree
+		;;
+esac
