@@ -1,156 +1,156 @@
+**Keep in sync: AGENTS.md, CLAUDE.md, .github/copilot-instructions.md**
+
 ## Overview
 
-This repository contains personal shell dotfiles (bash/zsh) organized as modular components and submodules. Key goals for changes: be minimal, POSIX-friendly where reasonable, and preserve per-host feature flags.
+Personal bash/zsh dotfiles with modular components and submodules. Goals: minimal changes, POSIX-friendly, preserve per-host feature flags.
 
-## Repository structure
+## Repository Structure
 
 ```
 dotfiles/
-├── alias/              # Shell-Alias-Definitionen (9 Dateien nach Kategorie)
-│   ├── alias           # Main aliases (sudo-Präfixe, globale Aliases)
-│   ├── alias-docker    # Docker-Befehle
-│   ├── alias-git       # Git-Befehle
-│   ├── alias-systemctl # Systemctl-Befehle
-│   ├── alias-proxmox   # Proxmox PVE Commands
+├── alias/              # Shell aliases (9 files by category)
+│   ├── alias           # Main aliases (sudo prefixes, global)
+│   ├── alias-docker    # Docker commands
+│   ├── alias-git       # Git commands
+│   ├── alias-systemctl # Systemctl commands
+│   ├── alias-proxmox   # Proxmox VE commands
 │   ├── alias-wireguard # WireGuard VPN
-│   ├── alias-glusterfs # Gluster Filesystem
-│   ├── alias-iobroker  # ioBroker Smart Home
-│   └── alias-navi      # Navi Cheat-Widget
+│   ├── alias-glusterfs # Gluster filesystem
+│   ├── alias-iobroker  # ioBroker smart home
+│   └── alias-navi      # Navi cheat widget
 ├── bash_completion.d/  # Custom bash completions
-├── bin/                # Hilfsskripte (archive, etc.)
-├── cheats/             # 60 Navi Cheat-Dateien (.cheat Format)
-├── components/         # 22 modulare Shell-Komponenten (siehe unten)
-├── config/             # Konfigurationsdateien
-│   ├── dotfiles.config       # Farben und globale Einstellungen
-│   ├── local_dotfiles_settings # Per-Host Overrides (gitignored)
-│   ├── dot_help.json         # Datenbank für `dot help`
-│   ├── tmux.conf.local       # Tmux lokale Overrides
-│   └── helix/                # Helix Editor Konfiguration
-├── modules/            # Git Submodules (shallow)
-│   ├── fzf/            # Fuzzy finder (binary + shell scripts)
-│   ├── fzf-tab-completion/ # Tab-Completion mit FZF-Preview
-│   ├── oh-my-zsh/      # Zsh Framework (optional)
-│   ├── oh-my-tmux/     # Tmux Configuration Framework
+├── bin/                # Helper scripts
+├── cheats/             # Navi cheat files (.cheat format)
+├── components/         # 22 modular shell components
+├── config/             # Configuration files
+│   ├── dotfiles.config       # Colors and global settings
+│   ├── local_dotfiles_settings # Per-host overrides (gitignored)
+│   ├── dot_help.json         # Database for `dot help`
+│   ├── tmux.conf.local       # Tmux local overrides
+│   └── helix/                # Helix editor config
+├── modules/            # Git submodules (shallow)
+│   ├── fzf/            # Fuzzy finder
+│   ├── fzf-tab-completion/ # Tab completion with FZF preview
+│   ├── oh-my-zsh/      # Zsh framework (optional)
+│   ├── oh-my-tmux/     # Tmux configuration framework
 │   ├── tpm/            # Tmux Plugin Manager
-│   └── vimrc/          # Vim Configuration
-└── motd/               # Message of the day System
+│   └── vimrc/          # Vim configuration
+└── motd/               # Message of the day system
     ├── motd.sh         # Main MOTD (hostname routing)
-    ├── motd-<host>.sh  # Host-spezifische MOTDs
-    ├── widgets.sh      # Widget-System mit Caching
-    ├── widgets/        # Custom Widget-Erweiterungen
-    └── systemd/        # Timer für Background-Updates
+    ├── motd-<host>.sh  # Host-specific MOTDs
+    ├── widgets.sh      # Widget system with caching
+    ├── widgets/        # Custom widget extensions
+    └── systemd/        # Timers for background updates
 ```
 
-## Components (22 Module)
+## Components
 
-| Kategorie | Komponenten |
-|-----------|-------------|
-| **Shell** | `bash_prompt`, `zsh_prompt`, `bash_defaults`, `zsh_defaults`, `bash_completion`, `zsh_completion` |
-| **FZF** | `fzf`, `fzf_git`, `fzf_tmux`, `fzf_docker`, `fzf_systemctl`, `fzf_extras` |
-| **Pickers** | `ssh_picker`, `journalctl_picker` |
-| **Tools** | `dot_help`, `dot_doctor`, `helpers`, `navi` |
-| **System** | `platform`, `feature_flags`, `brew` |
+| Category | Components |
+|----------|------------|
+| Shell | `bash_prompt`, `zsh_prompt`, `bash_defaults`, `zsh_defaults`, `bash_completion`, `zsh_completion` |
+| FZF | `fzf`, `fzf_git`, `fzf_tmux`, `fzf_docker`, `fzf_systemctl`, `fzf_extras` |
+| Pickers | `ssh_picker`, `journalctl_picker` |
+| Tools | `dot_help`, `dot_doctor`, `helpers`, `navi` |
+| System | `platform`, `feature_flags`, `brew` |
 
-## Shell Entry Points Flow
+## Shell Loading Order
 
 ```
 bashrc/zshrc
-├── config/dotfiles.config (Colors, Settings)
-├── components/platform (OS Detection)
-├── components/feature_flags (Load flags + local overrides)
-├── components/*_defaults (Shell settings)
-├── components/*_prompt (if ENABLED)
-├── components/fzf* (if ENABLED)
-├── alias/* (if ENABLED)
-├── components/helpers (if ENABLED)
-└── components/navi (if ENABLED)
+├── config/dotfiles.config (colors, settings)
+├── components/platform (OS detection)
+├── components/feature_flags (load flags + local overrides)
+├── components/*_defaults (shell settings)
+├── components/*_prompt (if enabled)
+├── components/fzf* (if enabled)
+├── alias/* (if enabled)
+├── components/helpers (if enabled)
+└── components/navi (if enabled)
 ```
 
-## Key Functions & Commands
+## Key Commands
 
 | Command | Description |
 |---------|-------------|
-| `dot help` | Kommando & Keybinding Übersicht |
-| `dot doctor` | Diagnose für häufige Probleme |
-| `fh` | FZF History Picker |
-| `cdf` | FZF Directory Picker |
-| `gco` | Git Checkout (Branch Picker) |
-| `gshow` | Git Show (Commit Picker) |
-| `ts`/`tw`/`tp` | Tmux Session/Window/Pane Picker |
-| `sshp` | SSH Host Picker |
-| `dcheat`/`cheat` | Lokale Cheat-Sheet Navigation |
+| `dot help` | Command and keybinding overview |
+| `dot doctor` | Diagnose common problems |
+| `dot alias` | Show aliases with availability status |
+| `dot update` | Update dotfiles and reload shell |
+| `fh` | FZF history picker |
+| `cdf` | FZF directory picker |
+| `gco` | Git checkout (branch picker) |
+| `gshow` | Git show (commit picker) |
+| `ts`/`tw`/`tp` | Tmux session/window/pane picker |
+| `sshp` | SSH host picker |
+| `dcheat`/`cheat` | Local cheat sheet navigation |
 
 ## MOTD Widgets
 
-Aktuelle Widgets in `motd/widgets.sh`:
-- **docker** - Running/stopped container counts
-- **tailscale** - Tailscale IP oder Status
-- **wireguard** - WireGuard IP und allowed IPs
-- **proxmox** - LXC/VM counts (running/total)
-- **homebrew** - Verfügbare Updates (formulas/casks)
+Built-in widgets in `motd/widgets.sh`:
+- **docker** — running/stopped container counts
+- **tailscale** — Tailscale IP or status
+- **wireguard** — WireGuard IP and allowed IPs
+- **proxmox** — LXC/VM counts (running/total)
+- **homebrew** — available updates (formulas/casks)
+- **network** — host reachability status
 
-## Quick entrypoints
+## Entry Points
 
-- Installer: `install.sh` (also runnable via the curl/wget one-liner in [README.md](README.md)).
-- Update: `cd ~/dotfiles && git pull --ff-only && git submodule update --init --recursive --depth 1` (see README.md "Updating").
-- Autoupdate: `autoupdate.sh` controlled by `DOTFILES_ENABLE_AUTOUPDATE` in `config/local_dotfiles_settings`.
+- **Install**: `install.sh` (or curl one-liner in README.md)
+- **Update**: `dot update` or manually: `git pull --ff-only && git submodule update --init --recursive --depth 1`
+- **Auto-update**: `autoupdate.sh` via `DOTFILES_ENABLE_AUTOUPDATE`
 
-## Important files & places to change
+## Key Files
 
-- Configuration & flags: `components/feature_flags`, `components/platform`, and `config/local_dotfiles_settings` (gitignored) for host overrides.
-- Shell entrypoints: `bashrc`, `zshrc`, `bash_profile`, `zprofile`.
-- Prompt components: `components/bash_prompt` (bash) and `components/zsh_prompt` (zsh).
-- FZF integrations: `components/fzf`, `components/fzf_docker`, `components/fzf_git`, `components/fzf_systemctl`, `components/fzf_tmux`, `components/fzf_extras`.
-- Helper utilities: `components/dot_doctor` (diagnostics), `components/dot_help` (help system), `components/helpers` (utility functions).
-- Pickers: `components/ssh_picker`, `components/journalctl_picker`.
-- Modules: `modules/<name>/` — add an `install` script and `README.md` when adding new modules (see `modules/fzf`).
-- tmux: `modules/oh-my-tmux/.tmux.conf.local` and `config/tmux.conf.local` for local overrides.
-- MOTD: `motd/motd.sh` (main), `motd/widgets.sh` (widget system), `motd/widgets/` (individual widgets), and host-specific scripts (`motd/motd-<hostname>.sh`).
-- Cheats and docs: `cheats/` contains many usage examples and keybindings.
-- dot help data: `config/dot_help.json` stores descriptions for `dot help` (keep it in sync when adding/removing commands or keybindings).
+| Purpose | Files |
+|---------|-------|
+| Config & flags | `components/feature_flags`, `components/platform`, `config/local_dotfiles_settings` |
+| Shell entry | `bashrc`, `zshrc`, `bash_profile`, `zprofile` |
+| Prompts | `components/bash_prompt`, `components/zsh_prompt` |
+| FZF | `components/fzf`, `components/fzf_docker`, `components/fzf_git`, `components/fzf_systemctl`, `components/fzf_tmux`, `components/fzf_extras` |
+| Utilities | `components/dot_doctor`, `components/dot_help`, `components/helpers` |
+| Pickers | `components/ssh_picker`, `components/journalctl_picker` |
+| Tmux | `modules/oh-my-tmux/.tmux.conf.local`, `config/tmux.conf.local` |
+| MOTD | `motd/motd.sh`, `motd/widgets.sh`, `motd/widgets/`, `motd/motd-<hostname>.sh` |
+| Help data | `config/dot_help.json` |
 
-## Conventions and patterns
+## Conventions
 
-- Per-host feature flags: prefer adding switches to `components/feature_flags` and expose toggles in `config/local_dotfiles_settings` rather than editing `bashrc` directly.
-- Submodules: repo expects submodules for vim/tmux/fzf/oh-my-zsh/tpm; `git clone --recurse-submodules` is the default install path. `gitconfig` sets `submodule.recurse=true`.
-- Packaging: fzf and other tools are installed via module scripts (e.g., `modules/fzf/install --key-bindings --completion`) not distro packages.
-- Platform detection: `components/platform` exports `DOTFILES_OS`, `DOTFILES_DISTRO_ID`, `DOTFILES_WSL`, and `DOTFILES_CONTAINER`. Use these variables for conditional logic.
-- Line endings: keep LF (see `.gitattributes`). Avoid CRLF in shell files.
-- MOTD widgets: widgets are standalone scripts in `motd/widgets/` that output one line. Enable via `DOTFILES_ENABLE_MOTD_WIDGETS`. Host-specific logic goes in `motd/motd-<hostname>.sh`.
-- Component naming: FZF-related components use `fzf_` prefix (e.g., `fzf_docker`, `fzf_systemctl`). Pickers use `_picker` suffix (e.g., `ssh_picker`, `journalctl_picker`).
+- **Feature flags**: Add to `components/feature_flags`, override in `config/local_dotfiles_settings`
+- **Submodules**: Installed via `git clone --recurse-submodules`; `gitconfig` sets `submodule.recurse=true`
+- **Tool installation**: Via module scripts (e.g., `modules/fzf/install`), not distro packages
+- **Platform detection**: Use `DOTFILES_OS`, `DOTFILES_DISTRO_ID`, `DOTFILES_WSL`, `DOTFILES_CONTAINER` from `components/platform`
+- **Line endings**: LF only (see `.gitattributes`)
+- **Component naming**: FZF components use `fzf_` prefix, pickers use `_picker` suffix
 
-## Testing & validation
+## Testing
 
-- Syntax-check shell changes with: `bash -n path/to/file` before committing.
-- Quick manual test: source the relevant file (`source bashrc` or open a new shell) and verify prompt/completions.
+- Syntax check: `bash -n path/to/file`
+- Manual test: `source bashrc` or open new shell
 
-## Editing guidance for AI agents
+## Editing Guidelines
 
-- Make small, focused edits. Preserve existing style and comments. Modifications that change user-facing defaults should be placed behind feature flags in `components/feature_flags`.
-- When adding a new module, include an `install` script and `README.md` under `modules/<name>/` and document any prerequisites in the root `README.md`.
-- Prefer runtime checks using `components/platform` rather than hardcoding OS checks.
-- For updates affecting install flow, update `install.sh` and include idempotent checks (e.g., skip when already installed).
-- **Keep README.md in sync**: When adding/removing features, commands, bindings, or flags, update the corresponding sections in `README.md`:
-  - New commands → update "What it configures" section
-  - New flags → update "Feature flags (per host)" list
-  - New bindings → update "Keyboard-Bindings" tables
-  - Prompt changes → update "Prompt erklärt" section
-  - MOTD changes → update "MOTD (hostname-basiert)" section
-  - dot help changes → update "dot help" section
+- Make small, focused edits preserving existing style
+- Put user-facing defaults behind feature flags
+- New modules need `install` script and `README.md` under `modules/<name>/`
+- Use `components/platform` for OS checks, not hardcoded conditions
+- Keep `install.sh` idempotent (skip if already installed)
+- **Keep README.md in sync**: Update relevant sections when changing features, commands, bindings, or flags
 
-## Examples (where to implement common changes)
+## Implementation Examples
 
-- Add new prompt segments: edit `components/bash_prompt` and `components/zsh_prompt`. Then update README.md "Prompt erklärt" section.
-- Add an alias set: create `alias/alias-<name>` and source it from `alias/alias`. Document in README.md if user-facing.
-- Add a completion: put script into `bash_completion.d/` and enable via `DOTFILES_ENABLE_BASH_COMPLETION`.
-- Add an FZF integration: create `components/fzf_<name>`, add a feature flag `DOTFILES_ENABLE_<NAME>_FZF`, and source it conditionally from `bashrc`/`zshrc`.
-- Add a picker: create `components/<name>_picker`, add a feature flag, define keybindings and functions. Follow `ssh_picker` or `journalctl_picker` as templates.
-- Add a MOTD widget: create a script in `motd/widgets/` that outputs a single line. Register it in `motd/widgets.sh`.
-- After implementing any change: verify that relevant sections in README.md reflect new behavior.
+| Task | How |
+|------|-----|
+| New prompt segment | Edit `components/bash_prompt` and `components/zsh_prompt`, update README |
+| New alias set | Create `alias/alias-<name>`, source from `alias/alias` |
+| New completion | Add to `bash_completion.d/`, enable via `DOTFILES_ENABLE_BASH_COMPLETION` |
+| New FZF integration | Create `components/fzf_<name>`, add `DOTFILES_ENABLE_<NAME>_FZF` flag |
+| New picker | Create `components/<name>_picker`, add flag, follow `ssh_picker` template |
+| New MOTD widget | Create script in `motd/widgets/`, register in `motd/widgets.sh` |
 
-## Current feature flags
+## Feature Flags
 
-All flags default to `true` unless noted. Override in `config/local_dotfiles_settings`.
+All default to `true` unless noted. Override in `config/local_dotfiles_settings`.
 
 | Flag | Description |
 |------|-------------|
@@ -185,18 +185,12 @@ All flags default to `true` unless noted. Override in `config/local_dotfiles_set
 | `DOTFILES_ENABLE_RELOAD_BINDING` | Reload shell binding |
 | `DOTFILES_ENABLE_IOBROKER` | ioBroker integrations |
 
-## Change checklist (for significant changes)
+## Change Checklist
 
-Before committing changes that affect user-facing features:
+Before committing user-facing changes:
 
 - [ ] Code changes implemented and tested
 - [ ] Feature flags added/updated in `components/feature_flags`
 - [ ] `config/dot_help.json` updated (if adding commands/bindings)
-- [ ] README.md updated:
-  - [ ] "What it configures" section
-  - [ ] Feature flags list
-  - [ ] Keyboard-Bindings tables
-  - [ ] Relevant detailed sections (Prompt/MOTD/dot help/etc.)
-- [ ] CLAUDE.md updated if new conventions were established
-
-If anything here is unclear or you want me to expand examples, tell me which area to iterate on.
+- [ ] README.md sections updated (features, flags, bindings, etc.)
+- [ ] CLAUDE.md updated if new conventions established
