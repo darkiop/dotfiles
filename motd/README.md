@@ -33,8 +33,8 @@ Think of the MOTD system like a **smart news ticker** on a digital billboard. Wh
 │ Widgets       │    │ Widgets         │    │ Scripts            │
 ├───────────────┤    ├─────────────────┤    ├────────────────────┤
 │ docker        │    │ tailscale       │    │ motd-proxmox.sh    │
-│ brew          │    │ wireguard       │    │ motd-odin.sh       │
-│ proxmox       │    │                 │    │ widgets/$HOST/*.sh │
+│ proxmox       │    │ wireguard       │    │ motd-odin.sh       │
+│ homebrew      │    │ network         │    │ widgets/$HOST/*.sh │
 └───────┬───────┘    └────────┬────────┘    └─────────┬──────────┘
         │                     │                       │
         └─────────────────────┴───────────────────────┘
@@ -229,6 +229,21 @@ motd/
     ├── calc-dir-size-homes.*
     └── update-motd-apt-infos.*
 ```
+
+## Built-in Widgets
+
+These widgets come with the MOTD system and activate automatically when the required tools are present:
+
+| Widget | What it shows | Cache TTL | Requirements |
+|--------|---------------|-----------|--------------|
+| docker | Running/stopped container counts | 60s | `docker` command |
+| tailscale | Tailscale IP or status | 300s | `tailscale` command |
+| wireguard | WireGuard IP and peer info | 300s | `wg` command |
+| proxmox | LXC/VM counts (running/total) | 60s | `pct`, `qm` (Proxmox VE) |
+| homebrew | Available updates | 3600s | `brew` command (macOS) |
+| network | Host reachability status | 60s | `config/network-hosts.conf` |
+
+The network widget requires explicit opt-in via `DOTFILES_ENABLE_NETWORK_WIDGET=true`.
 
 ## Adding a New Widget
 

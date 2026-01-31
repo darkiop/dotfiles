@@ -258,6 +258,7 @@ The picker shows container ID, name, image, status, and ports. Falls back to sud
 | `dot cd` | — | cd to ~/dotfiles |
 | `dot modules` | `dot mod` | List submodules with sync status |
 | `dot env` | — | Show DOTFILES_* environment variables |
+| `dot alias` | — | List all aliases with availability check |
 | `dot cache remove` | — | Clear MOTD widget cache |
 
 ## FZF extras

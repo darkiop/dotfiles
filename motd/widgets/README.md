@@ -52,9 +52,30 @@ chmod +x motd/widgets/myhost/custom-widget.sh
 
 The following widgets are built into `motd/widgets.sh`:
 
-- **docker**: Shows Docker container stats (running/stopped/total)
+- **docker**: Shows running and stopped container counts
   - Cache TTL: 60 seconds
   - Requires: `docker` command
+
+- **tailscale**: Shows your Tailscale IP address or connection status
+  - Cache TTL: 300 seconds
+  - Requires: `tailscale` command
+
+- **wireguard**: Shows WireGuard interface IP and peer information
+  - Cache TTL: 300 seconds
+  - Requires: `wg` command and active interface
+
+- **proxmox**: Shows running/total counts for LXC containers and VMs
+  - Cache TTL: 60 seconds
+  - Requires: `pct` and `qm` commands (Proxmox VE)
+
+- **homebrew**: Shows available formula and cask updates
+  - Cache TTL: 3600 seconds
+  - Requires: `brew` command (macOS)
+
+- **network**: Shows reachability status for configured hosts
+  - Cache TTL: 60 seconds
+  - Requires: hosts configured in `config/network-hosts.conf`
+  - Enable via `DOTFILES_ENABLE_NETWORK_WIDGET=true`
 
 ## Feature Flag
 
