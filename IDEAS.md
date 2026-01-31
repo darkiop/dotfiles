@@ -2,11 +2,15 @@
 
 ## Navi als submodule
 
+Passe die:
+
 AGENTS.md
 CLAUDE.md
 copilot-instructions.md
 
-Texte (Kommentare, Hilfetexte in READMEs, etc.) immer in english, in natürlicher Sprache (kein KI Speak) formulueren.
+an:
+
+Texte (Kommentare, Hilfetexte in READMEs, etc.) immer in english und in natürlicher Sprache (kein KI Speak) formulieren. Versuche auch möglichst viel Information auf wenig Text zubekommen.
 
 ## Shells
 

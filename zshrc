@@ -47,7 +47,7 @@ fi
 # This is consumed by config/tmux.conf.local via $DOTFILES_TMUX_SHELL.
 export DOTFILES_TMUX_SHELL="${commands[zsh]:-$(command -v zsh 2>/dev/null || true)}"
 
-# components
+# Components that must be loaded eagerly (have keybindings or are always needed)
 if dotfiles_flag_enabled DOTFILES_ENABLE_PROMPT; then
   source ~/dotfiles/components/zsh_prompt
 fi
@@ -63,17 +63,11 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then
   source ~/dotfiles/alias/alias
 fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_PICKER; then
-  source ~/dotfiles/components/ssh_picker
-fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_GIT_FZF; then
   source ~/dotfiles/components/fzf_git
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
   source ~/dotfiles/components/fzf_extras
-fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_HELPERS; then
-  source ~/dotfiles/components/helpers
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_BREW; then
   source ~/dotfiles/components/brew
@@ -81,23 +75,50 @@ fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_TMUX_FZF; then
   source ~/dotfiles/components/fzf_tmux
 fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
-  source ~/dotfiles/components/journalctl_picker
-fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_LOG_PICKER; then
-  source ~/dotfiles/components/log_picker
-fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_SYSTEMCTL_FZF; then
-  source ~/dotfiles/components/fzf_systemctl
-fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_DOT_DOCTOR; then
-  source ~/dotfiles/components/dot_doctor
-fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_DOCKER_FZF; then
-  source ~/dotfiles/components/fzf_docker
-fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_DOT_HELP; then
   source ~/dotfiles/components/dot_help
+fi
+
+# Lazy-loadable components (loaded on first use to reduce startup time)
+if dotfiles_flag_enabled DOTFILES_ENABLE_LAZY_LOADING; then
+  source ~/dotfiles/components/lazy_loader
+  dotfiles_flag_enabled DOTFILES_ENABLE_SSH_PICKER && \
+    dotfiles_lazy_register sshp ssh_picker
+  dotfiles_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER && \
+    dotfiles_lazy_register jctl journalctl_picker
+  dotfiles_flag_enabled DOTFILES_ENABLE_LOG_PICKER && \
+    dotfiles_lazy_register lctl log_picker
+  dotfiles_flag_enabled DOTFILES_ENABLE_HELPERS && \
+    dotfiles_lazy_register dcheat helpers cheat helpme
+  dotfiles_flag_enabled DOTFILES_ENABLE_DOCKER_FZF && \
+    dotfiles_lazy_register dps fzf_docker dexec dlogs
+  dotfiles_flag_enabled DOTFILES_ENABLE_SYSTEMCTL_FZF && \
+    dotfiles_lazy_register sctl fzf_systemctl
+  dotfiles_flag_enabled DOTFILES_ENABLE_DOT_DOCTOR && \
+    dotfiles_lazy_register dot_doctor dot_doctor
+else
+  # Fallback: eager loading when lazy loading is disabled
+  if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_PICKER; then
+    source ~/dotfiles/components/ssh_picker
+  fi
+  if dotfiles_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
+    source ~/dotfiles/components/journalctl_picker
+  fi
+  if dotfiles_flag_enabled DOTFILES_ENABLE_LOG_PICKER; then
+    source ~/dotfiles/components/log_picker
+  fi
+  if dotfiles_flag_enabled DOTFILES_ENABLE_HELPERS; then
+    source ~/dotfiles/components/helpers
+  fi
+  if dotfiles_flag_enabled DOTFILES_ENABLE_DOCKER_FZF; then
+    source ~/dotfiles/components/fzf_docker
+  fi
+  if dotfiles_flag_enabled DOTFILES_ENABLE_SYSTEMCTL_FZF; then
+    source ~/dotfiles/components/fzf_systemctl
+  fi
+  if dotfiles_flag_enabled DOTFILES_ENABLE_DOT_DOCTOR; then
+    source ~/dotfiles/components/dot_doctor
+  fi
 fi
 
 # MOTD (opt-in)
