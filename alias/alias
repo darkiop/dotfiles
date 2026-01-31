@@ -241,7 +241,6 @@ alias ip='ip -c'
 alias dotf='cd ~/dotfiles && git status'
 
 # dotfiles update
-alias update-dotfiles='cd ~/dotfiles && git pull && rl'
 alias dotfu='cd ~/dotfiles && git pull && reload'
 
 # system update

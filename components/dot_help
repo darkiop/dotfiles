@@ -559,17 +559,18 @@ _dot_help_setup_keybindings
 			fi
 
 			if [[ ${cmd} == "alias" || ${cmd} == "aliases" ]]; then
+				# Use same color scheme as dot help --plain
 				local use_color=0
 				if [[ -t 1 ]] && [[ -z ${NO_COLOR:-} ]]; then
 					use_color=1
 				fi
-				local c_reset="${COLOR_RESET:-}"
-				local c_head="${COLOR_LIGHT_BLUE:-}"
-				local c_muted="${COLOR_BLUE:-}"
-				if [[ ${use_color} -eq 1 ]] && [[ -z ${c_reset} ]]; then
-					c_head=$'\033[36m'
-					c_muted=$'\033[34m'
+				local c_reset="" c_head="" c_muted="" c_green="" c_red=""
+				if [[ ${use_color} -eq 1 ]]; then
 					c_reset=$'\033[0m'
+					c_head=$'\033[38;5;81m'
+					c_muted=$'\033[38;5;39m'
+					c_green=$'\033[38;5;83m'
+					c_red=$'\033[38;5;196m'
 				fi
 
 				local filter="${1:-}"
@@ -614,7 +615,16 @@ _dot_help_setup_keybindings
 							continue
 						fi
 
-						alias_items+=("${name}"$'\t'"${value}")
+						# Check if the command is available
+						local cmd_check="${value%% *}"  # First word
+						cmd_check="${cmd_check#sudo }"  # Strip sudo prefix
+						cmd_check="${cmd_check%% *}"    # First word again after sudo
+						local status_icon="${c_green}✓${c_reset}"
+						if ! command -v "${cmd_check}" >/dev/null 2>&1; then
+							status_icon="${c_red}✗${c_reset}"
+						fi
+
+						alias_items+=("${status_icon}"$'\t'"${name}"$'\t'"${value}")
 					fi
 				done < <(alias 2>/dev/null | sort)
 
@@ -630,12 +640,13 @@ _dot_help_setup_keybindings
 					printf '\n%b%s%b\n' "${c_head}" "${section_name}" "${c_reset}"
 					for item in "${items[@]}"; do
 						i=$((i + 1))
-						local item_name item_desc prefix
-						IFS=$'\t' read -r item_name item_desc <<< "${item}"
+						local item_icon item_name item_desc prefix
+						IFS=$'\t' read -r item_icon item_name item_desc <<< "${item}"
 						prefix="├─"
 						[[ $i -eq $item_count ]] && prefix="╰─"
-						printf '%b%s%b %-28s %b%s%b\n' \
+						printf '%b%s%b %s %-24s %b%s%b\n' \
 							"${c_muted}" "${prefix}" "${c_reset}" \
+							"${item_icon}" \
 							"${item_name}" \
 							"${c_muted}" "${item_desc}" "${c_reset}"
 					done
@@ -645,15 +656,14 @@ _dot_help_setup_keybindings
 					_dot_alias_print_section "Aliases" "${alias_items[@]}"
 				fi
 
-				local -a summary_items=()
+				printf '\n%b%s%b\n' "${c_head}" "Summary" "${c_reset}"
 				if [[ -n ${filter} ]]; then
-					summary_items+=("Total"$'\t'"${count} (filter: ${filter})")
+					printf '%b╰─%b Total: %d aliases (filter: %s)\n' "${c_muted}" "${c_reset}" "${count}" "${filter}"
 				else
-					summary_items+=("Total"$'\t'"${count}")
+					printf '%b╰─%b Total: %d aliases  %b│  %s✓%b = available  %s✗%b = not found%b\n' \
+						"${c_muted}" "${c_reset}" "${count}" \
+						"${c_muted}" "${c_green}" "${c_reset}" "${c_red}" "${c_reset}" "${c_reset}"
 				fi
-				summary_items+=("Tip"$'\t'"dot alias <filter> to search")
-
-				_dot_alias_print_section "Summary" "${summary_items[@]}"
 
 				printf '\n'
 				return 0
