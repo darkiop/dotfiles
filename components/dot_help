@@ -366,7 +366,11 @@ _dot_help_setup_keybindings
 					git pull --ff-only &&
 						git submodule update --init --recursive --depth 1
 				)
-				return $?
+				local update_status=$?
+				if [[ ${update_status} -eq 0 ]]; then
+					dot reload
+				fi
+				return ${update_status}
 			fi
 
 			if [[ ${cmd} == "reload" ]]; then
