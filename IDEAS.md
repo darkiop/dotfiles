@@ -1,5 +1,13 @@
 # Ideas
 
+## Navi als submodule
+
+AGENTS.md
+CLAUDE.md
+copilot-instructions.md
+
+Texte (Kommentare, Hilfetexte in READMEs, etc.) immer in english, in natürlicher Sprache (kein KI Speak) formulueren.
+
 ## Shells
 
 Unter Window > Powershell
@@ -11,13 +19,6 @@ einbinden von, optional
 https://github.com/Mikescher/better-docker-ps?tab=readme-ov-file
 oder
 https://github.com/devemio/docker-color-output
-
-## install-checklist.md
-
-Prüfe vollständigkeit, ausführlichkeit und lesbarkeit. Wenn nötig nutze Tabellen für die Darstellung.
-Berücksichtige jedes unterstützte Systen: Debian/Ubuntu Deriverate oder MacOS
-Kein KI Speak.
-Immer English.
 
 ## motd
 
