@@ -243,8 +243,8 @@ EOF
 
 	# Output
 	printf "\n"
+	[[ -n ${TASKS} ]] && print_kv description "${TASKS}"
 	[[ -n ${GET_HOST_IP} ]] && print_kv ip "${GET_HOST_IP}"
-	[[ -n ${TASKS} ]] && print_kv tasks "${TASKS}"
 	print_kv load "${LOAD1} / ${LOAD5} / ${LOAD15}"
 	print_kv uptime "${UPTIME_TEXT}"
 	print_kv os "${GET_PLATFORM_DATA}"
@@ -258,7 +258,7 @@ EOF
 			"${COLOR_GREEN}" " updates to install" "${COLOR_RESET}"
 	fi
 
-	[[ -n ${JQ_MISSING_MSG} ]] && print_kv tasks "${JQ_MISSING_MSG}"
+	[[ -n ${JQ_MISSING_MSG} ]] && print_kv description "${JQ_MISSING_MSG}"
 
 	# Widgets
 	if [[ ${DOTFILES_ENABLE_MOTD_WIDGETS:-true} == true ]]; then
@@ -369,6 +369,12 @@ EOF
 		;;
 	esac
 
+	# Description (if any)
+	if [[ -n ${TASKS} ]]; then
+		_motd_tree_section "Description"
+		_motd_tree_item 1 "current" "${TASKS}"
+	fi
+
 	# System section
 	_motd_tree_section "System"
 	[[ -n ${GET_HOST_IP} ]] && _motd_tree_item 0 "ip" "${GET_HOST_IP}"
@@ -387,12 +393,6 @@ EOF
 	if [[ ${SHOW_UPDATES_LINE} == true ]]; then
 		_motd_tree_section "Updates"
 		_motd_tree_item 1 "apt" "${UPDATES_COUNT} packages available"
-	fi
-
-	# Tasks (if any)
-	if [[ -n ${TASKS} ]]; then
-		_motd_tree_section "Tasks"
-		_motd_tree_item 1 "current" "${TASKS}"
 	fi
 
 	# Widgets
