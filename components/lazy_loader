@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# Lazy-load shell components on first use to reduce shell startup time.
+# Enabled via DOTFILES_ENABLE_LAZY_LOADING.
+#
+# Components are registered with stub functions that source the real
+# component on first invocation, then call the original function.
+
+# Guard: only run in interactive shells.
+case $- in
+*i*) ;;
+*) return ;;
+esac
+
+# Register a function for lazy loading.
+# Usage: dotfiles_lazy_register <main_func> <component> [extra_funcs...]
+#
+# Arguments:
+#   main_func   - Primary function that triggers loading
+#   component   - Component filename (under ~/dotfiles/components/)
+#   extra_funcs - Additional functions exported by the component
+#
+# Example:
+#   dotfiles_lazy_register sshp ssh_picker
+#   dotfiles_lazy_register dcheat helpers cheat helpme
+dotfiles_lazy_register() {
+	local func="$1"
+	local component="$2"
+	shift 2
+	local extra_funcs=("$@")
+	local component_path="${HOME}/dotfiles/components/${component}"
+	local had_expand_aliases=0
+
+	if shopt -q expand_aliases 2>/dev/null; then
+		had_expand_aliases=1
+		shopt -u expand_aliases
+	fi
+
+	# Create stub for the main function.
+	# When called, it unsets all stubs, sources the component, then calls the real function.
+	eval "${func}() {
+		unset -f ${func} ${extra_funcs[*]} 2>/dev/null
+		source \"${component_path}\"
+		${func} \"\$@\"
+	}"
+
+	# Create stubs for extra functions that delegate to the main function first.
+	local f
+	for f in "${extra_funcs[@]}"; do
+		eval "${f}() {
+			unset -f ${func} ${extra_funcs[*]} 2>/dev/null
+			source \"${component_path}\"
+			${f} \"\$@\"
+		}"
+	done
+
+	if [[ ${had_expand_aliases} -eq 1 ]]; then
+		shopt -s expand_aliases
+	fi
+}
