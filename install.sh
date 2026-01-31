@@ -170,6 +170,11 @@ function INSTALL_DEPENDENCIES() {
 		fi
 
 		# Linux dependencies (command, apt-pkg, brew-pkg)
+		# Install sudo first (needed for other installations if not root)
+		if ! command -v sudo >/dev/null 2>&1 && IS_USER_ROOT; then
+			MESSAGE lightblue "Installing sudo..."
+			apt install sudo -y
+		fi
 		INSTALL_PACKAGE jq jq
 		INSTALL_PACKAGE tmux tmux
 		INSTALL_PACKAGE vim vim

@@ -21,10 +21,6 @@ Immer English.
 
 ## motd
 
-widgets in einzele dateien aufteilen
-
-proxmox widget
-
 docker widget: auch anzeigen wenn keine container laufenc
 
 widgetize the current standard lines
