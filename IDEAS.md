@@ -5,9 +5,6 @@
 Unter Window > Powershell
 - oh-my-posh
 
-## install.sh
-mit brew und apt die dependicies installieren
-
 ## docker
 
 einbinden von, optional
@@ -15,9 +12,12 @@ https://github.com/Mikescher/better-docker-ps?tab=readme-ov-file
 oder
 https://github.com/devemio/docker-color-output
 
-## install-checklist
+## install-checklist.md
 
-generell und für jedes system (linux, debian), ausführlicher
+Prüfe vollständigkeit, ausführlichkeit und lesbarkeit. Wenn nötig nutze Tabellen für die Darstellung.
+Berücksichtige jedes unterstützte Systen: Debian/Ubuntu Deriverate oder MacOS
+Kein KI Speak.
+Immer English.
 
 ## motd
 

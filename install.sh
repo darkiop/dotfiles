@@ -11,9 +11,32 @@ function IS_USER_ROOT() {
 }
 
 # -------------------------------------------------------------
-# first check if root, when not define a alias with sudo
+# Platform detection
+# -------------------------------------------------------------
+DOTFILES_PLATFORM="unknown"
+if [[ "$(uname -s)" == "Darwin" ]]; then
+	DOTFILES_PLATFORM="darwin"
+elif [[ "$(uname -s)" == "Linux" ]]; then
+	DOTFILES_PLATFORM="linux"
+fi
+
+# -------------------------------------------------------------
+# Package manager setup
 # -------------------------------------------------------------
 # trunk-ignore(shellcheck/SC2310)
+if [[ "${DOTFILES_PLATFORM}" == "darwin" ]]; then
+	# macOS uses Homebrew
+	PKG_MANAGER="brew"
+	PKG_INSTALL="brew install"
+elif IS_USER_ROOT; then
+	PKG_MANAGER="apt"
+	PKG_INSTALL="apt install -y"
+else
+	PKG_MANAGER="apt"
+	PKG_INSTALL="sudo apt install -y"
+fi
+
+# Legacy APT variable for backwards compatibility
 if IS_USER_ROOT; then
 	APT='apt'
 else
@@ -61,7 +84,11 @@ function CHECK_IF_SUDO_IS_INSTALLED() {
 function CHECK_IF_CURL_IS_INSTALLED() {
 	if ! command -v curl >/dev/null 2>&1; then
 		MESSAGE red "curl not found. install it ..."
-		${APT} install curl -y
+		if [[ "${DOTFILES_PLATFORM}" == "darwin" ]]; then
+			${PKG_INSTALL} curl
+		else
+			${APT} install curl -y
+		fi
 	fi
 }
 
@@ -71,8 +98,87 @@ function CHECK_IF_CURL_IS_INSTALLED() {
 function CHECK_IF_GIT_IS_INSTALLED() {
 	if ! command -v git >/dev/null 2>&1; then
 		MESSAGE red "git not found. install it ..."
-		${APT} install git -y
+		if [[ "${DOTFILES_PLATFORM}" == "darwin" ]]; then
+			${PKG_INSTALL} git
+		else
+			${APT} install git -y
+		fi
 	fi
+}
+
+# -------------------------------------------------------------
+# Install a package using the appropriate package manager
+# Usage: INSTALL_PACKAGE <command_to_check> <apt_package> [brew_package]
+# -------------------------------------------------------------
+function INSTALL_PACKAGE() {
+	local cmd="$1"
+	local apt_pkg="$2"
+	local brew_pkg="${3:-$2}"
+
+	if command -v "${cmd}" >/dev/null 2>&1; then
+		MESSAGE lightblue "${cmd} is already installed"
+		return 0
+	fi
+
+	MESSAGE lightblue "Installing ${cmd}..."
+	if [[ "${DOTFILES_PLATFORM}" == "darwin" ]]; then
+		${PKG_INSTALL} "${brew_pkg}" || {
+			MESSAGE yellow "Failed to install ${brew_pkg} via brew"
+			return 1
+		}
+	else
+		${APT} install "${apt_pkg}" -y || {
+			MESSAGE yellow "Failed to install ${apt_pkg} via apt"
+			return 1
+		}
+	fi
+}
+
+# -------------------------------------------------------------
+# Install all dependencies
+# -------------------------------------------------------------
+function INSTALL_DEPENDENCIES() {
+	MESSAGE blue "[ Install dependencies ]"
+
+	if [[ "${DOTFILES_PLATFORM}" == "darwin" ]]; then
+		# Check if Homebrew is installed
+		if ! command -v brew >/dev/null 2>&1; then
+			MESSAGE red "Homebrew not found. Please install it first:"
+			MESSAGE yellow '  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+			return 1
+		fi
+		MESSAGE lightblue "Using Homebrew for package installation"
+
+		# macOS dependencies (command, apt-pkg, brew-pkg)
+		INSTALL_PACKAGE jq jq jq
+		INSTALL_PACKAGE tmux tmux tmux
+		INSTALL_PACKAGE vim vim vim
+		INSTALL_PACKAGE bat bat bat
+		INSTALL_PACKAGE lsd lsd lsd
+		INSTALL_PACKAGE gdircolors coreutils coreutils  # for greadlink, gdircolors
+		INSTALL_PACKAGE gawk gawk gawk                  # for fzf-tab-completion
+		INSTALL_PACKAGE reattach-to-user-namespace reattach-to-user-namespace reattach-to-user-namespace
+	else
+		MESSAGE lightblue "Using apt for package installation"
+
+		# Update package list first
+		MESSAGE lightblue "Updating package list..."
+		if IS_USER_ROOT; then
+			apt update -qq
+		else
+			sudo apt update -qq
+		fi
+
+		# Linux dependencies (command, apt-pkg, brew-pkg)
+		INSTALL_PACKAGE jq jq
+		INSTALL_PACKAGE tmux tmux
+		INSTALL_PACKAGE vim vim
+		INSTALL_PACKAGE batcat bat      # bat is called batcat on Debian/Ubuntu
+		INSTALL_PACKAGE lsd lsd
+		INSTALL_PACKAGE zsh zsh
+	fi
+
+	MESSAGE green "Dependencies installed successfully"
 }
 
 # -------------------------------------------------------------
@@ -157,22 +263,29 @@ function SHOW_MAIN_MENU() {
 	printf '%b[ darkiop/dotfiles ]%b\n\n' \
 		"${COLOR_GREEN}" "${COLOR_CLOSE}"
 
-	# Now use %b for COLORs, then literal “1)”, then %b to close COLOR:
+	# Platform info
+	printf 'Platform: %b%s%b\n\n' \
+		"${COLOR_LIGHT_BLUE}" "${DOTFILES_PLATFORM}" "${COLOR_CLOSE}"
+
+	# Now use %b for COLORs, then literal "1)", then %b to close COLOR:
 	printf '%b1)%b Install dotfiles (all)\n' \
 		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
 
-	printf '%b2)%b Install git submodules\n' \
+	printf '%b2)%b Install dependencies (jq, tmux, vim, bat, lsd, ...)\n' \
 		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
 
-	printf '%b3)%b Install shell config\n' \
+	printf '%b3)%b Install git submodules\n' \
 		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
 
-	printf '%b4)%b Install MOTD systemd timers\n' \
+	printf '%b4)%b Install shell config\n' \
+		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
+
+	printf '%b5)%b Install MOTD systemd timers\n' \
 		"${COLOR_YELLOW}" "${COLOR_CLOSE}"
 
 	echo
 
-	# Prompt line, again using %b for red “x” and reset:
+	# Prompt line, again using %b for red "x" and reset:
 	printf 'Please choose an option or %bx%b to exit: ' \
 		"${COLOR_RED}" "${COLOR_CLOSE}"
 
@@ -453,7 +566,7 @@ function INSTALL_DOTFILES() {
 	CHECK_IF_GIT_IS_INSTALLED
 	CLONE_REPO
 	INSTALL_GIT_SUBMODULES
-	#instBASHCOMPLE
+	INSTALL_DEPENDENCIES
 	INSTALL_VIMRC
 	INSTALL_HELIX
 	INSTALL_TMUX
@@ -480,19 +593,25 @@ else
 		exit
 	else
 		case ${opt_main_menu} in
-		1) # install dotfiles
+		1) # install dotfiles (all)
 			INSTALL_DOTFILES
 			exit
 			;;
-		2) # install git submodules
+		2) # install dependencies
+			LOAD_COLORS
+			CHECK_IF_SUDO_IS_INSTALLED
+			INSTALL_DEPENDENCIES
+			exit
+			;;
+		3) # install git submodules
 			INSTALL_GIT_SUBMODULES
 			exit
 			;;
-		3) # link dotfiles
+		4) # link dotfiles
 			LINK_DOTFILES
 			exit
 			;;
-		4) # install MOTD systemd timers
+		5) # install MOTD systemd timers
 			INSTALL_MOTD_TIMERS
 			exit
 			;;
