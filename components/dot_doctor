@@ -143,6 +143,15 @@ dot_doctor() {
 	_dot_doctor_check_link "${HOME}/.zshrc" "${DOTFILES_DIR}/zshrc"
 	_dot_doctor_check_link "${HOME}/.tmux.conf" "${DOTFILES_DIR}/modules/oh-my-tmux/.tmux.conf"
 	_dot_doctor_check_link "${HOME}/.tmux.conf.local" "${DOTFILES_DIR}/config/tmux.conf.local"
+	_dot_doctor_check_link "${HOME}/.vim_runtime" "${DOTFILES_DIR}/modules/vimrc"
+	_dot_doctor_check_link "${HOME}/.gitconfig" "${DOTFILES_DIR}/gitconfig"
+
+	# Local settings file
+	if [[ -f "${DOTFILES_DIR}/config/local_dotfiles_settings" ]]; then
+		_dot_doctor_ok "local settings" "config/local_dotfiles_settings exists"
+	else
+		_dot_doctor_ok "local settings" "using defaults (no local overrides)"
+	fi
 
 	# Binaries (based on enabled features)
 	_DOT_DOCTOR_SECTION="Checks"
@@ -171,26 +180,59 @@ dot_doctor() {
 		_dot_doctor_need_bin jq "required for motd/tasks.json"
 	fi
 	if _dot_doctor_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
-	_dot_doctor_need_bin journalctl "required for jctl"
-	_dot_doctor_need_bin lnav "optional pager for jctl"
+		_dot_doctor_need_bin journalctl "required for jctl"
+		_dot_doctor_need_bin lnav "optional pager for jctl"
+	fi
+	if _dot_doctor_flag_enabled DOTFILES_ENABLE_NAVI; then
+		_dot_doctor_need_bin navi "navi enabled"
+	fi
+	if _dot_doctor_flag_enabled DOTFILES_ENABLE_DOCKER_FZF; then
+		_dot_doctor_need_bin docker "docker fzf enabled"
+	fi
+	if _dot_doctor_flag_enabled DOTFILES_ENABLE_SYSTEMCTL_FZF; then
+		_dot_doctor_need_bin systemctl "systemctl fzf enabled"
+	fi
+	if _dot_doctor_flag_enabled DOTFILES_ENABLE_BREW; then
+		if [[ "${DOTFILES_OS:-}" == "darwin" ]]; then
+			_dot_doctor_need_bin brew "homebrew enabled"
+		fi
 	fi
 
-	# Feature flags summary (selected)
+	# Feature flags summary (all flags)
 	if command -v dotfiles_flag_enabled >/dev/null 2>&1; then
 		_DOT_DOCTOR_SECTION="Flags"
 		local flags=(
 			DOTFILES_ENABLE_PROMPT
+			DOTFILES_ENABLE_BASH_COMPLETION
 			DOTFILES_ENABLE_FZF
 			DOTFILES_ENABLE_FZF_EXTRAS
 			DOTFILES_ENABLE_FZF_TAB_COMPLETION
+			DOTFILES_ENABLE_FZF_HISTORY_BINDINGS
+			DOTFILES_ENABLE_FZF_CDF_BINDING
 			DOTFILES_ENABLE_GIT_FZF
+			DOTFILES_ENABLE_DOCKER_FZF
+			DOTFILES_ENABLE_TMUX_FZF
+			DOTFILES_ENABLE_SYSTEMCTL_FZF
+			DOTFILES_ENABLE_JOURNALCTL_PICKER
+			DOTFILES_ENABLE_LOG_PICKER
+			DOTFILES_ENABLE_SSH_PICKER
+			DOTFILES_ENABLE_NAVI
+			DOTFILES_ENABLE_ALIASES
 			DOTFILES_ENABLE_HELPERS
+			DOTFILES_ENABLE_EXTRACT_EXT
+			DOTFILES_ENABLE_DOT_DOCTOR
+			DOTFILES_ENABLE_DOT_HELP
+			DOTFILES_ENABLE_DOT_HELP_BINDING
+			DOTFILES_ENABLE_RELOAD_BINDING
+			DOTFILES_ENABLE_BREW
+			DOTFILES_ENABLE_OH_MY_ZSH
 			DOTFILES_ENABLE_MOTD
 			DOTFILES_ENABLE_MOTD_AUTO_RUN
+			DOTFILES_ENABLE_MOTD_WIDGETS
+			DOTFILES_ENABLE_AUTOUPDATE
 			DOTFILES_ENABLE_TMUX_AUTOSTART
-			DOTFILES_ENABLE_TMUX_FZF
-			DOTFILES_ENABLE_JOURNALCTL_PICKER
-			DOTFILES_ENABLE_DOT_DOCTOR
+			DOTFILES_ENABLE_SSH_TMUX_RENAME
+			DOTFILES_ENABLE_IOBROKER
 		)
 		local f enabled
 		for f in "${flags[@]}"; do
@@ -203,9 +245,25 @@ dot_doctor() {
 		done
 	fi
 
+	# System info
+	_DOT_DOCTOR_SECTION="System"
+
+	# Platform
+	local platform_info="${DOTFILES_OS:-unknown}"
+	[[ -n "${DOTFILES_DISTRO_ID:-}" ]] && platform_info="${platform_info} (${DOTFILES_DISTRO_ID})"
+	[[ "${DOTFILES_WSL:-0}" == "1" ]] && platform_info="${platform_info} [WSL]"
+	[[ "${DOTFILES_CONTAINER:-0}" == "1" ]] && platform_info="${platform_info} [container]"
+	_dot_doctor_print_row "platform" "INFO" "${platform_info}"
+
+	# Shell version
+	if [[ -n ${BASH_VERSION:-} ]]; then
+		_dot_doctor_print_row "shell" "INFO" "bash ${BASH_VERSION}"
+	elif [[ -n ${ZSH_VERSION:-} ]]; then
+		_dot_doctor_print_row "shell" "INFO" "zsh ${ZSH_VERSION}"
+	fi
+
 	# MOTD timers (systemd)
 	if [[ -d /run/systemd/system ]] && command -v systemctl >/dev/null 2>&1; then
-		_DOT_DOCTOR_SECTION="System"
 		local enabled_a enabled_h
 		enabled_a="$(systemctl is-enabled update-motd-apt-infos.timer 2>/dev/null || true)"
 		enabled_h="$(systemctl is-enabled calc-dir-size-homes.timer 2>/dev/null || true)"
