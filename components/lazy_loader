@@ -36,6 +36,13 @@ dotfiles_lazy_register() {
 		shopt -u expand_aliases
 	fi
 
+	# Remove any existing alias to avoid zsh "defining function based on alias" error.
+	# In zsh, you can't define a function with the same name as an alias.
+	unalias "${func}" 2>/dev/null || true
+	for f in "${extra_funcs[@]}"; do
+		unalias "${f}" 2>/dev/null || true
+	done
+
 	# Create stub for the main function.
 	# When called, it unsets all stubs, sources the component, then calls the real function.
 	eval "${func}() {

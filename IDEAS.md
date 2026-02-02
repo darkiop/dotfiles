@@ -2,6 +2,10 @@
 
 ## Navi als submodule
 
+Erstelle ein Plan für die Integration von https://github.com/denisidoro/navi als submodule dieses dotfiles projekt.
+
+## Agents
+
 Passe die:
 
 AGENTS.md
@@ -14,8 +18,7 @@ Texte (Kommentare, Hilfetexte in READMEs, etc.) immer in english und in natürli
 
 ## Shells
 
-Unter Window > Powershell
-- oh-my-posh
+Unter Window > Powershell (oh-my-posh)
 
 ## docker
 
