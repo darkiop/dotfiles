@@ -444,7 +444,7 @@ motd_run_widgets() {
 	# Proxmox widget
 	if _motd_has_cmd pveversion; then
 		if widget_output=$(_motd_widget_proxmox 2>/dev/null); then
-			print_kv "proxmox-overview" "${widget_output}"
+			print_kv "proxmox" "${widget_output}"
 		fi
 	fi
 
