@@ -222,6 +222,60 @@ _motd_widget_proxmox() {
 }
 
 # ============================================================================
+# Proxmox IDs Widget (colored by status)
+# ============================================================================
+_motd_widget_proxmox_ids() {
+	local cache_file="${MOTD_CACHE_DIR}/proxmox_ids"
+	local cache_ttl=60
+
+	if _motd_cache_fresh "${cache_file}" "${cache_ttl}"; then
+		_motd_cache_read "${cache_file}"
+		return 0
+	fi
+
+	local c_green=$'\x1b[38;5;83m'
+	local c_red=$'\x1b[38;5;196m'
+	local c_reset=$'\x1b[m'
+	local output=""
+	local vmid status color
+	local -a instances=()
+
+	# Collect LXC containers (pct list: VMID in $1, Status in $2)
+	if _motd_has_cmd pct; then
+		while read -r vmid status _; do
+			[[ -z ${vmid} ]] && continue
+			instances+=("${vmid}:${status}")
+		done < <(pct list 2>/dev/null | awk 'NR>1 {print $1, $2}')
+	fi
+
+	# Collect VMs (qm list: VMID in $1, Status in $3)
+	if _motd_has_cmd qm; then
+		while read -r vmid status _; do
+			[[ -z ${vmid} ]] && continue
+			instances+=("${vmid}:${status}")
+		done < <(qm list 2>/dev/null | awk 'NR>1 {print $1, $3}')
+	fi
+
+	# Sort by ID (numerically) and build colored output
+	while IFS=: read -r vmid status; do
+		if [[ ${status} == "running" ]]; then
+			color="${c_green}"
+		else
+			color="${c_red}"
+		fi
+		output="${output}${color}${vmid}${c_reset} "
+	done < <(printf '%s\n' "${instances[@]}" | sort -t: -k1 -n)
+
+	# Trim trailing space
+	output="${output% }"
+
+	[[ -z ${output} ]] && return 1
+
+	_motd_cache_write "${cache_file}" "${output}"
+	printf "%s" "${output}"
+}
+
+# ============================================================================
 # Homebrew Widget (macOS)
 # ============================================================================
 _motd_widget_brew() {
@@ -391,6 +445,13 @@ motd_run_widgets() {
 	if _motd_has_cmd pveversion; then
 		if widget_output=$(_motd_widget_proxmox 2>/dev/null); then
 			print_kv "proxmox" "${widget_output}"
+		fi
+	fi
+
+	# Proxmox instances widget (show all IDs with status colors)
+	if _motd_has_cmd pveversion; then
+		if widget_output=$(_motd_widget_proxmox_ids 2>/dev/null); then
+			print_kv "instances" "${widget_output}"
 		fi
 	fi
 
