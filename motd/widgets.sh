@@ -444,14 +444,14 @@ motd_run_widgets() {
 	# Proxmox widget
 	if _motd_has_cmd pveversion; then
 		if widget_output=$(_motd_widget_proxmox 2>/dev/null); then
-			print_kv "proxmox" "${widget_output}"
+			print_kv "proxmox-overview" "${widget_output}"
 		fi
 	fi
 
 	# Proxmox instances widget (show all IDs with status colors)
 	if _motd_has_cmd pveversion; then
 		if widget_output=$(_motd_widget_proxmox_ids 2>/dev/null); then
-			print_kv "instances" "${widget_output}"
+			print_kv "proxmox-ids" "${widget_output}"
 		fi
 	fi
 
