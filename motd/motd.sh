@@ -298,7 +298,8 @@ _motd_render_tree() {
 		shift 2
 		local value="$*"
 		local tree_char="${tree_mid}"
-		[[ ${is_last} == "1" ]] && tree_char="${tree_end}"
+		local tree_cont="│"
+		[[ ${is_last} == "1" ]] && tree_char="${tree_end}" && tree_cont=" "
 
 		# Calculate available width for value (terminal width - prefix width)
 		# Prefix: "  ├─ label          " = 2 + 2 + 1 + 14 + 1 = 20 chars
@@ -332,9 +333,10 @@ _motd_render_tree() {
 					"${c_value}" "${value}" "${c_reset}"
 			fi
 		else
-			# Word-wrap the value, preserving ANSI codes
-			local indent
-			indent=$(printf '%*s' "${prefix_width}" "")
+			# Word-wrap the value with tree continuation line
+			# Continuation prefix: "  │                 " (tree_cont + 17 spaces)
+			local cont_prefix
+			cont_prefix=$(printf '  %b%s%b %17s' "${c_label}" "${tree_cont}" "${c_reset}" "")
 			local first_line=1
 
 			# Split value into words (space-separated)
@@ -363,9 +365,9 @@ _motd_render_tree() {
 						first_line=0
 					else
 						if [[ ${use_color} -eq 0 ]]; then
-							printf '%s%s\n' "${indent}" "${line}"
+							printf '%s%s\n' "${cont_prefix}" "${line}"
 						else
-							printf '%s%b%s%b\n' "${indent}" "${c_value}" "${line}" "${c_reset}"
+							printf '%s%b%s%b\n' "${cont_prefix}" "${c_value}" "${line}" "${c_reset}"
 						fi
 					fi
 					line="${word}"
@@ -387,9 +389,9 @@ _motd_render_tree() {
 					fi
 				else
 					if [[ ${use_color} -eq 0 ]]; then
-						printf '%s%s\n' "${indent}" "${line}"
+						printf '%s%s\n' "${cont_prefix}" "${line}"
 					else
-						printf '%s%b%s%b\n' "${indent}" "${c_value}" "${line}" "${c_reset}"
+						printf '%s%b%s%b\n' "${cont_prefix}" "${c_value}" "${line}" "${c_reset}"
 					fi
 				fi
 			fi
