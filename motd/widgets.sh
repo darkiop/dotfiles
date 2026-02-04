@@ -276,60 +276,6 @@ _motd_widget_proxmox_ids() {
 }
 
 # ============================================================================
-# ioBroker Instances Widget
-# ============================================================================
-_motd_widget_iobroker() {
-	local cache_file="${MOTD_CACHE_DIR}/iobroker"
-	local cache_ttl=60
-
-	if _motd_cache_fresh "${cache_file}" "${cache_ttl}"; then
-		_motd_cache_read "${cache_file}"
-		return 0
-	fi
-
-	local c_green=$'\x1b[38;5;83m'
-	local c_red=$'\x1b[38;5;196m'
-	local c_reset=$'\x1b[m'
-	local output=""
-	local line name is_active
-
-	# Parse iobroker list instances output
-	while IFS= read -r line; do
-		# Skip empty lines and the "instance is alive" footer
-		[[ -z ${line} ]] && continue
-		[[ ${line} == *"instance is alive"* ]] && continue
-
-		# Check if line starts with + (active) or space (inactive)
-		if [[ ${line} =~ ^[[:space:]]*\+ ]]; then
-			is_active=true
-		else
-			is_active=false
-		fi
-
-		# Extract instance name: second field after first colon, trimmed
-		# Format: system.adapter.admin.0  : admin  : hostname  - status
-		name=$(printf "%s" "${line}" | awk -F':' '{gsub(/^ +| +$/, "", $2); print $2}')
-
-		[[ -z ${name} ]] && continue
-
-		# Set color based on status
-		if [[ ${is_active} == true ]]; then
-			output="${output}${c_green}${name}${c_reset} "
-		else
-			output="${output}${c_red}${name}${c_reset} "
-		fi
-	done < <(iobroker list instances 2>/dev/null)
-
-	# Trim trailing space
-	output="${output% }"
-
-	[[ -z ${output} ]] && return 1
-
-	_motd_cache_write "${cache_file}" "${output}"
-	printf "%s" "${output}"
-}
-
-# ============================================================================
 # Homebrew Widget (macOS)
 # ============================================================================
 _motd_widget_brew() {
@@ -456,7 +402,7 @@ _motd_widget_network() {
 declare -A _motd_cmd_available 2>/dev/null || true
 _motd_init_cmd_cache() {
 	local cmd
-	for cmd in docker tailscale wg pveversion pct qm brew jq iobroker; do
+	for cmd in docker tailscale wg pveversion pct qm brew jq; do
 		if command -v "${cmd}" >/dev/null 2>&1; then
 			_motd_cmd_available[${cmd}]=1
 		fi
@@ -506,13 +452,6 @@ motd_run_widgets() {
 	if _motd_has_cmd pveversion; then
 		if widget_output=$(_motd_widget_proxmox_ids 2>/dev/null); then
 			print_kv "proxmox-ids" "${widget_output}"
-		fi
-	fi
-
-	# ioBroker widget
-	if _motd_has_cmd iobroker; then
-		if widget_output=$(_motd_widget_iobroker 2>/dev/null); then
-			print_kv "iobroker-instances" "${widget_output}"
 		fi
 	fi
 
