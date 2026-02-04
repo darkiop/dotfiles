@@ -291,7 +291,7 @@ _motd_render_tree() {
 		printf '  %b%s%b\n' "${c_head}" "$1" "${c_reset}"
 	}
 
-	# Tree item (mid or end)
+	# Tree item (mid or end) with word-wrap support
 	_motd_tree_item() {
 		local is_last="$1"
 		local label="$2"
@@ -300,20 +300,100 @@ _motd_render_tree() {
 		local tree_char="${tree_mid}"
 		[[ ${is_last} == "1" ]] && tree_char="${tree_end}"
 
+		# Calculate available width for value (terminal width - prefix width)
+		# Prefix: "  ├─ label          " = 2 + 2 + 1 + 14 + 1 = 20 chars
+		local prefix_width=20
+		local term_width
+		term_width=$(tput cols 2>/dev/null || echo 80)
+		local value_width=$((term_width - prefix_width))
+		[[ ${value_width} -lt 20 ]] && value_width=20
+
+		# Strip ANSI codes for length calculation, but preserve them in output
+		local value_plain
+		value_plain=$(printf '%s' "${value}" | sed 's/\x1b\[[0-9;]*m//g')
+
 		# Handle special labels that provide their own colors
+		local use_color=1
 		case "${label}" in
-			network)
+			network|instances) use_color=0 ;;
+		esac
+
+		# Check if wrapping is needed
+		if [[ ${#value_plain} -le ${value_width} ]]; then
+			# No wrapping needed
+			if [[ ${use_color} -eq 0 ]]; then
 				printf '  %b%s%b %-14s %s\n' \
 					"${c_label}" "${tree_char}" "${c_reset}" \
 					"${label}" "${value}"
-				;;
-			*)
+			else
 				printf '  %b%s%b %-14s %b%s%b\n' \
 					"${c_label}" "${tree_char}" "${c_reset}" \
 					"${label}" \
 					"${c_value}" "${value}" "${c_reset}"
-				;;
-		esac
+			fi
+		else
+			# Word-wrap the value, preserving ANSI codes
+			local indent
+			indent=$(printf '%*s' "${prefix_width}" "")
+			local first_line=1
+
+			# Split value into words (space-separated)
+			local line="" word
+			for word in ${value}; do
+				local word_plain
+				word_plain=$(printf '%s' "${word}" | sed 's/\x1b\[[0-9;]*m//g')
+
+				if [[ -z ${line} ]]; then
+					line="${word}"
+				elif [[ $((${#line} + 1 + ${#word_plain})) -le ${value_width} ]]; then
+					line="${line} ${word}"
+				else
+					# Print current line
+					if [[ ${first_line} -eq 1 ]]; then
+						if [[ ${use_color} -eq 0 ]]; then
+							printf '  %b%s%b %-14s %s\n' \
+								"${c_label}" "${tree_char}" "${c_reset}" \
+								"${label}" "${line}"
+						else
+							printf '  %b%s%b %-14s %b%s%b\n' \
+								"${c_label}" "${tree_char}" "${c_reset}" \
+								"${label}" \
+								"${c_value}" "${line}" "${c_reset}"
+						fi
+						first_line=0
+					else
+						if [[ ${use_color} -eq 0 ]]; then
+							printf '%s%s\n' "${indent}" "${line}"
+						else
+							printf '%s%b%s%b\n' "${indent}" "${c_value}" "${line}" "${c_reset}"
+						fi
+					fi
+					line="${word}"
+				fi
+			done
+
+			# Print remaining line
+			if [[ -n ${line} ]]; then
+				if [[ ${first_line} -eq 1 ]]; then
+					if [[ ${use_color} -eq 0 ]]; then
+						printf '  %b%s%b %-14s %s\n' \
+							"${c_label}" "${tree_char}" "${c_reset}" \
+							"${label}" "${line}"
+					else
+						printf '  %b%s%b %-14s %b%s%b\n' \
+							"${c_label}" "${tree_char}" "${c_reset}" \
+							"${label}" \
+							"${c_value}" "${line}" "${c_reset}"
+					fi
+				else
+					if [[ ${use_color} -eq 0 ]]; then
+						printf '%s%s\n' "${indent}" "${line}"
+					else
+						printf '%s%b%s%b\n' "${indent}" "${c_value}" "${line}" "${c_reset}"
+					fi
+				fi
+			fi
+		fi
 	}
 
 	# Collect widget outputs for minimal style
@@ -444,9 +524,7 @@ EOF
 
 		# Render each category section
 		for category in "${category_order[@]}"; do
-			# Capitalize first letter for section header
-			local section_name="${category^}"
-			_motd_tree_section "${section_name}"
+			_motd_tree_section "${category}"
 
 			# Parse items for this category
 			local -a cat_items=()
