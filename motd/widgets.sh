@@ -475,13 +475,31 @@ motd_run_widgets() {
 	if [[ -d ${host_widgets_dir} ]]; then
 		for widget_script in "${host_widgets_dir}"/*.sh; do
 			if [[ -f ${widget_script} && -x ${widget_script} ]]; then
-				# Source or execute widget script
-				# Widget scripts should output in format: "label:value"
+				# Extract filename without path and extension
+				local script_name
+				script_name=$(basename "${widget_script}" .sh)
+
+				# Parse category from filename: "iobroker-instances" -> category="iobroker", sublabel="instances"
+				# If no dash, the whole name becomes the label without category
+				local category="" sublabel=""
+				if [[ ${script_name} == *-* ]]; then
+					category="${script_name%%-*}"
+					sublabel="${script_name#*-}"
+				fi
+
+				# Execute widget script - output format: "label:value"
 				if widget_output=$("${widget_script}" 2>/dev/null); then
 					if [[ -n ${widget_output} && ${widget_output} == *:* ]]; then
 						local label="${widget_output%%:*}"
 						local value="${widget_output#*:}"
-						print_kv "${label}" "${value}"
+
+						# If filename has category prefix, use "category::sublabel" format
+						# This allows motd.sh tree renderer to group by category
+						if [[ -n ${category} ]]; then
+							print_kv "${category}::${sublabel}" "${value}"
+						else
+							print_kv "${label}" "${value}"
+						fi
 					fi
 				fi
 			fi

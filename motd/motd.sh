@@ -395,21 +395,77 @@ EOF
 		_motd_tree_item 1 "apt" "${UPDATES_COUNT} packages available"
 	fi
 
-	# Widgets
+	# Widgets - group by category (category::sublabel format) or show under "Services"
 	_motd_tree_collect_widgets
 	if [[ ${#_motd_widget_items[@]} -gt 0 ]]; then
-		_motd_tree_section "Services"
-		local total=${#_motd_widget_items[@]}
-		local idx=0
+		# Separate widgets into categories
+		local -a services_items=()
+		local -A category_items=()
+		local -a category_order=()
+
 		for item in "${_motd_widget_items[@]}"; do
-			idx=$((idx + 1))
 			local label="${item%%|*}"
 			local value="${item#*|}"
-			if [[ ${idx} -eq ${total} ]]; then
-				_motd_tree_item 1 "${label}" "${value}"
+
+			if [[ ${label} == *::* ]]; then
+				# Categorized widget: "category::sublabel"
+				local category="${label%%::*}"
+				local sublabel="${label#*::}"
+
+				# Track category order (first occurrence)
+				if [[ -z ${category_items[${category}]:-} ]]; then
+					category_order+=("${category}")
+				fi
+
+				# Append to category (use newline as separator)
+				category_items[${category}]+="${sublabel}|${value}"$'\n'
 			else
-				_motd_tree_item 0 "${label}" "${value}"
+				# Non-categorized widget -> Services
+				services_items+=("${label}|${value}")
 			fi
+		done
+
+		# Render "Services" section for non-categorized widgets
+		if [[ ${#services_items[@]} -gt 0 ]]; then
+			_motd_tree_section "Services"
+			local total=${#services_items[@]}
+			local idx=0
+			for item in "${services_items[@]}"; do
+				idx=$((idx + 1))
+				local label="${item%%|*}"
+				local value="${item#*|}"
+				if [[ ${idx} -eq ${total} ]]; then
+					_motd_tree_item 1 "${label}" "${value}"
+				else
+					_motd_tree_item 0 "${label}" "${value}"
+				fi
+			done
+		fi
+
+		# Render each category section
+		for category in "${category_order[@]}"; do
+			# Capitalize first letter for section header
+			local section_name="${category^}"
+			_motd_tree_section "${section_name}"
+
+			# Parse items for this category
+			local -a cat_items=()
+			while IFS= read -r line; do
+				[[ -n ${line} ]] && cat_items+=("${line}")
+			done <<< "${category_items[${category}]}"
+
+			local total=${#cat_items[@]}
+			local idx=0
+			for item in "${cat_items[@]}"; do
+				idx=$((idx + 1))
+				local label="${item%%|*}"
+				local value="${item#*|}"
+				if [[ ${idx} -eq ${total} ]]; then
+					_motd_tree_item 1 "${label}" "${value}"
+				else
+					_motd_tree_item 0 "${label}" "${value}"
+				fi
+			done
 		done
 	fi
 
