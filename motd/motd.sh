@@ -334,9 +334,9 @@ _motd_render_tree() {
 			fi
 		else
 			# Word-wrap the value with tree continuation line
-			# Continuation prefix: "  │                 " (tree_cont + 17 spaces)
+			# Continuation prefix: "  │" + 16 spaces = 19 chars (same as "  ├─ " + 14-char label)
 			local cont_prefix
-			cont_prefix=$(printf '  %b%s%b %17s' "${c_label}" "${tree_cont}" "${c_reset}" "")
+			cont_prefix=$(printf '  %b%s%b %15s' "${c_label}" "${tree_cont}" "${c_reset}" "")
 			local first_line=1
 
 			# Split value into words (space-separated)
