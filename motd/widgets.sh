@@ -326,6 +326,34 @@ _motd_widget_brew() {
 }
 
 # ============================================================================
+# CPU Temperature Widget (requires inxi)
+# ============================================================================
+_motd_widget_temp() {
+	local cache_file="${MOTD_CACHE_DIR}/temp"
+	local cache_ttl=30
+
+	# Return cached if fresh
+	if _motd_cache_fresh "${cache_file}" "${cache_ttl}"; then
+		_motd_cache_read "${cache_file}"
+		return 0
+	fi
+
+	# Command availability is pre-checked by motd_run_widgets
+
+	# Get CPU temperature via inxi
+	local output
+	output=$(inxi -s 2>/dev/null | grep -i cpu | awk '{print $4}')
+
+	if [[ -z ${output} ]]; then
+		return 1
+	fi
+
+	# Cache and return
+	_motd_cache_write "${cache_file}" "${output}"
+	printf "%s" "${output}"
+}
+
+# ============================================================================
 # Network Status Widget
 # ============================================================================
 _motd_widget_network() {
@@ -402,7 +430,7 @@ _motd_widget_network() {
 declare -A _motd_cmd_available 2>/dev/null || true
 _motd_init_cmd_cache() {
 	local cmd
-	for cmd in docker tailscale wg pveversion pct qm brew jq; do
+	for cmd in docker tailscale wg pveversion pct qm brew jq inxi; do
 		if command -v "${cmd}" >/dev/null 2>&1; then
 			_motd_cmd_available[${cmd}]=1
 		fi
@@ -419,6 +447,13 @@ motd_run_widgets() {
 
 	# Initialize command cache once
 	_motd_init_cmd_cache
+
+	# CPU Temperature widget (requires inxi)
+	if _motd_has_cmd inxi; then
+		if widget_output=$(_motd_widget_temp 2>/dev/null); then
+			print_kv "temp" "${widget_output}"
+		fi
+	fi
 
 	# Docker widget
 	if _motd_has_cmd docker; then
