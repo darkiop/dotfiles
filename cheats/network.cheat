@@ -1,5 +1,8 @@
 % network
 
+# check if port on destination is reachable
+nc -zv -w 3 <ip> <port>
+
 # show ip interfaces and addresses
 ip a
 
