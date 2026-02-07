@@ -108,7 +108,7 @@ dotfiles_prompt_ip() {
       ip="$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || true)"
     fi
     if [[ -z "${ip}" ]] && command -v ifconfig >/dev/null 2>&1; then
-      ip="$(ifconfig 2>/dev/null | awk '/inet / {print $2}' | grep -v '^127\\.' | grep -v '^169\\.254\\.' | head -n 1 || true)"
+      ip="$(ifconfig 2>/dev/null | awk '/inet / {print $2}' | grep -v '^127\.' | grep -v '^169\.254\.' | head -n 1 || true)"
     fi
     [[ -n "${ip}" ]] && print -r -- "${ip}"
     return 0
@@ -131,9 +131,9 @@ dotfiles_prompt_ip() {
     ips=("${(@f)$(
       "${ip_cmd}" -4 a 2>/dev/null |
         grep 'inet' |
-        grep -Eo '([0-9]*\\.){3}[0-9]*' |
-        grep -v '^127\\.' |
-        grep -v '^169\\.254\\.' ||
+        grep -Eo '([0-9]*\.){3}[0-9]*' |
+        grep -v '^127\.' |
+        grep -v '^169\.254\.' ||
         true
     )}")
   fi
@@ -142,9 +142,9 @@ dotfiles_prompt_ip() {
     ips=("${(@f)$(
       hostname -I 2>/dev/null |
         tr ' ' '\n' |
-        grep -Eo '([0-9]*\\.){3}[0-9]*' |
-        grep -v '^127\\.' |
-        grep -v '^169\\.254\\.' ||
+        grep -Eo '([0-9]*\.){3}[0-9]*' |
+        grep -v '^127\.' |
+        grep -v '^169\.254\.' ||
         true
     )}")
   fi
