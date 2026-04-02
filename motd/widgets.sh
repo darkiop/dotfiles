@@ -60,6 +60,19 @@ _motd_widget_docker() {
 
 	# Command availability is pre-checked by motd_run_widgets
 
+	# On macOS, check Docker socket first to avoid triggering docker-credential-desktop
+	# (which prompts for macOS Keychain access even for read-only operations)
+	if [[ ${DOTFILES_OS:-} == "darwin" ]]; then
+		local _sock=""
+		local _s
+		for _s in "${HOME}/.docker/run/docker.sock" \
+		          "${HOME}/.docker/desktop/docker.sock" \
+		          "/var/run/docker.sock"; do
+			[[ -S ${_s} ]] && _sock="${_s}" && break
+		done
+		[[ -z ${_sock} ]] && return 1
+	fi
+
 	# Get docker stats (suppress errors if docker daemon not running)
 	local running stopped total output
 	if ! running=$(docker ps -q 2>/dev/null | wc -l | tr -d ' '); then
