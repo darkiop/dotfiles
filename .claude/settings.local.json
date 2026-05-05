@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(schedule)",
+      "Skill(schedule:*)",
+      "Bash(git -C /home/darkiop/dotfiles add motd/widgets.sh)",
+      "Bash(git -C /home/darkiop/dotfiles status)",
+      "Bash(git -C /home/darkiop/dotfiles commit -m ':*)",
+      "Bash(git -C /home/darkiop/dotfiles push)",
+      "Bash(git -C /home/darkiop/dotfiles log -1 --oneline)",
+      "Bash(git add:*)"
+    ]
+  }
+}
