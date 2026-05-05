@@ -1,0 +1,28 @@
+% journalctl - system and application logs
+
+# show all logs of service
+journalctl UNIT=<service>
+
+# show live log of service
+journalctl -f -u <service_active>
+
+# delete journal logs older than 2 days
+journalctl --vacuum-time=2days
+
+# logs since yesterday
+journalctl --since yesterday
+
+# logs since the last boot
+journalctl -b
+
+# only logs with errors and warnings
+journalctl -p warning
+
+# only kernel messages
+journalctl -k
+
+$ service_inactive: systemctl list-units --type=service --state=inactive | awk '{print $1}' | grep .service | sed 's/.service$//'
+$ service_active: systemctl list-units --type=service --state=active | awk '{print $1}' | grep .service | sed 's/.service$//'
+$ service_enabled: systemctl list-unit-files --type=service --state=enabled | awk '{print $1}' | grep .service | sed 's/.service$//'
+$ service_disabled: systemctl list-unit-files --type=service --state=disabled | awk '{print $1}' | grep .service | sed 's/.service$//'
+$ service: systemctl list-units --type=service --all | awk '{print $1}' | grep .service | sed 's/.service$//'
