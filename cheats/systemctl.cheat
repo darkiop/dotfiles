@@ -42,15 +42,6 @@ systemctl daemon-reload
 # list all available timers
 systemctl list-timers --all
 
-# show all logs of service
-journalctl UNIT=<service>
-
-# show live log of service
-journalctl -f -u <service_active>
-
-# delete journal logs older than 2 days
-journalctl --vacuum-time=2days
-
 # reboot to uefi
 systemctl reboot --firmware-setup
 
