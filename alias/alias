@@ -176,6 +176,7 @@ fi
 
 # ls or lsd
 if command -v eza >/dev/null 2>&1; then
+	export EZA_CONFIG_DIR="${HOME}/.config/eza"
 	alias ls='eza --sort type --icons --git'
 	alias l='eza -l --sort type --icons --git'
 	alias ll='eza -la --sort type --icons --git --colour=always'

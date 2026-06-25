@@ -406,6 +406,37 @@ function INSTALL_HELIX() {
 }
 
 # -------------------------------------------------------------
+# Install: bat (catppuccin theme)
+# -------------------------------------------------------------
+function INSTALL_BAT() {
+	MESSAGE blue "[ Install bat catppuccin theme ]"
+	if [[ ! -d "${HOME}"/.config/bat/themes ]]; then
+		mkdir -p "${HOME}"/.config/bat/themes
+	fi
+	MESSAGE lightblue "Creating symlink for bat config from dotfiles/config/bat/config to ~/.config/bat/config"
+	ln -sf -- "${HOME}"/dotfiles/config/bat/config "${HOME}"/.config/bat/config
+	MESSAGE lightblue "Creating symlink for bat themes from dotfiles/config/bat/themes to ~/.config/bat/themes"
+	ln -sf -- "${HOME}"/dotfiles/config/bat/themes "${HOME}"/.config/bat/themes
+	# Rebuild bat theme cache
+	if command -v bat >/dev/null 2>&1; then
+		bat cache --build
+	elif command -v batcat >/dev/null 2>&1; then
+		batcat cache --build
+	fi
+}
+
+# Install: eza (catppuccin theme)
+# -------------------------------------------------------------
+function INSTALL_EZA() {
+	MESSAGE blue "[ Install eza catppuccin theme ]"
+	if [[ ! -d "${HOME}"/.config/eza ]]; then
+		mkdir -p "${HOME}"/.config/eza
+	fi
+	MESSAGE lightblue "Creating symlink for theme.yml from dotfiles/config/eza/theme.yml to ~/.config/eza/theme.yml"
+	ln -sf -- "${HOME}"/dotfiles/config/eza/theme.yml "${HOME}"/.config/eza/theme.yml
+}
+
+# -------------------------------------------------------------
 # Install gut submodules
 # -------------------------------------------------------------
 function INSTALL_GIT_SUBMODULES() {
@@ -574,6 +605,8 @@ function INSTALL_DOTFILES() {
 	INSTALL_DEPENDENCIES
 	INSTALL_VIMRC
 	INSTALL_HELIX
+	INSTALL_BAT
+	INSTALL_EZA
 	INSTALL_TMUX
 	INSTALL_FZF
 	LINK_DOTFILES
