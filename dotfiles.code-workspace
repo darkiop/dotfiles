@@ -6,7 +6,7 @@
 	],
 	"settings": {
 		"editor.tabSize": 2,
-		"workbench.colorTheme": "Obsidian Dark",
+		"workbench.colorTheme": "Catppuccin Mocha",
 		"ansible.python.interpreterPath": "/usr/bin/python3"
 	}
 }
