@@ -1,6 +1,6 @@
 # https://docs.helix-editor.com/editor.html
 
-theme = "flexoki_dark"
+theme = "catppuccin_mocha"
 
 [editor]
 line-number = "absolute"
