@@ -8,7 +8,10 @@
       "Bash(git -C /home/darkiop/dotfiles commit -m ':*)",
       "Bash(git -C /home/darkiop/dotfiles push)",
       "Bash(git -C /home/darkiop/dotfiles log -1 --oneline)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(tmux show *)",
+      "Bash(infocmp -x)",
+      "Bash(tmux source-file *)"
     ]
   }
 }
