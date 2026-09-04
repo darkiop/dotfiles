@@ -317,6 +317,12 @@ tmux_conf_copy_to_os_clipboard=false
 # -- user customizations -------------------------------------------------------
 # this is the place to override or undo settings
 
+# Push copy-mode selection to the outer terminal's clipboard via OSC 52.
+# Works over SSH on headless hosts (no xsel/xclip/pbcopy needed).
+# iTerm2: enable Settings > General > Selection >
+#   "Applications in terminal may access clipboard".
+set -g set-clipboard on
+
 # Inherit the shell you started tmux from (bash vs zsh).
 # DOTFILES_TMUX_SHELL is exported by ~/dotfiles/bashrc and ~/dotfiles/zshrc.
 if-shell 'test -n "$DOTFILES_TMUX_SHELL" && test -x "$DOTFILES_TMUX_SHELL"' 'set -g default-shell "$DOTFILES_TMUX_SHELL"'
