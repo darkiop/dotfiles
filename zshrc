@@ -123,8 +123,8 @@ fi
 
 # MOTD (opt-in)
 if dotfiles_flag_enabled DOTFILES_ENABLE_MOTD && dotfiles_flag_enabled DOTFILES_ENABLE_MOTD_AUTO_RUN; then
-  if [[ -s ~/dotfiles/motd/motd.sh ]]; then
-    source ~/dotfiles/motd/motd.sh
+  if [[ -s ~/dotfiles/motd/motd-catppuccin-mocha.sh ]]; then
+    source ~/dotfiles/motd/motd-catppuccin-mocha.sh
   fi
 fi
 

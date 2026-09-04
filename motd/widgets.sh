@@ -257,7 +257,7 @@ _motd_widget_proxmox_ids() {
 		return 0
 	fi
 
-	local c_green=$'\x1b[38;5;83m'
+	local c_green="${COLOR_SUCCESS:-$'\x1b[38;5;83m'}"
 	local c_red=$'\x1b[38;5;196m'
 	local c_reset=$'\x1b[m'
 	local output=""
@@ -401,8 +401,7 @@ _motd_widget_network() {
 		return 1
 	fi
 
-	# Color codes (hardcoded - dotfiles.config uses non-interpreted escapes)
-	local c_green=$'\x1b[38;5;83m'
+	local c_green="${COLOR_SUCCESS:-$'\x1b[38;5;83m'}"
 	local c_red=$'\x1b[38;5;196m'
 	local c_reset=$'\x1b[m'
 

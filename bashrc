@@ -36,7 +36,7 @@ export DOTFILES_TMUX_SHELL="${BASH:-$(command -v bash 2>/dev/null || true)}"
 
 # Components that must be loaded eagerly (have keybindings or are always needed)
 if dotfiles_flag_enabled DOTFILES_ENABLE_PROMPT; then
-  source ~/dotfiles/components/bash_prompt
+  source ~/dotfiles/components/bash_prompt_catppuccin_mocha
 fi
 if dotfiles_flag_enabled DOTFILES_ENABLE_BASH_COMPLETION; then
   source ~/dotfiles/components/bash_completion
@@ -112,8 +112,8 @@ fi
 
 # MOTD (opt-in)
 if dotfiles_flag_enabled DOTFILES_ENABLE_MOTD && dotfiles_flag_enabled DOTFILES_ENABLE_MOTD_AUTO_RUN; then
-  if [[ -s ~/dotfiles/motd/motd.sh ]]; then
-    source ~/dotfiles/motd/motd.sh
+  if [[ -s ~/dotfiles/motd/motd-catppuccin-mocha.sh ]]; then
+    source ~/dotfiles/motd/motd-catppuccin-mocha.sh
   fi
 fi
 
@@ -209,3 +209,7 @@ if dotfiles_flag_enabled DOTFILES_ENABLE_IOBROKER && [[ -x /opt/iobroker/iobroke
   source ~/.iobroker/iobroker_completions   # Enable ioBroker command auto-completion
   source ~/.iobroker/npm_command_fix        # Forces npm to run as iobroker when inside the iobroker installation dir
 fi
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

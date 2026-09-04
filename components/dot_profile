@@ -105,8 +105,8 @@ dot_profile() {
 	fi
 
 	# Add MOTD if exists
-	if [[ -f "${DOTFILES_DIR}/motd/motd.sh" ]]; then
-		components+=("${DOTFILES_DIR}/motd/motd.sh")
+	if [[ -f "${DOTFILES_DIR}/motd/motd-catppuccin-mocha.sh" ]]; then
+		components+=("${DOTFILES_DIR}/motd/motd-catppuccin-mocha.sh")
 		component_names+=("motd")
 	fi
 
