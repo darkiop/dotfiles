@@ -21,8 +21,17 @@ docker images
 # delete old / unused images
 docker image prune
 
-# delte old / unused volumes
+# delete old / unused volumes
 docker volume prune
+
+# delete unused container
+docker container prune -f
+
+# delete old / unused networks
+docker network prune
+
+# Remove all unused Docker images, containers, networks, volumes.
+docker system prune -af --volumes
 
 # Build an image from the Dockerfile in the current directory and tag the image
 docker build -t <image>:<version> .
