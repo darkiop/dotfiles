@@ -1,6 +1,6 @@
 # TODO
 
-Zusammengeführt aus `IDEAS.md` und `IMPROVEMENTS.md`. Letzte Aktualisierung: 2026-04-02.
+Zusammengeführt aus `IDEAS.md` und `IMPROVEMENTS.md`. Letzte Aktualisierung: 2026-09-04 (Backlog-Audit gegen Code-Stand).
 
 **Status-Werte:** `offen` | `in Arbeit` | `erledigt` | `verworfen`
 **Prioritäten:** `kritisch` | `hoch` | `mittel` | `niedrig`
@@ -14,9 +14,9 @@ Zusammengeführt aus `IDEAS.md` und `IMPROVEMENTS.md`. Letzte Aktualisierung: 20
 | [IMP-001](#imp-001) | ioBroker Source-Validierung | Sicherheit | kritisch | 30 min | offen | Existenzprüfung vor dem Sourcen von ioBroker-Dateien hinzufügen |
 | [IMP-002](#imp-002) | Hardcodierten Username entfernen | Sicherheit | kritisch | 30 min | offen | `$USER == "darkiop"` Check in ioBroker-Integration entfernen oder via Feature-Flag konfigurierbar machen |
 | [IMP-003](#imp-003) | WOL MAC-Adressen auslagern | Sicherheit | kritisch | 1h | offen | MAC-Adressen aus alias-Datei in verschlüsselte Config oder Umgebungsvariablen verschieben |
-| [IMP-004](#imp-004) | Secret-Scanning | Sicherheit | kritisch | 3–4h | offen | Pre-Commit Hooks für API-Keys, Tokens, Credentials (gitleaks/trufflehog) |
+| [IMP-004](#imp-004) | Secret-Scanning + Scanner | Sicherheit | kritisch | 3–4h | offen | Pre-Commit Hooks + `dot secrets-scan` für API-Keys, Tokens, Credentials (gitleaks/trufflehog). Vereint mit ehem. P013 |
 | [IMP-005](#imp-005) | IPv6-Erkennung SSH tmux rename | Bug | kritisch | 1h | offen | Regex für IP-Erkennung um IPv6 erweitern (`bashrc:170`, `zshrc:161`) |
-| [IMP-006](#imp-006) | Docker Widget Daemon-Status | Bug | hoch | 1h | offen | Unterscheiden zwischen "Daemon down" und "0 Container laufen" (`motd/widgets.sh:61-62`) |
+| [IMP-006](#imp-006) | Docker Widget Daemon/Leer-Status | Bug | hoch | 1h | offen | Widget auch bei 0 Containern anzeigen (solange Daemon läuft) und "Daemon down" davon unterscheiden (`motd/widgets.sh:97-99`). Vereint mit ehem. IDX-005 |
 | [IMP-007](#imp-007) | Startup-Profiler | Performance | mittel | 2–3h | offen | `dot profile` Command zur Messung der Shell-Startzeit pro Komponente implementieren |
 | [IMP-008](#imp-008) | Lazy-Loading Komponenten | Performance | mittel | 3–5h | offen | Selten genutzte Komponenten erst bei Aufruf laden statt beim Shell-Start |
 | [IMP-009](#imp-009) | Feature-Flag-Caching | Performance | mittel | 2–3h | offen | Flags einmal vorab berechnen statt 40+ mal beim Start aufrufen |
@@ -26,7 +26,7 @@ Zusammengeführt aus `IDEAS.md` und `IMPROVEMENTS.md`. Letzte Aktualisierung: 20
 | [IMP-013](#imp-013) | Architektur-Diagramm | Dokumentation | mittel | 1h | offen | Visuelles Diagramm der Ladereihenfolge in README.md ergänzen |
 | [IMP-014](#imp-014) | Troubleshooting-Guide | Dokumentation | mittel | 2–3h | offen | Guide für häufige Probleme: langsamer Shell-Start, macOS bash 3.2, WSL, Container |
 | [IMP-015](#imp-015) | Kompatibilitätsmatrix | Dokumentation | mittel | 1–2h | offen | Dokumentieren welche Features bash 4+/zsh 5.0+ benötigen und was auf macOS vs. Linux läuft |
-| [IMP-016](#imp-016) | Error Handling in Scripts | Code-Qualität | mittel | 2–3h | offen | `set -euo pipefail` in kritische Scripts einfügen (`install.sh`, `motd/motd.sh`, `motd/widgets.sh`) |
+| [IMP-016](#imp-016) | Error Handling in MOTD-Scripts | Code-Qualität | niedrig | 1–2h | offen | `set -euo pipefail` in `motd/motd.sh`, `motd/widgets.sh` + Widget-Scripts (`install.sh` hat bereits `set -e`) |
 | [IMP-017](#imp-017) | PATH-Management vereinfachen | Code-Qualität | mittel | 1h | offen | Array-basiertes PATH-Management statt wiederholter `ADD_TO_PATH` Aufrufe |
 | [IMP-018](#imp-018) | FZF-Komponente aufteilen | Code-Qualität | mittel | 2–3h | offen | `components/fzf` (166 Zeilen) in `fzf_core` und `fzf_tab_completion` aufteilen |
 | [IMP-019](#imp-019) | Shellcheck Suppressions reduzieren | Code-Qualität | mittel | 3–5h | offen | 36 Suppressions (SC2312, SC2086, SC1090) in 13 Dateien auditieren und reduzieren |
@@ -35,23 +35,19 @@ Zusammengeführt aus `IDEAS.md` und `IMPROVEMENTS.md`. Letzte Aktualisierung: 20
 | [IMP-022](#imp-022) | Cheats reorganisieren | Organisation | niedrig | 2h | offen | 57 Cheat-Dateien in Kategorie-Unterverzeichnisse (`docker/`, `git/`, `kubernetes/`) sortieren |
 | [IMP-023](#imp-023) | CI/CD Pipeline | Testing | niedrig | 3–5h | offen | GitHub Actions mit Shellcheck-Validierung für automatisierte Qualitätssicherung |
 | [IMP-024](#imp-024) | BATS Test-Suite | Testing | niedrig | 8–12h | offen | Integration Tests mit Bash Automated Testing System für Komponenten, Flags, FZF, MOTD |
-| [IMP-025](#imp-025) | dot doctor erweitern | QA | niedrig | 3–4h | offen | Syntax-Check, Flag-Validierung (Typos), Symlink-Integrität und Broken-Source-Detection hinzufügen |
 | [IMP-026](#imp-026) | WSL-Version erkennen | Kompatibilität | niedrig | 1h | offen | `DOTFILES_WSL_VERSION` (1 oder 2) zusätzlich zum bestehenden boolean `DOTFILES_WSL` hinzufügen |
 | [IMP-027](#imp-027) | macOS bash-Upgrade Guide | Dokumentation | niedrig | 1h | offen | Upgrade-Anleitung für bash 4+ auf macOS in README.md (FZF Tab-Completion benötigt bash 4+) |
 | [IDX-001](#idx-001) | Navi als Submodule | Integration | mittel | 3–5h | offen | https://github.com/denisidoro/navi als git Submodule integrieren |
 | [IDX-002](#idx-002) | Agent-Instruktionen überarbeiten | Dokumentation | mittel | 1–2h | offen | AGENTS.md, CLAUDE.md, copilot-instructions.md: Texte auf Englisch, natürliche Sprache, kein KI-Speak |
 | [IDX-003](#idx-003) | Windows PowerShell (oh-my-posh) | Kompatibilität | niedrig | 10–15h | offen | PowerShell-Unterstützung mit oh-my-posh für Windows-Umgebungen |
 | [IDX-004](#idx-004) | Docker Output Colorizer | Integration | niedrig | 1–2h | offen | Optional: better-docker-ps oder docker-color-output einbinden |
-| [IDX-005](#idx-005) | MOTD Docker Widget ohne Container | Bug | hoch | 1h | offen | Docker Widget auch anzeigen wenn keine Container laufen (aktuell nur bei >0 Containern) |
 | [IDX-006](#idx-006) | MOTD Standardzeilen als Widgets | Feature | mittel | 3–5h | offen | Aktuelle hartcodierte MOTD-Ausgaben in das Widget-System überführen |
 | [P001](#p001) | kubectl fzf Helpers | Integration | mittel | 3–5h | offen | `kpods`, `klogs`, `kexec`, `kdesc`, `kctx`, `kns` — analog zu fzf_docker |
-| [P002](#p002) | Systemd Unit Manager | Feature | hoch | 2–3h | offen | `sctl` mit Start/Stop/Restart/Status-Actions und Log-Preview via fzf |
 | [P004](#p004) | Environment Switcher | Feature | mittel | 3–4h | offen | `dotenv switch <name>` für dev/staging/prod Konfigurationen aus `config/environments/` |
 | [P005](#p005) | Extended Git Helpers | Feature | hoch | 4–6h | offen | `gwip`, `gundo`, `gclean`, `gworktree`, `gbrowse`, `gblame-fzf` in fzf_git ergänzen |
-| [P007](#p007) | Config Validator | QA | mittel | 3–4h | offen | `dot validate` mit Shellcheck, Deprecated-Feature-Erkennung und Symlink-Check |
+| [P007](#p007) | Config Validator + dot doctor | QA | mittel | 3–4h | offen | `dot validate`: Shellcheck, Syntax-Check, Flag-Typo-Erkennung, Deprecated-Features (Symlink-Check bereits in `dot_doctor`). Vereint mit ehem. IMP-025 |
 | [P008](#p008) | Snippet Manager | Produktivität | mittel | 4–6h | offen | `snip add/run/list/edit/delete` mit Template-Variablen (`{{var}}`) und fzf-Picker |
 | [P009](#p009) | Remote Host Manager | Netzwerk | mittel | 5–7h | offen | `hosts add/list/edit/connect/tunnel` mit Metadaten, Tags und Storage in `config/hosts.json` |
-| [P013](#p013) | Secret Scanner | Sicherheit | hoch | 3–4h | offen | `dot secrets-scan` mit gitleaks/trufflehog, Custom-Patterns und Pre-Commit-Hook (optional) |
 | [P014](#p014) | Audit Log | Sicherheit | mittel | 4–5h | offen | `dot audit` — automatisches Logging von Installs, Updates und Config-Änderungen |
 | [P015](#p015) | Cloud CLI Helpers | Integration | niedrig | 8–12h | offen | fzf-Helpers für AWS (`awsp`, `ec2fzf`), GCP (`gcpfzf`) und Azure (`azfzf`) |
 | [P016](#p016) | Database Connection Manager | Integration | niedrig | 4–6h | offen | `dbconnect` mit Picker für PostgreSQL/MySQL/Redis/MongoDB, GPG-verschlüsselte Credentials |
@@ -98,9 +94,14 @@ Dateien `bashrc:184-185`, `zshrc:173-174` sourcen ioBroker-Dateien ohne Existenz
 ---
 
 ### IMP-004
-**Secret-Scanning** · Sicherheit · kritisch
+**Secret-Scanning + Scanner** · Sicherheit · kritisch
 
-Keine Pre-Commit Hooks für API-Keys, Tokens, Credentials. gitleaks oder trufflehog einrichten. Siehe auch [P013](#p013).
+Keine Pre-Commit Hooks für API-Keys, Tokens, Credentials. gitleaks oder trufflehog einrichten. Vereint mit ehem. P013:
+
+- `dot secrets-scan` — scannt alle Dotfiles nach versehentlich commiteten Secrets
+- Optionaler Pre-Commit-Hook, Custom-Patterns, Whitelist für False Positives
+- Neue Datei: `components/secret_scanner`, Feature-Flag: `DOTFILES_ENABLE_SECRET_SCANNER`
+- Vorhandene Klartext-Secrets siehe [IMP-003](#imp-003) (WOL MAC-Adressen)
 
 ---
 
@@ -121,16 +122,12 @@ fi
 ---
 
 ### IMP-006
-**Docker Widget Daemon-Status** · Bug · hoch
+**Docker Widget Daemon/Leer-Status** · Bug · hoch
 
-`motd/widgets.sh:61-62` — Widget zeigt "0 running" auch wenn Docker Daemon nicht läuft. Daemon-Status vorab prüfen und getrennt ausgeben.
+`motd/widgets.sh:97-99` — Widget macht aktuell `return 1` sowohl wenn der Daemon nicht läuft als auch bei 0 Containern; beide Zustände sind ununterscheidbar und unsichtbar. Vereint mit ehem. IDX-005:
 
----
-
-### IDX-005
-**MOTD Docker Widget ohne Container** · Bug · hoch
-
-Docker Widget wird aktuell nur angezeigt wenn Container vorhanden sind. Auch bei 0 Containern anzeigen, solange der Daemon läuft.
+- Daemon-Status vorab prüfen (`docker info`) und "Daemon down" getrennt ausgeben
+- Bei laufendem Daemon auch mit 0 Containern anzeigen statt zu verstecken
 
 ---
 
@@ -217,9 +214,9 @@ Tabellarisch dokumentieren: welche Features bash 4+ oder zsh 5.0+ benötigen, wa
 ---
 
 ### IMP-016
-**Error Handling in Scripts** · Code-Qualität · mittel
+**Error Handling in MOTD-Scripts** · Code-Qualität · niedrig
 
-Nur 10 Dateien nutzen `set -e`, nur 5 nutzen `set -o pipefail`. `set -euo pipefail` in `install.sh`, `motd/motd.sh`, `motd/widgets.sh` und alle Widget-Scripts einfügen.
+`install.sh` hat bereits `set -e`. Verbleibend: `set -euo pipefail` in `motd/motd.sh`, `motd/widgets.sh` und alle Widget-Scripts einfügen. Vorsicht bei Widgets, die bewusst mit non-zero exits arbeiten (z.B. Docker-Widget `return 1`).
 
 ---
 
@@ -254,7 +251,7 @@ Nur 10 Dateien nutzen `set -e`, nur 5 nutzen `set -o pipefail`. `set -euo pipefa
 ### IMP-021
 **Plugin-System** · Architektur · niedrig
 
-`plugins/` Verzeichnis mit Auto-Discovery für User-Erweiterungen ohne Core-Dateien ändern zu müssen. Siehe [P010](#p010).
+`plugins/` Verzeichnis mit Auto-Discovery für User-Erweiterungen ohne Core-Dateien ändern zu müssen.
 
 ---
 
@@ -276,13 +273,6 @@ GitHub Actions Workflow mit Shellcheck-Validierung für automatisierte Syntax- u
 **BATS Test-Suite** · Testing · niedrig
 
 Bash Automated Testing System einführen. Tests für: Komponenten-Loading (bash/zsh), Feature-Flags, FZF-Komponenten, Git-Alias-Funktionen, MOTD-Rendering.
-
----
-
-### IMP-025
-**dot doctor erweitern** · QA · niedrig
-
-Neue Checks: Syntax-Validierung aller Shell-Dateien, Feature-Flag-Validierung (Typos, unbekannte Flags), Symlink-Integrität, Broken-Source-Detection.
 
 ---
 
@@ -317,7 +307,7 @@ https://github.com/denisidoro/navi als git Submodule analog zu fzf/oh-my-zsh ein
 ### IDX-003
 **Windows PowerShell (oh-my-posh)** · Kompatibilität · niedrig
 
-PowerShell-Unterstützung für Windows mit oh-my-posh als Prompt-Framework. Siehe auch [P023](#p023).
+PowerShell-Unterstützung für Windows mit oh-my-posh als Prompt-Framework.
 
 ---
 
@@ -345,16 +335,6 @@ Aktuelle hartcodierte MOTD-Ausgaben (Hostname, Uptime, Last Login etc.) in das W
 
 ---
 
-### P002
-**Systemd Unit Manager** · Feature · hoch
-
-`sctl` — interaktiver Service-Picker mit Actions (start, stop, restart, reload, enable, disable, status), Preview mit aktuellem Status und letzten Logs, sudo-Handling.
-
-- Neue Datei: `components/fzf_systemctl`
-- Feature-Flag: `DOTFILES_ENABLE_SYSTEMCTL_FZF`
-
----
-
 ### P004
 **Environment Switcher** · Feature · mittel
 
@@ -376,9 +356,9 @@ Aktuelle hartcodierte MOTD-Ausgaben (Hostname, Uptime, Last Login etc.) in das W
 ---
 
 ### P007
-**Config Validator** · QA · mittel
+**Config Validator + dot doctor** · QA · mittel
 
-`dot validate` — Shellcheck-Integration, Erkennung veralteter Features, Symlink- und Referenz-Check, Warnung bei unbekannten Flags.
+`dot validate` — Shellcheck-Integration, Syntax-Validierung aller Shell-Dateien, Feature-Flag-Validierung (Typos, unbekannte Flags), Erkennung veralteter Features, Referenz-/Broken-Source-Check, Warnung bei unbekannten Flags. Vereint mit ehem. IMP-025 (Symlink-Integrität ist bereits in `dot_doctor:137` implementiert).
 
 - Erweiterung: `components/dot_doctor`
 - Flag: `DOTFILES_ENABLE_DOT_DOCTOR` (bestehend)
@@ -402,18 +382,6 @@ Aktuelle hartcodierte MOTD-Ausgaben (Hostname, Uptime, Last Login etc.) in das W
 
 - Neue Datei: `components/host_manager`
 - Feature-Flag: `DOTFILES_ENABLE_HOST_MANAGER`
-
----
-
-### P013
-**Secret Scanner** · Sicherheit · hoch
-
-`dot secrets-scan` — scannt alle Dotfiles nach versehentlich commiteten Secrets. gitleaks oder trufflehog, Custom-Patterns, optionaler Pre-Commit-Hook, Whitelist für False Positives.
-
-- Neue Datei: `components/secret_scanner`
-- Feature-Flag: `DOTFILES_ENABLE_SECRET_SCANNER`
-
-Überschneidet sich mit [IMP-004](#imp-004).
 
 ---
 
