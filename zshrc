@@ -193,7 +193,7 @@ if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_TMUX_RENAME && [[ -n "${TMUX}" ]]; 
 fi
 
 # ioBroker
-if dotfiles_flag_enabled DOTFILES_ENABLE_IOBROKER && [[ -x /opt/iobroker/iobroker && $USER == "darkiop" ]]; then
+if dotfiles_flag_enabled DOTFILES_ENABLE_IOBROKER && [[ -x /opt/iobroker/iobroker ]]; then
   source ~/.iobroker/iobroker_completions
   source ~/.iobroker/npm_command_fix
 fi

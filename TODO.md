@@ -12,7 +12,7 @@ Zusammengeführt aus `IDEAS.md` und `IMPROVEMENTS.md`. Letzte Aktualisierung: 20
 | ID | Titel | Kategorie | Priorität | Aufwand | Status | Beschreibung |
 |----|-------|-----------|-----------|---------|--------|--------------|
 | [IMP-001](#imp-001) | ioBroker Source-Validierung | Sicherheit | kritisch | 30 min | offen | Existenzprüfung vor dem Sourcen von ioBroker-Dateien hinzufügen |
-| [IMP-002](#imp-002) | Hardcodierten Username entfernen | Sicherheit | kritisch | 30 min | offen | `$USER == "darkiop"` Check in ioBroker-Integration entfernen oder via Feature-Flag konfigurierbar machen |
+| [IMP-002](#imp-002) | Hardcodierten Username entfernen | Sicherheit | kritisch | 30 min | erledigt | `$USER == "darkiop"` Check in ioBroker-Integration entfernen oder via Feature-Flag konfigurierbar machen |
 | [IMP-003](#imp-003) | WOL MAC-Adressen auslagern | Sicherheit | kritisch | 1h | offen | MAC-Adressen aus alias-Datei in verschlüsselte Config oder Umgebungsvariablen verschieben |
 | [IMP-004](#imp-004) | Secret-Scanning + Scanner | Sicherheit | kritisch | 3–4h | offen | Pre-Commit Hooks + `dot secrets-scan` für API-Keys, Tokens, Credentials (gitleaks/trufflehog). Vereint mit ehem. P013 |
 | [IMP-005](#imp-005) | IPv6-Erkennung SSH tmux rename | Bug | kritisch | 1h | offen | Regex für IP-Erkennung um IPv6 erweitern (`bashrc:170`, `zshrc:161`) |
@@ -80,9 +80,9 @@ Dateien `bashrc:184-185`, `zshrc:173-174` sourcen ioBroker-Dateien ohne Existenz
 ---
 
 ### IMP-002
-**Hardcodierten Username entfernen** · Sicherheit · kritisch
+**Hardcodierten Username entfernen** · Sicherheit · kritisch · erledigt
 
-`bashrc:183`, `zshrc:172` prüfen `$USER == "darkiop"`. Entfernen oder via Feature-Flag konfigurierbar machen, damit das Repo portabel bleibt.
+`bashrc:208`, `zshrc:196` prüften `$USER == "darkiop"`. Check entfernt — `DOTFILES_ENABLE_IOBROKER` Flag + Binary-Existenzcheck reichen zur Gate-Steuerung, Repo bleibt portabel.
 
 ---
 

@@ -205,7 +205,7 @@ if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_TMUX_RENAME && [[ -n $TMUX ]]; then
 fi
 
 # ioBroker
-if dotfiles_flag_enabled DOTFILES_ENABLE_IOBROKER && [[ -x /opt/iobroker/iobroker && $USER == "darkiop" ]]; then
+if dotfiles_flag_enabled DOTFILES_ENABLE_IOBROKER && [[ -x /opt/iobroker/iobroker ]]; then
   source ~/.iobroker/iobroker_completions   # Enable ioBroker command auto-completion
   source ~/.iobroker/npm_command_fix        # Forces npm to run as iobroker when inside the iobroker installation dir
 fi
