@@ -1,6 +1,6 @@
 # 📋 Backlog
 
-![open](https://img.shields.io/badge/open-37-blue) ![done](https://img.shields.io/badge/done-28-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
+![open](https://img.shields.io/badge/open-38-blue) ![done](https://img.shields.io/badge/done-28-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
 
 Note: entries are never removed from this backlog, only status changes (done, out-of-scope, etc.).
 
@@ -40,6 +40,7 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | BUG-012 | `autoupdate.sh` retries a network `git pull` on every shell start after one failure                        | 🐛 Bug | ✅ done [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603) | `autoupdate.sh:52` resets the counter only when the subshell exits 0. A failed pull leaves the count above 20, so every subsequent shell blocks on the network. Reset (or back off) on failure too, and add a timeout |
 | BUG-015 | `motd/motd.sh` tree renderer needs bash 4+ (`local -A category_items`)                                     | 🐛 Bug | ✅ done [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603) | breaks on stock macOS bash 3.2, the default `DOTFILES_MOTD_STYLE=tree`. Guard on `BASH_VERSINFO` and fall back to `default` style, or replace the associative array |
 | BUG-018 | `ADD_TO_PATH` appends, so personal bin dirs rank below system paths                                        | 🐛 Bug | ✅ done [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603) | `bashrc:20-26`, `zshrc:24-30`. Verified: `~/bin`, `~/.local/bin`, `~/.cargo/bin` end up after `/usr/bin`, so user-installed tools cannot shadow system ones. Overlaps DOC-004 |
+| BUG-021 | `motd/widgets.sh:536` uses `declare -A _motd_cmd_available`, so command gating breaks on bash 3.2 | 🐛 Bug | 🔲 open | same class as BUG-015 ([`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603)), which only covered `motd.sh`. The `declare` is guarded with `2>/dev/null || true`, so on stock macOS bash 3.2 it silently stays an indexed array: every string subscript evaluates to 0, `_motd_cmd_available[docker]=1` writes index 0, and `_motd_has_cmd <anything>` then returns true. Reproduced: `x[docker]=1` makes `${x[nonexistent]}` read `1`. Consequence: every built-in widget runs on every login even when its tool is missing. Replace the map with a delimited string plus a `case` test |
 
 ### ⚡ Performance
 
@@ -199,6 +200,7 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 
 | Effort | Task                                          | Type           | File(s)                                     |
 |--------|-----------------------------------------------|----------------|---------------------------------------------|
+| 20 min | BUG-021: drop the `declare -A` command cache  | 🐛 Bug         | `motd/widgets.sh:536`                       |
 | 1h     | DOC-003: `set -euo pipefail` in motd scripts  | 📄 Chore       | `motd/motd.sh`, `motd/widgets.sh`           |
 | 1h     | NEW-019: `DOTFILES_WSL_VERSION` detection     | 🆕 New-Feature | `components/platform`                       |
 | 1h     | DOC-014: macOS bash upgrade guide             | 📄 Chore       | `README.md`                                 |
