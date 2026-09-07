@@ -11,7 +11,14 @@
       "Bash(git add:*)",
       "Bash(tmux show *)",
       "Bash(infocmp -x)",
-      "Bash(tmux source-file *)"
+      "Bash(tmux source-file *)",
+      "Bash(git submodule *)",
+      "Bash(git -C modules/vimrc status --short)",
+      "Bash(git -C modules/vimrc log --oneline -1)",
+      "Bash(git -C modules/vimrc clean -fdx)",
+      "Bash(git -C modules/vimrc cat-file -t a716fe1777f72444f54845763c3060c4e1a33059)",
+      "Bash(git -C modules/vimrc check-ignore my_configs.vim)",
+      "Bash(git -C modules/vimrc ls-files my_configs.vim)"
     ]
   }
 }
