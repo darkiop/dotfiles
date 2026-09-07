@@ -24,6 +24,7 @@ dotfiles/
 ├── components/         # 27 modular shell components
 ├── config/             # Configuration files
 │   ├── dotfiles.config       # Colors and global settings
+│   ├── catppuccin.sh         # Catppuccin palette (CAT_*, raw escapes)
 │   ├── local_dotfiles_settings # Per-host overrides (gitignored)
 │   ├── dot_help.json         # Database for `dot help`
 │   ├── tmux.conf.local       # Tmux local overrides
@@ -39,7 +40,7 @@ dotfiles/
     ├── motd.sh         # Main MOTD renderer
     ├── motd-catppuccin-mocha.sh # Themed entry point (login + `motd` alias)
     ├── widgets.sh      # Widget system with caching
-    ├── palette.sh      # Shared status colours (raw escapes)
+    ├── palette.sh      # MOTD status colours (maps config/catppuccin.sh)
     ├── widgets/        # Custom widget extensions
     └── systemd/        # Timers for background updates
 ```

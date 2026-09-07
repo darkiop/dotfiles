@@ -117,7 +117,9 @@ print_kv load "0.5 / 0.3 / 0.2"   # Output:   load        0.5 / 0.3 / 0.2
 Anything that writes a widget cache has to agree on the escape codes, because
 the cache is written by three different places: a live render through
 `widgets.sh`, the `update-motd-network` systemd timer, and the per-host widget
-scripts. `palette.sh` holds those colours as raw escape bytes:
+scripts. `palette.sh` holds those colours as raw escape bytes, taken from
+`config/catppuccin.sh` (the same palette `dot env`, `dot alias` and
+`dot modules` use):
 
 | Variable | Meaning |
 |----------|---------|
@@ -239,7 +241,7 @@ motd/
 ├── motd.sh              # Main entry point
 ├── widgets.sh           # Widget system + built-in widgets
 ├── motd-catppuccin-mocha.sh # Themed entry point (login MOTD + `motd` alias)
-├── palette.sh           # Shared status colours (raw escapes)
+├── palette.sh           # Status colours (from config/catppuccin.sh)
 ├── widgets/             # Host-specific widget scripts
 │   ├── README.md
 │   └── <short-hostname>/*.sh
