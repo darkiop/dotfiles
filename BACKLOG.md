@@ -1,6 +1,6 @@
 # 📋 Backlog
 
-![open](https://img.shields.io/badge/open-34-blue) ![done](https://img.shields.io/badge/done-33-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
+![open](https://img.shields.io/badge/open-32-blue) ![done](https://img.shields.io/badge/done-35-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
 
 Note: entries are never removed from this backlog, only status changes (done, out-of-scope, etc.).
 
@@ -70,8 +70,8 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | ID      | Title                                                                                                            | Type     | Status  |
 |---------|------------------------------------------------------------------------------------------------------------------|----------|---------|
 | DOC-003 | Add `set -euo pipefail` to `motd/motd.sh`, `motd/widgets.sh`, widget scripts (`install.sh` already has `set -e`) | 📄 Chore | ✅ done [`d8ec7c9`](https://github.com/darkiop/dotfiles/commit/d8ec7c9) |
-| DOC-004 | Array-based PATH management in bashrc/zshrc instead of repeated `ADD_TO_PATH` calls                              | 📄 Chore | 🔲 open |
-| DOC-005 | Split `components/fzf` (166 lines) into `fzf_core` + `fzf_tab_completion`                                        | 📄 Chore | 🔲 open |
+| DOC-004 | Array-based PATH management in bashrc/zshrc instead of repeated `ADD_TO_PATH` calls                              | 📄 Chore | ✅ done [`7c929ce`](https://github.com/darkiop/dotfiles/commit/7c929ce) | new shared `components/path`; the duplicated helper pair is gone from both rc files |
+| DOC-005 | Split `components/fzf` (166 lines) into `fzf_core` + `fzf_tab_completion`                                        | 📄 Chore | ✅ done [`16d1c8f`](https://github.com/darkiop/dotfiles/commit/16d1c8f) | `components/fzf` is now a 21-line loader. Structural only — the startup cost is `fzf --bash` and the completion script, so the measured startup time is unchanged |
 | DOC-006 | Shellcheck audit — review 36 suppressions in 13 files, reduce SC2312/SC2086/SC1090                               | 📄 Chore | 🔲 open |
 | DOC-016 | Remove dead prompt components: `components/bash_prompt` and `components/bash_prompt_catppuccin_mocha_2`          | 📄 Chore | ✅ done [`4a56c40`](https://github.com/darkiop/dotfiles/commit/4a56c40) |
 | DOC-018 | `bin/archive/*` is tracked in git although `.gitignore` lists it — 8 legacy scripts, ~50 shellcheck warnings     | 📄 Chore | 🔲 open |
@@ -191,6 +191,8 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | NEW-019 | Detect the WSL version, not just "is WSL"                                      | 🆕 New-Feature | [`ef11c59`](https://github.com/darkiop/dotfiles/commit/ef11c59)                                                                                                                  | `DOTFILES_WSL_VERSION` + `dotfiles_is_wsl1`/`dotfiles_is_wsl2`; `dot doctor` prints `[WSL2]` |
 | DOC-014 | macOS bash upgrade guide in README.md                                          | 📄 Chore    | [`f645274`](https://github.com/darkiop/dotfiles/commit/f645274)                                                                                                                     | what breaks on bash 3.2, `brew install bash`, `/etc/shells` + `chsh` |
 | BUG-022 | Give the widget status colors the catppuccin palette                           | 🐛 Bug      | [`e5269d1`](https://github.com/darkiop/dotfiles/commit/e5269d1)                                                                                                                     | `COLOR_SUCCESS`/new `COLOR_FAILURE` exported as raw escapes; red was 256-colour |
+| DOC-004 | Build $PATH from arrays in one pass                                            | 📄 Chore    | [`7c929ce`](https://github.com/darkiop/dotfiles/commit/7c929ce)                                                                                                                     | `components/path`, shared by bashrc + zshrc; also dedups inherited $PATH |
+| DOC-005 | Split `components/fzf` into `fzf_core` + `fzf_tab_completion`                  | 📄 Chore    | [`16d1c8f`](https://github.com/darkiop/dotfiles/commit/16d1c8f)                                                                                                                     | `components/fzf` is a loader now; no measurable startup change |
 
 ---
 
