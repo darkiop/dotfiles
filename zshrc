@@ -15,38 +15,14 @@ esac
 source ~/dotfiles/config/dotfiles.config
 source ~/dotfiles/components/zsh_defaults
 
-# PATH handling (avoid duplicates)
-# Appends a fallback directory at the end of $PATH.
-ADD_TO_PATH() {
-  if [[ -d "$1" ]] && [[ ":${PATH}:" != *":$1:"* ]]; then
-    export PATH="${PATH:+${PATH}:}$1"
-  fi
-}
-
-# Puts the given directories at the front of $PATH, in the order listed, so
-# tools installed there shadow the system ones instead of being shadowed by
-# them. Existing occurrences are removed first.
-ADD_TO_PATH_FRONT() {
-  local front="" rest="" dir entry
-  for dir in "$@"; do
-    [[ -d "${dir}" ]] || continue
-    case ":${front}:" in *":${dir}:"*) continue ;; esac
-    front="${front:+${front}:}${dir}"
-  done
-  [[ -n ${front} ]] || return 0
-
-  for entry in ${(s.:.)PATH}; do
-    [[ -z ${entry} ]] && continue
-    case ":${front}:" in *":${entry}:"*) continue ;; esac
-    rest="${rest:+${rest}:}${entry}"
-  done
-  export PATH="${front}${rest:+:${rest}}"
-}
-
-ADD_TO_PATH_FRONT "$HOME/bin" "$HOME/dotfiles/bin" "$HOME/.local/bin" "$HOME/.cargo/bin"
-ADD_TO_PATH "/usr/local/bin"
-ADD_TO_PATH "/usr/bin"
-ADD_TO_PATH "/bin"
+# PATH handling: one pass over two arrays instead of one call per directory.
+# See components/path for ADD_TO_PATH / ADD_TO_PATH_FRONT.
+source ~/dotfiles/components/path
+# shellcheck disable=SC2034 # both arrays are read by dotfiles_path_apply
+DOTFILES_PATH_FRONT=("$HOME/bin" "$HOME/dotfiles/bin" "$HOME/.local/bin" "$HOME/.cargo/bin")
+# shellcheck disable=SC2034
+DOTFILES_PATH_BACK=("/usr/local/bin" "/usr/bin" "/bin")
+dotfiles_path_apply
 
 # platform + feature flags
 source ~/dotfiles/components/platform

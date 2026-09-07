@@ -49,6 +49,9 @@ dot_profile() {
 		component_names+=("zsh_defaults")
 	fi
 
+	components+=("${DOTFILES_DIR}/components/path")
+	component_names+=("path")
+
 	components+=("${DOTFILES_DIR}/components/platform")
 	component_names+=("platform")
 

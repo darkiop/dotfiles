@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# Central $PATH management for bash and zsh.
+#
+# Instead of calling a helper once per directory, fill the two arrays and apply
+# them in a single pass:
+#
+#   DOTFILES_PATH_FRONT=("$HOME/bin" "$HOME/.local/bin")
+#   DOTFILES_PATH_BACK=("/usr/local/bin" "/usr/bin")
+#   dotfiles_path_apply
+#
+# Front entries win over everything already in $PATH, so tools installed there
+# shadow the system ones. Back entries are fallbacks appended at the end.
+# Missing directories and duplicates (including ones $PATH already carried) are
+# dropped.
+#
+# ADD_TO_PATH / ADD_TO_PATH_FRONT stay available for one-off additions from
+# components and from config/local_dotfiles_settings.
+
+# Split the current $PATH into the array named by $1, without word-splitting
+# surprises or globbing.
+_dotfiles_path_split() {
+	if [[ -n ${ZSH_VERSION:-} ]]; then
+		# shellcheck disable=SC2296 # zsh parameter expansion flag
+		eval "$1=( \${(s.:.)PATH} )"
+	else
+		IFS=: read -r -a "$1" <<< "${PATH}"
+	fi
+}
+
+# Rebuild $PATH as: front entries, then the existing $PATH, then back entries.
+dotfiles_path_apply() {
+	local front="" back="" rest="" dir entry
+	local -a current=()
+
+	for dir in ${DOTFILES_PATH_FRONT[@]+"${DOTFILES_PATH_FRONT[@]}"}; do
+		[[ -d ${dir} ]] || continue
+		case ":${front}:" in *":${dir}:"*) continue ;; esac
+		front="${front:+${front}:}${dir}"
+	done
+
+	for dir in ${DOTFILES_PATH_BACK[@]+"${DOTFILES_PATH_BACK[@]}"}; do
+		[[ -d ${dir} ]] || continue
+		case ":${front}:${back}:" in *":${dir}:"*) continue ;; esac
+		back="${back:+${back}:}${dir}"
+	done
+
+	_dotfiles_path_split current
+	for entry in ${current[@]+"${current[@]}"}; do
+		[[ -z ${entry} ]] && continue
+		case ":${front}:${back}:${rest}:" in *":${entry}:"*) continue ;; esac
+		rest="${rest:+${rest}:}${entry}"
+	done
+
+	local new="${front}"
+	[[ -n ${rest} ]] && new="${new:+${new}:}${rest}"
+	[[ -n ${back} ]] && new="${new:+${new}:}${back}"
+	export PATH="${new}"
+}
+
+# Append a single fallback directory at the end of $PATH.
+ADD_TO_PATH() {
+	[[ -d "$1" ]] || return 0
+	case ":${PATH}:" in *":$1:"*) return 0 ;; esac
+	export PATH="${PATH:+${PATH}:}$1"
+}
+
+# Put the given directories at the front of $PATH, in the order listed.
+ADD_TO_PATH_FRONT() {
+	local -a DOTFILES_PATH_FRONT=("$@")
+	local -a DOTFILES_PATH_BACK=()
+	dotfiles_path_apply
+}
