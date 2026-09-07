@@ -35,83 +35,83 @@ source ~/dotfiles/components/feature_flags
 export DOTFILES_TMUX_SHELL="${BASH:-$(command -v bash 2>/dev/null || true)}"
 
 # Components that must be loaded eagerly (have keybindings or are always needed)
-if dotfiles_flag_enabled DOTFILES_ENABLE_PROMPT; then
+if [[ "${DOTFILES_ENABLE_PROMPT}" == true ]]; then
   source ~/dotfiles/components/bash_prompt_catppuccin_mocha
 fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_BASH_COMPLETION; then
+if [[ "${DOTFILES_ENABLE_BASH_COMPLETION}" == true ]]; then
   source ~/dotfiles/components/bash_completion
 fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_FZF; then
+if [[ "${DOTFILES_ENABLE_FZF}" == true ]]; then
   source ~/dotfiles/components/fzf
 fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_NAVI; then
+if [[ "${DOTFILES_ENABLE_NAVI}" == true ]]; then
   source ~/dotfiles/components/navi
 fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_GIT_FZF; then
+if [[ "${DOTFILES_ENABLE_GIT_FZF}" == true ]]; then
   source ~/dotfiles/components/fzf_git
 fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_FZF_EXTRAS; then
+if [[ "${DOTFILES_ENABLE_FZF_EXTRAS}" == true ]]; then
   source ~/dotfiles/components/fzf_extras
 fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_BREW; then
+if [[ "${DOTFILES_ENABLE_BREW}" == true ]]; then
   source ~/dotfiles/components/brew
 fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_TMUX_FZF; then
+if [[ "${DOTFILES_ENABLE_TMUX_FZF}" == true ]]; then
   source ~/dotfiles/components/fzf_tmux
 fi
-if dotfiles_flag_enabled DOTFILES_ENABLE_DOT_HELP; then
+if [[ "${DOTFILES_ENABLE_DOT_HELP}" == true ]]; then
   source ~/dotfiles/components/dot_help
 fi
 
 # Lazy-loadable components (loaded on first use to reduce startup time)
-if dotfiles_flag_enabled DOTFILES_ENABLE_LAZY_LOADING; then
+if [[ "${DOTFILES_ENABLE_LAZY_LOADING}" == true ]]; then
   source ~/dotfiles/components/lazy_loader
-  dotfiles_flag_enabled DOTFILES_ENABLE_SSH_PICKER && \
+  [[ "${DOTFILES_ENABLE_SSH_PICKER}" == true ]] && \
     dotfiles_lazy_register sshp ssh_picker
-  dotfiles_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER && \
+  [[ "${DOTFILES_ENABLE_JOURNALCTL_PICKER}" == true ]] && \
     dotfiles_lazy_register jctl journalctl_picker
-  dotfiles_flag_enabled DOTFILES_ENABLE_LOG_PICKER && \
+  [[ "${DOTFILES_ENABLE_LOG_PICKER}" == true ]] && \
     dotfiles_lazy_register lctl log_picker
-  dotfiles_flag_enabled DOTFILES_ENABLE_HELPERS && \
+  [[ "${DOTFILES_ENABLE_HELPERS}" == true ]] && \
     dotfiles_lazy_register dcheat helpers cheat helpme
-  dotfiles_flag_enabled DOTFILES_ENABLE_DOCKER_FZF && \
+  [[ "${DOTFILES_ENABLE_DOCKER_FZF}" == true ]] && \
     dotfiles_lazy_register dps fzf_docker dexec dlogs
-  dotfiles_flag_enabled DOTFILES_ENABLE_SYSTEMCTL_FZF && \
+  [[ "${DOTFILES_ENABLE_SYSTEMCTL_FZF}" == true ]] && \
     dotfiles_lazy_register sctl fzf_systemctl
-  dotfiles_flag_enabled DOTFILES_ENABLE_DOT_DOCTOR && \
+  [[ "${DOTFILES_ENABLE_DOT_DOCTOR}" == true ]] && \
     dotfiles_lazy_register dot_doctor dot_doctor
 else
   # Fallback: eager loading when lazy loading is disabled
-  if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_PICKER; then
+  if [[ "${DOTFILES_ENABLE_SSH_PICKER}" == true ]]; then
     source ~/dotfiles/components/ssh_picker
   fi
-  if dotfiles_flag_enabled DOTFILES_ENABLE_JOURNALCTL_PICKER; then
+  if [[ "${DOTFILES_ENABLE_JOURNALCTL_PICKER}" == true ]]; then
     source ~/dotfiles/components/journalctl_picker
   fi
-  if dotfiles_flag_enabled DOTFILES_ENABLE_LOG_PICKER; then
+  if [[ "${DOTFILES_ENABLE_LOG_PICKER}" == true ]]; then
     source ~/dotfiles/components/log_picker
   fi
-  if dotfiles_flag_enabled DOTFILES_ENABLE_HELPERS; then
+  if [[ "${DOTFILES_ENABLE_HELPERS}" == true ]]; then
     source ~/dotfiles/components/helpers
   fi
-  if dotfiles_flag_enabled DOTFILES_ENABLE_DOCKER_FZF; then
+  if [[ "${DOTFILES_ENABLE_DOCKER_FZF}" == true ]]; then
     source ~/dotfiles/components/fzf_docker
   fi
-  if dotfiles_flag_enabled DOTFILES_ENABLE_SYSTEMCTL_FZF; then
+  if [[ "${DOTFILES_ENABLE_SYSTEMCTL_FZF}" == true ]]; then
     source ~/dotfiles/components/fzf_systemctl
   fi
-  if dotfiles_flag_enabled DOTFILES_ENABLE_DOT_DOCTOR; then
+  if [[ "${DOTFILES_ENABLE_DOT_DOCTOR}" == true ]]; then
     source ~/dotfiles/components/dot_doctor
   fi
 fi
 
 # load aliases
-if dotfiles_flag_enabled DOTFILES_ENABLE_ALIASES; then
+if [[ "${DOTFILES_ENABLE_ALIASES}" == true ]]; then
   source ~/dotfiles/alias/alias
 fi
 
 # MOTD (opt-in)
-if dotfiles_flag_enabled DOTFILES_ENABLE_MOTD && dotfiles_flag_enabled DOTFILES_ENABLE_MOTD_AUTO_RUN; then
+if [[ "${DOTFILES_ENABLE_MOTD}" == true ]] && [[ "${DOTFILES_ENABLE_MOTD_AUTO_RUN}" == true ]]; then
   if [[ -s ~/dotfiles/motd/motd-catppuccin-mocha.sh ]]; then
     source ~/dotfiles/motd/motd-catppuccin-mocha.sh
   fi
@@ -139,17 +139,17 @@ elif command -v gdircolors >/dev/null 2>&1; then
 fi
 
 # Autoupdate dotfiles after 20 logins
-if dotfiles_flag_enabled DOTFILES_ENABLE_AUTOUPDATE && [[ -x ~/dotfiles/autoupdate.sh ]]; then
+if [[ "${DOTFILES_ENABLE_AUTOUPDATE}" == true ]] && [[ -x ~/dotfiles/autoupdate.sh ]]; then
   source ~/dotfiles/autoupdate.sh
 fi
 
 # Run tmux session
-if dotfiles_flag_enabled DOTFILES_ENABLE_TMUX_AUTOSTART && command -v tmux &> /dev/null && [[ -n "${PS1}" ]] && [[ ! "${TERM}" =~ screen ]] && [[ ! "${TERM}" =~ tmux ]] && [[ -z "${TMUX}" ]]; then
+if [[ "${DOTFILES_ENABLE_TMUX_AUTOSTART}" == true ]] && command -v tmux &> /dev/null && [[ -n "${PS1}" ]] && [[ ! "${TERM}" =~ screen ]] && [[ ! "${TERM}" =~ tmux ]] && [[ -z "${TMUX}" ]]; then
   tmux -u attach -t default || tmux -u new -s default
 fi
 
 # Enable automatic renaming of tmux windows based on ssh connections
-if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_TMUX_RENAME && [[ -n $TMUX ]]; then # only inside tmux
+if [[ "${DOTFILES_ENABLE_SSH_TMUX_RENAME}" == true ]] && [[ -n $TMUX ]]; then # only inside tmux
   _dotfiles_ssh_extract_target() {
     local arg
     while [[ $# -gt 0 ]]; do
@@ -209,7 +209,7 @@ if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_TMUX_RENAME && [[ -n $TMUX ]]; then
 fi
 
 # ioBroker
-if dotfiles_flag_enabled DOTFILES_ENABLE_IOBROKER && [[ -x /opt/iobroker/iobroker ]]; then
+if [[ "${DOTFILES_ENABLE_IOBROKER}" == true ]] && [[ -x /opt/iobroker/iobroker ]]; then
   source ~/.iobroker/iobroker_completions   # Enable ioBroker command auto-completion
   source ~/.iobroker/npm_command_fix        # Forces npm to run as iobroker when inside the iobroker installation dir
 fi

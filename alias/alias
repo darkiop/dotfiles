@@ -43,7 +43,7 @@ function show() {
 	apt-cache search "$1"
 }
 
-if dotfiles_flag_enabled DOTFILES_ENABLE_EXTRACT_EXT; then
+if [[ "${DOTFILES_ENABLE_EXTRACT_EXT}" == true ]]; then
 	function extract() {
 		local file="$1"
 		if [[ -f "${file}" ]]; then
@@ -221,7 +221,7 @@ if command -v mtr >/dev/null 2>&1; then
 fi
 
 # motd (optional)
-if dotfiles_flag_enabled DOTFILES_ENABLE_MOTD; then
+if [[ "${DOTFILES_ENABLE_MOTD}" == true ]]; then
 	alias motd='source ~/dotfiles/motd/motd.sh'
 fi
 
