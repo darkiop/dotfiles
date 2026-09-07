@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# fzf core: $PATH, the shell init script, default options and the helpers that
+# components/fzf_tab_completion builds on. Sourced through components/fzf.
+
+# shellcheck source=/dev/null
+case $- in
+*i*) ;;
+*) return ;;
+esac
+
+# Ensure fzf is reachable even when installed via dotfiles submodule.
+if ! command -v ADD_TO_PATH >/dev/null 2>&1; then
+	# shellcheck source=/dev/null
+	source ~/dotfiles/components/path
+fi
+ADD_TO_PATH "$HOME/.fzf/bin"
+ADD_TO_PATH "$HOME/dotfiles/modules/fzf/bin"
+
+if ! command -v fzf >/dev/null 2>&1; then
+	return 0
+fi
+
+if [[ -n ${ZSH_VERSION:-} ]]; then
+	# Prefer the installer-generated init script if present.
+	# `~/.fzf.bash` contains `eval "$(fzf --bash)"` and must not be sourced by zsh.
+	if [[ -f ~/.fzf.zsh ]]; then
+		source ~/.fzf.zsh
+	fi
+
+	# `eval "$(fzf --zsh)"` breaks because backslash-newline continuations in the
+	# generated script are consumed by double-quote parsing before `eval` sees them.
+	# Source the generated script instead to preserve its exact contents.
+	source <(fzf --zsh 2>/dev/null) || true
+else
+	# bash
+	if [[ -f ~/.fzf.bash ]]; then
+		source ~/.fzf.bash
+	fi
+
+	# Same rationale as above: source the generated script to preserve continuations.
+	source <(fzf --bash 2>/dev/null) || true
+fi
+
+# fzf (Fuzzy Finder) Options
+export FZF_DEFAULT_OPTS='
+--height 50% 
+--layout=reverse-list 
+--margin=0 
+--padding=0 
+--border=rounded 
+--info=inline 
+--ansi 
+--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 
+--color=fg:#ffffff,header:#00afff,info:#00afff,pointer:#ff0000 
+--color=marker:#ff0000,fg+:#00afff,prompt:#00afff,hl+:#ffffff
+'
+
+dotfiles_fzf__flag_enabled() {
+	local var_name="$1"
+	if type dotfiles_flag_enabled >/dev/null 2>&1; then
+		dotfiles_flag_enabled "${var_name}"
+		return $?
+	fi
+	local value=""
+	eval "value=\"\${${var_name}:-}\""
+	case "${value}" in
+	1 | true | TRUE | yes | YES | y | Y | on | ON) return 0 ;;
+	0 | false | FALSE | no | NO | n | N | off | OFF | "") return 1 ;;
+	*) return 1 ;;
+	esac
+}
+
+dotfiles_fzf__set_cmd_var() {
+	# Usage: dotfiles_fzf__set_cmd_var VAR_NAME preferred fallback
+	local var_name="$1"
+	local preferred="$2"
+	local fallback="$3"
+
+	local resolved=""
+	if [[ -n "${preferred}" ]] && command -v "${preferred}" >/dev/null 2>&1; then
+		resolved="${preferred}"
+	elif [[ -n "${fallback}" ]] && command -v "${fallback}" >/dev/null 2>&1; then
+		resolved="${fallback}"
+	fi
+
+	[[ -n "${resolved}" ]] || return 0
+	# Avoid eval'ing user input: var_name is a constant in this file.
+	printf -v "${var_name}" '%s' "${resolved}"
+}
+
+# load fzf key bindungs
+# if [[ -f /usr/share/doc/fzf/examples/key-bindings.bash ]]; then
+#   source /usr/share/doc/fzf/examples/key-bindings.bash
+# fi
