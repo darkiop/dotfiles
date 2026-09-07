@@ -1,6 +1,6 @@
 # 📋 Backlog
 
-![open](https://img.shields.io/badge/open-52-blue) ![done](https://img.shields.io/badge/done-10-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
+![open](https://img.shields.io/badge/open-51-blue) ![done](https://img.shields.io/badge/done-11-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
 
 Note: entries are never removed from this backlog, only status changes (done, out-of-scope, etc.).
 
@@ -22,7 +22,7 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | SEC-003 | `install.sh:52-56` pipes remote `dotfiles.config` into `source <(curl -s ...)` with no failure or integrity check | 🔒 Security | 🔲 open | a 404/HTML body or MITM response gets executed; `set -e` does not catch process-substitution failure. Fetch to a temp file, check HTTP status, then source |
 | BUG-006 | `components/platform:22` runs `source /etc/os-release`, leaking every one of its variables into the interactive shell | 🐛 Bug      | ✅ done | verified: `NAME`, `VERSION`, `VERSION_ID`, `PRETTY_NAME`, `HOME_URL`, `LOGO`, … are all set in every shell. Parse `ID`/`ID_LIKE` with `grep`/`awk`, or source inside a subshell |
 | BUG-007 | `motd/motd-odin.sh:8` is a bash syntax error — unescaped `($volume1_usage%)` outside quotes                   | 🐛 Bug      | ✅ done | `bash -n motd/motd-odin.sh` fails; file never executes. Also dead code (see BUG-008) — fix or delete |
-| BUG-002 | Docker widget: distinguish "daemon not running" from "0 containers" in `motd/widgets.sh:97-99`                | 🐛 Bug      | 🔲 open | confirmed: exit status comes from the trailing `wc -l`, so `if ! running=$(... \| wc -l ...)` never fires. Check `docker info` first, show widget on 0 containers too |
+| BUG-002 | Docker widget: distinguish "daemon not running" from "0 containers" in `motd/widgets.sh:97-99`                | 🐛 Bug      | ✅ done | confirmed: exit status comes from the trailing `wc -l`, so `if ! running=$(... \| wc -l ...)` never fires. Check `docker info` first, show widget on 0 containers too |
 
 ---
 
@@ -187,6 +187,5 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | 15 min | BUG-010: use short hostname for widget dir    | 🐛 Bug         | `motd/widgets.sh`                           |
 | 30 min | DOC-016: delete dead prompt components        | 📄 Chore       | `components/bash_prompt*`                   |
 | 1h     | DOC-003: `set -euo pipefail` in motd scripts  | 📄 Chore       | `motd/motd.sh`, `motd/widgets.sh`           |
-| 1h     | BUG-002: Docker daemon-down detection         | 🐛 Bug         | `motd/widgets.sh:97-99`                     |
 | 1h     | NEW-019: `DOTFILES_WSL_VERSION` detection     | 🆕 New-Feature | `components/platform`                       |
 | 1h     | DOC-014: macOS bash upgrade guide             | 📄 Chore       | `README.md`                                 |

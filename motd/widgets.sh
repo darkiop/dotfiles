@@ -30,6 +30,15 @@ _motd_cache_fresh() {
 	[[ ${age} -lt ${max_age_seconds} ]]
 }
 
+# Helper: Count non-empty lines in a captured command output
+_motd_count_lines() {
+	[[ -z $1 ]] && {
+		printf '0'
+		return 0
+	}
+	printf '%s\n' "$1" | grep -c . | tr -d ' '
+}
+
 # Helper: Read from cache
 _motd_cache_read() {
 	local cache_file="$1"
@@ -82,21 +91,22 @@ _motd_widget_docker() {
 		_docker_env=(env DOCKER_CONFIG="${_tmp_cfg}" DOCKER_HOST="unix://${_sock}")
 	fi
 
-	# Get docker stats (suppress errors if docker daemon not running)
-	local running stopped total output
-	if ! running=$("${_docker_env[@]}" docker ps -q 2>/dev/null | wc -l | tr -d ' '); then
+	# Get docker stats. Capture the container IDs instead of piping into wc,
+	# otherwise the exit status comes from wc and a dead daemon looks like an
+	# empty host.
+	local running_ids stopped_ids running stopped total output
+	if ! running_ids=$("${_docker_env[@]}" docker ps -q 2>/dev/null); then
 		[[ -n ${_tmp_cfg:-} ]] && rm -rf "${_tmp_cfg}"
 		return 1
 	fi
-	if ! stopped=$("${_docker_env[@]}" docker ps -aq --filter "status=exited" 2>/dev/null | wc -l | tr -d ' '); then
-		stopped=0
+	if ! stopped_ids=$("${_docker_env[@]}" docker ps -aq --filter "status=exited" 2>/dev/null); then
+		stopped_ids=""
 	fi
 	[[ -n ${_tmp_cfg:-} ]] && rm -rf "${_tmp_cfg}"
-	total=$((running + stopped))
 
-	if [[ ${total} -eq 0 ]]; then
-		return 1
-	fi
+	running=$(_motd_count_lines "${running_ids}")
+	stopped=$(_motd_count_lines "${stopped_ids}")
+	total=$((running + stopped))
 
 	output="${running} running, ${stopped} stopped (${total} total)"
 
