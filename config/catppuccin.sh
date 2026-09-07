@@ -17,9 +17,11 @@
 : "${CAT_TEAL:=$'\x1b[38;2;148;226;213m'}"     # #94e2d5
 : "${CAT_SKY:=$'\x1b[38;2;137;220;235m'}"      # #89dceb
 : "${CAT_BLUE:=$'\x1b[38;2;137;180;250m'}"     # #89b4fa
+: "${CAT_TEXT:=$'\x1b[38;2;205;214;244m'}"     # #cdd6f4
+: "${CAT_MAUVE:=$'\x1b[38;2;203;166;247m'}"    # #cba6f7
 : "${CAT_SUBTEXT1:=$'\x1b[38;2;186;194;222m'}" # #bac2de
 : "${CAT_OVERLAY1:=$'\x1b[38;2;127;132;156m'}" # #7f849c
 : "${CAT_RESET:=$'\x1b[0m'}"
 
 export CAT_GREEN CAT_RED CAT_YELLOW CAT_PEACH CAT_TEAL CAT_SKY CAT_BLUE
-export CAT_SUBTEXT1 CAT_OVERLAY1 CAT_RESET
+export CAT_TEXT CAT_MAUVE CAT_SUBTEXT1 CAT_OVERLAY1 CAT_RESET
