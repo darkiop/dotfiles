@@ -8,8 +8,11 @@
 #
 # Assignments are conditional, so a caller that already set them wins.
 
-: "${MOTD_COLOR_SUCCESS:=$'\x1b[38;2;166;227;161m'}" # green
-: "${MOTD_COLOR_FAILURE:=$'\x1b[38;2;243;139;168m'}" # red
-: "${MOTD_COLOR_RESET:=$'\x1b[m'}"
+# shellcheck source=../config/catppuccin.sh
+source "${HOME}/dotfiles/config/catppuccin.sh"
+
+: "${MOTD_COLOR_SUCCESS:=${CAT_GREEN}}"
+: "${MOTD_COLOR_FAILURE:=${CAT_RED}}"
+: "${MOTD_COLOR_RESET:=${CAT_RESET}}"
 
 export MOTD_COLOR_SUCCESS MOTD_COLOR_FAILURE MOTD_COLOR_RESET

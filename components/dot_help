@@ -477,11 +477,11 @@ _dot_help_setup_keybindings
 				fi
 				local c_reset="" c_green="" c_yellow="" c_red="" c_muted=""
 				if [[ ${use_color} -eq 1 ]]; then
-					c_reset=$'\033[0m'
-					c_green=$'\033[32m'
-					c_yellow=$'\033[33m'
-					c_red=$'\033[31m'
-					c_muted=$'\033[90m'
+					c_reset="${CAT_RESET:-$'\033[0m'}"
+					c_green="${CAT_GREEN:-$'\033[32m'}"
+					c_yellow="${CAT_YELLOW:-$'\033[33m'}"
+					c_red="${CAT_RED:-$'\033[31m'}"
+					c_muted="${CAT_OVERLAY1:-$'\033[90m'}"
 				fi
 
 				printf '%s\n' "Submodules in ${repo_dir}:"
@@ -532,11 +532,11 @@ _dot_help_setup_keybindings
 				fi
 				local c_reset="" c_name="" c_true="" c_false="" c_value=""
 				if [[ ${use_color} -eq 1 ]]; then
-					c_reset=$'\033[0m'
-					c_name=$'\033[36m'
-					c_true=$'\033[32m'
-					c_false=$'\033[31m'
-					c_value=$'\033[33m'
+					c_reset="${CAT_RESET:-$'\033[0m'}"
+					c_name="${CAT_SKY:-$'\033[36m'}"
+					c_true="${CAT_GREEN:-$'\033[32m'}"
+					c_false="${CAT_RED:-$'\033[31m'}"
+					c_value="${CAT_YELLOW:-$'\033[33m'}"
 				fi
 
 				printf '%s\n' "DOTFILES_* environment variables:"
@@ -570,11 +570,11 @@ _dot_help_setup_keybindings
 				fi
 				local c_reset="" c_head="" c_muted="" c_green="" c_red=""
 				if [[ ${use_color} -eq 1 ]]; then
-					c_reset=$'\033[0m'
-					c_head=$'\033[38;5;81m'
-					c_muted=$'\033[38;5;39m'
-					c_green=$'\033[38;5;83m'
-					c_red=$'\033[38;5;196m'
+					c_reset="${CAT_RESET:-$'\033[0m'}"
+					c_head="${CAT_TEAL:-$'\033[38;5;81m'}"
+					c_muted="${CAT_SKY:-$'\033[38;5;39m'}"
+					c_green="${CAT_GREEN:-$'\033[38;5;83m'}"
+					c_red="${CAT_RED:-$'\033[38;5;196m'}"
 				fi
 
 				local filter="${1:-}"
