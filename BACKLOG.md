@@ -1,8 +1,10 @@
 # 📋 Backlog
 
-![open](https://img.shields.io/badge/open-36-blue) ![done](https://img.shields.io/badge/done-7-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
+![open](https://img.shields.io/badge/open-54-blue) ![done](https://img.shields.io/badge/done-8-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
 
 Note: entries are never removed from this backlog, only status changes (done, out-of-scope, etc.).
+
+Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bashrc`, `zshrc`, `components/`, `motd/`, `install.sh`, `autoupdate.sh`).
 
 **Status:** 🔲 `open` · 🚧 `in-progress` · ✅ `done` · ⛔ `dropped`
 **Priority:** 🔴 High · 🟡 Medium · 🟢 Low
@@ -17,17 +19,32 @@ Note: entries are never removed from this backlog, only status changes (done, ou
 | BUG-001 | ioBroker source validation — add `[[ -f ]]` check before sourcing `~/.iobroker/*` files in `bashrc`, `zshrc`  | 🐛 Bug      | ✅ done | 30 min                                                             |
 | SEC-001 | Move WOL MAC addresses out of `alias/alias:310-314` into encrypted config or env vars                         | 🔒 Security | 🔲 open | security                                                           |
 | SEC-002 | Secret scanning — pre-commit hook via gitleaks/trufflehog + `dot secrets-scan`, whitelist for false positives | 🔒 Security | 🔲 open | `components/secret_scanner`, flag `DOTFILES_ENABLE_SECRET_SCANNER` |
-| BUG-002 | Docker widget: distinguish "daemon not running" from "0 containers" in `motd/widgets.sh:97-99`                | 🐛 Bug      | 🔲 open | check `docker info` first, show widget on 0 containers too         |
+| SEC-003 | `install.sh:52-56` pipes remote `dotfiles.config` into `source <(curl -s ...)` with no failure or integrity check | 🔒 Security | 🔲 open | a 404/HTML body or MITM response gets executed; `set -e` does not catch process-substitution failure. Fetch to a temp file, check HTTP status, then source |
+| BUG-006 | `components/platform:22` runs `source /etc/os-release`, leaking every one of its variables into the interactive shell | 🐛 Bug      | 🔲 open | verified: `NAME`, `VERSION`, `VERSION_ID`, `PRETTY_NAME`, `HOME_URL`, `LOGO`, … are all set in every shell. Parse `ID`/`ID_LIKE` with `grep`/`awk`, or source inside a subshell |
+| BUG-007 | `motd/motd-odin.sh:8` is a bash syntax error — unescaped `($volume1_usage%)` outside quotes                   | 🐛 Bug      | 🔲 open | `bash -n motd/motd-odin.sh` fails; file never executes. Also dead code (see BUG-008) — fix or delete |
+| BUG-002 | Docker widget: distinguish "daemon not running" from "0 containers" in `motd/widgets.sh:97-99`                | 🐛 Bug      | 🔲 open | confirmed: exit status comes from the trailing `wc -l`, so `if ! running=$(... \| wc -l ...)` never fires. Check `docker info` first, show widget on 0 containers too |
 
 ---
 
 ## 🟡 Medium Priority
 
+### 🐛 Bugs
+
+| ID      | Title                                                                                                      | Type   | Status  | Ref                                                                                                                                                                   |
+|---------|--------------------------------------------------------------------------------------------------------------|--------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| BUG-008 | MOTD hostname routing does not exist — `motd-odin.sh` / `motd-proxmox.sh` are never sourced                | 🐛 Bug | 🔲 open | `bashrc:115`, `zshrc:126` source `motd/motd-catppuccin-mocha.sh` directly. `motd.sh` special-cases `odin` inline instead of dispatching. Either wire up routing or drop the per-host files |
+| BUG-009 | `motd` alias bypasses the color wrapper                                                                    | 🐛 Bug | 🔲 open | `alias/alias:225` is `source ~/dotfiles/motd/motd.sh`, but login MOTD goes through `motd-catppuccin-mocha.sh`. Manual invocation renders with different colors, and `source` leaks `HOSTNAME`/`USAGE_*`/`_motd_*` into the shell |
+| BUG-010 | Host widget directory lookup uses the full hostname, not the short one                                     | 🐛 Bug | 🔲 open | `motd/widgets.sh` `motd_run_widgets` does `hostname=$(hostname)`; on an FQDN host `motd/widgets/<fqdn>/` never matches. `motd.sh` already computes `HOSTNAME_SHORT` — reuse it |
+| BUG-011 | `DOTFILES_ENABLE_NETWORK_WIDGET` is documented but missing from `components/feature_flags`                 | 🐛 Bug | 🔲 open | README.md:138 documents it; the flag is never defaulted, normalized, or exported. `motd/widgets.sh:6` compensates by re-sourcing `local_dotfiles_settings` mid-render. Add it to the flag list and the cache array, then drop the workaround |
+| BUG-012 | `autoupdate.sh` retries a network `git pull` on every shell start after one failure                        | 🐛 Bug | 🔲 open | `autoupdate.sh:52` resets the counter only when the subshell exits 0. A failed pull leaves the count above 20, so every subsequent shell blocks on the network. Reset (or back off) on failure too, and add a timeout |
+| BUG-015 | `motd/motd.sh` tree renderer needs bash 4+ (`local -A category_items`)                                     | 🐛 Bug | 🔲 open | breaks on stock macOS bash 3.2, the default `DOTFILES_MOTD_STYLE=tree`. Guard on `BASH_VERSINFO` and fall back to `default` style, or replace the associative array |
+| BUG-018 | `ADD_TO_PATH` appends, so personal bin dirs rank below system paths                                        | 🐛 Bug | 🔲 open | `bashrc:20-26`, `zshrc:24-30`. Verified: `~/bin`, `~/.local/bin`, `~/.cargo/bin` end up after `/usr/bin`, so user-installed tools cannot shadow system ones. Overlaps DOC-004 |
+
 ### ⚡ Performance
 
 | ID      | Title                                                                   | Type           | Status                                                                  |
 |---------|-------------------------------------------------------------------------|----------------|-------------------------------------------------------------------------|
-| NEW-001 | `dot profile` — shell startup profiler, measure load time per component | 🆕 New-Feature | 🔲 open                                                                 |
+| NEW-001 | `dot profile` — shell startup profiler, measure load time per component | 🆕 New-Feature | ✅ done [`2b798df`](https://github.com/darkiop/dotfiles/commit/2b798df) |
 | PER-001 | Feature-flag caching — compute flags once at startup, not 40+ times     | ⚡ Performance | ✅ done [`7d9276c`](https://github.com/darkiop/dotfiles/commit/7d9276c) |
 
 ### ✨ Features
@@ -53,18 +70,42 @@ Note: entries are never removed from this backlog, only status changes (done, ou
 | DOC-004 | Array-based PATH management in bashrc/zshrc instead of repeated `ADD_TO_PATH` calls                              | 📄 Chore | 🔲 open |
 | DOC-005 | Split `components/fzf` (166 lines) into `fzf_core` + `fzf_tab_completion`                                        | 📄 Chore | 🔲 open |
 | DOC-006 | Shellcheck audit — review 36 suppressions in 13 files, reduce SC2312/SC2086/SC1090                               | 📄 Chore | 🔲 open |
+| DOC-016 | Remove dead prompt components: `components/bash_prompt` and `components/bash_prompt_catppuccin_mocha_2`          | 📄 Chore | 🔲 open |
+| DOC-018 | `bin/archive/*` is tracked in git although `.gitignore` lists it — 8 legacy scripts, ~50 shellcheck warnings     | 📄 Chore | 🔲 open |
+| DOC-019 | `dot doctor` has no inline component fallback, unlike `dot profile` (`components/dot_help:404` vs `:409-422`)    | 📄 Chore | 🔲 open |
 
 ### 📚 Docs
 
 | ID      | Title                                                                                  | Type     | Status  |
 |---------|----------------------------------------------------------------------------------------|----------|---------|
+| DOC-017 | Doc drift in AGENTS.md / CLAUDE.md / copilot-instructions.md — see notes below          | 📄 Chore | 🔲 open |
 | DOC-007 | Architecture diagram — loading order visualization in README.md                        | 📄 Chore | 🔲 open |
 | DOC-008 | Troubleshooting guide — slow startup, macOS bash 3.2, WSL gotchas, container detection | 📄 Chore | 🔲 open |
 | DOC-009 | Compatibility matrix — bash 4+/zsh 5.0+, macOS vs Linux, container limits              | 📄 Chore | 🔲 open |
 
+**DOC-017 details** — the three agent instruction files drifted from the code (keep all three in sync):
+
+- Component count says 22; there are 26 in `components/`.
+- Component table is missing `dot_profile`, `lazy_loader`, `log_picker`, `bash_prompt_catppuccin_mocha`.
+- Component table still lists `bash_prompt`, which `bashrc` no longer sources (see DOC-016).
+- Flag table is missing `DOTFILES_ENABLE_LAZY_LOADING`, `DOTFILES_ENABLE_LOG_PICKER`, `DOTFILES_ENABLE_NETWORK_WIDGET`, `DOTFILES_MOTD_STYLE`.
+- MOTD section describes `motd/motd.sh` as a hostname router; it is not one (see BUG-008).
+- Loading order block omits the lazy-loading branch in `bashrc`/`zshrc`.
+
 ---
 
 ## 🟢 Low Priority
+
+### 🐛 Bugs & Papercuts
+
+| ID      | Title                                                                                           | Type   | Status  | Ref                                                                                                                        |
+|---------|---------------------------------------------------------------------------------------------------|--------|---------|-------------------------------------------------------------------------------------------------------------------------------|
+| BUG-013 | `motd/motd.sh:85` assigns `HOSTNAME=$(hostname)`, clobbering the shell's own `HOSTNAME`         | 🐛 Bug | 🔲 open | `motd.sh` is sourced (not executed) from `bashrc`/`zshrc`. Rename to `MOTD_HOSTNAME`                                        |
+| BUG-014 | `motd/motd.sh:169` reads `${MOTD_SHOW_APT_UPDATES}` with no `:-` default                        | 🐛 Bug | 🔲 open | unset when `motd.sh` runs standalone; blocks DOC-003 (`set -u`). Every other read in the file already uses `:-`             |
+| BUG-016 | `components/lazy_loader:42` uses loop variable `f` before the `local f` on line 55              | 🐛 Bug | 🔲 open | the first `for f in "${extra_funcs[@]}"` clobbers a global `$f`. Move the declaration above the loop                        |
+| BUG-017 | `tput sgr0` called without error suppression                                                    | 🐛 Bug | 🔲 open | `config/dotfiles.config:19`, `motd/motd.sh:143` — stderr noise on unset/dumb `TERM`. `motd.sh:17` already does it correctly |
+| BUG-019 | `motd/motd.sh:113` `cat /etc.defaults/VERSION` on the `odin` branch without an existence check   | 🐛 Bug | 🔲 open | any host named `odin` that is not a Synology NAS prints a `cat` error into the MOTD                                        |
+| BUG-020 | `shopt` guard in `components/lazy_loader:34,64` is a silent no-op under zsh                     | 🐛 Bug | 🔲 open | `shopt` does not exist in zsh; the `unalias` on line 41 is what actually protects zsh. Gate the block on `${BASH_VERSION}`  |
 
 ### 🗂️ Organization
 
@@ -115,6 +156,7 @@ Note: entries are never removed from this backlog, only status changes (done, ou
 | NEW-020 | Systemd unit manager with fzf                                                   | 🆕 New-Feature | [`eeedc1b`](https://github.com/darkiop/dotfiles/commit/eeedc1b) | `components/fzf_systemctl` exists                          |
 | BUG-005 | Docker widget macOS: skip when Desktop not running                              | 🐛 Bug         | [`38b3e87`](https://github.com/darkiop/dotfiles/commit/38b3e87) |                                                            |
 | DOC-015 | AGENTS.md / CLAUDE.md / copilot-instructions.md — natural language, no AI speak | 📄 Chore       | [`60efee1`](https://github.com/darkiop/dotfiles/commit/60efee1) |                                                            |
+| NEW-001 | `dot profile` — shell startup profiler                                          | 🆕 New-Feature | [`2b798df`](https://github.com/darkiop/dotfiles/commit/2b798df) | `components/dot_profile`, `dot profile\|prof`; needs docs (DOC-017) |
 
 ---
 
@@ -135,9 +177,18 @@ Note: entries are never removed from this backlog, only status changes (done, ou
 
 ## 🚀 Quick Wins (< 1h each)
 
-| Effort | Task                                         | Type           | File(s)                           |
-|--------|----------------------------------------------|----------------|-----------------------------------|
-| 1h     | DOC-003: `set -euo pipefail` in motd scripts | 📄 Chore       | `motd/motd.sh`, `motd/widgets.sh` |
-| 1h     | BUG-002: Docker daemon-down detection        | 🐛 Bug         | `motd/widgets.sh:97-99`           |
-| 1h     | NEW-019: `DOTFILES_WSL_VERSION` detection    | 🆕 New-Feature | `components/platform`             |
-| 1h     | DOC-014: macOS bash upgrade guide            | 📄 Chore       | `README.md`                       |
+| Effort | Task                                          | Type           | File(s)                                     |
+|--------|-----------------------------------------------|----------------|---------------------------------------------|
+| 5 min  | BUG-007: fix or delete broken `motd-odin.sh`  | 🐛 Bug         | `motd/motd-odin.sh:8`                       |
+| 10 min | BUG-014: default `MOTD_SHOW_APT_UPDATES`      | 🐛 Bug         | `motd/motd.sh:169`                          |
+| 10 min | BUG-016: move `local f` above the loop        | 🐛 Bug         | `components/lazy_loader:42,55`              |
+| 10 min | BUG-017: suppress `tput sgr0` errors          | 🐛 Bug         | `config/dotfiles.config:19`, `motd/motd.sh:143` |
+| 15 min | BUG-011: declare `DOTFILES_ENABLE_NETWORK_WIDGET` | 🐛 Bug     | `components/feature_flags`                  |
+| 15 min | BUG-013: rename MOTD `HOSTNAME`               | 🐛 Bug         | `motd/motd.sh:85`                           |
+| 15 min | BUG-010: use short hostname for widget dir    | 🐛 Bug         | `motd/widgets.sh`                           |
+| 30 min | BUG-006: stop sourcing `/etc/os-release`      | 🐛 Bug         | `components/platform:20-25`                 |
+| 30 min | DOC-016: delete dead prompt components        | 📄 Chore       | `components/bash_prompt*`                   |
+| 1h     | DOC-003: `set -euo pipefail` in motd scripts  | 📄 Chore       | `motd/motd.sh`, `motd/widgets.sh`           |
+| 1h     | BUG-002: Docker daemon-down detection         | 🐛 Bug         | `motd/widgets.sh:97-99`                     |
+| 1h     | NEW-019: `DOTFILES_WSL_VERSION` detection     | 🆕 New-Feature | `components/platform`                       |
+| 1h     | DOC-014: macOS bash upgrade guide             | 📄 Chore       | `README.md`                                 |
