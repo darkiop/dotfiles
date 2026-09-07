@@ -158,7 +158,7 @@ motd_run_widgets() {
     fi
     # ... more widgets
 
-    # Host-specific widgets from ~/dotfiles/motd/widgets/$HOSTNAME/*.sh
+    # Host-specific widgets from ~/dotfiles/motd/widgets/<short-hostname>/*.sh
     for widget_script in "${host_widgets_dir}"/*.sh; do
         # Execute and parse "label:value" format
     done

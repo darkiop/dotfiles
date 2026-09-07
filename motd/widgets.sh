@@ -535,10 +535,17 @@ motd_run_widgets() {
 		print_kv "network" "${widget_output}"
 	fi
 
-	# Host-specific widgets (if directory exists)
-	local hostname
-	hostname=$(hostname)
-	local host_widgets_dir="${HOME}/dotfiles/motd/widgets/${hostname}"
+	# Host-specific widgets (if directory exists).
+	# Match on the short hostname: on an FQDN host `hostname` returns
+	# "host.example.com" and motd/widgets/<fqdn>/ would never match.
+	local host_full host_short host_widgets_dir
+	host_full=$(hostname)
+	host_short="${host_full%%.*}"
+	host_widgets_dir="${HOME}/dotfiles/motd/widgets/${host_short}"
+	if [[ ! -d ${host_widgets_dir} && -d "${HOME}/dotfiles/motd/widgets/${host_full}" ]]; then
+		# Backwards compatibility with directories named after the full hostname
+		host_widgets_dir="${HOME}/dotfiles/motd/widgets/${host_full}"
+	fi
 
 	if [[ -d ${host_widgets_dir} ]]; then
 		for widget_script in "${host_widgets_dir}"/*.sh; do

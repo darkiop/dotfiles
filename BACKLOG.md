@@ -1,6 +1,6 @@
 # 📋 Backlog
 
-![open](https://img.shields.io/badge/open-50-blue) ![done](https://img.shields.io/badge/done-12-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
+![open](https://img.shields.io/badge/open-50-blue) ![done](https://img.shields.io/badge/done-14-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
 
 Note: entries are never removed from this backlog, only status changes (done, out-of-scope, etc.).
 
@@ -32,9 +32,9 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 
 | ID      | Title                                                                                                      | Type   | Status  | Ref                                                                                                                                                                   |
 |---------|--------------------------------------------------------------------------------------------------------------|--------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BUG-008 | MOTD hostname routing does not exist — `motd-odin.sh` / `motd-proxmox.sh` are never sourced                | 🐛 Bug | 🔲 open | `bashrc:115`, `zshrc:126` source `motd/motd-catppuccin-mocha.sh` directly. `motd.sh` special-cases `odin` inline instead of dispatching. Either wire up routing or drop the per-host files |
-| BUG-009 | `motd` alias bypasses the color wrapper                                                                    | 🐛 Bug | 🔲 open | `alias/alias:225` is `source ~/dotfiles/motd/motd.sh`, but login MOTD goes through `motd-catppuccin-mocha.sh`. Manual invocation renders with different colors, and `source` leaks `HOSTNAME`/`USAGE_*`/`_motd_*` into the shell |
-| BUG-010 | Host widget directory lookup uses the full hostname, not the short one                                     | 🐛 Bug | 🔲 open | `motd/widgets.sh` `motd_run_widgets` does `hostname=$(hostname)`; on an FQDN host `motd/widgets/<fqdn>/` never matches. `motd.sh` already computes `HOSTNAME_SHORT` — reuse it |
+| BUG-008 | MOTD hostname routing does not exist — `motd-odin.sh` / `motd-proxmox.sh` are never sourced                | 🐛 Bug | 🔲 open | Deferred 2026-09-07: needs a decision — wire up routing or drop the per-host files. `bashrc:115`, `zshrc:126` source `motd/motd-catppuccin-mocha.sh` directly. `motd.sh` special-cases `odin` inline instead of dispatching. Either wire up routing or drop the per-host files |
+| BUG-009 | `motd` alias bypasses the color wrapper                                                                    | 🐛 Bug | 🔲 open | Deferred 2026-09-07: depends on the BUG-008 decision (which file is the entry point). `alias/alias:225` is `source ~/dotfiles/motd/motd.sh`, but login MOTD goes through `motd-catppuccin-mocha.sh`. Manual invocation renders with different colors, and `source` leaks `HOSTNAME`/`USAGE_*`/`_motd_*` into the shell |
+| BUG-010 | Host widget directory lookup uses the full hostname, not the short one                                     | 🐛 Bug | ✅ done | `motd/widgets.sh` `motd_run_widgets` does `hostname=$(hostname)`; on an FQDN host `motd/widgets/<fqdn>/` never matches. `motd.sh` already computes `HOSTNAME_SHORT` — reuse it |
 | BUG-011 | `DOTFILES_ENABLE_NETWORK_WIDGET` is documented but missing from `components/feature_flags`                 | 🐛 Bug | 🔲 open | README.md:138 documents it; the flag is never defaulted, normalized, or exported. `motd/widgets.sh:6` compensates by re-sourcing `local_dotfiles_settings` mid-render. Add it to the flag list and the cache array, then drop the workaround |
 | BUG-012 | `autoupdate.sh` retries a network `git pull` on every shell start after one failure                        | 🐛 Bug | 🔲 open | `autoupdate.sh:52` resets the counter only when the subshell exits 0. A failed pull leaves the count above 20, so every subsequent shell blocks on the network. Reset (or back off) on failure too, and add a timeout |
 | BUG-015 | `motd/motd.sh` tree renderer needs bash 4+ (`local -A category_items`)                                     | 🐛 Bug | 🔲 open | breaks on stock macOS bash 3.2, the default `DOTFILES_MOTD_STYLE=tree`. Guard on `BASH_VERSINFO` and fall back to `default` style, or replace the associative array |
@@ -157,6 +157,11 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | BUG-005 | Docker widget macOS: skip when Desktop not running                              | 🐛 Bug         | [`38b3e87`](https://github.com/darkiop/dotfiles/commit/38b3e87) |                                                            |
 | DOC-015 | AGENTS.md / CLAUDE.md / copilot-instructions.md — natural language, no AI speak | 📄 Chore       | [`60efee1`](https://github.com/darkiop/dotfiles/commit/60efee1) |                                                            |
 | NEW-001 | `dot profile` — shell startup profiler                                          | 🆕 New-Feature | [`2b798df`](https://github.com/darkiop/dotfiles/commit/2b798df) | `components/dot_profile`, `dot profile\|prof`; needs docs (DOC-017) |
+| SEC-003 | install.sh: verify remote config download before sourcing                       | 🔒 Security | [`819b4fb`](https://github.com/darkiop/dotfiles/commit/819b4fb) | temp file + `--fail`/`--proto '=https'`; content pinning still open |
+| BUG-002 | Docker widget: tell a stopped daemon apart from zero containers                 | 🐛 Bug      | [`07b535f`](https://github.com/darkiop/dotfiles/commit/07b535f) | exit status was swallowed by `wc -l`                       |
+| BUG-006 | Stop leaking `/etc/os-release` variables into the shell                         | 🐛 Bug      | [`8f9940e`](https://github.com/darkiop/dotfiles/commit/8f9940e) | `components/platform` reads ID/ID_LIKE in a subshell       |
+| BUG-007 | Repair the syntax error in `motd/motd-odin.sh`                                  | 🐛 Bug      | [`d5a5df4`](https://github.com/darkiop/dotfiles/commit/d5a5df4) | file never executed before; still unrouted (BUG-008)       |
+| BUG-010 | Host widget lookup uses the short hostname                                      | 🐛 Bug      | [`ffa66f7`](https://github.com/darkiop/dotfiles/commit/ffa66f7) | FQDN dir name still honoured as a fallback                 |
 
 ---
 
@@ -184,7 +189,6 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | 10 min | BUG-017: suppress `tput sgr0` errors          | 🐛 Bug         | `config/dotfiles.config:19`, `motd/motd.sh:143` |
 | 15 min | BUG-011: declare `DOTFILES_ENABLE_NETWORK_WIDGET` | 🐛 Bug     | `components/feature_flags`                  |
 | 15 min | BUG-013: rename MOTD `HOSTNAME`               | 🐛 Bug         | `motd/motd.sh:85`                           |
-| 15 min | BUG-010: use short hostname for widget dir    | 🐛 Bug         | `motd/widgets.sh`                           |
 | 30 min | DOC-016: delete dead prompt components        | 📄 Chore       | `components/bash_prompt*`                   |
 | 1h     | DOC-003: `set -euo pipefail` in motd scripts  | 📄 Chore       | `motd/motd.sh`, `motd/widgets.sh`           |
 | 1h     | NEW-019: `DOTFILES_WSL_VERSION` detection     | 🆕 New-Feature | `components/platform`                       |

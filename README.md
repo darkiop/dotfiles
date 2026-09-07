@@ -312,7 +312,7 @@ The message of the day system shows system info on login. Enable with `DOTFILES_
 - homebrew — available updates
 - network — reachability status for configured hosts
 
-Add custom widgets in `motd/widgets/<hostname>/`.
+Add custom widgets in `motd/widgets/<short-hostname>/` (the hostname up to the first dot).
 
 **Network widget:** Shows host reachability (green = up, red = down). Enable with `DOTFILES_ENABLE_NETWORK_WIDGET=true` and configure hosts in `config/network-hosts.conf`.
 
