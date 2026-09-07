@@ -18,10 +18,13 @@ export DOTFILES_OS
 DOTFILES_DISTRO_ID="unknown"
 DOTFILES_DISTRO_LIKE=""
 if [[ -r /etc/os-release ]]; then
+	# Source in a subshell so os-release variables (NAME, VERSION, PRETTY_NAME, ...)
+	# do not leak into the interactive shell.
 	# shellcheck source=/dev/null
-	source /etc/os-release
-	[[ -n "${ID:-}" ]] && DOTFILES_DISTRO_ID="${ID}"
-	[[ -n "${ID_LIKE:-}" ]] && DOTFILES_DISTRO_LIKE="${ID_LIKE}"
+	_dotfiles_osrel=$(. /etc/os-release 2>/dev/null && printf '%s\n%s' "${ID:-}" "${ID_LIKE:-}")
+	[[ -n "${_dotfiles_osrel%%$'\n'*}" ]] && DOTFILES_DISTRO_ID="${_dotfiles_osrel%%$'\n'*}"
+	DOTFILES_DISTRO_LIKE="${_dotfiles_osrel#*$'\n'}"
+	unset _dotfiles_osrel
 fi
 export DOTFILES_DISTRO_ID
 export DOTFILES_DISTRO_LIKE
