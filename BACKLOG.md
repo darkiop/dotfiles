@@ -1,6 +1,6 @@
 # 📋 Backlog
 
-![open](https://img.shields.io/badge/open-38-blue) ![done](https://img.shields.io/badge/done-28-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
+![open](https://img.shields.io/badge/open-35-blue) ![done](https://img.shields.io/badge/done-32-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
 
 Note: entries are never removed from this backlog, only status changes (done, out-of-scope, etc.).
 
@@ -40,7 +40,8 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | BUG-012 | `autoupdate.sh` retries a network `git pull` on every shell start after one failure                        | 🐛 Bug | ✅ done [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603) | `autoupdate.sh:52` resets the counter only when the subshell exits 0. A failed pull leaves the count above 20, so every subsequent shell blocks on the network. Reset (or back off) on failure too, and add a timeout |
 | BUG-015 | `motd/motd.sh` tree renderer needs bash 4+ (`local -A category_items`)                                     | 🐛 Bug | ✅ done [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603) | breaks on stock macOS bash 3.2, the default `DOTFILES_MOTD_STYLE=tree`. Guard on `BASH_VERSINFO` and fall back to `default` style, or replace the associative array |
 | BUG-018 | `ADD_TO_PATH` appends, so personal bin dirs rank below system paths                                        | 🐛 Bug | ✅ done [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603) | `bashrc:20-26`, `zshrc:24-30`. Verified: `~/bin`, `~/.local/bin`, `~/.cargo/bin` end up after `/usr/bin`, so user-installed tools cannot shadow system ones. Overlaps DOC-004 |
-| BUG-021 | `motd/widgets.sh:536` uses `declare -A _motd_cmd_available`, so command gating breaks on bash 3.2 | 🐛 Bug | 🔲 open | same class as BUG-015 ([`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603)), which only covered `motd.sh`. The `declare` is guarded with `2>/dev/null || true`, so on stock macOS bash 3.2 it silently stays an indexed array: every string subscript evaluates to 0, `_motd_cmd_available[docker]=1` writes index 0, and `_motd_has_cmd <anything>` then returns true. Reproduced: `x[docker]=1` makes `${x[nonexistent]}` read `1`. Consequence: every built-in widget runs on every login even when its tool is missing. Replace the map with a delimited string plus a `case` test |
+| BUG-022 | `COLOR_SUCCESS` reaches the widgets as the literal text `\e[38;2;166;227;161m` | 🐛 Bug | 🔲 open | `motd/motd-catppuccin-mocha.sh:20` builds the palette with `"\e[..."` strings, which `motd.sh` resolves with `printf %b`. The three widgets that colorize their own output (`_motd_widget_proxmox_ids`, `_motd_widget_proxmox_services`, `_motd_widget_network` in `motd/widgets.sh:278,360,497`) print with `%s` instead and default their red to `$'\x1b[...'`, so a reachable host renders as `\e[38;2;166;227;161mudmp\e[m` while an unreachable one is colored correctly. Reproduced on `pve-ct-dev`. Assign `COLOR_SUCCESS` with `$'\x1b[38;2;166;227;161m'` in the wrapper (the other `COLOR_*` vars must stay `\e`-escaped for their `%b` consumers) |
+| BUG-021 | `motd/widgets.sh:536` uses `declare -A _motd_cmd_available`, so command gating breaks on bash 3.2 | 🐛 Bug | ✅ done [`406b355`](https://github.com/darkiop/dotfiles/commit/406b355) | replaced by a `:`-delimited string plus a `case` test in `_motd_has_cmd`. Original note: same class as BUG-015 ([`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603)), which only covered `motd.sh`. The `declare` is guarded with `2>/dev/null || true`, so on stock macOS bash 3.2 it silently stays an indexed array: every string subscript evaluates to 0, `_motd_cmd_available[docker]=1` writes index 0, and `_motd_has_cmd <anything>` then returns true. Reproduced: `x[docker]=1` makes `${x[nonexistent]}` read `1`. Consequence: every built-in widget runs on every login even when its tool is missing. Replace the map with a delimited string plus a `case` test |
 
 ### ⚡ Performance
 
@@ -68,7 +69,7 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 
 | ID      | Title                                                                                                            | Type     | Status  |
 |---------|------------------------------------------------------------------------------------------------------------------|----------|---------|
-| DOC-003 | Add `set -euo pipefail` to `motd/motd.sh`, `motd/widgets.sh`, widget scripts (`install.sh` already has `set -e`) | 📄 Chore | 🔲 open |
+| DOC-003 | Add `set -euo pipefail` to `motd/motd.sh`, `motd/widgets.sh`, widget scripts (`install.sh` already has `set -e`) | 📄 Chore | ✅ done [`d8ec7c9`](https://github.com/darkiop/dotfiles/commit/d8ec7c9) |
 | DOC-004 | Array-based PATH management in bashrc/zshrc instead of repeated `ADD_TO_PATH` calls                              | 📄 Chore | 🔲 open |
 | DOC-005 | Split `components/fzf` (166 lines) into `fzf_core` + `fzf_tab_completion`                                        | 📄 Chore | 🔲 open |
 | DOC-006 | Shellcheck audit — review 36 suppressions in 13 files, reduce SC2312/SC2086/SC1090                               | 📄 Chore | 🔲 open |
@@ -84,6 +85,13 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | DOC-007 | Architecture diagram — loading order visualization in README.md                        | 📄 Chore | 🔲 open |
 | DOC-008 | Troubleshooting guide — slow startup, macOS bash 3.2, WSL gotchas, container detection | 📄 Chore | 🔲 open |
 | DOC-009 | Compatibility matrix — bash 4+/zsh 5.0+, macOS vs Linux, container limits              | 📄 Chore | 🔲 open |
+
+**DOC-003 details** — `set -euo pipefail` now heads `motd/motd.sh`, `motd/widgets.sh`, the three host widget scripts that lacked it and `motd/systemd/calc-dir-size-homes.sh`. Both MOTD entry points already run in their own `bash` process (BUG-009), so the strict mode never reaches the interactive shell. Hardened alongside it, because `pipefail` and `set -u` would otherwise abort a login banner mid-render:
+
+- `grep -c` exits 1 when it counts zero — it fed `_motd_count_lines` (docker widget) and `iobroker-updates.sh`; both now tolerate it.
+- `iobroker-status.sh` used `grep -c ... || echo "0"`, which printed *two* lines (`0\n0`) whenever no instance was enabled. Fixed with `|| true` plus a `:-0` default.
+- Empty arrays (`_docker_env`, `instances`) are unbound references under `set -u` on bash < 4.4, so they are now guarded; `_motd_widget_proxmox_ids` returns 1 on an empty list instead of printing a bare color escape.
+- Optional-tool pipelines (`tailscale`, `wg`, `pveversion`, `brew`, `inxi`, `toilet`, `jq`, `sysctl`, `hostname`, `du`) end in `|| true`, and `motd_run_widgets` is called with `|| true`.
 
 **DOC-017 details** — all six drift points are fixed; the three files are byte-identical apart from their own filename references:
 
@@ -141,8 +149,8 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 
 | ID      | Title                                                                                                | Type           | Status  |
 |---------|------------------------------------------------------------------------------------------------------|----------------|---------|
-| NEW-019 | Add `DOTFILES_WSL_VERSION` (1 or 2) to platform detection, alongside existing boolean `DOTFILES_WSL` | 🆕 New-Feature | 🔲 open |
-| DOC-014 | macOS bash upgrade guide in README.md (bash 4+ for FZF tab completion)                               | 📄 Chore       | 🔲 open |
+| NEW-019 | Add `DOTFILES_WSL_VERSION` (1 or 2) to platform detection, alongside existing boolean `DOTFILES_WSL` | 🆕 New-Feature | ✅ done [`ef11c59`](https://github.com/darkiop/dotfiles/commit/ef11c59) |
+| DOC-014 | macOS bash upgrade guide in README.md (bash 4+ for FZF tab completion)                               | 📄 Chore       | ✅ done [`f645274`](https://github.com/darkiop/dotfiles/commit/f645274) |
 
 ---
 
@@ -178,6 +186,10 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | BUG-009 | One MOTD entry point for login and the `motd` alias                            | 🐛 Bug      | [`4a56c40`](https://github.com/darkiop/dotfiles/commit/4a56c40)                                                               | both run `motd-catppuccin-mocha.sh` in a child shell, so nothing leaks into the shell |
 | DOC-016 | Delete the dead prompt components                                              | 📄 Chore    | [`4a56c40`](https://github.com/darkiop/dotfiles/commit/4a56c40)                                                               | `bash_prompt`, `bash_prompt_catppuccin_mocha_2`; `dot_profile` now profiles the prompt that is actually sourced |
 | DOC-017 | Resync AGENTS.md / CLAUDE.md / copilot-instructions.md with the code           | 📄 Chore    | [`4a56c40`](https://github.com/darkiop/dotfiles/commit/4a56c40)                                                               | component count, component + flag tables, loading order, MOTD section |
+| DOC-003 | Run the MOTD scripts under `set -euo pipefail`                                 | 📄 Chore    | [`d8ec7c9`](https://github.com/darkiop/dotfiles/commit/d8ec7c9)                                                               | see the DOC-003 notes above                                |
+| BUG-021 | Drop the `declare -A` command cache in the MOTD widgets                        | 🐛 Bug      | [`406b355`](https://github.com/darkiop/dotfiles/commit/406b355)                                                                                                                     | `:`-delimited string + `case`; every widget is gated again on bash 3.2 |
+| NEW-019 | Detect the WSL version, not just "is WSL"                                      | 🆕 New-Feature | [`ef11c59`](https://github.com/darkiop/dotfiles/commit/ef11c59)                                                                                                                  | `DOTFILES_WSL_VERSION` + `dotfiles_is_wsl1`/`dotfiles_is_wsl2`; `dot doctor` prints `[WSL2]` |
+| DOC-014 | macOS bash upgrade guide in README.md                                          | 📄 Chore    | [`f645274`](https://github.com/darkiop/dotfiles/commit/f645274)                                                                                                                     | what breaks on bash 3.2, `brew install bash`, `/etc/shells` + `chsh` |
 
 ---
 
@@ -200,7 +212,6 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 
 | Effort | Task                                          | Type           | File(s)                                     |
 |--------|-----------------------------------------------|----------------|---------------------------------------------|
-| 20 min | BUG-021: drop the `declare -A` command cache  | 🐛 Bug         | `motd/widgets.sh:536`                       |
-| 1h     | DOC-003: `set -euo pipefail` in motd scripts  | 📄 Chore       | `motd/motd.sh`, `motd/widgets.sh`           |
-| 1h     | NEW-019: `DOTFILES_WSL_VERSION` detection     | 🆕 New-Feature | `components/platform`                       |
-| 1h     | DOC-014: macOS bash upgrade guide             | 📄 Chore       | `README.md`                                 |
+| 30 min | BUG-022: fix the `COLOR_SUCCESS` escape mismatch | 🐛 Bug      | `motd/motd-catppuccin-mocha.sh:20`          |
+
+Cleared: ~~BUG-021~~, ~~NEW-019~~, ~~DOC-014~~ (all done).
