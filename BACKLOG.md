@@ -1,6 +1,6 @@
 # 📋 Backlog
 
-![open](https://img.shields.io/badge/open-35-blue) ![done](https://img.shields.io/badge/done-32-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
+![open](https://img.shields.io/badge/open-34-blue) ![done](https://img.shields.io/badge/done-33-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
 
 Note: entries are never removed from this backlog, only status changes (done, out-of-scope, etc.).
 
@@ -40,7 +40,7 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | BUG-012 | `autoupdate.sh` retries a network `git pull` on every shell start after one failure                        | 🐛 Bug | ✅ done [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603) | `autoupdate.sh:52` resets the counter only when the subshell exits 0. A failed pull leaves the count above 20, so every subsequent shell blocks on the network. Reset (or back off) on failure too, and add a timeout |
 | BUG-015 | `motd/motd.sh` tree renderer needs bash 4+ (`local -A category_items`)                                     | 🐛 Bug | ✅ done [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603) | breaks on stock macOS bash 3.2, the default `DOTFILES_MOTD_STYLE=tree`. Guard on `BASH_VERSINFO` and fall back to `default` style, or replace the associative array |
 | BUG-018 | `ADD_TO_PATH` appends, so personal bin dirs rank below system paths                                        | 🐛 Bug | ✅ done [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603) | `bashrc:20-26`, `zshrc:24-30`. Verified: `~/bin`, `~/.local/bin`, `~/.cargo/bin` end up after `/usr/bin`, so user-installed tools cannot shadow system ones. Overlaps DOC-004 |
-| BUG-022 | `COLOR_SUCCESS` reaches the widgets as the literal text `\e[38;2;166;227;161m` | 🐛 Bug | 🔲 open | `motd/motd-catppuccin-mocha.sh:20` builds the palette with `"\e[..."` strings, which `motd.sh` resolves with `printf %b`. The three widgets that colorize their own output (`_motd_widget_proxmox_ids`, `_motd_widget_proxmox_services`, `_motd_widget_network` in `motd/widgets.sh:278,360,497`) print with `%s` instead and default their red to `$'\x1b[...'`, so a reachable host renders as `\e[38;2;166;227;161mudmp\e[m` while an unreachable one is colored correctly. Reproduced on `pve-ct-dev`. Assign `COLOR_SUCCESS` with `$'\x1b[38;2;166;227;161m'` in the wrapper (the other `COLOR_*` vars must stay `\e`-escaped for their `%b` consumers) |
+| BUG-022 | `COLOR_SUCCESS` reaches the widgets as the literal text `\e[38;2;166;227;161m` | 🐛 Bug | ✅ done [`e5269d1`](https://github.com/darkiop/dotfiles/commit/e5269d1) | fixed as described, plus the widget red: it was `\x1b[38;5;196m` (256-colour), not catppuccin red. The wrapper now exports `COLOR_SUCCESS` and a new `COLOR_FAILURE` as raw `$'\x1b[...'` bytes and the three widgets default to the catppuccin values. Original note: `motd/motd-catppuccin-mocha.sh:20` builds the palette with `"\e[..."` strings, which `motd.sh` resolves with `printf %b`. The three widgets that colorize their own output (`_motd_widget_proxmox_ids`, `_motd_widget_proxmox_services`, `_motd_widget_network` in `motd/widgets.sh:278,360,497`) print with `%s` instead and default their red to `$'\x1b[...'`, so a reachable host renders as `\e[38;2;166;227;161mudmp\e[m` while an unreachable one is colored correctly. Reproduced on `pve-ct-dev`. Assign `COLOR_SUCCESS` with `$'\x1b[38;2;166;227;161m'` in the wrapper (the other `COLOR_*` vars must stay `\e`-escaped for their `%b` consumers) |
 | BUG-021 | `motd/widgets.sh:536` uses `declare -A _motd_cmd_available`, so command gating breaks on bash 3.2 | 🐛 Bug | ✅ done [`406b355`](https://github.com/darkiop/dotfiles/commit/406b355) | replaced by a `:`-delimited string plus a `case` test in `_motd_has_cmd`. Original note: same class as BUG-015 ([`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603)), which only covered `motd.sh`. The `declare` is guarded with `2>/dev/null || true`, so on stock macOS bash 3.2 it silently stays an indexed array: every string subscript evaluates to 0, `_motd_cmd_available[docker]=1` writes index 0, and `_motd_has_cmd <anything>` then returns true. Reproduced: `x[docker]=1` makes `${x[nonexistent]}` read `1`. Consequence: every built-in widget runs on every login even when its tool is missing. Replace the map with a delimited string plus a `case` test |
 
 ### ⚡ Performance
@@ -190,6 +190,7 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | BUG-021 | Drop the `declare -A` command cache in the MOTD widgets                        | 🐛 Bug      | [`406b355`](https://github.com/darkiop/dotfiles/commit/406b355)                                                                                                                     | `:`-delimited string + `case`; every widget is gated again on bash 3.2 |
 | NEW-019 | Detect the WSL version, not just "is WSL"                                      | 🆕 New-Feature | [`ef11c59`](https://github.com/darkiop/dotfiles/commit/ef11c59)                                                                                                                  | `DOTFILES_WSL_VERSION` + `dotfiles_is_wsl1`/`dotfiles_is_wsl2`; `dot doctor` prints `[WSL2]` |
 | DOC-014 | macOS bash upgrade guide in README.md                                          | 📄 Chore    | [`f645274`](https://github.com/darkiop/dotfiles/commit/f645274)                                                                                                                     | what breaks on bash 3.2, `brew install bash`, `/etc/shells` + `chsh` |
+| BUG-022 | Give the widget status colors the catppuccin palette                           | 🐛 Bug      | [`e5269d1`](https://github.com/darkiop/dotfiles/commit/e5269d1)                                                                                                                     | `COLOR_SUCCESS`/new `COLOR_FAILURE` exported as raw escapes; red was 256-colour |
 
 ---
 
@@ -210,8 +211,6 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 
 ## 🚀 Quick Wins (< 1h each)
 
-| Effort | Task                                          | Type           | File(s)                                     |
-|--------|-----------------------------------------------|----------------|---------------------------------------------|
-| 30 min | BUG-022: fix the `COLOR_SUCCESS` escape mismatch | 🐛 Bug      | `motd/motd-catppuccin-mocha.sh:20`          |
+None open right now.
 
-Cleared: ~~BUG-021~~, ~~NEW-019~~, ~~DOC-014~~ (all done).
+Cleared: ~~BUG-021~~, ~~BUG-022~~, ~~DOC-003~~, ~~NEW-019~~, ~~DOC-014~~ (all done).
