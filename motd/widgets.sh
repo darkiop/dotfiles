@@ -542,20 +542,27 @@ _motd_widget_network() {
 # Widget Runner - Call all enabled widgets
 # ============================================================================
 
-# Pre-check available commands once (avoids repeated command -v calls)
-declare -A _motd_cmd_available 2>/dev/null || true
+# Pre-check available commands once (avoids repeated command -v calls).
+# Stored as a delimited string instead of an associative array so this also
+# works on bash 3.2 (macOS), where "declare -A" silently creates an indexed
+# array and every string subscript would evaluate to 0.
+_motd_cmd_available=":"
 _motd_init_cmd_cache() {
 	local cmd
+	_motd_cmd_available=":"
 	for cmd in docker tailscale wg pveversion pct qm brew jq inxi; do
 		if command -v "${cmd}" >/dev/null 2>&1; then
-			_motd_cmd_available[${cmd}]=1
+			_motd_cmd_available="${_motd_cmd_available}${cmd}:"
 		fi
 	done
 }
 
 # Helper to check cached command availability
 _motd_has_cmd() {
-	[[ ${_motd_cmd_available[$1]:-} == 1 ]]
+	case "${_motd_cmd_available}" in
+	*":$1:"*) return 0 ;;
+	*) return 1 ;;
+	esac
 }
 
 motd_run_widgets() {
