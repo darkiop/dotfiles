@@ -15,7 +15,7 @@ Zusammengeführt aus `IDEAS.md` und `IMPROVEMENTS.md`. Letzte Aktualisierung: 20
 | [IMP-002](#imp-002) | Hardcodierten Username entfernen | Sicherheit | kritisch | 30 min | erledigt | `$USER == "darkiop"` Check in ioBroker-Integration entfernen oder via Feature-Flag konfigurierbar machen |
 | [IMP-003](#imp-003) | WOL MAC-Adressen auslagern | Sicherheit | kritisch | 1h | offen | MAC-Adressen aus alias-Datei in verschlüsselte Config oder Umgebungsvariablen verschieben |
 | [IMP-004](#imp-004) | Secret-Scanning + Scanner | Sicherheit | kritisch | 3–4h | offen | Pre-Commit Hooks + `dot secrets-scan` für API-Keys, Tokens, Credentials (gitleaks/trufflehog). Vereint mit ehem. P013 |
-| [IMP-005](#imp-005) | IPv6-Erkennung SSH tmux rename | Bug | kritisch | 1h | offen | Regex für IP-Erkennung um IPv6 erweitern (`bashrc:170`, `zshrc:161`) |
+| [IMP-005](#imp-005) | IPv6-Erkennung SSH tmux rename | Bug | kritisch | 1h | erledigt | Regex für IP-Erkennung um IPv6 erweitern (`bashrc:170`, `zshrc:161`) |
 | [IMP-006](#imp-006) | Docker Widget Daemon/Leer-Status | Bug | hoch | 1h | offen | Widget auch bei 0 Containern anzeigen (solange Daemon läuft) und "Daemon down" davon unterscheiden (`motd/widgets.sh:97-99`). Vereint mit ehem. IDX-005 |
 | [IMP-007](#imp-007) | Startup-Profiler | Performance | mittel | 2–3h | offen | `dot profile` Command zur Messung der Shell-Startzeit pro Komponente implementieren |
 | [IMP-008](#imp-008) | Lazy-Loading Komponenten | Performance | mittel | 3–5h | offen | Selten genutzte Komponenten erst bei Aufruf laden statt beim Shell-Start |
@@ -106,16 +106,24 @@ Keine Pre-Commit Hooks für API-Keys, Tokens, Credentials. gitleaks oder truffle
 ---
 
 ### IMP-005
-**IPv6-Erkennung SSH tmux rename** · Bug · kritisch
+**IPv6-Erkennung SSH tmux rename** · Bug · kritisch · erledigt
 
-`bashrc:170`, `zshrc:161` — Regex `^[0-9]+(\.[0-9]+){3}$` erkennt nur IPv4. IPv6-Adressen werden fälschlich als Hostnames behandelt und gekürzt.
+`bashrc:192-199`, `zshrc:183-189` prüften nur IPv4 (`^[0-9]+(\.[0-9]+){3}$`) — IPv6-Adressen wurden fälschlich als Hostnames behandelt und gekürzt. Zusätzliches Problem: der `%%:*` Port-Strip lief unconditional *vor* dem IP-Check und hätte jede IPv6-Adresse (mehrere `:`) schon vor der Prüfung zerschnitten.
+
+Fix: IPv6 (2+ `:`) wird vor dem Port-Strip erkannt und unverändert behalten; Port-Strip + IPv4-Check laufen nur noch im else-Zweig.
 
 ```bash
-# Verbessert (IPv4 und IPv6):
-if [[ $target =~ ^[0-9]+(\.[0-9]+){3}$ ]] || [[ $target =~ : ]]; then
-  : # IP-Adresse, behalten
+target=${target##*@}
+
+if [[ $target == *:*:* ]]; then
+  : # IPv6 address (2+ colons), keep full
 else
-  target=${target%%.*}
+  target=${target%%:*}
+  if [[ $target =~ ^[0-9]+(\.[0-9]+){3}$ ]]; then
+    : # IPv4 address, keep full
+  else
+    target=${target%%.*}
+  fi
 fi
 ```
 

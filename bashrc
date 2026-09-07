@@ -190,12 +190,16 @@ if dotfiles_flag_enabled DOTFILES_ENABLE_SSH_TMUX_RENAME && [[ -n $TMUX ]]; then
       return $?
     fi
     target=${target##*@}
-    target=${target%%:*}
 
-    if [[ $target =~ ^[0-9]+(\.[0-9]+){3}$ ]]; then
-      : # IPv4 address, keep full
+    if [[ $target == *:*:* ]]; then
+      : # IPv6 address (2+ colons), keep full
     else
-      target=${target%%.*}
+      target=${target%%:*}
+      if [[ $target =~ ^[0-9]+(\.[0-9]+){3}$ ]]; then
+        : # IPv4 address, keep full
+      else
+        target=${target%%.*}
+      fi
     fi
 
     tmux rename-window "$target"      # rename before we connect
