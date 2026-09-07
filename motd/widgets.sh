@@ -13,6 +13,10 @@ if [[ -z ${DOTFILES_ENABLE_NETWORK_WIDGET+x} && -f "${HOME}/dotfiles/components/
 	source "${HOME}/dotfiles/components/feature_flags" || true
 fi
 
+# Shared status colours (raw escapes; these are printed with '%s').
+# shellcheck source=palette.sh
+source "${HOME}/dotfiles/motd/palette.sh"
+
 # Widget cache directory
 MOTD_CACHE_DIR="${HOME}/.cache/dotfiles/motd"
 mkdir -p "${MOTD_CACHE_DIR}" 2>/dev/null || true
@@ -275,8 +279,8 @@ _motd_widget_proxmox_ids() {
 		return 0
 	fi
 
-	local c_green="${COLOR_SUCCESS:-$'\x1b[38;2;166;227;161m'}"
-	local c_red="${COLOR_FAILURE:-$'\x1b[38;2;243;139;168m'}"
+	local c_green="${COLOR_SUCCESS:-${MOTD_COLOR_SUCCESS}}"
+	local c_red="${COLOR_FAILURE:-${MOTD_COLOR_FAILURE}}"
 	local c_reset=$'\x1b[m'
 	local output=""
 	local vmid status color
@@ -357,8 +361,8 @@ _motd_widget_proxmox_services() {
 
 	command -v systemctl >/dev/null 2>&1 || return 1
 
-	local c_green="${COLOR_SUCCESS:-$'\x1b[38;2;166;227;161m'}"
-	local c_red="${COLOR_FAILURE:-$'\x1b[38;2;243;139;168m'}"
+	local c_green="${COLOR_SUCCESS:-${MOTD_COLOR_SUCCESS}}"
+	local c_red="${COLOR_FAILURE:-${MOTD_COLOR_FAILURE}}"
 	local c_reset=$'\x1b[m'
 
 	local output="" unit label
@@ -494,8 +498,8 @@ _motd_widget_network() {
 		return 1
 	fi
 
-	local c_green="${COLOR_SUCCESS:-$'\x1b[38;2;166;227;161m'}"
-	local c_red="${COLOR_FAILURE:-$'\x1b[38;2;243;139;168m'}"
+	local c_green="${COLOR_SUCCESS:-${MOTD_COLOR_SUCCESS}}"
+	local c_red="${COLOR_FAILURE:-${MOTD_COLOR_FAILURE}}"
 	local c_reset=$'\x1b[m'
 
 	# Platform-specific ping timeout flag
@@ -505,7 +509,7 @@ _motd_widget_network() {
 	fi
 
 	local output=""
-	local host status_color status_symbol
+	local host status_color
 
 	while IFS= read -r host || [[ -n ${host} ]]; do
 		# Skip empty lines and comments

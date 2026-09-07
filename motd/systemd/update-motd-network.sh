@@ -7,10 +7,13 @@ CACHE_DIR="${HOME}/.cache/dotfiles/motd"
 CACHE_FILE="${CACHE_DIR}/network"
 CONFIG_FILE="${HOME}/dotfiles/config/network-hosts.conf"
 
-# Color codes
-C_GREEN=$'\x1b[38;5;83m'
-C_RED=$'\x1b[38;5;196m'
-C_RESET=$'\x1b[m'
+# Color codes: shared with widgets.sh so the cache this writes matches what a
+# live MOTD render would produce.
+# shellcheck source=../palette.sh
+source "${HOME}/dotfiles/motd/palette.sh"
+C_GREEN="${MOTD_COLOR_SUCCESS}"
+C_RED="${MOTD_COLOR_FAILURE}"
+C_RESET="${MOTD_COLOR_RESET}"
 
 # Platform-specific ping timeout flag
 PING_TIMEOUT_FLAG="-W"
@@ -27,7 +30,7 @@ update_network_cache() {
 	mkdir -p "${CACHE_DIR}"
 
 	local output=""
-	local host status_color status_symbol
+	local host status_color
 
 	while IFS= read -r host || [[ -n ${host} ]]; do
 		[[ -z ${host} ]] && continue

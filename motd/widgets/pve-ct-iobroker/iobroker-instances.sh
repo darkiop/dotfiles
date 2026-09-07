@@ -10,8 +10,10 @@ if ! command -v iobroker >/dev/null 2>&1; then
 	exit 1
 fi
 
-c_green=$'\x1b[38;5;83m'
-c_red=$'\x1b[38;5;196m'
+# shellcheck source=../../palette.sh
+source "${HOME}/dotfiles/motd/palette.sh"
+c_green="${MOTD_COLOR_SUCCESS}"
+c_red="${MOTD_COLOR_FAILURE}"
 c_reset=$'\x1b[m'
 output=""
 
