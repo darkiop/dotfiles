@@ -48,16 +48,33 @@ fi
 # https://bashCOLORs.com
 # -------------------------------------------------------------
 function LOAD_COLORS() {
-	if [[ ! -f "${HOME}/dotfiles/config/dotfiles.config" ]]; then
-		# shellcheck source=/dev/null
-		config_url='https://raw.githubusercontent.com/darkiop/dotfiles/master/config/dotfiles.config'
-		# trunk-ignore(shellcheck/SC1090)
-		# trunk-ignore(shellcheck/SC2312)
-		source <(curl -s "${config_url}")
-	else
+	if [[ -f "${HOME}/dotfiles/config/dotfiles.config" ]]; then
 		# shellcheck source=/dev/null
 		source ~/dotfiles/config/dotfiles.config
+		return 0
 	fi
+
+	# Bootstrap case: the repo is not checked out yet, so fetch the config over
+	# HTTPS. Download to a temp file and check the transfer first - piping curl
+	# straight into source executes whatever came back, including a 404 page.
+	local config_url='https://raw.githubusercontent.com/darkiop/dotfiles/master/config/dotfiles.config'
+	local tmp_config
+	tmp_config=$(mktemp) || {
+		echo "Warning: mktemp failed, continuing without colors." >&2
+		return 0
+	}
+
+	if curl --fail --silent --show-error --location \
+		--proto '=https' --tlsv1.2 --max-time 20 \
+		--output "${tmp_config}" "${config_url}" && [[ -s ${tmp_config} ]]; then
+		# shellcheck source=/dev/null
+		# trunk-ignore(shellcheck/SC1090)
+		source "${tmp_config}"
+	else
+		echo "Warning: could not download ${config_url}, continuing without colors." >&2
+	fi
+
+	rm -f "${tmp_config}"
 }
 
 # -------------------------------------------------------------

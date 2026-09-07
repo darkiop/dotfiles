@@ -1,6 +1,6 @@
 # 📋 Backlog
 
-![open](https://img.shields.io/badge/open-51-blue) ![done](https://img.shields.io/badge/done-11-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
+![open](https://img.shields.io/badge/open-50-blue) ![done](https://img.shields.io/badge/done-12-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
 
 Note: entries are never removed from this backlog, only status changes (done, out-of-scope, etc.).
 
@@ -19,7 +19,7 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | BUG-001 | ioBroker source validation — add `[[ -f ]]` check before sourcing `~/.iobroker/*` files in `bashrc`, `zshrc`  | 🐛 Bug      | ✅ done | 30 min                                                             |
 | SEC-001 | Move WOL MAC addresses out of `alias/alias:310-314` into encrypted config or env vars                         | 🔒 Security | 🔲 open | security                                                           |
 | SEC-002 | Secret scanning — pre-commit hook via gitleaks/trufflehog + `dot secrets-scan`, whitelist for false positives | 🔒 Security | 🔲 open | `components/secret_scanner`, flag `DOTFILES_ENABLE_SECRET_SCANNER` |
-| SEC-003 | `install.sh:52-56` pipes remote `dotfiles.config` into `source <(curl -s ...)` with no failure or integrity check | 🔒 Security | 🔲 open | a 404/HTML body or MITM response gets executed; `set -e` does not catch process-substitution failure. Fetch to a temp file, check HTTP status, then source |
+| SEC-003 | `install.sh:52-56` pipes remote `dotfiles.config` into `source <(curl -s ...)` with no failure or integrity check | 🔒 Security | ✅ done | a 404/HTML body or MITM response gets executed; `set -e` does not catch process-substitution failure. Fetch to a temp file, check HTTP status, then source |
 | BUG-006 | `components/platform:22` runs `source /etc/os-release`, leaking every one of its variables into the interactive shell | 🐛 Bug      | ✅ done | verified: `NAME`, `VERSION`, `VERSION_ID`, `PRETTY_NAME`, `HOME_URL`, `LOGO`, … are all set in every shell. Parse `ID`/`ID_LIKE` with `grep`/`awk`, or source inside a subshell |
 | BUG-007 | `motd/motd-odin.sh:8` is a bash syntax error — unescaped `($volume1_usage%)` outside quotes                   | 🐛 Bug      | ✅ done | `bash -n motd/motd-odin.sh` fails; file never executes. Also dead code (see BUG-008) — fix or delete |
 | BUG-002 | Docker widget: distinguish "daemon not running" from "0 containers" in `motd/widgets.sh:97-99`                | 🐛 Bug      | ✅ done | confirmed: exit status comes from the trailing `wc -l`, so `if ! running=$(... \| wc -l ...)` never fires. Check `docker info` first, show widget on 0 containers too |
