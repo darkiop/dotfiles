@@ -39,6 +39,7 @@ dotfiles/
     ├── motd.sh         # Main MOTD renderer
     ├── motd-catppuccin-mocha.sh # Themed entry point (login + `motd` alias)
     ├── widgets.sh      # Widget system with caching
+    ├── palette.sh      # Shared status colours (raw escapes)
     ├── widgets/        # Custom widget extensions
     └── systemd/        # Timers for background updates
 ```
@@ -118,7 +119,7 @@ Built-in widgets in `motd/widgets.sh`:
 | Utilities | `components/dot_doctor`, `components/dot_help`, `components/dot_profile`, `components/helpers`, `components/lazy_loader` |
 | Pickers | `components/ssh_picker`, `components/journalctl_picker`, `components/log_picker` |
 | Tmux | `modules/oh-my-tmux/.tmux.conf.local`, `config/tmux.conf.local` |
-| MOTD | `motd/motd.sh`, `motd/motd-catppuccin-mocha.sh`, `motd/widgets.sh`, `motd/widgets/<short-hostname>/` |
+| MOTD | `motd/motd.sh`, `motd/motd-catppuccin-mocha.sh`, `motd/widgets.sh`, `motd/palette.sh`, `motd/widgets/<short-hostname>/` |
 | Help data | `config/dot_help.json` |
 
 ## Conventions

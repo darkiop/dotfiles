@@ -112,6 +112,23 @@ print_kv ip "192.168.1.100"       # Output:   ip          192.168.1.100
 print_kv load "0.5 / 0.3 / 0.2"   # Output:   load        0.5 / 0.3 / 0.2
 ```
 
+### Status colours
+
+Anything that writes a widget cache has to agree on the escape codes, because
+the cache is written by three different places: a live render through
+`widgets.sh`, the `update-motd-network` systemd timer, and the per-host widget
+scripts. `palette.sh` holds those colours as raw escape bytes:
+
+| Variable | Meaning |
+|----------|---------|
+| `MOTD_COLOR_SUCCESS` | reachable host / active unit (catppuccin green) |
+| `MOTD_COLOR_FAILURE` | unreachable host / inactive unit (catppuccin red) |
+| `MOTD_COLOR_RESET` | reset |
+
+Note the difference to the `COLOR_*` palette in `motd-catppuccin-mocha.sh`:
+those are `"\e[..."` strings because `motd.sh` prints them with `printf '%b'`.
+The widgets print with `'%s'`, so they need the real bytes.
+
 ### 5. Widget System: `widgets.sh`
 
 Widgets are **self-contained functions** with a consistent pattern:
@@ -222,13 +239,15 @@ motd/
 ├── motd.sh              # Main entry point
 ├── widgets.sh           # Widget system + built-in widgets
 ├── motd-catppuccin-mocha.sh # Themed entry point (login MOTD + `motd` alias)
+├── palette.sh           # Shared status colours (raw escapes)
 ├── widgets/             # Host-specific widget scripts
 │   ├── README.md
 │   └── <short-hostname>/*.sh
 ├── tasks.json           # Per-host task messages
 └── systemd/             # Timers for cache updates
     ├── calc-dir-size-homes.*
-    └── update-motd-apt-infos.*
+    ├── update-motd-apt-infos.*
+    └── update-motd-network.*
 ```
 
 ## Built-in Widgets
