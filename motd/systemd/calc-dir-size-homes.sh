@@ -2,6 +2,8 @@
 # This script calculates the size of the root (/) and /home directories
 # and stores the results in /usr/local/share/dotfiles/dir-sizes/dir-sizes.txt.
 
+set -euo pipefail
+
 OUTPUT_DIR="/usr/local/share/dotfiles"
 OUTPUT_FILE="${OUTPUT_DIR}/dir-sizes"
 
@@ -12,7 +14,7 @@ mkdir -p "${OUTPUT_DIR}" || {
 }
 
 # Calculate and capture sizes (human-readable, suppressing errors)
-SIZE_HOME=$(du -sh /home 2>/dev/null | awk '{print $1}')
+SIZE_HOME=$(du -sh /home 2>/dev/null | awk '{print $1}' || true)
 
 # Write results to the output file
 echo "${SIZE_HOME}" >"${OUTPUT_FILE}"

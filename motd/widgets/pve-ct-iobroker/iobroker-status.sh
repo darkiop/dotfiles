@@ -58,7 +58,8 @@ if [[ ${js_status} == "on" ]]; then
 	# Alternative: parse 'iobroker list instances' output
 	instance_list=$(iobroker list instances 2>/dev/null || true)
 	if [[ -n ${instance_list} ]]; then
-		running_instances=$(echo "${instance_list}" | grep -c "enabled" 2>/dev/null || echo "0")
+		running_instances=$(printf '%s\n' "${instance_list}" | grep -c "enabled" 2>/dev/null || true)
+		running_instances="${running_instances:-0}"
 	fi
 fi
 

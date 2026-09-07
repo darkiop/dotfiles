@@ -3,6 +3,8 @@
 # Shows all instance names with status colors (green=active, red=inactive)
 # Output format: label:value (required by motd_run_widgets host-specific loader)
 
+set -euo pipefail
+
 # Check if iobroker command is available
 if ! command -v iobroker >/dev/null 2>&1; then
 	exit 1
@@ -27,7 +29,7 @@ while IFS= read -r line; do
 
 	# Extract instance name: second field after first colon, trimmed
 	# Format: system.adapter.admin.0  : admin  : hostname  - status
-	name=$(printf "%s" "${line}" | awk -F':' '{gsub(/^ +| +$/, "", $2); print $2}')
+	name=$(printf "%s" "${line}" | awk -F':' '{gsub(/^ +| +$/, "", $2); print $2}' || true)
 
 	[[ -z ${name} ]] && continue
 

@@ -2,11 +2,15 @@
 # MOTD Widget System (P021)
 # Extensible widget architecture for displaying additional system information
 
+# Sourced from motd/motd.sh, which runs in its own bash process, so the strict
+# mode stays out of the interactive shell.
+set -euo pipefail
+
 # Load the feature flags if the shell has not done so yet (standalone motd.sh
 # calls). components/feature_flags applies the local overrides itself.
 if [[ -z ${DOTFILES_ENABLE_NETWORK_WIDGET+x} && -f "${HOME}/dotfiles/components/feature_flags" ]]; then
 	# shellcheck source=/dev/null
-	source "${HOME}/dotfiles/components/feature_flags"
+	source "${HOME}/dotfiles/components/feature_flags" || true
 fi
 
 # Widget cache directory
@@ -37,7 +41,7 @@ _motd_count_lines() {
 		printf '0'
 		return 0
 	}
-	printf '%s\n' "$1" | grep -c . | tr -d ' '
+	printf '%s\n' "$1" | grep -c . | tr -d ' ' || true
 }
 
 # Helper: Read from cache
@@ -81,7 +85,10 @@ _motd_widget_docker() {
 		for _s in "${HOME}/.docker/run/docker.sock" \
 		          "${HOME}/.docker/desktop/docker.sock" \
 		          "/var/run/docker.sock"; do
-			[[ -S ${_s} ]] && _sock="${_s}" && break
+			if [[ -S ${_s} ]]; then
+				_sock="${_s}"
+				break
+			fi
 		done
 		[[ -z ${_sock} ]] && return 1
 
@@ -96,11 +103,11 @@ _motd_widget_docker() {
 	# otherwise the exit status comes from wc and a dead daemon looks like an
 	# empty host.
 	local running_ids stopped_ids running stopped total output
-	if ! running_ids=$("${_docker_env[@]}" docker ps -q 2>/dev/null); then
+	if ! running_ids=$(${_docker_env[@]+"${_docker_env[@]}"} docker ps -q 2>/dev/null); then
 		[[ -n ${_tmp_cfg:-} ]] && rm -rf "${_tmp_cfg}"
 		return 1
 	fi
-	if ! stopped_ids=$("${_docker_env[@]}" docker ps -aq --filter "status=exited" 2>/dev/null); then
+	if ! stopped_ids=$(${_docker_env[@]+"${_docker_env[@]}"} docker ps -aq --filter "status=exited" 2>/dev/null); then
 		stopped_ids=""
 	fi
 	[[ -n ${_tmp_cfg:-} ]] && rm -rf "${_tmp_cfg}"
@@ -141,7 +148,7 @@ _motd_widget_tailscale() {
 	if ! _motd_has_cmd jq; then
 		# Fallback: simple status check without jq
 		local ip output
-		ip=$(tailscale ip -4 2>/dev/null | head -1)
+		ip=$(tailscale ip -4 2>/dev/null | head -1 || true)
 		if [[ -n ${ip} ]]; then
 			output="${ip}"
 		else
@@ -154,7 +161,7 @@ _motd_widget_tailscale() {
 
 	# Parse status with jq
 	local backend_state self_ip output
-	backend_state=$(printf "%s" "${status_json}" | jq -r '.BackendState // empty')
+	backend_state=$(printf "%s" "${status_json}" | jq -r '.BackendState // empty' || true)
 
 	# Show status if not running
 	if [[ ${backend_state} != "Running" ]]; then
@@ -165,7 +172,7 @@ _motd_widget_tailscale() {
 	fi
 
 	# Get own IP only
-	self_ip=$(printf "%s" "${status_json}" | jq -r '.Self.TailscaleIPs[0] // empty')
+	self_ip=$(printf "%s" "${status_json}" | jq -r '.Self.TailscaleIPs[0] // empty' || true)
 
 	if [[ -z ${self_ip} ]]; then
 		return 1
@@ -197,16 +204,16 @@ _motd_widget_wireguard() {
 	# Only show wg0 status; if not connected, show a minimal message
 	local wg_ip output allowed_ips
 	# Strip ANSI escape sequences from ip output (ip may colorize even in pipes)
-	wg_ip=$(ip -4 addr show dev wg0 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | awk '/inet / {split($2, a, "/"); print a[1]; exit}')
+	wg_ip=$(ip -4 addr show dev wg0 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | awk '/inet / {split($2, a, "/"); print a[1]; exit}' || true)
 
 	if [[ -n ${wg_ip} ]]; then
 		output="${wg_ip}"
 
 		# Append allowed IPs if available
-		allowed_ips=$("${wg_bin}" show wg0 allowed-ips 2>/dev/null | awk '{$1=""; sub(/^ /,""); print}' | paste -sd ",")
+		allowed_ips=$("${wg_bin}" show wg0 allowed-ips 2>/dev/null | awk '{$1=""; sub(/^ /,""); print}' | paste -sd "," || true)
 		if [[ -z ${allowed_ips} && ${EUID} -ne 0 ]]; then
 			if command -v sudo >/dev/null 2>&1; then
-				allowed_ips=$(sudo -n "${wg_bin}" show wg0 allowed-ips 2>/dev/null | awk '{$1=""; sub(/^ /,""); print}' | paste -sd ",")
+				allowed_ips=$(sudo -n "${wg_bin}" show wg0 allowed-ips 2>/dev/null | awk '{$1=""; sub(/^ /,""); print}' | paste -sd "," || true)
 			fi
 		fi
 		if [[ -n ${allowed_ips} ]]; then
@@ -291,6 +298,9 @@ _motd_widget_proxmox_ids() {
 		done < <(qm list 2>/dev/null | awk 'NR>1 {print $1, $3}')
 	fi
 
+	# Nothing to show (and an empty array is an unbound reference under `set -u`)
+	[[ ${#instances[@]} -eq 0 ]] && return 1
+
 	# Sort by ID (numerically) and build colored output
 	while IFS=: read -r vmid status; do
 		if [[ ${status} == "running" ]]; then
@@ -324,7 +334,7 @@ _motd_widget_proxmox_version() {
 
 	# Command availability is pre-checked by motd_run_widgets
 	local output
-	output=$(pveversion 2>/dev/null | head -n 1)
+	output=$(pveversion 2>/dev/null | head -n 1 || true)
 	output="${output%% *}"
 
 	[[ -z ${output} ]] && return 1
@@ -399,8 +409,8 @@ _motd_widget_brew() {
 
 	# Count outdated formulas and casks separately (suppress auto-update)
 	local formula_count cask_count total output
-	formula_count=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --formula 2>/dev/null | wc -l | tr -d ' ')
-	cask_count=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --cask 2>/dev/null | wc -l | tr -d ' ')
+	formula_count=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --formula 2>/dev/null | wc -l | tr -d ' ' || true)
+	cask_count=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --cask 2>/dev/null | wc -l | tr -d ' ' || true)
 	total=$((formula_count + cask_count))
 
 	# Show "up2date" if no updates available
@@ -449,7 +459,7 @@ _motd_widget_temp() {
 
 	# Get CPU temperature via inxi
 	local output
-	output=$(inxi -s 2>/dev/null | grep -i cpu | awk '{print $4}')
+	output=$(inxi -s 2>/dev/null | grep -i cpu | awk '{print $4}' || true)
 
 	if [[ -z ${output} ]]; then
 		return 1
@@ -502,7 +512,7 @@ _motd_widget_network() {
 		[[ -z ${host} ]] && continue
 		[[ ${host} =~ ^[[:space:]]*# ]] && continue
 		# Trim whitespace
-		host=$(echo "${host}" | xargs)
+		host=$(echo "${host}" | xargs || true)
 		[[ -z ${host} ]] && continue
 
 		# Check reachability (quick ping, 1 second timeout)
@@ -626,7 +636,7 @@ motd_run_widgets() {
 	# Match on the short hostname: on an FQDN host `hostname` returns
 	# "host.example.com" and motd/widgets/<fqdn>/ would never match.
 	local host_full host_short host_widgets_dir
-	host_full=$(hostname)
+	host_full=$(hostname 2>/dev/null || echo "unknown")
 	host_short="${host_full%%.*}"
 	host_widgets_dir="${HOME}/dotfiles/motd/widgets/${host_short}"
 	if [[ ! -d ${host_widgets_dir} && -d "${HOME}/dotfiles/motd/widgets/${host_full}" ]]; then

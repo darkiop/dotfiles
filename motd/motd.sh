@@ -6,6 +6,10 @@
 #   - "tree" (default): compact tree-style layout like `dot help --plain`
 #   - "default": toilet banner + simple key-value lines
 
+# Fail fast: this file runs in its own bash process (motd-catppuccin-mocha.sh),
+# so the strict mode never leaks into the interactive shell.
+set -euo pipefail
+
 # ============================================================================
 # Color Setup
 # ============================================================================
@@ -82,7 +86,7 @@ else
 fi
 
 # Hostname
-MOTD_HOSTNAME=$(hostname)
+MOTD_HOSTNAME=$(hostname 2>/dev/null || echo "unknown")
 MOTD_HOSTNAME_SHORT="${MOTD_HOSTNAME%%.*}"
 
 # IP address
@@ -111,7 +115,7 @@ dotfiles_motd_get_ip() {
 case ${MOTD_HOSTNAME} in
 odin)
 	if [[ -r /etc.defaults/VERSION ]]; then
-		GET_PLATFORM_DATA="Synology DSM "$(grep productversion /etc.defaults/VERSION | awk -F'=' '{print $2}' | tr -d '"')
+		GET_PLATFORM_DATA="Synology DSM "$(grep productversion /etc.defaults/VERSION 2>/dev/null | awk -F'=' '{print $2}' | tr -d '"' || true)
 	else
 		GET_PLATFORM_DATA="$(uname -s)"
 	fi
@@ -119,7 +123,7 @@ odin)
 	;;
 *)
 	if [[ -r /etc/os-release ]]; then
-		GET_PLATFORM_DATA=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }')
+		GET_PLATFORM_DATA=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | awk -F"=" '{print $2}' | awk -F'"' '{ print $2 }' || true)
 	elif command -v sw_vers >/dev/null 2>&1; then
 		GET_PLATFORM_DATA="$(sw_vers -productName 2>/dev/null) $(sw_vers -productVersion 2>/dev/null)"
 	else
@@ -135,7 +139,7 @@ if [[ -r /proc/loadavg ]]; then
 	LOAD5=$(awk '{ print $2 }' /proc/loadavg || true)
 	LOAD15=$(awk '{ print $3 }' /proc/loadavg || true)
 elif command -v sysctl >/dev/null 2>&1; then
-	read -r LOAD1 LOAD5 LOAD15 <<<"$(sysctl -n vm.loadavg 2>/dev/null | tr -d '{}' | awk '{print $1, $2, $3}')"
+	read -r LOAD1 LOAD5 LOAD15 <<<"$(sysctl -n vm.loadavg 2>/dev/null | tr -d '{}' | awk '{print $1, $2, $3}')" || true
 fi
 LOAD1="${LOAD1:-n/a}"
 LOAD5="${LOAD5:-n/a}"
@@ -152,7 +156,7 @@ TASKS=""
 JQ_MISSING_MSG=""
 if [[ -f ~/dotfiles/motd/tasks.json ]]; then
 	if command -v jq >/dev/null 2>&1; then
-		TASKS="$(jq -r --arg host "${MOTD_HOSTNAME}" '(.[$host] // .default // "")' ~/dotfiles/motd/tasks.json 2>/dev/null)"
+		TASKS="$(jq -r --arg host "${MOTD_HOSTNAME}" '(.[$host] // .default // "")' ~/dotfiles/motd/tasks.json 2>/dev/null || true)"
 	else
 		JQ_MISSING_MSG="(jq missing for tasks.json)"
 	fi
@@ -237,7 +241,7 @@ EOF
 			banner_cache="${HOME}/.cache/dotfiles/motd/banner-${MOTD_HOSTNAME_SHORT}"
 			if [[ ! -f ${banner_cache} ]]; then
 				mkdir -p "${HOME}/.cache/dotfiles/motd" 2>/dev/null || true
-				toilet -f smblock -w 150 "${MOTD_HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /' > "${banner_cache}"
+				toilet -f smblock -w 150 "${MOTD_HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /' > "${banner_cache}" || true
 			fi
 			command cat "${banner_cache}"
 			printf '%b' "${COLOR_CLOSE}"
@@ -269,7 +273,7 @@ EOF
 		if [[ -f ~/dotfiles/motd/widgets.sh ]]; then
 			# shellcheck source=/dev/null
 			source ~/dotfiles/motd/widgets.sh
-			motd_run_widgets
+			motd_run_widgets || true
 		fi
 	fi
 
@@ -419,7 +423,7 @@ _motd_render_tree() {
 
 		# shellcheck source=/dev/null
 		source ~/dotfiles/motd/widgets.sh
-		motd_run_widgets
+		motd_run_widgets || true
 
 		unset -f print_kv
 	}
@@ -447,7 +451,7 @@ EOF
 			banner_cache="${HOME}/.cache/dotfiles/motd/banner-${MOTD_HOSTNAME_SHORT}"
 			if [[ ! -f ${banner_cache} ]]; then
 				mkdir -p "${HOME}/.cache/dotfiles/motd" 2>/dev/null || true
-				toilet -f smblock -w 150 "${MOTD_HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /' > "${banner_cache}"
+				toilet -f smblock -w 150 "${MOTD_HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /' > "${banner_cache}" || true
 			fi
 			command cat "${banner_cache}"
 			printf '%b\n' "${COLOR_CLOSE}"
