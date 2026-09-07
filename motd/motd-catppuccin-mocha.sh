@@ -17,9 +17,14 @@ COLOR_YELLOW="${_CAT_BLUE}"
 COLOR_RED="${_CAT_RED}"
 COLOR_RESET="\033[m"
 
-COLOR_SUCCESS="${_CAT_GREEN}"
+# The COLOR_* vars above are consumed by motd.sh with printf '%b', so they stay
+# "\e"-escaped. The widgets in widgets.sh print their own colors with '%s', so
+# these two carry real escape bytes instead.
+COLOR_SUCCESS=$'\x1b[38;2;166;227;161m' # catppuccin green
+COLOR_FAILURE=$'\x1b[38;2;243;139;168m' # catppuccin red
 
-export COLOR_BLUE COLOR_LIGHT_BLUE COLOR_GREEN COLOR_YELLOW COLOR_RED COLOR_RESET COLOR_SUCCESS
+export COLOR_BLUE COLOR_LIGHT_BLUE COLOR_GREEN COLOR_YELLOW COLOR_RED COLOR_RESET
+export COLOR_SUCCESS COLOR_FAILURE
 
 DOTFILES_DIR="${DOTFILES_DIR:-${HOME}/dotfiles}"
 # shellcheck source=motd.sh

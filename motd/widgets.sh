@@ -275,8 +275,8 @@ _motd_widget_proxmox_ids() {
 		return 0
 	fi
 
-	local c_green="${COLOR_SUCCESS:-$'\x1b[38;5;83m'}"
-	local c_red=$'\x1b[38;5;196m'
+	local c_green="${COLOR_SUCCESS:-$'\x1b[38;2;166;227;161m'}"
+	local c_red="${COLOR_FAILURE:-$'\x1b[38;2;243;139;168m'}"
 	local c_reset=$'\x1b[m'
 	local output=""
 	local vmid status color
@@ -357,8 +357,8 @@ _motd_widget_proxmox_services() {
 
 	command -v systemctl >/dev/null 2>&1 || return 1
 
-	local c_green="${COLOR_SUCCESS:-$'\x1b[38;5;83m'}"
-	local c_red=$'\x1b[38;5;196m'
+	local c_green="${COLOR_SUCCESS:-$'\x1b[38;2;166;227;161m'}"
+	local c_red="${COLOR_FAILURE:-$'\x1b[38;2;243;139;168m'}"
 	local c_reset=$'\x1b[m'
 
 	local output="" unit label
@@ -494,8 +494,8 @@ _motd_widget_network() {
 		return 1
 	fi
 
-	local c_green="${COLOR_SUCCESS:-$'\x1b[38;5;83m'}"
-	local c_red=$'\x1b[38;5;196m'
+	local c_green="${COLOR_SUCCESS:-$'\x1b[38;2;166;227;161m'}"
+	local c_red="${COLOR_FAILURE:-$'\x1b[38;2;243;139;168m'}"
 	local c_reset=$'\x1b[m'
 
 	# Platform-specific ping timeout flag
