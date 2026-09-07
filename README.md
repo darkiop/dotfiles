@@ -53,6 +53,41 @@ A few things to keep in mind:
 - `gawk` makes fzf tab-completion work properly in zsh
 - Anything that needs systemd or journalctl (MOTD timers, `jctl`, systemctl pickers) won't work on macOS
 
+### Upgrading bash on macOS
+
+macOS still ships bash 3.2 (from 2007, the last GPLv2 release). Everything here runs on
+3.2, but two things behave differently:
+
+- fzf tab-completion in bash is skipped — `modules/fzf-tab-completion` needs `readarray`
+  and `exec {fd}>`, both bash 4+ (`components/fzf:100`). zsh tab-completion is unaffected.
+- The prompt's stdin flush waits longer per step, so a new bash shell starts slightly slower
+  (`components/bash_prompt_catppuccin_mocha:137`).
+
+If you use zsh as your login shell (the macOS default), you don't need any of this.
+
+To install a current bash:
+
+```bash
+brew install bash
+```
+
+That puts it in `/opt/homebrew/bin/bash` (Apple Silicon) or `/usr/local/bin/bash` (Intel);
+the old `/bin/bash` stays where it is. Check with `bash --version`.
+
+To make it your login shell, register it first — `chsh` only accepts shells listed in
+`/etc/shells`:
+
+```bash
+echo "$(brew --prefix)/bin/bash" | sudo tee -a /etc/shells
+chsh -s "$(brew --prefix)/bin/bash"
+```
+
+Open a new terminal and verify with `echo "${BASH_VERSINFO[0]}"` (should print 5) and
+`dot doctor`, which reports the running shell version.
+
+Scripts with a `#!/bin/bash` shebang still run under 3.2 — that is fine, nothing in this
+repo depends on bash 4 at script level.
+
 ## What's included
 
 **Shell configs:**
@@ -338,7 +373,10 @@ The `components/platform` file exports these variables:
 - `DOTFILES_OS` — linux, darwin, or unknown
 - `DOTFILES_DISTRO_ID`, `DOTFILES_DISTRO_LIKE` — from /etc/os-release
 - `DOTFILES_WSL` — 1 if running in WSL
+- `DOTFILES_WSL_VERSION` — 1 or 2 in WSL, 0 otherwise
 - `DOTFILES_CONTAINER` — 1 if running in a container
+
+Helpers: `dotfiles_is_linux`, `dotfiles_is_darwin`, `dotfiles_is_wsl`, `dotfiles_is_wsl1`, `dotfiles_is_wsl2`, `dotfiles_is_container`, `dotfiles_is_debian_like`.
 
 ## Updating
 
