@@ -34,6 +34,7 @@ dotfiles_autoupdate() {
 
 	# Check whether to update
 	if ${force} || [[ ${startup_count} -gt 20 ]]; then
+		local update_rc=0
 		(
 			if [[ ! -d "${HOME}/dotfiles/.git" ]]; then
 				exit 0
@@ -48,8 +49,28 @@ dotfiles_autoupdate() {
 			echo "Updating dotfiles ..."
 			# Do not recurse into submodules even if user has `submodule.recurse=true`
 			# (common in global gitconfig) to avoid SSH-only submodule fetch failures.
-			git -c submodule.recurse=false pull --ff-only
-		) && echo "0" >"${count_file}"
+			# Cap the runtime so an unreachable remote cannot stall the shell start.
+			local timeout_bin=""
+			if command -v timeout >/dev/null 2>&1; then
+				timeout_bin="timeout"
+			elif command -v gtimeout >/dev/null 2>&1; then
+				timeout_bin="gtimeout"
+			fi
+			if [[ -n ${timeout_bin} ]]; then
+				"${timeout_bin}" 30 git -c submodule.recurse=false pull --ff-only
+			else
+				git -c submodule.recurse=false pull --ff-only
+			fi
+		) || update_rc=$?
+
+		# Reset the counter regardless of the outcome. Resetting only on success
+		# left the count above the threshold after a failed pull, so every later
+		# shell start hit the network again.
+		echo "0" >"${count_file}"
+
+		if [[ ${update_rc} -ne 0 ]]; then
+			echo "dotfiles auto-update failed (exit ${update_rc}); retrying later." >&2
+		fi
 	fi
 }
 

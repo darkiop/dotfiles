@@ -82,8 +82,8 @@ else
 fi
 
 # Hostname
-HOSTNAME=$(hostname)
-HOSTNAME_SHORT="${HOSTNAME%%.*}"
+MOTD_HOSTNAME=$(hostname)
+MOTD_HOSTNAME_SHORT="${MOTD_HOSTNAME%%.*}"
 
 # IP address
 dotfiles_motd_get_ip() {
@@ -108,9 +108,13 @@ dotfiles_motd_get_ip() {
 }
 
 # OS version & IP
-case ${HOSTNAME} in
+case ${MOTD_HOSTNAME} in
 odin)
-	GET_PLATFORM_DATA="Synology DSM "$(command cat /etc.defaults/VERSION | grep productversion | awk -F'=' '{print $2}' | sed 's/"//' | sed 's/"//')
+	if [[ -r /etc.defaults/VERSION ]]; then
+		GET_PLATFORM_DATA="Synology DSM "$(grep productversion /etc.defaults/VERSION | awk -F'=' '{print $2}' | tr -d '"')
+	else
+		GET_PLATFORM_DATA="$(uname -s)"
+	fi
 	GET_HOST_IP="$(dotfiles_motd_get_ip || true)"
 	;;
 *)
@@ -138,9 +142,9 @@ LOAD5="${LOAD5:-n/a}"
 LOAD15="${LOAD15:-n/a}"
 
 # Color close
-case ${HOSTNAME} in
+case ${MOTD_HOSTNAME} in
 odin) COLOR_CLOSE="" ;;
-*) COLOR_CLOSE="$(tput sgr0)" ;;
+*) COLOR_CLOSE="$(tput sgr0 2>/dev/null || true)" ;;
 esac
 
 # Tasks
@@ -148,15 +152,15 @@ TASKS=""
 JQ_MISSING_MSG=""
 if [[ -f ~/dotfiles/motd/tasks.json ]]; then
 	if command -v jq >/dev/null 2>&1; then
-		TASKS="$(jq -r --arg host "${HOSTNAME}" '(.[$host] // .default // "")' ~/dotfiles/motd/tasks.json 2>/dev/null)"
+		TASKS="$(jq -r --arg host "${MOTD_HOSTNAME}" '(.[$host] // .default // "")' ~/dotfiles/motd/tasks.json 2>/dev/null)"
 	else
 		JQ_MISSING_MSG="(jq missing for tasks.json)"
 	fi
 fi
 
 if [[ -z ${TASKS} ]]; then
-	if [[ -f ~/dotfiles/motd/tasks-${HOSTNAME} ]]; then
-		TASKS="$(command cat ~/dotfiles/motd/tasks-"${HOSTNAME}")"
+	if [[ -f ~/dotfiles/motd/tasks-${MOTD_HOSTNAME} ]]; then
+		TASKS="$(command cat ~/dotfiles/motd/tasks-"${MOTD_HOSTNAME}")"
 	elif [[ -f ~/dotfiles/motd/tasks ]]; then
 		TASKS="$(command cat ~/dotfiles/motd/tasks)"
 	fi
@@ -166,7 +170,7 @@ fi
 SHOW_UPDATES_LINE=false
 UPDATES_COUNT=""
 UPDATES_PACKAGES=""
-if [[ ${MOTD_SHOW_APT_UPDATES} == "y" ]]; then
+if [[ ${MOTD_SHOW_APT_UPDATES:-} == "y" ]]; then
 	if [[ -f /usr/local/share/dotfiles/apt-updates-count ]] && [[ -f /usr/local/share/dotfiles/apt-updates-packages ]]; then
 		UPDATES_COUNT=$(</usr/local/share/dotfiles/apt-updates-count)
 		UPDATES_PACKAGES=$(</usr/local/share/dotfiles/apt-updates-packages)
@@ -213,7 +217,7 @@ _motd_render_default() {
 	}
 
 	# Banner
-	case ${HOSTNAME} in
+	case ${MOTD_HOSTNAME} in
 	odin)
 		clear
 		echo
@@ -230,10 +234,10 @@ EOF
 		if command -v toilet >/dev/null 2>&1; then
 			echo
 			printf '%b' "${COLOR_YELLOW}"
-			banner_cache="${HOME}/.cache/dotfiles/motd/banner-${HOSTNAME_SHORT}"
+			banner_cache="${HOME}/.cache/dotfiles/motd/banner-${MOTD_HOSTNAME_SHORT}"
 			if [[ ! -f ${banner_cache} ]]; then
 				mkdir -p "${HOME}/.cache/dotfiles/motd" 2>/dev/null || true
-				toilet -f smblock -w 150 "${HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /' > "${banner_cache}"
+				toilet -f smblock -w 150 "${MOTD_HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /' > "${banner_cache}"
 			fi
 			command cat "${banner_cache}"
 			printf '%b' "${COLOR_CLOSE}"
@@ -423,7 +427,7 @@ _motd_render_tree() {
 	# Render
 
 	# Banner (same as default style)
-	case ${HOSTNAME} in
+	case ${MOTD_HOSTNAME} in
 	odin)
 		clear
 		echo
@@ -440,10 +444,10 @@ EOF
 		if command -v toilet >/dev/null 2>&1; then
 			echo
 			printf '%b' "${COLOR_YELLOW}"
-			banner_cache="${HOME}/.cache/dotfiles/motd/banner-${HOSTNAME_SHORT}"
+			banner_cache="${HOME}/.cache/dotfiles/motd/banner-${MOTD_HOSTNAME_SHORT}"
 			if [[ ! -f ${banner_cache} ]]; then
 				mkdir -p "${HOME}/.cache/dotfiles/motd" 2>/dev/null || true
-				toilet -f smblock -w 150 "${HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /' > "${banner_cache}"
+				toilet -f smblock -w 150 "${MOTD_HOSTNAME_SHORT}" 2>/dev/null | sed 's/^/  /' > "${banner_cache}"
 			fi
 			command cat "${banner_cache}"
 			printf '%b\n' "${COLOR_CLOSE}"
@@ -480,9 +484,12 @@ EOF
 	# Widgets - group by category (category::sublabel format) or show under "Services"
 	_motd_tree_collect_widgets
 	if [[ ${#_motd_widget_items[@]} -gt 0 ]]; then
-		# Separate widgets into categories
+		# Separate widgets into categories. Deliberately no associative array:
+		# `local -A` needs bash 4 and stock macOS still ships bash 3.2, which
+		# made the whole tree style (the default) fail there. The widget list is
+		# short, so a second scan per category is cheaper than the portability
+		# loss.
 		local -a services_items=()
-		local -A category_items=()
 		local -a category_order=()
 
 		for item in "${_motd_widget_items[@]}"; do
@@ -492,15 +499,21 @@ EOF
 			if [[ ${label} == *::* ]]; then
 				# Categorized widget: "category::sublabel"
 				local category="${label%%::*}"
-				local sublabel="${label#*::}"
 
 				# Track category order (first occurrence)
-				if [[ -z ${category_items[${category}]:-} ]]; then
+				local category_seen=0
+				if [[ ${#category_order[@]} -gt 0 ]]; then
+					local known
+					for known in "${category_order[@]}"; do
+						if [[ ${known} == "${category}" ]]; then
+							category_seen=1
+							break
+						fi
+					done
+				fi
+				if [[ ${category_seen} -eq 0 ]]; then
 					category_order+=("${category}")
 				fi
-
-				# Append to category (use newline as separator)
-				category_items[${category}]+="${sublabel}|${value}"$'\n'
 			else
 				# Non-categorized widget -> Services
 				services_items+=("${label}|${value}")
@@ -525,14 +538,16 @@ EOF
 		fi
 
 		# Render each category section
-		for category in "${category_order[@]}"; do
+		for category in ${category_order[@]+"${category_order[@]}"}; do
 			_motd_tree_section "${category}"
 
-			# Parse items for this category
+			# Collect the items of this category, in widget order
 			local -a cat_items=()
-			while IFS= read -r line; do
-				[[ -n ${line} ]] && cat_items+=("${line}")
-			done <<< "${category_items[${category}]}"
+			for item in "${_motd_widget_items[@]}"; do
+				local label="${item%%|*}"
+				[[ ${label} == "${category}::"* ]] || continue
+				cat_items+=("${label#*::}|${item#*|}")
+			done
 
 			local total=${#cat_items[@]}
 			local idx=0

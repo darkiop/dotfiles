@@ -2,10 +2,11 @@
 # MOTD Widget System (P021)
 # Extensible widget architecture for displaying additional system information
 
-# Source local settings if not already loaded (for standalone motd.sh calls)
-if [[ -z ${DOTFILES_ENABLE_NETWORK_WIDGET+x} && -f "${HOME}/dotfiles/config/local_dotfiles_settings" ]]; then
+# Load the feature flags if the shell has not done so yet (standalone motd.sh
+# calls). components/feature_flags applies the local overrides itself.
+if [[ -z ${DOTFILES_ENABLE_NETWORK_WIDGET+x} && -f "${HOME}/dotfiles/components/feature_flags" ]]; then
 	# shellcheck source=/dev/null
-	source "${HOME}/dotfiles/config/local_dotfiles_settings"
+	source "${HOME}/dotfiles/components/feature_flags"
 fi
 
 # Widget cache directory

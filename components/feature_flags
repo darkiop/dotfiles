@@ -63,6 +63,8 @@ fi
 : "${DOTFILES_ENABLE_RELOAD_BINDING:=true}"
 : "${DOTFILES_ENABLE_IOBROKER:=true}"
 : "${DOTFILES_ENABLE_MOTD_WIDGETS:=true}"
+# Network reachability widget: opt-in, needs config/network-hosts.conf
+: "${DOTFILES_ENABLE_NETWORK_WIDGET:=false}"
 # MOTD style: "tree" (tree layout), "default" (simple key-value lines)
 : "${DOTFILES_MOTD_STYLE:=tree}"
 
@@ -102,6 +104,7 @@ _dotfiles_flag_names=(
 	DOTFILES_ENABLE_RELOAD_BINDING
 	DOTFILES_ENABLE_IOBROKER
 	DOTFILES_ENABLE_MOTD_WIDGETS
+	DOTFILES_ENABLE_NETWORK_WIDGET
 )
 for _dotfiles_flag_name in "${_dotfiles_flag_names[@]}"; do
 	if dotfiles_flag_enabled "${_dotfiles_flag_name}"; then
@@ -144,4 +147,5 @@ export DOTFILES_ENABLE_DOT_HELP_BINDING
 export DOTFILES_ENABLE_RELOAD_BINDING
 export DOTFILES_ENABLE_IOBROKER
 export DOTFILES_ENABLE_MOTD_WIDGETS
+export DOTFILES_ENABLE_NETWORK_WIDGET
 export DOTFILES_MOTD_STYLE

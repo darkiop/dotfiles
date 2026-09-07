@@ -30,8 +30,11 @@ dotfiles_lazy_register() {
 	local extra_funcs=("$@")
 	local component_path="${HOME}/dotfiles/components/${component}"
 	local had_expand_aliases=0
+	local f
 
-	if shopt -q expand_aliases 2>/dev/null; then
+	# `shopt` only exists in bash; in zsh the `unalias` calls below are what
+	# keep an alias from colliding with the stub function definitions.
+	if [[ -n ${BASH_VERSION:-} ]] && shopt -q expand_aliases 2>/dev/null; then
 		had_expand_aliases=1
 		shopt -u expand_aliases
 	fi
@@ -52,7 +55,6 @@ dotfiles_lazy_register() {
 	}"
 
 	# Create stubs for extra functions that delegate to the main function first.
-	local f
 	for f in "${extra_funcs[@]}"; do
 		eval "${f}() {
 			unset -f ${func} ${extra_funcs[*]} 2>/dev/null
