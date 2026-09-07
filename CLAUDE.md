@@ -123,7 +123,7 @@ Built-in widgets in `motd/widgets.sh`:
 - **Feature flags**: Add to `components/feature_flags`, override in `config/local_dotfiles_settings`
 - **Submodules**: Installed via `git clone --recurse-submodules`; `gitconfig` sets `submodule.recurse=true`
 - **Tool installation**: Via module scripts (e.g., `modules/fzf/install`), not distro packages
-- **Platform detection**: Use `DOTFILES_OS`, `DOTFILES_DISTRO_ID`, `DOTFILES_WSL`, `DOTFILES_CONTAINER` from `components/platform`
+- **Platform detection**: Use `DOTFILES_OS`, `DOTFILES_DISTRO_ID`, `DOTFILES_WSL`, `DOTFILES_WSL_VERSION`, `DOTFILES_CONTAINER` from `components/platform`
 - **Line endings**: LF only (see `.gitattributes`)
 - **Component naming**: FZF components use `fzf_` prefix, pickers use `_picker` suffix
 

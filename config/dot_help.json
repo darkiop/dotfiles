@@ -71,7 +71,7 @@
     {
       "name": "dot env",
       "desc": "Show DOTFILES_* environment variables",
-      "details": "Lists all DOTFILES_* environment variables.\n\n━━━ Color coding ━━━\n  green  = true  (enabled)\n  red    = false (disabled)\n  yellow = other values\n\n━━━ Usage ━━━\n  dot env\n\n━━━ Important variables ━━━\n• DOTFILES_ENABLE_*    Feature flags\n• DOTFILES_OS          linux/darwin\n• DOTFILES_DISTRO_ID   ubuntu/debian/...\n• DOTFILES_WSL         0/1\n• DOTFILES_CONTAINER   0/1\n• DOTFILES_PROMPT_STYLE classic/compact\n\n━━━ Debugging ━━━\nHelps find out why a feature\nis not working.",
+      "details": "Lists all DOTFILES_* environment variables.\n\n━━━ Color coding ━━━\n  green  = true  (enabled)\n  red    = false (disabled)\n  yellow = other values\n\n━━━ Usage ━━━\n  dot env\n\n━━━ Important variables ━━━\n• DOTFILES_ENABLE_*    Feature flags\n• DOTFILES_OS          linux/darwin\n• DOTFILES_DISTRO_ID   ubuntu/debian/...\n• DOTFILES_WSL         0/1\n• DOTFILES_WSL_VERSION 0/1/2\n• DOTFILES_CONTAINER   0/1\n• DOTFILES_PROMPT_STYLE classic/compact\n\n━━━ Debugging ━━━\nHelps find out why a feature\nis not working.",
       "run": "dot env",
       "requires": [
         "DOTFILES_ENABLE_DOT_HELP"

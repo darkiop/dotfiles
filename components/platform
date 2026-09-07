@@ -6,6 +6,7 @@
 #   DOTFILES_DISTRO_ID: e.g. debian|ubuntu|arch|unknown
 #   DOTFILES_DISTRO_LIKE: value of ID_LIKE (may be empty)
 #   DOTFILES_WSL: 1 if running under WSL, else 0
+#   DOTFILES_WSL_VERSION: 1 or 2 under WSL, else 0
 #   DOTFILES_CONTAINER: 1 if running in a container, else 0
 
 DOTFILES_OS="unknown"
@@ -37,6 +38,22 @@ elif [[ -r /proc/version ]] && grep -qiE 'microsoft|wsl' /proc/version; then
 fi
 export DOTFILES_WSL
 
+# 0 when not under WSL, otherwise 1 or 2.
+# WSL2 runs a real Linux kernel and marks it in the kernel release / /proc/version;
+# only WSL2 provides the /run/WSL interop socket directory.
+DOTFILES_WSL_VERSION=0
+if [[ "${DOTFILES_WSL}" == "1" ]]; then
+	DOTFILES_WSL_VERSION=1
+	if [[ "$(uname -r 2>/dev/null)" == *[Ww][Ss][Ll]2* ]]; then
+		DOTFILES_WSL_VERSION=2
+	elif [[ -d /run/WSL ]]; then
+		DOTFILES_WSL_VERSION=2
+	elif [[ -r /proc/version ]] && grep -qi 'wsl2' /proc/version; then
+		DOTFILES_WSL_VERSION=2
+	fi
+fi
+export DOTFILES_WSL_VERSION
+
 DOTFILES_CONTAINER=0
 if [[ -f /.dockerenv || -f /run/.containerenv ]]; then
 	DOTFILES_CONTAINER=1
@@ -46,6 +63,8 @@ fi
 export DOTFILES_CONTAINER
 
 dotfiles_is_wsl() { [[ "${DOTFILES_WSL}" == "1" ]]; }
+dotfiles_is_wsl1() { [[ "${DOTFILES_WSL_VERSION}" == "1" ]]; }
+dotfiles_is_wsl2() { [[ "${DOTFILES_WSL_VERSION}" == "2" ]]; }
 dotfiles_is_container() { [[ "${DOTFILES_CONTAINER}" == "1" ]]; }
 dotfiles_is_linux() { [[ "${DOTFILES_OS}" == "linux" ]]; }
 dotfiles_is_darwin() { [[ "${DOTFILES_OS}" == "darwin" ]]; }

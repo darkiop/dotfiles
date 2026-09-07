@@ -252,7 +252,7 @@ dot_doctor() {
 	# Platform
 	local platform_info="${DOTFILES_OS:-unknown}"
 	[[ -n "${DOTFILES_DISTRO_ID:-}" ]] && platform_info="${platform_info} (${DOTFILES_DISTRO_ID})"
-	[[ "${DOTFILES_WSL:-0}" == "1" ]] && platform_info="${platform_info} [WSL]"
+	[[ "${DOTFILES_WSL:-0}" == "1" ]] && platform_info="${platform_info} [WSL${DOTFILES_WSL_VERSION:-}]"
 	[[ "${DOTFILES_CONTAINER:-0}" == "1" ]] && platform_info="${platform_info} [container]"
 	_dot_doctor_print_row "platform" "INFO" "${platform_info}"
 
