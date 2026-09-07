@@ -199,6 +199,10 @@ fi
 
 # ioBroker
 if [[ "${DOTFILES_ENABLE_IOBROKER}" == true ]] && [[ -x /opt/iobroker/iobroker ]]; then
-  source ~/.iobroker/iobroker_completions
-  source ~/.iobroker/npm_command_fix
+  if [[ -f ~/.iobroker/iobroker_completions ]]; then
+    source ~/.iobroker/iobroker_completions
+  fi
+  if [[ -f ~/.iobroker/npm_command_fix ]]; then
+    source ~/.iobroker/npm_command_fix
+  fi
 fi

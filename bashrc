@@ -210,8 +210,14 @@ fi
 
 # ioBroker
 if [[ "${DOTFILES_ENABLE_IOBROKER}" == true ]] && [[ -x /opt/iobroker/iobroker ]]; then
-  source ~/.iobroker/iobroker_completions   # Enable ioBroker command auto-completion
-  source ~/.iobroker/npm_command_fix        # Forces npm to run as iobroker when inside the iobroker installation dir
+  # Enable ioBroker command auto-completion
+  if [[ -f ~/.iobroker/iobroker_completions ]]; then
+    source ~/.iobroker/iobroker_completions
+  fi
+  # Forces npm to run as iobroker when inside the iobroker installation dir
+  if [[ -f ~/.iobroker/npm_command_fix ]]; then
+    source ~/.iobroker/npm_command_fix
+  fi
 fi
 
 export NVM_DIR="$HOME/.nvm"
