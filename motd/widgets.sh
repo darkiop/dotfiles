@@ -311,6 +311,78 @@ _motd_widget_proxmox_ids() {
 }
 
 # ============================================================================
+# Proxmox Version Widget
+# ============================================================================
+_motd_widget_proxmox_version() {
+	local cache_file="${MOTD_CACHE_DIR}/proxmox_version"
+	local cache_ttl=3600
+
+	if _motd_cache_fresh "${cache_file}" "${cache_ttl}"; then
+		_motd_cache_read "${cache_file}"
+		return 0
+	fi
+
+	# Command availability is pre-checked by motd_run_widgets
+	local output
+	output=$(pveversion 2>/dev/null | head -n 1)
+	output="${output%% *}"
+
+	[[ -z ${output} ]] && return 1
+
+	_motd_cache_write "${cache_file}" "${output}"
+	printf "%s" "${output}"
+}
+
+# ============================================================================
+# Proxmox Services Widget
+# ============================================================================
+_motd_widget_proxmox_services() {
+	local cache_file="${MOTD_CACHE_DIR}/proxmox_services"
+	local cache_ttl=60
+
+	if _motd_cache_fresh "${cache_file}" "${cache_ttl}"; then
+		_motd_cache_read "${cache_file}"
+		return 0
+	fi
+
+	command -v systemctl >/dev/null 2>&1 || return 1
+
+	local c_green="${COLOR_SUCCESS:-$'\x1b[38;5;83m'}"
+	local c_red=$'\x1b[38;5;196m'
+	local c_reset=$'\x1b[m'
+
+	local output="" unit label
+	for unit in watchdog-mux corosync pve-ha-crm; do
+		label="${unit}"
+		# systemctl blocks on a busy or broken systemd, so cap it where possible
+		if _motd_systemd_unit_active "${unit}.service"; then
+			output="${output}${c_green}${label}${c_reset} "
+		else
+			output="${output}${c_red}${label}${c_reset} "
+		fi
+	done
+	output="${output% }"
+
+	[[ -z ${output} ]] && return 1
+
+	_motd_cache_write "${cache_file}" "${output}"
+	printf "%s" "${output}"
+}
+
+# Helper: is a systemd unit active? Capped at 2s so a hung systemd cannot
+# stall the MOTD.
+_motd_systemd_unit_active() {
+	local state
+	if command -v timeout >/dev/null 2>&1; then
+		state=$(timeout 2s systemctl is-active "$1" 2>/dev/null)
+	else
+		state=$(systemctl is-active "$1" 2>/dev/null)
+	fi
+	[[ ${state} == "active" ]]
+}
+
+
+# ============================================================================
 # Homebrew Widget (macOS)
 # ============================================================================
 _motd_widget_brew() {
@@ -510,10 +582,24 @@ motd_run_widgets() {
 		fi
 	fi
 
+	# Proxmox version widget
+	if _motd_has_cmd pveversion; then
+		if widget_output=$(_motd_widget_proxmox_version 2>/dev/null); then
+			print_kv "proxmox-version" "${widget_output}"
+		fi
+	fi
+
 	# Proxmox widget
 	if _motd_has_cmd pveversion; then
 		if widget_output=$(_motd_widget_proxmox 2>/dev/null); then
 			print_kv "proxmox" "${widget_output}"
+		fi
+	fi
+
+	# Proxmox services widget (watchdog-mux, corosync, pve-ha-crm)
+	if _motd_has_cmd pveversion; then
+		if widget_output=$(_motd_widget_proxmox_services 2>/dev/null); then
+			print_kv "proxmox-services" "${widget_output}"
 		fi
 	fi
 

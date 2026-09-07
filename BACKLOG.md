@@ -1,6 +1,6 @@
 # 📋 Backlog
 
-![open](https://img.shields.io/badge/open-41-blue) ![done](https://img.shields.io/badge/done-24-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
+![open](https://img.shields.io/badge/open-37-blue) ![done](https://img.shields.io/badge/done-28-brightgreen) ![dropped](https://img.shields.io/badge/dropped-8-lightgrey)
 
 Note: entries are never removed from this backlog, only status changes (done, out-of-scope, etc.).
 
@@ -33,8 +33,8 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 
 | ID      | Title                                                                                                      | Type   | Status  | Ref                                                                                                                                                                   |
 |---------|--------------------------------------------------------------------------------------------------------------|--------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BUG-008 | MOTD hostname routing does not exist — `motd-odin.sh` / `motd-proxmox.sh` are never sourced                | 🐛 Bug | 🔲 open | Deferred 2026-09-07: needs a decision — wire up routing or drop the per-host files. `bashrc:115`, `zshrc:126` source `motd/motd-catppuccin-mocha.sh` directly. `motd.sh` special-cases `odin` inline instead of dispatching. Either wire up routing or drop the per-host files |
-| BUG-009 | `motd` alias bypasses the color wrapper                                                                    | 🐛 Bug | 🔲 open | Deferred 2026-09-07: depends on the BUG-008 decision (which file is the entry point). `alias/alias:225` is `source ~/dotfiles/motd/motd.sh`, but login MOTD goes through `motd-catppuccin-mocha.sh`. Manual invocation renders with different colors, and `source` leaks `MOTD_HOSTNAME`/`USAGE_*`/`_motd_*` into the shell |
+| BUG-008 | MOTD hostname routing does not exist — `motd-odin.sh` / `motd-proxmox.sh` are never sourced                | 🐛 Bug | ✅ done | resolved by converting both files into widgets instead of adding a router. Original note: needs a decision — wire up routing or drop the per-host files. `bashrc:115`, `zshrc:126` source `motd/motd-catppuccin-mocha.sh` directly. `motd.sh` special-cases `odin` inline instead of dispatching. Either wire up routing or drop the per-host files |
+| BUG-009 | `motd` alias bypasses the color wrapper                                                                    | 🐛 Bug | ✅ done | alias and login MOTD both run `motd-catppuccin-mocha.sh` in a child shell now. Original note: depends on the BUG-008 decision (which file is the entry point). `alias/alias:225` is `source ~/dotfiles/motd/motd.sh`, but login MOTD goes through `motd-catppuccin-mocha.sh`. Manual invocation renders with different colors, and `source` leaks `MOTD_HOSTNAME`/`USAGE_*`/`_motd_*` into the shell |
 | BUG-010 | Host widget directory lookup uses the full hostname, not the short one                                     | 🐛 Bug | ✅ done [`a52a68c`](https://github.com/darkiop/dotfiles/commit/a52a68c) | `motd/widgets.sh` `motd_run_widgets` does `hostname=$(hostname)`; on an FQDN host `motd/widgets/<fqdn>/` never matches. `motd.sh` already computes `HOSTNAME_SHORT` — reuse it |
 | BUG-011 | `DOTFILES_ENABLE_NETWORK_WIDGET` is documented but missing from `components/feature_flags`                 | 🐛 Bug | ✅ done [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603) | README.md:138 documents it; the flag is never defaulted, normalized, or exported. `motd/widgets.sh:6` compensates by re-sourcing `local_dotfiles_settings` mid-render. Add it to the flag list and the cache array, then drop the workaround |
 | BUG-012 | `autoupdate.sh` retries a network `git pull` on every shell start after one failure                        | 🐛 Bug | ✅ done [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603) | `autoupdate.sh:52` resets the counter only when the subshell exits 0. A failed pull leaves the count above 20, so every subsequent shell blocks on the network. Reset (or back off) on failure too, and add a timeout |
@@ -71,7 +71,7 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | DOC-004 | Array-based PATH management in bashrc/zshrc instead of repeated `ADD_TO_PATH` calls                              | 📄 Chore | 🔲 open |
 | DOC-005 | Split `components/fzf` (166 lines) into `fzf_core` + `fzf_tab_completion`                                        | 📄 Chore | 🔲 open |
 | DOC-006 | Shellcheck audit — review 36 suppressions in 13 files, reduce SC2312/SC2086/SC1090                               | 📄 Chore | 🔲 open |
-| DOC-016 | Remove dead prompt components: `components/bash_prompt` and `components/bash_prompt_catppuccin_mocha_2`          | 📄 Chore | 🔲 open |
+| DOC-016 | Remove dead prompt components: `components/bash_prompt` and `components/bash_prompt_catppuccin_mocha_2`          | 📄 Chore | ✅ done |
 | DOC-018 | `bin/archive/*` is tracked in git although `.gitignore` lists it — 8 legacy scripts, ~50 shellcheck warnings     | 📄 Chore | 🔲 open |
 | DOC-019 | `dot doctor` has no inline component fallback, unlike `dot profile` (`components/dot_help:404` vs `:409-422`)    | 📄 Chore | 🔲 open |
 
@@ -79,19 +79,19 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 
 | ID      | Title                                                                                  | Type     | Status  |
 |---------|----------------------------------------------------------------------------------------|----------|---------|
-| DOC-017 | Doc drift in AGENTS.md / CLAUDE.md / copilot-instructions.md — see notes below          | 📄 Chore | 🔲 open |
+| DOC-017 | Doc drift in AGENTS.md / CLAUDE.md / copilot-instructions.md — see notes below          | 📄 Chore | ✅ done |
 | DOC-007 | Architecture diagram — loading order visualization in README.md                        | 📄 Chore | 🔲 open |
 | DOC-008 | Troubleshooting guide — slow startup, macOS bash 3.2, WSL gotchas, container detection | 📄 Chore | 🔲 open |
 | DOC-009 | Compatibility matrix — bash 4+/zsh 5.0+, macOS vs Linux, container limits              | 📄 Chore | 🔲 open |
 
-**DOC-017 details** — the three agent instruction files drifted from the code (keep all three in sync):
+**DOC-017 details** — all six drift points are fixed; the three files are byte-identical apart from their own filename references:
 
-- Component count says 22; there are 26 in `components/`.
-- Component table is missing `dot_profile`, `lazy_loader`, `log_picker`, `bash_prompt_catppuccin_mocha`.
-- Component table still lists `bash_prompt`, which `bashrc` no longer sources (see DOC-016).
-- Flag table is missing `DOTFILES_ENABLE_LAZY_LOADING`, `DOTFILES_ENABLE_LOG_PICKER`, `DOTFILES_ENABLE_NETWORK_WIDGET`, `DOTFILES_MOTD_STYLE`.
-- MOTD section describes `motd/motd.sh` as a hostname router; it is not one (see BUG-008).
-- Loading order block omits the lazy-loading branch in `bashrc`/`zshrc`.
+- ~~Component count says 22~~ → now 24, matching `components/` after DOC-016.
+- ~~Component table is missing `dot_profile`, `lazy_loader`, `log_picker`, `bash_prompt_catppuccin_mocha`~~ → added.
+- ~~Component table still lists `bash_prompt`~~ → removed with DOC-016.
+- ~~Flag table is missing `DOTFILES_ENABLE_LAZY_LOADING`, `DOTFILES_ENABLE_LOG_PICKER`, `DOTFILES_ENABLE_NETWORK_WIDGET`, `DOTFILES_MOTD_STYLE`~~ → added (README got `DOTFILES_ENABLE_LAZY_LOADING` too).
+- ~~MOTD section describes `motd/motd.sh` as a hostname router~~ → describes the real entry point after BUG-008.
+- ~~Loading order block omits the lazy-loading branch~~ → added.
 
 ---
 
@@ -173,6 +173,10 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 | BUG-018 | Prepend the personal bin dirs to `PATH`                                        | 🐛 Bug      | [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603)                                                               | new `ADD_TO_PATH_FRONT` in `bashrc` + `zshrc`              |
 | BUG-019 | Check `/etc.defaults/VERSION` before reading it on the `odin` branch           | 🐛 Bug      | [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603)                                                               | falls back to `uname -s`                                   |
 | BUG-020 | Gate the `shopt` block in `lazy_loader` on `${BASH_VERSION}`                    | 🐛 Bug      | [`ecb5603`](https://github.com/darkiop/dotfiles/commit/ecb5603)                                                               | it was a silent no-op under zsh                            |
+| BUG-008 | Turn the unrouted per-host MOTD files into widgets                             | 🐛 Bug      | —                                                               | `motd-odin.sh` → `widgets/odin/storage-volume1.sh`; `motd-proxmox.sh` → built-in `proxmox-version` + `proxmox-services` |
+| BUG-009 | One MOTD entry point for login and the `motd` alias                            | 🐛 Bug      | —                                                               | both run `motd-catppuccin-mocha.sh` in a child shell, so nothing leaks into the shell |
+| DOC-016 | Delete the dead prompt components                                              | 📄 Chore    | —                                                               | `bash_prompt`, `bash_prompt_catppuccin_mocha_2`; `dot_profile` now profiles the prompt that is actually sourced |
+| DOC-017 | Resync AGENTS.md / CLAUDE.md / copilot-instructions.md with the code           | 📄 Chore    | —                                                               | component count, component + flag tables, loading order, MOTD section |
 
 ---
 
@@ -195,7 +199,6 @@ Last bug scan: 2026-09-07 (shellcheck 0.9.0 + `bash -n` + manual review of `bash
 
 | Effort | Task                                          | Type           | File(s)                                     |
 |--------|-----------------------------------------------|----------------|---------------------------------------------|
-| 30 min | DOC-016: delete dead prompt components        | 📄 Chore       | `components/bash_prompt*`                   |
 | 1h     | DOC-003: `set -euo pipefail` in motd scripts  | 📄 Chore       | `motd/motd.sh`, `motd/widgets.sh`           |
 | 1h     | NEW-019: `DOTFILES_WSL_VERSION` detection     | 🆕 New-Feature | `components/platform`                       |
 | 1h     | DOC-014: macOS bash upgrade guide             | 📄 Chore       | `README.md`                                 |

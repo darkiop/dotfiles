@@ -57,7 +57,7 @@ dot_profile() {
 
 	# Conditional components (check if files exist)
 	local -a conditional_components=(
-		"bash_prompt:DOTFILES_ENABLE_PROMPT"
+		"bash_prompt_catppuccin_mocha:DOTFILES_ENABLE_PROMPT"
 		"zsh_prompt:DOTFILES_ENABLE_PROMPT"
 		"bash_completion:DOTFILES_ENABLE_BASH_COMPLETION"
 		"zsh_completion:DOTFILES_ENABLE_BASH_COMPLETION"

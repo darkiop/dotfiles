@@ -221,8 +221,10 @@ if command -v mtr >/dev/null 2>&1; then
 fi
 
 # motd (optional)
+# Runs the same themed entry point the login MOTD uses, in a child shell, so
+# manual invocation looks identical and leaks no MOTD_*/USAGE_* variables.
 if [[ "${DOTFILES_ENABLE_MOTD}" == true ]]; then
-	alias motd='source ~/dotfiles/motd/motd.sh'
+	alias motd='bash ~/dotfiles/motd/motd-catppuccin-mocha.sh'
 fi
 
 if [[ -n ${ZSH_VERSION:-} ]]; then

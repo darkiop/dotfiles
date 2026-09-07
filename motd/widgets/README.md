@@ -7,9 +7,16 @@ Host-specific custom widgets for the MOTD system.
 ```
 motd/widgets/
 ├── README.md                    # This file
-└── <hostname>/                  # Host-specific widgets directory
+└── <short-hostname>/            # Host-specific widgets directory
     └── *.sh                     # Widget scripts
 ```
+
+The directory is matched on the short hostname (everything up to the first
+dot); a directory named after the full FQDN still works as a fallback.
+
+A file named `<category>-<sublabel>.sh` is grouped under its own section in the
+tree layout — `storage-volume1.sh` renders under a "storage" heading. A name
+without a dash lands in the generic "Services" section.
 
 ## Creating Custom Widgets
 
@@ -67,6 +74,14 @@ The following widgets are built into `motd/widgets.sh`:
 - **proxmox**: Shows running/total counts for LXC containers and VMs
   - Cache TTL: 60 seconds
   - Requires: `pct` and `qm` commands (Proxmox VE)
+
+- **proxmox-version**: Shows the `pveversion` string
+  - Cache TTL: 3600 seconds
+  - Requires: `pveversion` command (Proxmox VE)
+
+- **proxmox-services**: Shows the state of watchdog-mux, corosync and pve-ha-crm
+  - Cache TTL: 60 seconds
+  - Requires: `pveversion` and `systemctl`
 
 - **homebrew**: Shows available formula and cask updates
   - Cache TTL: 3600 seconds

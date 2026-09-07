@@ -32,9 +32,9 @@ Think of the MOTD system like a **smart news ticker** on a digital billboard. Wh
 │ Built-in      │    │ Built-in        │    │ Host-specific      │
 │ Widgets       │    │ Widgets         │    │ Scripts            │
 ├───────────────┤    ├─────────────────┤    ├────────────────────┤
-│ docker        │    │ tailscale       │    │ motd-proxmox.sh    │
-│ proxmox       │    │ wireguard       │    │ motd-odin.sh       │
-│ homebrew      │    │ network         │    │ widgets/$HOST/*.sh │
+│ docker        │    │ tailscale       │    │                    │
+│ proxmox*      │    │ wireguard       │    │ widgets/$HOST/*.sh │
+│ homebrew      │    │ network         │    │                    │
 └───────┬───────┘    └────────┬────────┘    └─────────┬──────────┘
         │                     │                       │
         └─────────────────────┴───────────────────────┘
@@ -221,9 +221,10 @@ To debug a missing widget, check:
 motd/
 ├── motd.sh              # Main entry point
 ├── widgets.sh           # Widget system + built-in widgets
+├── motd-catppuccin-mocha.sh # Themed entry point (login MOTD + `motd` alias)
 ├── widgets/             # Host-specific widget scripts
-│   └── README.md
-├── motd-<hostname>.sh   # Host-specific extensions (e.g., motd-proxmox.sh)
+│   ├── README.md
+│   └── <short-hostname>/*.sh
 ├── tasks.json           # Per-host task messages
 └── systemd/             # Timers for cache updates
     ├── calc-dir-size-homes.*
@@ -240,6 +241,8 @@ These widgets come with the MOTD system and activate automatically when the requ
 | tailscale | Tailscale IP or status | 300s | `tailscale` command |
 | wireguard | WireGuard IP and peer info | 300s | `wg` command |
 | proxmox | LXC/VM counts (running/total) | 60s | `pct`, `qm` (Proxmox VE) |
+| proxmox-version | `pveversion` string | 3600s | `pveversion` (Proxmox VE) |
+| proxmox-services | watchdog-mux / corosync / pve-ha-crm state | 60s | `pveversion`, `systemctl` |
 | homebrew | Available updates | 3600s | `brew` command (macOS) |
 | network | Host reachability status | 60s | `config/network-hosts.conf` |
 

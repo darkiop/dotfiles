@@ -131,9 +131,11 @@ if [[ "${DOTFILES_ENABLE_ALIASES}" == true ]]; then
 fi
 
 # MOTD (opt-in)
+# Run it in a child shell instead of sourcing it: the MOTD only prints, and
+# sourcing leaked MOTD_HOSTNAME/USAGE_*/_motd_* into every interactive shell.
 if [[ "${DOTFILES_ENABLE_MOTD}" == true ]] && [[ "${DOTFILES_ENABLE_MOTD_AUTO_RUN}" == true ]]; then
   if [[ -s ~/dotfiles/motd/motd-catppuccin-mocha.sh ]]; then
-    source ~/dotfiles/motd/motd-catppuccin-mocha.sh
+    bash ~/dotfiles/motd/motd-catppuccin-mocha.sh
   fi
 fi
 

@@ -125,6 +125,7 @@ DOTFILES_ENABLE_SSH_TMUX_RENAME=false
 | `DOTFILES_ENABLE_NAVI` | true | Navi cheatsheet widget |
 | `DOTFILES_ENABLE_ALIASES` | true | Load alias files |
 | `DOTFILES_ENABLE_HELPERS` | true | Helper functions |
+| `DOTFILES_ENABLE_LAZY_LOADING` | true | Load rarely used components on first call |
 | `DOTFILES_ENABLE_EXTRACT_EXT` | true | Extended archive extraction |
 | `DOTFILES_ENABLE_DOT_DOCTOR` | true | Diagnostics command |
 | `DOTFILES_ENABLE_DOT_HELP` | true | Help system |
@@ -309,10 +310,12 @@ The message of the day system shows system info on login. Enable with `DOTFILES_
 - tailscale — Tailscale IP or status
 - wireguard — WireGuard IP and allowed IPs
 - proxmox — LXC/VM counts
+- proxmox-version — `pveversion` string
+- proxmox-services — watchdog-mux / corosync / pve-ha-crm state
 - homebrew — available updates
 - network — reachability status for configured hosts
 
-Add custom widgets in `motd/widgets/<short-hostname>/` (the hostname up to the first dot).
+Add custom widgets in `motd/widgets/<short-hostname>/` (the hostname up to the first dot). A file named `<category>-<sublabel>.sh` gets its own section in the tree layout.
 
 **Network widget:** Shows host reachability (green = up, red = down). Enable with `DOTFILES_ENABLE_NETWORK_WIDGET=true` and configure hosts in `config/network-hosts.conf`.
 

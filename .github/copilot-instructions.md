@@ -21,7 +21,7 @@ dotfiles/
 ├── bash_completion.d/  # Custom bash completions
 ├── bin/                # Helper scripts
 ├── cheats/             # Navi cheat files (.cheat format)
-├── components/         # 22 modular shell components
+├── components/         # 24 modular shell components
 ├── config/             # Configuration files
 │   ├── dotfiles.config       # Colors and global settings
 │   ├── local_dotfiles_settings # Per-host overrides (gitignored)
@@ -36,8 +36,8 @@ dotfiles/
 │   ├── tpm/            # Tmux Plugin Manager
 │   └── vimrc/          # Vim configuration
 └── motd/               # Message of the day system
-    ├── motd.sh         # Main MOTD (hostname routing)
-    ├── motd-<host>.sh  # Host-specific MOTDs
+    ├── motd.sh         # Main MOTD renderer
+    ├── motd-catppuccin-mocha.sh # Themed entry point (login + `motd` alias)
     ├── widgets.sh      # Widget system with caching
     ├── widgets/        # Custom widget extensions
     └── systemd/        # Timers for background updates
@@ -47,11 +47,11 @@ dotfiles/
 
 | Category | Components |
 |----------|------------|
-| Shell | `bash_prompt`, `zsh_prompt`, `bash_defaults`, `zsh_defaults`, `bash_completion`, `zsh_completion` |
+| Shell | `bash_prompt_catppuccin_mocha`, `zsh_prompt`, `bash_defaults`, `zsh_defaults`, `bash_completion`, `zsh_completion` |
 | FZF | `fzf`, `fzf_git`, `fzf_tmux`, `fzf_docker`, `fzf_systemctl`, `fzf_extras` |
-| Pickers | `ssh_picker`, `journalctl_picker` |
-| Tools | `dot_help`, `dot_doctor`, `helpers`, `navi` |
-| System | `platform`, `feature_flags`, `brew` |
+| Pickers | `ssh_picker`, `journalctl_picker`, `log_picker` |
+| Tools | `dot_help`, `dot_doctor`, `dot_profile`, `helpers`, `navi` |
+| System | `platform`, `feature_flags`, `brew`, `lazy_loader` |
 
 ## Shell Loading Order
 
@@ -63,6 +63,9 @@ bashrc/zshrc
 ├── components/*_defaults (shell settings)
 ├── components/*_prompt (if enabled)
 ├── components/fzf* (if enabled)
+├── components/lazy_loader (if enabled: registers stubs for
+│      ssh_picker, journalctl_picker, log_picker, … instead of
+│      sourcing them; the real component loads on first call)
 ├── alias/* (if enabled)
 ├── components/helpers (if enabled)
 └── components/navi (if enabled)
@@ -76,6 +79,7 @@ bashrc/zshrc
 | `dot doctor` | Diagnose common problems |
 | `dot alias` | Show aliases with availability status |
 | `dot update` | Update dotfiles and reload shell |
+| `dot profile` | Measure shell startup time per component |
 | `fh` | FZF history picker |
 | `cdf` | FZF directory picker |
 | `gco` | Git checkout (branch picker) |
@@ -106,12 +110,12 @@ Built-in widgets in `motd/widgets.sh`:
 |---------|-------|
 | Config & flags | `components/feature_flags`, `components/platform`, `config/local_dotfiles_settings` |
 | Shell entry | `bashrc`, `zshrc`, `bash_profile`, `zprofile` |
-| Prompts | `components/bash_prompt`, `components/zsh_prompt` |
+| Prompts | `components/bash_prompt_catppuccin_mocha`, `components/zsh_prompt` |
 | FZF | `components/fzf`, `components/fzf_docker`, `components/fzf_git`, `components/fzf_systemctl`, `components/fzf_tmux`, `components/fzf_extras` |
-| Utilities | `components/dot_doctor`, `components/dot_help`, `components/helpers` |
-| Pickers | `components/ssh_picker`, `components/journalctl_picker` |
+| Utilities | `components/dot_doctor`, `components/dot_help`, `components/dot_profile`, `components/helpers`, `components/lazy_loader` |
+| Pickers | `components/ssh_picker`, `components/journalctl_picker`, `components/log_picker` |
 | Tmux | `modules/oh-my-tmux/.tmux.conf.local`, `config/tmux.conf.local` |
-| MOTD | `motd/motd.sh`, `motd/widgets.sh`, `motd/widgets/`, `motd/motd-<hostname>.sh` |
+| MOTD | `motd/motd.sh`, `motd/motd-catppuccin-mocha.sh`, `motd/widgets.sh`, `motd/widgets/<short-hostname>/` |
 | Help data | `config/dot_help.json` |
 
 ## Conventions
@@ -141,7 +145,7 @@ Built-in widgets in `motd/widgets.sh`:
 
 | Task | How |
 |------|-----|
-| New prompt segment | Edit `components/bash_prompt` and `components/zsh_prompt`, update README |
+| New prompt segment | Edit `components/bash_prompt_catppuccin_mocha` and `components/zsh_prompt`, update README |
 | New alias set | Create `alias/alias-<name>`, source from `alias/alias` |
 | New completion | Add to `bash_completion.d/`, enable via `DOTFILES_ENABLE_BASH_COMPLETION` |
 | New FZF integration | Create `components/fzf_<name>`, add `DOTFILES_ENABLE_<NAME>_FZF` flag |
@@ -172,6 +176,10 @@ All default to `true` unless noted. Override in `config/local_dotfiles_settings`
 | `DOTFILES_ENABLE_MOTD` | Message of the day (default: false) |
 | `DOTFILES_ENABLE_MOTD_AUTO_RUN` | Auto-show MOTD on login (default: false) |
 | `DOTFILES_ENABLE_MOTD_WIDGETS` | MOTD widget system |
+| `DOTFILES_ENABLE_NETWORK_WIDGET` | MOTD network reachability widget (default: false) |
+| `DOTFILES_MOTD_STYLE` | MOTD layout: `tree` (default) or `default` |
+| `DOTFILES_ENABLE_LAZY_LOADING` | Lazy-load rarely used components |
+| `DOTFILES_ENABLE_LOG_PICKER` | macOS log picker (default: macOS only) |
 | `DOTFILES_ENABLE_AUTOUPDATE` | Auto-update dotfiles |
 | `DOTFILES_ENABLE_TMUX_AUTOSTART` | Auto-start tmux |
 | `DOTFILES_ENABLE_SSH_TMUX_RENAME` | Rename tmux window on SSH |
