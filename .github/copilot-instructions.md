@@ -21,7 +21,7 @@ dotfiles/
 ├── bash_completion.d/  # Custom bash completions
 ├── bin/                # Helper scripts
 ├── cheats/             # Navi cheat files (.cheat format)
-├── components/         # 24 modular shell components
+├── components/         # 27 modular shell components
 ├── config/             # Configuration files
 │   ├── dotfiles.config       # Colors and global settings
 │   ├── local_dotfiles_settings # Per-host overrides (gitignored)
@@ -48,21 +48,24 @@ dotfiles/
 | Category | Components |
 |----------|------------|
 | Shell | `bash_prompt_catppuccin_mocha`, `zsh_prompt`, `bash_defaults`, `zsh_defaults`, `bash_completion`, `zsh_completion` |
-| FZF | `fzf`, `fzf_git`, `fzf_tmux`, `fzf_docker`, `fzf_systemctl`, `fzf_extras` |
+| FZF | `fzf` (loader), `fzf_core`, `fzf_tab_completion`, `fzf_git`, `fzf_tmux`, `fzf_docker`, `fzf_systemctl`, `fzf_extras` |
 | Pickers | `ssh_picker`, `journalctl_picker`, `log_picker` |
 | Tools | `dot_help`, `dot_doctor`, `dot_profile`, `helpers`, `navi` |
-| System | `platform`, `feature_flags`, `brew`, `lazy_loader` |
+| System | `platform`, `path`, `feature_flags`, `brew`, `lazy_loader` |
 
 ## Shell Loading Order
 
 ```
 bashrc/zshrc
 ├── config/dotfiles.config (colors, settings)
+├── components/path ($PATH from DOTFILES_PATH_FRONT/BACK)
 ├── components/platform (OS detection)
 ├── components/feature_flags (load flags + local overrides)
 ├── components/*_defaults (shell settings)
 ├── components/*_prompt (if enabled)
-├── components/fzf* (if enabled)
+├── components/fzf (if enabled: sources fzf_core, plus
+│      fzf_tab_completion when DOTFILES_ENABLE_FZF_TAB_COMPLETION)
+├── components/fzf_git, fzf_extras, fzf_tmux (if enabled)
 ├── components/lazy_loader (if enabled: registers stubs for
 │      ssh_picker, journalctl_picker, log_picker, … instead of
 │      sourcing them; the real component loads on first call)
@@ -108,10 +111,10 @@ Built-in widgets in `motd/widgets.sh`:
 
 | Purpose | Files |
 |---------|-------|
-| Config & flags | `components/feature_flags`, `components/platform`, `config/local_dotfiles_settings` |
+| Config & flags | `components/feature_flags`, `components/platform`, `components/path`, `config/local_dotfiles_settings` |
 | Shell entry | `bashrc`, `zshrc`, `bash_profile`, `zprofile` |
 | Prompts | `components/bash_prompt_catppuccin_mocha`, `components/zsh_prompt` |
-| FZF | `components/fzf`, `components/fzf_docker`, `components/fzf_git`, `components/fzf_systemctl`, `components/fzf_tmux`, `components/fzf_extras` |
+| FZF | `components/fzf` (loader), `components/fzf_core`, `components/fzf_tab_completion`, `components/fzf_docker`, `components/fzf_git`, `components/fzf_systemctl`, `components/fzf_tmux`, `components/fzf_extras` |
 | Utilities | `components/dot_doctor`, `components/dot_help`, `components/dot_profile`, `components/helpers`, `components/lazy_loader` |
 | Pickers | `components/ssh_picker`, `components/journalctl_picker`, `components/log_picker` |
 | Tmux | `modules/oh-my-tmux/.tmux.conf.local`, `config/tmux.conf.local` |

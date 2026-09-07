@@ -59,7 +59,8 @@ macOS still ships bash 3.2 (from 2007, the last GPLv2 release). Everything here 
 3.2, but two things behave differently:
 
 - fzf tab-completion in bash is skipped — `modules/fzf-tab-completion` needs `readarray`
-  and `exec {fd}>`, both bash 4+ (`components/fzf:100`). zsh tab-completion is unaffected.
+  and `exec {fd}>`, both bash 4+ (`components/fzf_tab_completion`). zsh tab-completion
+  is unaffected.
 - The prompt's stdin flush waits longer per step, so a new bash shell starts slightly slower
   (`components/bash_prompt_catppuccin_mocha:137`).
 
@@ -375,6 +376,23 @@ The `components/platform` file exports these variables:
 - `DOTFILES_WSL` — 1 if running in WSL
 - `DOTFILES_WSL_VERSION` — 1 or 2 in WSL, 0 otherwise
 - `DOTFILES_CONTAINER` — 1 if running in a container
+
+## PATH management
+
+`components/path` builds `$PATH` in one pass from two arrays that `bashrc` and
+`zshrc` fill:
+
+```bash
+DOTFILES_PATH_FRONT=("$HOME/bin" "$HOME/dotfiles/bin" "$HOME/.local/bin" "$HOME/.cargo/bin")
+DOTFILES_PATH_BACK=("/usr/local/bin" "/usr/bin" "/bin")
+dotfiles_path_apply
+```
+
+Front entries win over everything already in `$PATH`, so tools installed there
+shadow the system ones. Back entries are appended as fallbacks. Missing
+directories and duplicates are dropped. `ADD_TO_PATH` and `ADD_TO_PATH_FRONT`
+remain available for one-off additions from components or from
+`config/local_dotfiles_settings`.
 
 Helpers: `dotfiles_is_linux`, `dotfiles_is_darwin`, `dotfiles_is_wsl`, `dotfiles_is_wsl1`, `dotfiles_is_wsl2`, `dotfiles_is_container`, `dotfiles_is_debian_like`.
 
